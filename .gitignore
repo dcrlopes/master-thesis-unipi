@@ -1,0 +1,11 @@
+openmc_runs/
+out*/
+run_assembly_ref/
+run_core_ref*/
+run_core_refl_*/
+*.h5
+*.png
+*.log
+__pycache__/
+*.pyc
+.ipynb_checkpoints/

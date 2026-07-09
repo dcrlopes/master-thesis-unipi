@@ -1,0 +1,20 @@
+# Pacotes Python instalados via pip DENTRO do ambiente conda "openmc-env"
+# (o restante do ambiente -- OpenMC, DAGMC, MOAB, MPI/OpenMPI, HDF5, NumPy,
+# SciPy, scikit-learn, etc. -- vem do conda-forge via environment.yml.
+# São binários compilados sem wheel genérico no PyPI: NÃO tente instalá-los
+# via pip. O environment.yml é o único caminho real de reprodução completa.)
+#
+# Uso (após criar o ambiente com environment.yml):
+#   conda activate openmc-env
+#   pip install -r requirements.txt
+about-time==4.2.1
+alive-progress==3.3.0
+autograd==1.9.0
+cma==4.4.4
+Deprecated==1.3.1
+graphemeu==0.7.2
+moocore==0.3.1
+openmc-data==2.4.0
+pyDOE2==1.3.0
+pymoo==0.6.2
+wrapt==2.2.2

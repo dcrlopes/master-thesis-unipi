@@ -176,6 +176,13 @@ def main():
                          workdir="openmc_runs")
 
     opt = ActiveLearningMOO(spec, ev, cfg)
+    # Ensure the output directory exists BEFORE anything tries to write into it
+    # (results JSON, checkpoint, and the HV plot all land here). write_text does
+    # not create missing parent folders, so without this the run crashes at the
+    # very end -- after all the expensive OpenMC evaluations have already run.
+    Path(args.out).mkdir(parents=True, exist_ok=True)
+    #   parents=True     create intermediate dirs too (like mkdir -p)
+    #   exist_ok=True    do not error if the folder is already there
     ckpt_out = args.checkpoint or str(Path(args.out) / "optimization_checkpoint.json")
 
     if args.resume:

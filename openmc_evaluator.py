@@ -26,6 +26,7 @@ in the same folder. See run_optimization.py for the driver.
 """
 from __future__ import annotations
 
+import json
 import math
 import os
 from collections import Counter
@@ -59,11 +60,19 @@ class OpenMCEvaluator(Evaluator):
     spec : ProblemSpec
         Must match example_reactor_problem(): objectives {cycle_length, peaking},
         constraints {g_kmin, g_kmax, g_enr, g_peak}.
-    k_target : float
-        The FROZEN leakage-corrected EOC target  k_inf = 1.0 * (k_inf/k_eff).
-        Measure it ONCE for your finalized reference geometry with
-        measure_leakage_target.py and paste the number in. (Your 4.55/4.05,
-        pitch 1.26, refl 15 reference gives ~1.085.)
+    k_target : float | str | dict
+        ROUTE A -- pass a single float: the FROZEN leakage-corrected EOC
+        target k_inf = 1.0 * (k_inf/k_eff), the SAME value for every design
+        regardless of refl_thick. Measure it ONCE with
+        measure_leakage_target.py. (Your 4.55/4.05, pitch 1.26, refl 15
+        reference gives ~1.085.)
+        ROUTE B -- pass a path to (or an already-loaded dict of) the JSON
+        table written by sweep_ktarget.py: k_target is then interpolated
+        per-design from design["refl_thick"], so a thicker reflector
+        correctly gets a lower, later-crossing target. This pairs with the
+        bc="reflective" (infinite-medium, no leakage) transport already used
+        below in _cycle_length -- do not ALSO give the depletion model an
+        explicit reflector region, or leakage gets counted twice.
     chain_file : str | None
         Path to the depletion chain. Falls back to $OPENMC_CHAIN_FILE.
     burnup_steps : sequence of float
@@ -79,7 +88,7 @@ class OpenMCEvaluator(Evaluator):
     """
 
     def __init__(self, spec: ProblemSpec, *,
-                 k_target: float,
+                 k_target: float | str | dict,
                  chain_file: str | None = None,
                  burnup_steps=DEFAULT_BURNUP_STEPS,
                  transport: dict | None = None,
@@ -87,7 +96,25 @@ class OpenMCEvaluator(Evaluator):
                  op=None, geo=None,
                  verbose: bool = True):
         super().__init__(spec)
-        self.k_target = float(k_target)
+
+        # ROUTE A (float) vs ROUTE B (table): see the k_target docstring
+        # above. Detected once here; _k_target_for() does the per-design
+        # lookup every evaluation.
+        if isinstance(k_target, (str, Path)):
+            with open(k_target) as f:
+                table = json.load(f)
+            self._kt_xs = np.array(table["refl_thick_cm"], dtype=float)
+            self._kt_ys = np.array(table["k_target"], dtype=float)
+            self.k_target = None
+            self.route_b = True
+        elif isinstance(k_target, dict):
+            self._kt_xs = np.array(k_target["refl_thick_cm"], dtype=float)
+            self._kt_ys = np.array(k_target["k_target"], dtype=float)
+            self.k_target = None
+            self.route_b = True
+        else:
+            self.k_target = float(k_target)
+            self.route_b = False
 
         self.chain_file = chain_file or os.environ.get("OPENMC_CHAIN_FILE")
         if not self.chain_file:
@@ -117,7 +144,7 @@ class OpenMCEvaluator(Evaluator):
         case.mkdir(parents=True, exist_ok=True)
 
         peaking = self._bol_peaking(design, case)
-        cycle_efpd, k_bol = self._cycle_length(design, case)
+        cycle_efpd, k_bol, k_target_used = self._cycle_length(design, case)
 
         e_in = design["enrich_inner"]
         e_out = design["enrich_outer"]
@@ -134,6 +161,7 @@ class OpenMCEvaluator(Evaluator):
             print(f"  [case {self.n_calls:04d}] "
                   f"e=({e_in:5.2f}/{e_out:5.2f}) Gd={design['gd_wt']:4.2f} "
                   f"p={design['pitch']:.3f} refl={design['refl_thick']:5.1f} "
+                  f"k_target={k_target_used:.4f} "
                   f"-> EFPD={cycle_efpd:7.0f} F_dh={peaking:.3f} "
                   f"k_bol={k_bol:.4f}")
         return res
@@ -169,6 +197,19 @@ class OpenMCEvaluator(Evaluator):
         return float((fm / fm.mean()).max())
 
     # ------------------------------------------------------------------ #
+    # EOC target for THIS design -- fixed (Route A) or refl_thick-        #
+    # interpolated (Route B, from the sweep_ktarget.py table)             #
+    # ------------------------------------------------------------------ #
+    def _k_target_for(self, design: dict) -> float:
+        if not self.route_b:
+            return self.k_target
+        # np.interp CLAMPS outside the swept range (returns the nearest
+        # endpoint y-value) rather than extrapolating -- sweep_ktarget.py's
+        # REFL_GRID was chosen to span the optimizer's refl_thick bounds
+        # precisely so this clamping should never actually trigger.
+        return float(np.interp(design["refl_thick"], self._kt_xs, self._kt_ys))
+
+    # ------------------------------------------------------------------ #
     # cycle length from assembly depletion  (cells 23-25)                #
     # ------------------------------------------------------------------ #
     def _cycle_length(self, design: dict, case: Path):
@@ -202,9 +243,11 @@ class OpenMCEvaluator(Evaluator):
         bu = np.cumsum([0.0] + self.burnup_steps)[:len(kvals)]
         k_bol = float(kvals[0])
 
-        if kvals.min() <= self.k_target:
+        k_target = self._k_target_for(design)   # CHANGED: per-design, not self.k_target
+
+        if kvals.min() <= k_target:
             # np.interp needs an increasing x; k decreases, so feed -k vs -target
-            cycle_bu = float(np.interp(-self.k_target, -kvals, bu))
+            cycle_bu = float(np.interp(-k_target, -kvals, bu))
             efpd = cycle_bu * 1000.0 / self.spec_power
         else:
             # never reached target in the previewed window: floor at last burnup
@@ -212,7 +255,7 @@ class OpenMCEvaluator(Evaluator):
             # gradient). Widen DEFAULT_BURNUP_STEPS if this fires often.
             efpd = float(bu[-1] * 1000.0 / self.spec_power)
 
-        return efpd, k_bol
+        return efpd, k_bol, k_target
 
 
 # Convenience: quick standalone check of a single design (not the optimizer).

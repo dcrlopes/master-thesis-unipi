@@ -82,11 +82,17 @@ import warnings
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
-# FROZEN leakage-corrected EOC (End Of Cycle) target. Measure ONCE for your
-# finalized reference geometry (run measure_leakage_target.py on THIS machine)
-# and paste the value here. The 4.55/4.05, pitch 1.26 reference on the OLD
-# geometry gave ~1.085 -- the frozen 32-assembly geometry WILL give a different
-# number, so re-measure before the first full session.
+# ROUTE A default: a single FROZEN leakage-corrected EOC (End Of Cycle)
+# target, the SAME for every design regardless of refl_thick. Measure ONCE
+# (run measure_leakage_target.py on THIS machine) and paste the value here.
+# The 4.55/4.05, pitch 1.26 reference on the OLD geometry gave ~1.085 -- the
+# frozen 32-assembly geometry WILL give a different number, so re-measure
+# before the first full session.
+#
+# ROUTE B (reflector thickness IS a real design variable): this constant is
+# ignored -- pass --ktarget-table ktarget_vs_refl.json instead (the table
+# sweep_ktarget.py writes). k_target is then interpolated per-design from
+# design['refl_thick']. Never mix routes within one resumed session.
 # ---------------------------------------------------------------------------
 K_TARGET = 1.085
 
@@ -96,7 +102,13 @@ def main():
     ap.add_argument("--smoke", action="store_true",
                     help="tiny config to validate the whole chain end-to-end")
     ap.add_argument("--ktarget", type=float, default=K_TARGET,
-                    help="frozen leakage-corrected EOC target (k_inf)")
+                    help="ROUTE A: frozen leakage-corrected EOC target "
+                         "(k_inf), one value for every design")
+    ap.add_argument("--ktarget-table", default=None, metavar="PATH.json",
+                    help="ROUTE B: path to the k_target-vs-refl_thick JSON "
+                         "table written by sweep_ktarget.py. Overrides "
+                         "--ktarget; k_target is interpolated per-design "
+                         "from design['refl_thick'] inside the evaluator.")
     ap.add_argument("--out", default=".", help="output directory")
     ap.add_argument("--resume", metavar="CHECKPOINT.json", default=None,
                     help="continue from a checkpoint written by a previous run "
@@ -124,6 +136,11 @@ def main():
                     help="override inactive batches discarded for source "
                          "convergence (full-run default 20, smoke 10)")
     args = ap.parse_args()
+
+    # ROUTE A (float) vs ROUTE B (per-design table) -- computed once, used by
+    # the evaluator, the resume check, and both status prints below.
+    # --ktarget-table wins if both are given.
+    k_target_arg = args.ktarget_table or args.ktarget
 
     # ----------------------------------------------------------------------- #
     # Set the thread count BEFORE any OpenMC import. The OpenMP runtime reads
@@ -171,7 +188,7 @@ def main():
     if args.iters is not None:
         cfg.n_iter = args.iters     # run exactly this many AL iterations now
 
-    ev = OpenMCEvaluator(spec, k_target=args.ktarget, transport=transport,
+    ev = OpenMCEvaluator(spec, k_target=k_target_arg, transport=transport,
                          **({"burnup_steps": burnup} if burnup else {}),
                          workdir="openmc_runs")
 
@@ -188,10 +205,19 @@ def main():
     if args.resume:
         prev_meta = json.loads(Path(args.resume).read_text()).get("meta", {})
         prev_kt = prev_meta.get("k_target")
-        if prev_kt is not None and abs(prev_kt - args.ktarget) > 1e-9:
-            print(f"!! WARNING: checkpoint k_target={prev_kt:.4f} differs from "
-                  f"current {args.ktarget:.4f}. Objectives across sessions will "
-                  f"be inconsistent -- re-run with --ktarget {prev_kt:.4f} to match.")
+        if prev_kt is not None:
+            # Numeric vs numeric (both Route A): tolerate float noise. Any
+            # other combination (a table PATH string, or Route A meeting
+            # Route B): compare as text so a route switch is always caught.
+            if isinstance(prev_kt, (int, float)) and isinstance(k_target_arg, (int, float)):
+                kt_mismatch = abs(prev_kt - k_target_arg) > 1e-9
+            else:
+                kt_mismatch = str(prev_kt) != str(k_target_arg)
+            if kt_mismatch:
+                print(f"!! WARNING: checkpoint k_target={prev_kt!r} differs "
+                      f"from current {k_target_arg!r}. Objectives across "
+                      f"sessions will be inconsistent -- match --ktarget / "
+                      f"--ktarget-table to the checkpoint's value.")
         prev_tr = prev_meta.get("transport")
         if prev_tr and any(int(prev_tr.get(k, -1)) != int(transport[k])
                            for k in ("particles", "batches", "inactive")):
@@ -218,22 +244,26 @@ def main():
           f"OMP_NUM_THREADS={os.environ['OMP_NUM_THREADS']}")
     print(f"transport: {transport['particles']} particles x "
           f"{transport['batches']} batches ({transport['inactive']} inactive)")
-    print(f"specific power = {ev.spec_power:.2f} W/gHM | k_target = {args.ktarget:.4f}")
+    kt_display = (f"{k_target_arg:.4f}" if isinstance(k_target_arg, (int, float))
+                  else f"table:{k_target_arg}")
+    print(f"specific power = {ev.spec_power:.2f} W/gHM | k_target = {kt_display}")
 
     res = opt.run(verbose=True)
 
     path = opt.save(str(Path(args.out) / "optimization_results.json"))
     print("saved ->", path)
     ckpt = opt.save_checkpoint(ckpt_out,
-                               meta={"k_target": args.ktarget,
+                               meta={"k_target": k_target_arg,
                                      "smoke": bool(args.smoke),
                                      "transport": dict(transport),
                                      "burnup_steps": (list(burnup) if burnup
                                                       else "evaluator-default"),
                                      "omp_threads": n_threads})
     print(f"checkpoint -> {ckpt}  ({res['n_real_evaluations']} evals total)")
+    kt_flag = (f"--ktarget-table {k_target_arg}" if args.ktarget_table
+               else f"--ktarget {k_target_arg:.4f}")
     print(f"   to add more later:  python run_optimization.py "
-          f"--resume {ckpt} --ktarget {args.ktarget:.4f} "
+          f"--resume {ckpt} {kt_flag} "
           f"--particles {transport['particles']} "
           f"--batches {transport['batches']} "
           f"--inactive {transport['inactive']}"

@@ -94,7 +94,7 @@ from pathlib import Path
 # sweep_ktarget.py writes). k_target is then interpolated per-design from
 # design['refl_thick']. Never mix routes within one resumed session.
 # ---------------------------------------------------------------------------
-K_TARGET = 1.085
+K_TARGET = 1.0556
 
 
 def main():

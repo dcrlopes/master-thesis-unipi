@@ -99,11 +99,34 @@ class DesignSpace:
     def xu(self) -> np.ndarray:
         return np.array([v.high for v in self.variables])
 
-    def lhs(self, n_samples: int, seed: int = 0) -> np.ndarray:
-        """Latin-Hypercube space-filling sample (Stage-1 DOE)."""
+    def lhs(self, n_samples: int, seed: int = 0, accept=None) -> np.ndarray:
+        """Latin-Hypercube space-filling sample (Stage-1 DOE).
+
+        accept : callable(dict) -> bool, optional
+            A cheap ANALYTIC feasibility test (e.g. the vessel-fit constraint
+            g_geom <= 0). When given, LHS rounds are drawn until n_samples
+            ACCEPTED points are collected, so no expensive truth evaluation is
+            ever spent on a design that is unbuildable by construction. The
+            points still come from LHS rounds, so space-filling quality inside
+            the feasible region is preserved.
+        """
         sampler = LHS()
-        unit = sampler(_BoxProblem(self.n), n_samples).get("X")  # in [0,1]
-        return self.xl + unit * (self.xu - self.xl)
+        if accept is None:
+            unit = sampler(_BoxProblem(self.n), n_samples).get("X")  # in [0,1]
+            return self.xl + unit * (self.xu - self.xl)
+        kept = []
+        for round_ in range(50):                      # hard stop: 50 rounds
+            unit = sampler(_BoxProblem(self.n), n_samples).get("X")
+            X = self.xl + unit * (self.xu - self.xl)
+            for x in X:
+                if accept(self.as_dict(x)):
+                    kept.append(x)
+                    if len(kept) >= n_samples:
+                        return np.array(kept)
+        raise RuntimeError(
+            f"DesignSpace.lhs: could not collect {n_samples} accepted points "
+            f"in 50 LHS rounds -- the accept() region may be (nearly) empty; "
+            f"check the design-variable bounds against the constraint.")
 
     def as_dict(self, x: Sequence[float]) -> dict:
         return {v.name: float(xi) for v, xi in zip(self.variables, x)}
@@ -142,6 +165,13 @@ class ProblemSpec:
     design_space: DesignSpace
     objectives: list[Objective]
     constraint_names: list[str]
+    # ANALYTIC constraints: {name -> callable(design_dict) -> g}. These are
+    # known in CLOSED FORM (e.g. the vessel-fit g_geom, pure geometry), so the
+    # optimizer (a) screens the Stage-1 DOE with them for free and (b) feeds
+    # NSGA-II their EXACT value instead of a surrogate prediction. Every name
+    # here must also appear in constraint_names, and the truth evaluator must
+    # still return it (so it lands in the archive/checkpoint like any other g).
+    exact_constraints: dict = field(default_factory=dict)
 
     @property
     def n_obj(self):
@@ -150,6 +180,10 @@ class ProblemSpec:
     @property
     def n_constr(self):
         return len(self.constraint_names)
+
+    def exact_ok(self, design: dict) -> bool:
+        """True iff the design satisfies every ANALYTIC constraint (g <= 0)."""
+        return all(f(design) <= 0.0 for f in self.exact_constraints.values())
 
 
 # =============================================================================
@@ -235,6 +269,7 @@ class AnalyticEvaluator(Evaluator):
             cycle   *= 1.0 + self.noise * self.rng.standard_normal()
             peaking *= 1.0 + 0.3 * self.noise * self.rng.standard_normal()
 
+        from core_geometry import geometry_margin
         return {
             "cycle_length": cycle,                 # objective (maximise)
             "peaking":      peaking,               # objective (minimise)
@@ -243,6 +278,7 @@ class AnalyticEvaluator(Evaluator):
             "g_kmax":  k_bol - 1.35,               # and  k_bol <= 1.35
             "g_enr":   max(e_in, e_out) - 19.75,   # LEU cap
             "g_peak":  peaking - 2.0,              # peaking <= 2.0
+            "g_geom":  geometry_margin(pitch, refl),  # fits in the vessel
             "k_bol":   k_bol,                      # carried along for plots
         }
 
@@ -443,21 +479,34 @@ class MLPEnsembleSurrogate(Surrogate):
 # =============================================================================
 class _SurrogateProblem(Problem):
     """A pymoo Problem whose objectives/constraints come from the surrogate.
-    Instantaneous to evaluate -> NSGA-II can run thousands of generations."""
+    Instantaneous to evaluate -> NSGA-II can run thousands of generations.
+
+    Constraints listed in spec.exact_constraints are NOT taken from the
+    surrogate: their column of G is overwritten with the closed-form value
+    (e.g. the vessel-fit g_geom). The acquisition therefore never proposes a
+    geometrically unbuildable design, even at iteration 1 when the GP
+    (Gaussian Process) has seen almost no data."""
     def __init__(self, spec, obj_surrogate, con_surrogate):
         super().__init__(n_var=spec.design_space.n,
                          n_obj=spec.n_obj,
                          n_ieq_constr=spec.n_constr,
                          xl=spec.design_space.xl,
                          xu=spec.design_space.xu)
+        self.spec = spec
         self.obj_surrogate = obj_surrogate
         self.con_surrogate = con_surrogate
+        self._exact_cols = [(spec.constraint_names.index(name), fn)
+                            for name, fn in spec.exact_constraints.items()]
 
     def _evaluate(self, X, out, *a, **k):
         f_mean, _ = self.obj_surrogate.predict(X)
         out["F"] = f_mean
         if self.con_surrogate is not None:
             g_mean, _ = self.con_surrogate.predict(X)
+            g_mean = np.atleast_2d(g_mean)
+            for col, fn in self._exact_cols:
+                g_mean[:, col] = [fn(self.spec.design_space.as_dict(x))
+                                  for x in np.atleast_2d(X)]
             out["G"] = g_mean
 
 
@@ -550,7 +599,10 @@ class ActiveLearningMOO:
         # pre-seeded the data set, we keep the existing (X, F, G, raw, history,
         # frozen HV reference) intact and go straight to more active learning.
         if len(self.X) == 0:
-            X0 = self.spec.design_space.lhs(self.cfg.n_init, seed=self.cfg.seed)
+            accept = (self.spec.exact_ok if self.spec.exact_constraints
+                      else None)
+            X0 = self.spec.design_space.lhs(self.cfg.n_init,
+                                            seed=self.cfg.seed, accept=accept)
             F0, G0, raw0 = self.evaluator.evaluate(X0)
             self._add(X0, F0, G0, raw0)
             self.history.append(self._hv())
@@ -693,6 +745,14 @@ class ActiveLearningMOO:
                 f"checkpoint design variables {ckpt['design_variables']} do not "
                 f"match this problem {self.spec.design_space.names}; are you "
                 f"resuming the right run?")
+        ck_con = ckpt.get("constraint_names")
+        if ck_con is not None and list(ck_con) != list(self.spec.constraint_names):
+            raise ValueError(
+                f"checkpoint constraints {ck_con} do not match this problem "
+                f"{self.spec.constraint_names}. A checkpoint written before the "
+                f"geometry fix (no g_geom, clipped-fuel core, old k_target "
+                f"table) is PHYSICALLY inconsistent with the corrected model "
+                f"-- start a fresh run instead of resuming it.")
         self._seed_from_raw(ckpt["all_raw"])
         self.history = list(ckpt.get("hv_history", []))
         hv_ref = ckpt.get("hv_ref")
@@ -707,21 +767,37 @@ class ActiveLearningMOO:
 # 7.  A REACTOR-FLAVOURED EXAMPLE PROBLEM
 # =============================================================================
 def example_reactor_problem() -> ProblemSpec:
-    """5 design variables, 2 objectives, 4 constraints -- the same SHAPE as
-    your real OpenMC problem.  Edit freely."""
+    """5 design variables, 2 objectives, 5 constraints -- the same SHAPE as
+    your real OpenMC problem.  Edit freely.
+
+    BOUNDS (updated for the corrected core geometry): the fuel envelope
+    R_env = sqrt(13)*17*pitch plus the reflector must fit inside the vessel
+    (inner radius 90 cm), so pitch and refl_thick are COUPLED through
+    g_geom (see core_geometry.geometry_margin). The box below is the tight
+    bounding box of the feasible slab:
+      * refl_thick <= 19.5 cm  (19.51 cm is the most that EVER fits, at the
+        minimum pitch 1.15; the old 25 cm bound was unbuildable at any pitch),
+      * pitch <= 1.43 cm       (above ~1.436 cm not even the 2 cm minimum
+        reflector fits; the old 1.45 bound had zero feasible reflector).
+    The diagonal cut INSIDE the box is enforced by g_geom, which is analytic
+    (exact_constraints), so the DOE and the acquisition never propose a
+    design that cannot physically be built."""
+    from core_geometry import geometry_margin
+
     ds = DesignSpace([
         DesignVariable("enrich_inner", 2.0, 19.75, "%"),
         DesignVariable("enrich_outer", 2.0, 19.75, "%"),
         DesignVariable("gd_wt",        0.0,  8.0,  "wt% Gd2O3"),
-        DesignVariable("pitch",        1.15, 1.45, "cm"),
-        DesignVariable("refl_thick",   2.0,  25.0, "cm"),
+        DesignVariable("pitch",        1.15, 1.43, "cm"),
+        DesignVariable("refl_thick",   2.0,  19.5, "cm"),
     ])
     objs = [
         Objective("cycle_length", maximize=True,  label="Cycle length [EFPD]"),
         Objective("peaking",      maximize=False, label="Power peaking factor"),
     ]
-    constraints = ["g_kmin", "g_kmax", "g_enr", "g_peak"]
-    return ProblemSpec(ds, objs, constraints)
+    constraints = ["g_kmin", "g_kmax", "g_enr", "g_peak", "g_geom"]
+    exact = {"g_geom": lambda d: geometry_margin(d["pitch"], d["refl_thick"])}
+    return ProblemSpec(ds, objs, constraints, exact_constraints=exact)
 
 
 # =============================================================================

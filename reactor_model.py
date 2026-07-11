@@ -185,11 +185,42 @@ def make_heavy_reflector(op: "Operating",
     return refl
 
 
+def uranium_atom_fractions(enrichment_wt: float) -> dict:
+    """U-234/235/238 ATOM fractions (within uranium) for a given U-235 weight
+    enrichment [wt%], for FRESH (non-recycled, U-236-free) commercial uranium.
+
+    WHY NOT add_element(..., enrichment=...): OpenMC's shortcut assumes a fixed
+    U-234/U-235 mass ratio of 0.008, documented valid only BELOW 5 wt% -- it
+    emitted 288 UserWarnings across the last optimization run because the
+    optimizer explores up to 19.75 wt%. Here U-234 follows the ASTM C996-style
+    power-law used by SCALE/ORIGEN for enriched commercial uranium:
+
+        w(U234) [wt%] = 0.007731 * (w(U235) [wt%]) ** 1.0837
+
+    (at 4.5 wt% this is ~0.040 wt% vs 0.036 from the 0.008 ratio; at 19.75 wt%
+    it is ~0.196 wt% vs 0.158 -- U-234 is a strong absorber, so the shortcut
+    OVERESTIMATED k for exactly the high-enrichment designs the optimizer
+    pushes toward). U-238 is the balance. Cite ASTM C996 / the SCALE manual
+    for this correlation in the thesis.
+    """
+    w235 = float(enrichment_wt)
+    w234 = 0.007731 * w235 ** 1.0837
+    w238 = 100.0 - w235 - w234
+    M = {"U234": 234.040952, "U235": 235.043930, "U238": 238.050788}
+    n = {"U234": w234 / M["U234"], "U235": w235 / M["U235"],
+         "U238": w238 / M["U238"]}
+    tot = sum(n.values())
+    return {iso: v / tot for iso, v in n.items()}
+
+
 def make_uo2(enrichment_wt: float, T: float, density: float = 10.4) -> openmc.Material:
-    """UO2 at a given U-235 enrichment [wt%]. Fully parametric for the optimizer."""
+    """UO2 at a given U-235 enrichment [wt%]. Fully parametric for the optimizer.
+    Isotopics are set EXPLICITLY (see uranium_atom_fractions) so the composition
+    is valid over the whole 2-19.75 wt% LEU search range."""
     f = openmc.Material(name=f"UO2_{enrichment_wt:.2f}")
-    f.add_element("U", 1.0, "ao", enrichment=enrichment_wt)
-    f.add_element("O", 2.0, "ao")
+    for iso, ao in uranium_atom_fractions(enrichment_wt).items():
+        f.add_nuclide(iso, ao, "ao")           # 1 U atom total ...
+    f.add_element("O", 2.0, "ao")              # ... + 2 O atoms = UO2
     f.set_density("g/cm3", density)
     f.temperature = T
     f.volume = None       # set later for depletion
@@ -384,48 +415,58 @@ def make_assembly_model(design: dict, op: Operating = Operating(),
 def make_core_model(design: dict, op: Operating = Operating(),
                     geo: Geometry17x17 = Geometry17x17(),
                     core_map=None, refl_thick=None, r_fuel=None,
+                    enforce_vessel=True,
                     particles=40000, batches=200, inactive=50):
     """A small 2D multi-assembly core with a HEAVY (steel) reflector and vacuum BC.
 
-    `core_map` is a 2D array of 1 (assembly) / 0 (reflector). Defaults to a
-    ~32-assembly compact layout consistent with the image-estimated core size.
+    `core_map` is a 2D array of 1 (assembly) / 0 (reflector). Defaults to the
+    32-assembly (6x6 minus corners) layout in core_geometry.CORE_MAP_32.
+
+    GEOMETRY FIX (replaces the old equivalent-area cylinder)
+    --------------------------------------------------------
+    The fuel-bounding cylinder is now the CIRCUMSCRIBED envelope radius
+    R_env(pitch) = core_geometry.core_envelope_radius(pitch): the smallest
+    cylinder containing every assembly INTACT. The old default was the
+    equivalent-AREA radius sqrt(N/pi)*A (~68.4 cm at pitch 1.26), which cut
+    8-10 cm off every corner-adjacent assembly and back-filled the cut with
+    reflector -- silently deleting ~5.2 % of the fuel. No fuel is clipped now:
+    inside R_env, the lattice map places reflector material in the removed
+    corners and around the cross-shaped footprint; fuel and reflector each
+    keep their own space.
 
     refl_thick : float | None
-        Radial thickness [cm] of the heavy-reflector annulus around the fuel.
-        This is now a REAL geometric dimension: the fuel is bounded by a cylinder
-        of radius r_fuel and the reflector is an annulus of this thickness with a
-        vacuum edge at r_fuel + refl_thick. Sweeping it moves the measured core
-        leakage, so this is the model to build K_TARGET(refl_thick) from. Falls
-        back to design['refl_thick'], then to the drawing nominal (~11.5 cm).
+        MINIMUM (corner-direction) radial thickness [cm] of the heavy-reflector
+        annulus. Vacuum edge sits at R_env + refl_thick. Along the flat faces
+        the reflector is thicker by (sqrt(13)-3)*A -- physical for a cylindrical
+        vessel around a square lattice. Falls back to design['refl_thick'],
+        then to the drawing nominal (~11.5 cm).
     r_fuel : float | None
-        Radius [cm] of the cylinder bounding the fuel. Defaults to the
-        equivalent-area radius sqrt(N_assemblies/pi) * assembly_pitch, which for
-        the 32-assembly layout is ~0.68 m and tracks the CTMSP drawing's R_fuel
-        (~0.675 m); it scales automatically with pitch and assembly count.
-        The outer corners of the edge assemblies are clipped by this cylinder,
-        which makes the square lattice rounder and closer to the real core.
+        Override for the fuel-bounding radius. Default: R_env(pitch) + 0.02 cm
+        pad (so no lattice corner is coincident with the cylinder). Passing a
+        value SMALLER than R_env re-creates the old clipping bug on purpose --
+        a warning is printed if you do.
+    enforce_vessel : bool
+        If True (default), raise ValueError when
+        r_fuel + refl_thick > core_geometry.R_VESSEL_INNER - VESSEL_CLEARANCE_CM
+        (the design would not fit in the vessel). sweep_ktarget.py sets this
+        False because table nodes beyond the vessel line are hypothetical
+        interpolation support, not buildable designs.
     """
+    import core_geometry as cg
+
     pitch = design.get("pitch", 1.26)
     assembly_pitch = geo.lattice * pitch
     mats = build_materials(design, op)
     asm_u, fuel_cells, _ = build_assembly_universe(design, mats, geo, pitch)
     # Reflector is now the homogenised steel reflector, not borated water -- this
     # is what LABGENE actually has, and it changes the measured assembly->core
-    # leakage (so re-run measure_leakage_target.py after this edit).
+    # leakage (so re-run sweep_ktarget.py after this edit).
     refl_mat = make_heavy_reflector(op)
     refl_u = openmc.Universe(cells=[openmc.Cell(fill=refl_mat)])
 
     if core_map is None:
-        # (EST. FROM IMAGE) 6x6 grid with corners removed -> 32 assemblies,
-        # replacing the old 21-assembly 5x5 layout tied to the 1.8 m height.
-        core_map = np.array([
-            [0, 1, 1, 1, 1, 0],
-            [1, 1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1],
-            [0, 1, 1, 1, 1, 0],
-        ])
+        core_map = cg.CORE_MAP_32          # ONE source of truth for the layout
+    core_map = np.asarray(core_map)
     ny, nx = core_map.shape
     # build the object array explicitly (np.where on object dtype is finicky)
     universes = np.empty(core_map.shape, dtype=openmc.Universe)
@@ -440,21 +481,36 @@ def make_core_model(design: dict, op: Operating = Operating(),
     lat.outer = refl_u
 
     # ---- explicit reflector thickness ------------------------------------ #
-    # refl_thick is a REAL radial dimension here (unlike the old fixed 90 cm
-    # vacuum). Fuel is bounded by r_fuel; the heavy reflector is an annulus of
-    # thickness refl_thick; the vacuum edge floats at r_fuel + refl_thick. So a
-    # thicker reflector returns more neutrons and the measured k_eff rises and
-    # saturates -> sweep refl_thick to tabulate K_TARGET(refl_thick).
+    # refl_thick is a REAL radial dimension. Fuel footprint is bounded by the
+    # CIRCUMSCRIBED envelope cylinder (no clipping); the heavy reflector fills
+    # everything from the fuel footprint out to R_env + refl_thick (removed
+    # corners, face gaps, and the annulus); the vacuum edge sits at
+    # R_env + refl_thick. Thicker reflector -> more neutrons returned ->
+    # k_eff rises and saturates -> sweep it to tabulate K_TARGET.
     if refl_thick is None:
         refl_thick = design.get("refl_thick", 11.5)   # cm, drawing nominal
-    n_fuel_asm = int(np.count_nonzero(core_map == 1))
+    r_env = cg.core_envelope_radius(pitch, core_map, geo.lattice)
     if r_fuel is None:
-        # equivalent-area fuel radius ~ drawing R_fuel (~0.675 m for 32 asm);
-        # scales with pitch and assembly count automatically.
-        r_fuel = math.sqrt(n_fuel_asm / math.pi) * assembly_pitch
+        r_fuel = r_env + 0.02   # small pad: no surface through a lattice corner
+    elif r_fuel < r_env - 1e-9:
+        print(f"WARNING make_core_model: r_fuel={r_fuel:.2f} cm is smaller than "
+              f"the fuel envelope R_env={r_env:.2f} cm -> the cylinder CLIPS "
+              f"fuel assemblies (the old bug). Pass r_fuel=None for the "
+              f"corrected geometry.")
+
+    r_outer = r_fuel + refl_thick
+    r_budget = cg.R_VESSEL_INNER - cg.VESSEL_CLEARANCE_CM
+    if enforce_vessel and r_outer > r_budget + 1e-9:
+        raise ValueError(
+            f"make_core_model: fuel envelope {r_fuel:.2f} cm + refl_thick "
+            f"{refl_thick:.2f} cm = {r_outer:.2f} cm exceeds the vessel budget "
+            f"{r_budget:.2f} cm (R_VESSEL_INNER={cg.R_VESSEL_INNER} - "
+            f"clearance {cg.VESSEL_CLEARANCE_CM}). Reduce pitch or refl_thick "
+            f"(g_geom > 0), or pass enforce_vessel=False for a hypothetical "
+            f"sweep node.")
 
     r_fuel_cyl = openmc.ZCylinder(r=r_fuel)
-    r_refl_cyl = openmc.ZCylinder(r=r_fuel + refl_thick, boundary_type="vacuum")
+    r_refl_cyl = openmc.ZCylinder(r=r_outer, boundary_type="vacuum")
     fuel_cell = openmc.Cell(fill=lat, region=-r_fuel_cyl)             # fuel + gaps
     refl_cell = openmc.Cell(fill=refl_mat, region=+r_fuel_cyl & -r_refl_cyl)
     geom = openmc.Geometry([fuel_cell, refl_cell])

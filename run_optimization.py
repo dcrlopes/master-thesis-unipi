@@ -105,10 +105,11 @@ def main():
                     help="ROUTE A: frozen leakage-corrected EOC target "
                          "(k_inf), one value for every design")
     ap.add_argument("--ktarget-table", default=None, metavar="PATH.json",
-                    help="ROUTE B: path to the k_target-vs-refl_thick JSON "
-                         "table written by sweep_ktarget.py. Overrides "
-                         "--ktarget; k_target is interpolated per-design "
-                         "from design['refl_thick'] inside the evaluator.")
+                    help="ROUTE B: path to the k_target JSON table written by "
+                         "sweep_ktarget.py (2-D pitch x refl_thick schema, "
+                         "e.g. ktarget_table.json; legacy 1-D refl-only "
+                         "tables still load). Overrides --ktarget; k_target "
+                         "is interpolated per design inside the evaluator.")
     ap.add_argument("--out", default=".", help="output directory")
     ap.add_argument("--resume", metavar="CHECKPOINT.json", default=None,
                     help="continue from a checkpoint written by a previous run "
@@ -135,6 +136,23 @@ def main():
     ap.add_argument("--inactive", type=int, default=None,
                     help="override inactive batches discarded for source "
                          "convergence (full-run default 20, smoke 10)")
+    # -------------------- NEW: adaptive-depletion knobs --------------------- #
+    ap.add_argument("--max-burnup", type=float, default=None,
+                    help="hard cap on the adaptive depletion [MWd/kgHM] "
+                         "(full-run default 100.0 ~ 10,020 EFPD; smoke 30). "
+                         "Designs still above k_target here are flagged "
+                         "censored=True and their EFPD is a LOWER BOUND. "
+                         "Replaces the old fixed 35.5 MWd/kg schedule ceiling.")
+    ap.add_argument("--dep-step", type=float, default=None,
+                    help="marching burnup step [MWd/kgHM] after the BOL "
+                         "(Beginning Of Life) block (full-run default 4.0 "
+                         "~ 401 EFPD; smoke 6.0). Smaller = finer EOC "
+                         "interpolation, more transport solves.")
+    ap.add_argument("--chunk-steps", type=int, default=2,
+                    help="marching steps per depletion-restart chunk "
+                         "(default 2). Larger = fewer operator restarts but "
+                         "up to (chunk-steps - 1) wasted solves past the "
+                         "crossing.")
     args = ap.parse_args()
 
     # ROUTE A (float) vs ROUTE B (per-design table) -- computed once, used by
@@ -162,20 +180,26 @@ def main():
     spec = example_reactor_problem()
 
     if args.smoke:
-        # 4 + 1*2 = 6 real evaluations, coarse transport & burnup
+        # 4 + 1*2 = 6 real evaluations, coarse transport, SHORT adaptive
+        # depletion (the same chunked code path as the full run, just capped
+        # low so it finishes in minutes).
         cfg = OptimizerConfig(n_init=4, n_iter=1, n_infill=2,
                               nsga_pop=20, nsga_gen=20, surrogate="gp", seed=1)
         transport = dict(particles=800, batches=30, inactive=10)
-        burnup = [1.0, 4.0, 8.0, 8.0, 8.0]
+        schedule = dict(bol_steps=[1.0, 2.0, 4.0], dep_step=6.0,
+                        max_burnup=30.0)
         print(">>> SMOKE TEST <<<")
     else:
-        # 24 + 8*6 = 72 real evaluations. Fidelity raised for a many-core node:
-        # 20000 x (80-20) = 1.2M active histories/solve vs. 4000 x 40 = 160k on
-        # the laptop profile -> ~2.7x lower Monte Carlo noise on k and F_dh.
+        # 24 + n_iter*6 real evaluations per session; resume in blocks and
+        # watch the Hypervolume (HV) plateau to DISCOVER the true budget.
+        # Transport default = EXPLORATION fidelity (two-fidelity strategy:
+        # search cheap at 4000x60, then re-score the final Pareto front at
+        # 20000-40000 particles). Raise with --particles/--batches if needed.
         cfg = OptimizerConfig(n_init=24, n_iter=8, n_infill=6,
                               nsga_pop=60, nsga_gen=80, surrogate="gp", seed=1)
-        transport = dict(particles=20000, batches=80, inactive=20)
-        burnup = None   # use the evaluator's default fine-near-EOC schedule
+        transport = dict(particles=4000, batches=60, inactive=20)
+        schedule = dict(bol_steps=[0.5, 1.0, 2.0, 4.0, 6.0], dep_step=4.0,
+                        max_burnup=100.0)
 
     # command-line fidelity overrides (apply to smoke AND full profiles)
     if args.particles is not None:
@@ -184,13 +208,18 @@ def main():
         transport["batches"] = int(args.batches)
     if args.inactive is not None:
         transport["inactive"] = int(args.inactive)
+    # command-line schedule overrides
+    if args.max_burnup is not None:
+        schedule["max_burnup"] = float(args.max_burnup)
+    if args.dep_step is not None:
+        schedule["dep_step"] = float(args.dep_step)
+    schedule["chunk_steps"] = int(args.chunk_steps)
 
     if args.iters is not None:
         cfg.n_iter = args.iters     # run exactly this many AL iterations now
 
     ev = OpenMCEvaluator(spec, k_target=k_target_arg, transport=transport,
-                         **({"burnup_steps": burnup} if burnup else {}),
-                         workdir="openmc_runs")
+                         workdir="openmc_runs", **schedule)
 
     opt = ActiveLearningMOO(spec, ev, cfg)
     # Ensure the output directory exists BEFORE anything tries to write into it
@@ -230,6 +259,20 @@ def main():
         if bool(prev_meta.get("smoke")) != bool(args.smoke):
             print("!! WARNING: checkpoint smoke flag differs from this run "
                   "(smoke and full runs must never share a checkpoint).")
+        prev_sched = prev_meta.get("schedule")
+        if prev_sched:
+            for key in ("max_burnup", "dep_step", "chunk_steps"):
+                if key in prev_sched and \
+                        abs(float(prev_sched[key]) - float(schedule[key])) > 1e-9:
+                    print(f"!! WARNING: checkpoint {key}={prev_sched[key]} "
+                          f"differs from current {schedule[key]}. Changing the "
+                          f"depletion schedule mid-campaign changes censoring "
+                          f"and EOC-interpolation behaviour across sessions.")
+        prev_geom = prev_meta.get("geometry")
+        if prev_geom is not None and prev_geom != "v2-envelope":
+            print("!! WARNING: checkpoint was written on a DIFFERENT geometry "
+                  f"tag ({prev_geom!r}); its objectives are not comparable "
+                  "with the corrected v2-envelope model.")
         n_loaded = opt.load_checkpoint(args.resume)
         added = cfg.n_iter * cfg.n_infill
         print(f"RESUME: loaded {n_loaded} prior real evaluations from "
@@ -247,6 +290,11 @@ def main():
     kt_display = (f"{k_target_arg:.4f}" if isinstance(k_target_arg, (int, float))
                   else f"table:{k_target_arg}")
     print(f"specific power = {ev.spec_power:.2f} W/gHM | k_target = {kt_display}")
+    print(f"adaptive depletion: BOL {schedule['bol_steps']} then "
+          f"{schedule['dep_step']} MWd/kg steps "
+          f"({schedule['chunk_steps']}/chunk), cap {schedule['max_burnup']} "
+          f"MWd/kg = {schedule['max_burnup']*1000/ev.spec_power:.0f} EFPD | "
+          f"geometry v2-envelope (g_geom active)")
 
     res = opt.run(verbose=True)
 
@@ -256,8 +304,8 @@ def main():
                                meta={"k_target": k_target_arg,
                                      "smoke": bool(args.smoke),
                                      "transport": dict(transport),
-                                     "burnup_steps": (list(burnup) if burnup
-                                                      else "evaluator-default"),
+                                     "schedule": dict(schedule),
+                                     "geometry": "v2-envelope",
                                      "omp_threads": n_threads})
     print(f"checkpoint -> {ckpt}  ({res['n_real_evaluations']} evals total)")
     kt_flag = (f"--ktarget-table {k_target_arg}" if args.ktarget_table
@@ -266,7 +314,9 @@ def main():
           f"--resume {ckpt} {kt_flag} "
           f"--particles {transport['particles']} "
           f"--batches {transport['batches']} "
-          f"--inactive {transport['inactive']}"
+          f"--inactive {transport['inactive']} "
+          f"--max-burnup {schedule['max_burnup']:g} "
+          f"--dep-step {schedule['dep_step']:g}"
           + (" --smoke" if args.smoke else ""))
     _plot(res, args.out)
 

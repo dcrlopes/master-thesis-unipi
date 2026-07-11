@@ -1,11 +1,43 @@
-openmc_runs/
-out*/
-run_assembly_ref/
-run_core_ref*/
-run_core_refl_*/
+# --- Windows / WSL "downloaded from internet" tags ---
+*:Zone.Identifier
+
+# --- OpenMC run artifacts (regenerated every run) ---
+geometry.xml
+materials.xml
+settings.xml
+tallies.xml
+tallies.out
+summary.h5
+statepoint.*.h5
+depletion_results.h5
+model.xml
 *.h5
-*.png
+run_assembly/
+run_core/
+run_pincell/
+run_asm_*/
+run_core_*/
+openmc_runs/
+rescore_runs/
+
+# --- optimization outputs (results, checkpoints, figures, logs) ---
+out/
+out_*/
+analysis/
+optimization_results.json
+optimization_checkpoint.json
+optimization_*.png
 *.log
+
+# --- calibration table (regenerate per machine; commit deliberately if you want it versioned) ---
+ktarget_table.json
+ktarget_vs_refl.json
+
+# --- Jupyter / Python cruft ---
+.ipynb_checkpoints/
 __pycache__/
 *.pyc
-.ipynb_checkpoints/
+
+# --- editor / OS ---
+.vscode/
+.DS_Store

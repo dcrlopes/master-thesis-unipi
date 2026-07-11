@@ -1,42 +1,41 @@
-# --- Windows / WSL "downloaded from internet" tags ---
+# --- Windows / WSL "downloaded from internet" tags (harmless on Linux) ---
 *:Zone.Identifier
 
-# --- OpenMC run artifacts (regenerated every run) ---
+# --- OpenMC scratch directories (any machine, any run type) ---
+run_*/
+openmc_runs*/
+rescore_runs/
+
+# --- OpenMC per-run artifacts if written at top level ---
 geometry.xml
 materials.xml
 settings.xml
 tallies.xml
-tallies.out
-summary.h5
-statepoint.*.h5
-depletion_results.h5
 model.xml
+plots.xml
+tallies.out
 *.h5
-run_assembly/
-run_core/
-run_pincell/
-run_asm_*/
-run_core_*/
-openmc_runs/
-rescore_runs/
 
-# --- optimization outputs (results, checkpoints, figures, logs) ---
+# --- optimization / analysis outputs ---
 out/
 out_*/
 analysis/
+first_run_12designs/
 optimization_results.json
 optimization_checkpoint.json
 optimization_*.png
+rescore.json
 *.log
 
-# --- calibration table (regenerate per machine; commit deliberately if you want it versioned) ---
+# --- calibration tables (regenerated per geometry; delete these two lines
+#     if you decide to version ktarget_table.json as a record) ---
 ktarget_table.json
 ktarget_vs_refl.json
 
-# --- Jupyter / Python cruft ---
-.ipynb_checkpoints/
+# --- Python / Jupyter cruft ---
 __pycache__/
 *.pyc
+.ipynb_checkpoints/
 
 # --- editor / OS ---
 .vscode/

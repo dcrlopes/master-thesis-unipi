@@ -335,7 +335,7 @@ def _settings(particles=20000, batches=120, inactive=30, bb=None, seed=1):
                      "range": (294.0, 1500.0), "default": 900.0}
     if bb is not None:
         s.source = openmc.IndependentSource(
-            space=openmc.stats.Box(bb[0], bb[1], constraints={"fissionable": True})
+            space=openmc.stats.Box(bb[0], bb[1], constraints={"fissionable": True}))
     s.seed = seed
     return s
 

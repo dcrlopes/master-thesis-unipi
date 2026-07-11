@@ -342,7 +342,16 @@ class OpenMCEvaluator(Evaluator):
         # 2) march until k has PEAKED and fallen through the target, or cap
         censored = False
         while True:
-            past_peak = int(np.argmax(k_hist)) < len(k_hist) - 1
+            # Peak detection EXCLUDES the first point: k(0) is xenon-free and
+            # therefore ALWAYS a local maximum, so including it would flag
+            # "past the peak" the moment the xenon transient dips k below the
+            # target -- truncating heavy, slow-burning Gd designs whose
+            # reactivity RECOVERS above the target after the BOL block
+            # (verified: a design with true EOC ~33 MWd/kg was cut at
+            # 0.4 MWd/kg by the naive rule). The operational trajectory for
+            # peak purposes starts at the first equilibrium-xenon point.
+            k_op = k_hist[1:] if len(k_hist) > 1 else k_hist
+            past_peak = int(np.argmax(k_op)) < len(k_op) - 1
             if past_peak and k_hist[-1] <= k_target:
                 break                       # crossing bracketed (or dud past
                                             # a sub-target peak -> interp None)

@@ -40,3 +40,12 @@ __pycache__/
 # --- editor / OS ---
 .vscode/
 .DS_Store
+
+# --- campaign records: keep the checkpoints (the ONLY copy of ~30 h of
+#     compute) and the calibration table, overriding the rules above.
+#     A parent directory must be re-included BEFORE a file inside it can be.
+!results_campaign2/
+!results_campaign2/**/
+!results_campaign2/**/optimization_checkpoint.json
+!results_campaign2/**/optimization_results.json
+!ktarget_table.json

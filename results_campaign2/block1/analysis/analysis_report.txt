@@ -1,0 +1,32 @@
+==============================================================================
+OPTIMIZATION RUN DIAGNOSTIC REPORT
+==============================================================================
+Transport settings : 4000 particles x 60 batches (20 inactive), 32 OpenMP threads
+k_target source    : ktarget_table.json   burnup steps: ?
+Real evaluations   : 54   feasible: 22   infeasible: 32
+                     g_kmax violated in 31 evaluations
+                     g_peak violated in 1 evaluations
+------------------------------------------------------------------------------
+CENSORING: 35/54 evaluations (65%) hit the depletion-schedule end at 10016.7 EFPD.
+Their true cycle lengths are LOWER BOUNDS, not measurements. Any Pareto
+point sitting on this ceiling is schedule-limited, not physics-limited.
+------------------------------------------------------------------------------
+PARETO SET
+      e_in% e_out%   Gd%  pitch  refl    EFPD   ±1σ  GWd/tHM   F_dh  k_bol  flags
+P1     2.07   9.03  7.96  1.206  10.4    2859    52     28.5  1.903  1.228  
+(burnup = EFPD x specific power 9.98 W/gHM / 1000; ±1σ from σ_k = 220 pcm)
+------------------------------------------------------------------------------
+STATISTICAL DISTINGUISHABILITY OF PARETO POINTS
+  all Pareto points are separated by more than the noise estimates
+Feasible peaking spans 1.168-1.881; the Pareto spread (1.903-1.903) is comparable to typical pin-power Monte Carlo noise at this particle count.
+------------------------------------------------------------------------------
+VARIABLE -> OBJECTIVE RANK CORRELATIONS (Spearman, feasible evals)
+  enrich_inner   cycle_length (non-censored): +0.67   peaking: -0.33
+  enrich_outer   cycle_length (non-censored): +0.85   peaking: +0.18
+  gd_wt          cycle_length (non-censored): +0.25   peaking: +0.43
+  pitch          cycle_length (non-censored): -0.56   peaking: +0.46
+  refl_thick     cycle_length (non-censored): -0.11   peaking: -0.09
+------------------------------------------------------------------------------
+HYPERVOLUME TREND
+  iter 1: HV=   340.1  gain=   +0.0
+==============================================================================

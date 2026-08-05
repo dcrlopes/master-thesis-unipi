@@ -64,6 +64,26 @@ import openmc.deplete
 
 import core_geometry as cg
 import reactor_model as rm
+
+
+def _design_seed(design: dict) -> int:
+    """Deterministic per-design RNG (random number generator) seed.
+
+    Campaigns 1-2 inherited seed=1 from reactor_model._settings() for EVERY
+    evaluation, so the whole archive shared ONE random stream: the surrogate
+    was fitted to a single frozen noise realization, and the F_dh ranking of
+    near-tied designs was an artifact of that stream (measured seed-to-seed
+    sd 0.018 at 4000x60). Hashing the design vector instead keeps every
+    evaluation exactly reproducible (same design -> same seed, also across
+    --resume) while making the noise independent ACROSS designs -- the
+    i.i.d. (independent and identically distributed) assumption the GP
+    (Gaussian Process) noise model actually relies on.
+    """
+    import json as _json
+    import zlib as _zlib
+    key = _json.dumps({k: round(float(v), 10)
+                       for k, v in sorted(design.items())})
+    return 1 + _zlib.crc32(key.encode()) % 2_000_000_000
 from reactor_optimization import Evaluator, ProblemSpec
 
 
@@ -225,6 +245,7 @@ class OpenMCEvaluator(Evaluator):
     def _bol_peaking(self, design: dict, case: Path) -> float:
         model, _fuel_cells, _lat = rm.make_assembly_model(
             design, self.op, self.geo, bc="reflective", **self.transport)
+        model.settings.seed = _design_seed(design)
 
         N = self.geo.lattice
         pitch = design.get("pitch", 1.26)
@@ -270,6 +291,7 @@ class OpenMCEvaluator(Evaluator):
     def _cycle_length(self, design: dict, case: Path):
         model, fuel_cells, _lat = rm.make_assembly_model(
             design, self.op, self.geo, bc="reflective", **self.transport)
+        model.settings.seed = _design_seed(design)
 
         # give each fuel material a volume + mark depletable
         pin_vol = math.pi * self.geo.fuel_or ** 2 * self.geo.active_height

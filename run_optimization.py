@@ -122,6 +122,14 @@ def main():
                     help="override the number of active-learning iterations for "
                          "THIS run (handy on --resume, e.g. --iters 3 to add 3 "
                          "more rounds of infill)")
+    ap.add_argument("--n-init", type=int, default=None,
+                    help="override the Stage-1 DOE (Design of Experiments) "
+                         "size, i.e. how many Latin-Hypercube designs are "
+                         "evaluated before active learning starts (default 24; "
+                         "ignored on --resume, where the DOE is already done)")
+    ap.add_argument("--n-infill", type=int, default=None,
+                    help="override how many real evaluations each "
+                         "active-learning iteration adds (default 6)")
     # ------------------------- NEW: many-core knobs ------------------------ #
     ap.add_argument("--threads", type=int, default=os.cpu_count(),
                     help="OpenMP (Open Multi-Processing) threads for EVERY "
@@ -217,6 +225,10 @@ def main():
 
     if args.iters is not None:
         cfg.n_iter = args.iters     # run exactly this many AL iterations now
+    if args.n_init is not None:
+        cfg.n_init = args.n_init
+    if args.n_infill is not None:
+        cfg.n_infill = args.n_infill
 
     ev = OpenMCEvaluator(spec, k_target=k_target_arg, transport=transport,
                          workdir="openmc_runs", **schedule)

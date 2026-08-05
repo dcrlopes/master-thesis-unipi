@@ -337,6 +337,17 @@ def _settings(particles=20000, batches=120, inactive=30, bb=None, seed=1):
         s.source = openmc.IndependentSource(
             space=openmc.stats.Box(bb[0], bb[1]),
             constraints={"fissionable": True})
+        # Shannon-entropy diagnostic mesh over the same fissionable extent.
+        # Costs nothing measurable and writes H(batch) into every statepoint,
+        # so EVERY campaign evaluation carries its own source-convergence
+        # evidence (thesis: justifies the inactive-batch count with data).
+        # 8x8x1 over a 17x17 assembly ~ 4-5 pins per cell: coarse enough for
+        # well-populated bins, fine enough to see source redistribution.
+        em = openmc.RegularMesh()
+        em.dimension = (8, 8, 1)
+        em.lower_left = bb[0]
+        em.upper_right = bb[1]
+        s.entropy_mesh = em
     s.seed = seed
     return s
 

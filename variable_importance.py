@@ -113,45 +113,82 @@ try:
     from sklearn.gaussian_process.kernels import Matern, WhiteKernel, ConstantKernel
     from sklearn.model_selection import KFold
 
-    print("\n== GP permutation importance (drop in CV R^2 when the column "
-          "is shuffled) ==")
+    import warnings
+    from sklearn.exceptions import ConvergenceWarning
+
+    # Kernel bounds are deliberately WIDE. A length-scale driven to its upper
+    # bound means the GP found the variable IRRELEVANT (flat in that
+    # direction) -- informative, not an error. With a tight bound the
+    # optimiser stops AT the wall and sklearn emits ConvergenceWarning; wide
+    # bounds let it converge to the true (large) value. Likewise the noise
+    # floor: k_bol at 16000x120 is so well converged that the GP legitimately
+    # wants near-zero noise.
+    LS_BOUNDS = (1e-2, 1e6)
+    NOISE_BOUNDS = (1e-10, 1.0)
+    SAT = 1e5          # length-scale above this => treat as irrelevant
+
+    print("\n== GP permutation importance ==")
+    print("   R^2 is computed ONCE on pooled OUT-OF-FOLD predictions, not "
+          "per fold:\n   with --max-burnup 75 many designs pin at exactly the "
+          "cap, so a single\n   fold can hold only capped designs -> zero "
+          "within-fold variance -> -inf.")
     for name, y in resp.items():
-        ys = (y - y.mean()) / y.std()
+        spread = y.std()
+        if spread == 0:
+            print(f"{name:6s}: constant response, skipped")
+            continue
+        ys = (y - y.mean()) / spread
+        n_tied = int((np.abs(y - y.max()) < 1e-6).sum())
         kern = (ConstantKernel(1.0) *
                 Matern(length_scale=np.ones(p), nu=2.5,
-                       length_scale_bounds=(1e-2, 1e3))
-                + WhiteKernel(1e-2, (1e-6, 1.0)))
+                       length_scale_bounds=LS_BOUNDS)
+                + WhiteKernel(1e-2, NOISE_BOUNDS))
         kf = KFold(n_splits=min(5, n), shuffle=True, random_state=0)
-        base, drops = [], np.zeros(p)
-        for tr, te in kf.split(Z):
-            gp = GaussianProcessRegressor(kernel=kern, normalize_y=False,
-                                          n_restarts_optimizer=2,
-                                          random_state=0).fit(Z[tr], ys[tr])
-            yhat = gp.predict(Z[te])
-            ss = ((ys[te] - ys[te].mean()) ** 2).sum()
-            b = 1 - ((ys[te] - yhat) ** 2).sum() / ss
-            base.append(b)
-            for j in range(p):
-                d = 0.0
-                for _ in range(args.n_perm):
-                    Zp = Z[te].copy()
-                    Zp[:, j] = rng.permutation(Zp[:, j])
-                    yp = gp.predict(Zp)
-                    d += b - (1 - ((ys[te] - yp) ** 2).sum() / ss)
-                drops[j] += d / args.n_perm
-        drops /= kf.get_n_splits()
+
+        oof = np.full(n, np.nan)                       # out-of-fold baseline
+        oof_perm = np.full((p, n), np.nan)             # ... per permuted column
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", ConvergenceWarning)
+            for tr, te in kf.split(Z):
+                gp = GaussianProcessRegressor(kernel=kern, normalize_y=False,
+                                              n_restarts_optimizer=2,
+                                              random_state=0).fit(Z[tr], ys[tr])
+                oof[te] = gp.predict(Z[te])
+                for j in range(p):
+                    acc = np.zeros(len(te))
+                    for _ in range(args.n_perm):
+                        Zp = Z[te].copy()
+                        Zp[:, j] = rng.permutation(Zp[:, j])
+                        acc += gp.predict(Zp)
+                    oof_perm[j, te] = acc / args.n_perm
+
+        ss_tot = ((ys - ys.mean()) ** 2).sum()         # pooled: never zero
+        r2 = 1 - ((ys - oof) ** 2).sum() / ss_tot
+        drops = np.array([r2 - (1 - ((ys - oof_perm[j]) ** 2).sum() / ss_tot)
+                          for j in range(p)])
         perm[name] = np.maximum(drops, 0)
-        # ARD length-scales from a full-data fit: small scale = important
-        gp = GaussianProcessRegressor(kernel=kern, n_restarts_optimizer=3,
-                                      random_state=0).fit(Z, ys)
-        ls = gp.kernel_.k1.k2.length_scale
-        inv = (1 / np.asarray(ls))
-        order = np.argsort(-drops)
-        print(f"{name:6s} (CV R2={np.mean(base):.3f}): "
-              + "  ".join(f"{dv[i]}={drops[i]:.3f}" for i in order))
-        print(f"        ARD 1/lengthscale: "
-              + "  ".join(f"{dv[i]}={inv[i]:.2f}"
-                          for i in np.argsort(-inv)))
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", ConvergenceWarning)
+            gp = GaussianProcessRegressor(kernel=kern, n_restarts_optimizer=3,
+                                          random_state=0).fit(Z, ys)
+        ls = np.asarray(gp.kernel_.k1.k2.length_scale, dtype=float)
+        noise = float(gp.kernel_.k2.noise_level)
+        irrel = [dv[i] for i in range(p) if ls[i] > SAT]
+
+        flag = ""
+        if r2 < 0:
+            flag = "  ** worse than the mean: too few points, ignore this row **"
+        elif n_tied > 0.25 * n:
+            flag = (f"  ** {n_tied}/{n} designs tied at the maximum "
+                    f"(objective saturated) **")
+        print(f"{name:6s} (pooled out-of-fold R2={r2:+.3f}){flag}")
+        print("        importance: "
+              + "  ".join(f"{dv[i]}={drops[i]:.3f}"
+                          for i in np.argsort(-drops)))
+        print(f"        fitted noise={noise:.2e}   "
+              + ("GP-irrelevant (length-scale saturated): "
+                 + ", ".join(irrel) if irrel else "no irrelevant variables"))
 except ImportError:
     print("\n(scikit-learn not available in this environment -- "
           "GP permutation importance skipped; linear results above stand)")
@@ -160,7 +197,10 @@ except ImportError:
 # 3. perspective aggregation                                                   #
 # --------------------------------------------------------------------------- #
 def norm(v):
-    v = np.asarray(v, float)
+    """Normalise to sum 1, treating NaN/inf as zero so one unusable response
+    cannot poison an entire perspective ranking."""
+    v = np.nan_to_num(np.asarray(v, float), nan=0.0, posinf=0.0, neginf=0.0)
+    v = np.maximum(v, 0.0)
     return v / v.sum() if v.sum() > 0 else v
 
 

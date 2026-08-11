@@ -98,19 +98,34 @@ else:
                         for _, b in feas)]
     picks.sort(key=lambda t: -t[1]["cycle_length"])
 
-# Route-B table: k_target(refl_thick), linearly interpolated
+# Route-B table: k_target(pitch, refl_thick), bilinearly interpolated.
+# Real schema (schema 2): {"pitch_cm":[...], "refl_thick_cm":[...],
+#                          "k_target":[[...per refl...] per pitch]}
 ktab = None
 tp = Path(args.ktarget_table)
 if tp.exists():
     tj = json.loads(tp.read_text())
-    # accept either {"refl_thick":[...],"k_target":[...]} or [[t,k],...]
-    if isinstance(tj, dict) and "refl_thick" in tj:
-        tt, tk = np.asarray(tj["refl_thick"], float), np.asarray(tj["k_target"], float)
+    if isinstance(tj, dict) and "k_target" in tj and "pitch_cm" in tj:
+        kp = np.asarray(tj["pitch_cm"], float)
+        kr = np.asarray(tj["refl_thick_cm"], float)
+        kv = np.asarray(tj["k_target"], float)          # shape (n_pitch, n_refl)
+        ktab = (kp, kr, kv)
     else:
-        arr = np.asarray(tj, float)
-        tt, tk = arr[:, 0], arr[:, 1]
-    order = np.argsort(tt)
-    ktab = (tt[order], tk[order])
+        print("!! WARNING: unrecognised k_target table schema; "
+              "Route-B closure check skipped.")
+
+
+def k_target_at(pitch, refl):
+    """Bilinear interpolation on the (pitch, refl_thick) grid, clamped to it."""
+    kp, kr, kv = ktab
+    p = float(np.clip(pitch, kp[0], kp[-1]))
+    t = float(np.clip(refl, kr[0], kr[-1]))
+    i = int(np.clip(np.searchsorted(kp, p) - 1, 0, len(kp) - 2))
+    j = int(np.clip(np.searchsorted(kr, t) - 1, 0, len(kr) - 2))
+    fp = 0.0 if kp[i + 1] == kp[i] else (p - kp[i]) / (kp[i + 1] - kp[i])
+    ft = 0.0 if kr[j + 1] == kr[j] else (t - kr[j]) / (kr[j + 1] - kr[j])
+    return float((1 - fp) * ((1 - ft) * kv[i, j] + ft * kv[i, j + 1])
+                 + fp * ((1 - ft) * kv[i + 1, j] + ft * kv[i + 1, j + 1]))
 
 outdir = Path(args.out)
 outdir.mkdir(parents=True, exist_ok=True)
@@ -217,7 +232,7 @@ for idx, rec in picks:
     # Route-B closure
     if ktab is not None and rec.get("k_bol"):
         kt_imp = rec["k_bol"] / mk
-        kt_tab = float(np.interp(design["refl_thick"], *ktab))
+        kt_tab = k_target_at(design["pitch"], design["refl_thick"])
         row.update(kt_implied=kt_imp, kt_table=kt_tab,
                    kt_resid_pcm=1e5 * (kt_imp - kt_tab) / kt_tab)
     rows.append(row)

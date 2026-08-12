@@ -66,7 +66,7 @@ import core_geometry as cg
 import reactor_model as rm
 
 
-def _design_seed(design: dict) -> int:
+def _design_seed(design: dict, salt: str = "") -> int:
     """Deterministic per-design RNG (random number generator) seed.
 
     Campaigns 1-2 inherited seed=1 from reactor_model._settings() for EVERY
@@ -82,7 +82,7 @@ def _design_seed(design: dict) -> int:
     import json as _json
     import zlib as _zlib
     key = _json.dumps({k: round(float(v), 10)
-                       for k, v in sorted(design.items())})
+                       for k, v in sorted(design.items())}) + salt
     return 1 + _zlib.crc32(key.encode()) % 2_000_000_000
 from reactor_optimization import Evaluator, ProblemSpec
 
@@ -143,6 +143,9 @@ class OpenMCEvaluator(Evaluator):
                  dep_step: float = DEFAULT_DEP_STEP,
                  chunk_steps: int = DEFAULT_CHUNK_STEPS,
                  max_burnup: float = DEFAULT_MAX_BURNUP,
+                 core_particles: int = 100000,
+                 core_batches: int = 170,
+                 core_inactive: int = 60,
                  verbose: bool = True):
         super().__init__(spec)
 
@@ -181,6 +184,14 @@ class OpenMCEvaluator(Evaluator):
         if sum(self.bol_steps) >= self.max_burnup:
             raise ValueError("max_burnup must exceed the BOL block "
                              f"({sum(self.bol_steps)} MWd/kg).")
+        # CAMPAIGN 4: transport settings for the core-BOL peaking solve.
+        # Defaults are the core_rescore screen settings; the inactive count is
+        # deliberately generous because the finite core has a real source
+        # transient (one screened design converged only at batch 94).
+        self.core_particles = int(core_particles)
+        self.core_batches = int(core_batches)
+        self.core_inactive = int(core_inactive)
+
         self.verbose = verbose
 
         # Specific power depends on geometry (active height, pellet radius,
@@ -208,7 +219,8 @@ class OpenMCEvaluator(Evaluator):
         case = self.workdir / f"case_{self.n_calls:04d}"
         case.mkdir(parents=True, exist_ok=True)
 
-        peaking = self._bol_peaking(design, case)
+        peaking = self._bol_peaking(design, case)      # assembly (diagnostic)
+        core = self._bol_core_peaking(design, case)   # CAMPAIGN 4 objective
         (cycle_efpd, k_bol, k_target_used,
          censored, bu_eoc, n_solves) = self._cycle_length(design, case)
 
@@ -216,13 +228,17 @@ class OpenMCEvaluator(Evaluator):
         e_out = design["enrich_outer"]
         res = {
             "cycle_length": cycle_efpd,                 # objective (maximise)
-            "peaking":      peaking,                    # objective (minimise)
+            "peaking":      core["fdh_core"],           # objective (minimise): CORE F_dh
             "g_kmin":  1.02 - k_bol,                    # need k_bol >= 1.02
             "g_kmax":  k_bol - 1.35,                    # and  k_bol <= 1.35
             "g_enr":   max(e_in, e_out) - 19.75,        # LEU cap
-            "g_peak":  peaking - 2.0,                   # peaking <= 2.0
+            "g_peak":  core["fdh_core"] - 2.0,          # CORE peaking <= 2.0
             "g_geom":  cg.geometry_margin(design["pitch"],
                                           design["refl_thick"]),
+            "peaking_asm": peaking,       # assembly F_dh: diagnostic and
+                                          # training data for the bridge model
+            "keff_core_bol": core["keff_core"],   # free Route-B closure check
+            "core_entropy_conv": core["entropy_conv"],  # flag if > inactive
             "k_bol":   k_bol,                           # carried for plots
             "k_target": k_target_used,                  # carried for analysis
             "censored": bool(censored),   # True -> EFPD is a LOWER BOUND (cap)
@@ -242,6 +258,68 @@ class OpenMCEvaluator(Evaluator):
     # ------------------------------------------------------------------ #
     # BOL radial peaking from a fresh-assembly mesh tally                 #
     # ------------------------------------------------------------------ #
+    # ------------------------------------------------------------------ #
+    # CAMPAIGN 4: BOL radial peaking on the FULL 32-assembly CORE.        #
+    #                                                                    #
+    # Campaign 3 optimised the single-assembly proxy. The core_rescore    #
+    # study (36 feasible designs, 3-8 seeds each) measured                #
+    # Spearman rho(assembly, core) = +0.89 GLOBALLY but a scrambled       #
+    # ordering inside the near-optimal set: assembly ranks 1/2/3 fell to  #
+    # core ranks 11/9/12, while assembly #14 rose to core #4. A linear    #
+    # bridge correction F_core/F_asm = 1.400 - 0.0045 refl + 0.343 pitch  #
+    # explains only R^2 = 0.746 -- too weak to optimise through. One      #
+    # extra BOL transport solve (~2 min of a ~110 min evaluation, ~3%)    #
+    # measures the true quantity instead of correcting a proxy.           #
+    # ------------------------------------------------------------------ #
+    def _bol_core_peaking(self, design: dict, case: Path) -> dict:
+        m = rm.make_core_model(design, self.op, self.geo,
+                               particles=self.core_particles,
+                               batches=self.core_batches,
+                               inactive=self.core_inactive)
+        model = m[0] if isinstance(m, tuple) else m
+        model.settings.seed = _design_seed(design, salt="core")
+
+        N = self.geo.lattice
+        pitch = design.get("pitch", 1.26)
+        try:
+            nx = ny = cg.CORE_MAP_32.shape[0]
+        except Exception:
+            nx = ny = 6
+        half = nx * N * pitch / 2.0
+
+        mesh = openmc.RegularMesh()
+        mesh.dimension = (nx * N, ny * N)
+        mesh.lower_left = (-half, -half)
+        mesh.upper_right = (half, half)
+        t = openmc.Tally(name="core_pin_fission")
+        t.filters = [openmc.MeshFilter(mesh)]
+        t.scores = ["fission"]
+        model.tallies = openmc.Tallies([t])
+
+        cdir = case / "core_bol"
+        cdir.mkdir(parents=True, exist_ok=True)
+        sp_path = model.run(cwd=str(cdir), output=False)
+        with openmc.StatePoint(sp_path) as sp:
+            keff = float(sp.keff.nominal_value)
+            v = sp.get_tally(name="core_pin_fission").get_values(
+                scores=["fission"]).reshape(ny * N, nx * N)
+            H = np.asarray(getattr(sp, "entropy", []), dtype=float)
+
+        # mask guide tubes, removed corners and reflector (all zero-fission)
+        f = np.ma.masked_equal(v, 0.0)
+        fdh = float((f / f.mean()).max())
+
+        # source-convergence sentinel
+        conv = None
+        if H.size:
+            tail = H[self.core_inactive + (len(H) - self.core_inactive) // 2:]
+            mu, sd = float(tail.mean()), float(tail.std(ddof=1))
+            Hs = np.convolve(H, np.ones(3) / 3.0, mode="same")
+            Hs[0], Hs[-1] = H[0], H[-1]
+            bad = np.where(~((Hs >= mu - 3 * sd) & (Hs <= mu + 3 * sd)))[0]
+            conv = int(bad[-1]) + 2 if len(bad) else 1
+        return dict(fdh_core=fdh, keff_core=keff, entropy_conv=conv)
+
     def _bol_peaking(self, design: dict, case: Path) -> float:
         model, _fuel_cells, _lat = rm.make_assembly_model(
             design, self.op, self.geo, bc="reflective", **self.transport)

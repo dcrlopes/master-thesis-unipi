@@ -49,3 +49,4 @@ __pycache__/
 !results_campaign2/**/optimization_checkpoint.json
 !results_campaign2/**/optimization_results.json
 !ktarget_table.json
+*.py.bak

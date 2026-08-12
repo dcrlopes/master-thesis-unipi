@@ -1,0 +1,146 @@
+--- a/openmc_evaluator.py
++++ b/openmc_evaluator.py
+@@ CAMPAIGN 4: the peaking objective and its constraint move to CORE level.
+@@ Rationale (core_rescore study, n=36): Spearman rho(assembly, core) = +0.89
+@@ globally but the ordering scrambles inside the near-optimal set (assembly
+@@ ranks 1-3 fell to core ranks 11, 9, 12; assembly #14 rose to core #4); the
+@@ bridge fit F_core/F_asm = 1.400 - 0.0045*refl + 0.343*pitch explains only
+@@ R^2 = 0.746 of the discrepancy -- too weak to correct with. The direct
+@@ measurement costs one extra BOL transport solve (~2 min of a ~110 min
+@@ evaluation): cheaper than any correction machinery and exactly right.
+@@ EFPD is unchanged: assembly depletion + Route-B closed to within
+@@ -91...-429 pcm on the finalists, so that proxy stands.
+
+--- PATCH 1 of 3: new method, place directly AFTER _bol_peaking() ----------
+
+    # ------------------------------------------------------------------ #
+    # CAMPAIGN 4: BOL radial peaking on the FULL 32-assembly CORE.        #
+    # One extra transport solve per evaluation. The mesh is pin-resolved  #
+    # over the whole core; zero cells (guide tubes, removed corners,      #
+    # reflector) are masked before the max/mean.                          #
+    # ------------------------------------------------------------------ #
+    def _bol_core_peaking(self, design: dict, case: Path) -> dict:
+        m = rm.make_core_model(design, self.op, self.geo,
+                               particles=self.core_particles,
+                               batches=self.core_batches,
+                               inactive=self.core_inactive)
+        model = m[0] if isinstance(m, tuple) else m
+        model.settings.seed = self._design_seed(design, salt="core")
+
+        N = self.geo.lattice
+        pitch = design.get("pitch", 1.26)
+        try:
+            nx = ny = cg.CORE_MAP_32.shape[0]
+        except Exception:
+            nx = ny = 6
+        half = nx * N * pitch / 2.0
+
+        mesh = openmc.RegularMesh()
+        mesh.dimension = (nx * N, ny * N)
+        mesh.lower_left = (-half, -half)
+        mesh.upper_right = (half, half)
+        t = openmc.Tally(name="core_pin_fission")
+        t.filters = [openmc.MeshFilter(mesh)]
+        t.scores = ["fission"]
+        model.tallies = openmc.Tallies([t])
+
+        cdir = case / "core_bol"
+        cdir.mkdir(parents=True, exist_ok=True)
+        sp_path = model.run(cwd=str(cdir), output=False)
+        with openmc.StatePoint(sp_path) as sp:
+            keff = float(sp.keff.nominal_value)
+            v = sp.get_tally(name="core_pin_fission").get_values(
+                scores=["fission"]).reshape(ny * N, nx * N)
+            H = np.asarray(getattr(sp, "entropy", []), dtype=float)
+        f = np.ma.masked_equal(v, 0.0)
+        fdh = float((f / f.mean()).max())
+
+        # source-convergence sentinel: the finite core HAS a real transient
+        conv = None
+        if H.size:
+            tail = H[self.core_inactive
+                     + (len(H) - self.core_inactive) // 2:]
+            mu, sd = tail.mean(), tail.std(ddof=1)
+            Hs = np.convolve(H, np.ones(3) / 3.0, mode="same")
+            Hs[0], Hs[-1] = H[0], H[-1]
+            bad = np.where(~((Hs >= mu - 3 * sd) & (Hs <= mu + 3 * sd)))[0]
+            conv = int(bad[-1]) + 2 if len(bad) else 1
+        return dict(fdh_core=fdh, keff_core=keff, entropy_conv=conv)
+
+--- PATCH 2 of 3: inside evaluate(), replace the result assembly -----------
+--- (anchor: the lines shown are the CURRENT code; edit as marked)
+
+        peaking = self._bol_peaking(design, case)            # KEEP (diagnostic)
++       core = self._bol_core_peaking(design, case)          # NEW  (objective)
+        (cycle_efpd, k_bol, k_target_used,
+         censored, bu_eoc, n_solves) = self._cycle_length(design, case)
+
+        e_in = design["enrich_inner"]
+        e_out = design["enrich_outer"]
+        res = {
+            "cycle_length": cycle_efpd,                 # objective (maximise)
+-           "peaking":      peaking,                    # objective (minimise)
++           "peaking":      core["fdh_core"],           # objective (minimise)
++                                                       # CAMPAIGN 4: CORE F_dH
+            "g_kmin":  1.02 - k_bol,
+            "g_kmax":  k_bol - 1.35,
+            "g_enr":   max(e_in, e_out) - 19.75,
+-           "g_peak":  peaking - 2.0,                   # peaking <= 2.0
++           "g_peak":  core["fdh_core"] - 2.0,          # CORE peaking <= 2.0
+            "g_geom":  cg.geometry_margin(design["pitch"],
+                                          design["refl_thick"]),
+            "k_bol":   k_bol,
++           "peaking_asm":   peaking,                   # kept as diagnostic +
++                                                       # bridge-model training
++           "keff_core_bol": core["keff_core"],         # free Route-B closure:
++                                                       # k_bol/keff vs table
++           "core_entropy_conv": core["entropy_conv"],  # sentinel (flag if
++                                                       #  > core_inactive)
+            "k_target": k_target_used,
+            "censored": bool(censored),
+            "bu_eoc_mwd_kg": bu_eoc,
+            "n_dep_solves": n_solves,
+        }
+
+--- PATCH 3 of 3: __init__ additions + design seed salt --------------------
+--- In __init__(...), alongside the existing transport settings, add:
+
+        # Campaign-4 core-BOL transport (screen-grade; the two-stage ranking
+        # at higher settings still applies to finalists, as always)
+        self.core_particles = core_particles      # new kwarg, default 100000
+        self.core_batches   = core_batches        # new kwarg, default 170
+        self.core_inactive  = core_inactive       # new kwarg, default 60
+
+--- and extend the per-design deterministic seed with a salt argument so the
+--- core solve uses an independent (but still reproducible) stream:
+
+    def _design_seed(self, design: dict, salt: str = "") -> int:
+        key = json.dumps({k: round(float(design[k]), 10)
+                          for k in sorted(design)}) + salt
+        return (zlib.crc32(key.encode()) % (2**31 - 1)) + 1
+
+--- run_optimization.py: expose the three knobs -----------------------------
++    ap.add_argument("--core-particles", type=int, default=100000)
++    ap.add_argument("--core-batches",   type=int, default=170)
++    ap.add_argument("--core-inactive",  type=int, default=60)
+--- and pass them into the evaluator constructor; write them into meta:
++    meta["core_transport"] = {"particles": args.core_particles,
++                              "batches": args.core_batches,
++                              "inactive": args.core_inactive}
++    meta["objective_def"] = "peaking = core BOL F_dH (Campaign 4)"
+
+--- OPERATIONAL NOTES -------------------------------------------------------
+ * NEW campaign directory (out_c4/...), fresh archive, HV history restarts:
+   the objective definition changed, so Campaign-3 values are not comparable.
+ * Cost: +~2 min on a ~110 min evaluation (~3%).
+ * Noise: per-seed core F_dH sd ~0.007-0.03 at these settings (measured in
+   core_rescore); with per-design seeds this is i.i.d. across designs, the
+   GP noise term absorbs it, and the end-of-campaign two-stage ranking
+   resolves finalists exactly as in Campaign 3 (rank_front_peaking.py needs
+   the same one-line switch to the core model for its re-evaluations).
+ * The entropy sentinel: if core_entropy_conv > core_inactive appears in the
+   archive, that design's peaking carries source-convergence bias; the
+   between-block review should list them (one grep of the checkpoint).
+ * g_peak at 2.0 now BINDS (best measured design: 2.019 +/- 0.007). Keeping
+   2.0 is deliberate: the campaign's question becomes whether ANY corner of
+   the five-variable space reaches it. Expect low feasible fractions early.

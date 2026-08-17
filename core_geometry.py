@@ -49,6 +49,16 @@ import numpy as np
 R_VESSEL_INNER = 90.0        # cm  (vessel inner radius, ID ~ 1.8 m)
 VESSEL_CLEARANCE_CM = 0.0    # cm  (barrel + downcomer allowance; edit knowingly)
 
+# FUEL_PAD_CM is the radial pad added by reactor_model.make_core_model between
+# the circumscribed fuel envelope R_env and the fuel-bounding cylinder, so that
+# no OpenMC surface passes exactly through a lattice corner. It is a MODELLING
+# device, not a design dimension -- but it consumes real radial budget, so the
+# analytic constraint must account for it or g_geom disagrees with the geometry
+# that is actually built (Campaign-4 boundary failure at pitch 1.1500 /
+# refl_thick 19.49, where g_geom read -0.020 and the builder refused at 90.00).
+# ONE source of truth: reactor_model imports this constant.
+FUEL_PAD_CM = 0.02           # cm  (lattice-corner pad; see make_core_model)
+
 # The reference 32-assembly core layout: 6x6 grid with the 4 corners removed.
 # ONE source of truth -- reactor_model.make_core_model imports THIS map.
 CORE_MAP_32 = np.array([
@@ -99,7 +109,7 @@ def geometry_margin(pitch: float, refl_thick: float, *,
     the design is unbuildable: either the reflector would have to bite into the
     outer assemblies (the old bug) or it would poke through the vessel.
     """
-    return (core_envelope_radius(pitch, core_map, lattice)
+    return (core_envelope_radius(pitch, core_map, lattice) + FUEL_PAD_CM
             + float(refl_thick) - (float(r_vessel) - float(clearance)))
 
 

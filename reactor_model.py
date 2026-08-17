@@ -503,7 +503,9 @@ def make_core_model(design: dict, op: Operating = Operating(),
         refl_thick = design.get("refl_thick", 11.5)   # cm, drawing nominal
     r_env = cg.core_envelope_radius(pitch, core_map, geo.lattice)
     if r_fuel is None:
-        r_fuel = r_env + 0.02   # small pad: no surface through a lattice corner
+        # pad so no surface passes through a lattice corner; the SAME constant
+        # is included in cg.geometry_margin so g_geom matches what is built
+        r_fuel = r_env + cg.FUEL_PAD_CM
     elif r_fuel < r_env - 1e-9:
         print(f"WARNING make_core_model: r_fuel={r_fuel:.2f} cm is smaller than "
               f"the fuel envelope R_env={r_env:.2f} cm -> the cylinder CLIPS "

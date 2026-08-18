@@ -136,10 +136,6 @@ def main():
                          "OpenMC transport solve (statepoint runs AND the "
                          "in-memory depletion transport). Default: all cores "
                          "the machine reports (os.cpu_count()).")
-    # CAMPAIGN 4: transport settings for the core-BOL peaking solve
-    ap.add_argument("--core-particles", type=int, default=100000)
-    ap.add_argument("--core-batches", type=int, default=170)
-    ap.add_argument("--core-inactive", type=int, default=60)
     ap.add_argument("--particles", type=int, default=None,
                     help="override particles per batch (full-run default 20000, "
                          "smoke default 800)")
@@ -235,9 +231,6 @@ def main():
         cfg.n_infill = args.n_infill
 
     ev = OpenMCEvaluator(spec, k_target=k_target_arg, transport=transport,
-                         core_particles=args.core_particles,
-                         core_batches=args.core_batches,
-                         core_inactive=args.core_inactive,
                          workdir="openmc_runs", **schedule)
 
     opt = ActiveLearningMOO(spec, ev, cfg)
@@ -266,15 +259,6 @@ def main():
                       f"from current {k_target_arg!r}. Objectives across "
                       f"sessions will be inconsistent -- match --ktarget / "
                       f"--ktarget-table to the checkpoint's value.")
-        prev_core = prev_meta.get("core_transport")
-        cur_core = {"particles": args.core_particles,
-                    "batches": args.core_batches,
-                    "inactive": args.core_inactive}
-        if prev_core is not None and dict(prev_core) != cur_core:
-            raise SystemExit(
-                "core transport settings differ from the checkpoint: "
-                f"{prev_core} vs {cur_core}. Every evaluation sharing a "
-                "checkpoint must use identical core settings.")
         prev_tr = prev_meta.get("transport")
         if prev_tr and any(int(prev_tr.get(k, -1)) != int(transport[k])
                            for k in ("particles", "batches", "inactive")):
@@ -324,6 +308,22 @@ def main():
           f"MWd/kg = {schedule['max_burnup']*1000/ev.spec_power:.0f} EFPD | "
           f"geometry v2-envelope (g_geom active)")
 
+    # crash-safe per-iteration checkpointing (same path and meta as the final
+    # write below, so a resume reads an identical file either way)
+    opt.checkpoint_path = ckpt_out
+    opt.checkpoint_meta = {"k_target": k_target_arg,
+                           "smoke": bool(args.smoke),
+                           "transport": dict(transport),
+                           "core_transport": {
+                               "particles": args.core_particles,
+                               "batches": args.core_batches,
+                               "inactive": args.core_inactive},
+                           "objective_def":
+                               "peaking = core BOL F_dh (Campaign 4)",
+                           "schedule": dict(schedule),
+                           "geometry": "v2-envelope",
+                           "omp_threads": n_threads}
+
     res = opt.run(verbose=True)
 
     path = opt.save(str(Path(args.out) / "optimization_results.json"))
@@ -332,13 +332,6 @@ def main():
                                meta={"k_target": k_target_arg,
                                      "smoke": bool(args.smoke),
                                      "transport": dict(transport),
-                                     "core_transport": {
-                                         "particles": args.core_particles,
-                                         "batches": args.core_batches,
-                                         "inactive": args.core_inactive},
-                                     "objective_def":
-                                         "peaking = core BOL F_dh "
-                                         "(Campaign 4)",
                                      "schedule": dict(schedule),
                                      "geometry": "v2-envelope",
                                      "omp_threads": n_threads})

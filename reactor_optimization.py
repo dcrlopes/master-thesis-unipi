@@ -591,6 +591,35 @@ class ActiveLearningMOO:
             return 0.0
         return float(HV(ref_point=ref)(front[keep]))
 
+    @staticmethod
+    def _least_infeasible_candidates(res):
+        """Candidate matrix from a pymoo Result, valid even when the run ended
+        with NO feasible solution.
+
+        pymoo reports res.X = None in that case. The information is still in
+        the final population, so rank it by total constraint violation and hand
+        back the least-infeasible designs: with an empty feasible set the
+        useful search direction is toward the constraint boundary, which is
+        precisely what a zero-feasible campaign must explore. Returns None only
+        if the population is unavailable too, leaving the caller's random
+        fallback in charge."""
+        X = getattr(res, "X", None)
+        if X is not None:
+            X = np.atleast_2d(X)
+            if X.ndim == 2 and X.shape[0] > 0 and X.dtype != object:
+                return X
+        pop = getattr(res, "pop", None)
+        if pop is None or len(pop) == 0:
+            return None
+        Xp = np.atleast_2d(np.asarray(pop.get("X"), dtype=float))
+        try:
+            cv = np.asarray(pop.get("CV"), dtype=float).ravel()
+        except Exception:
+            return Xp
+        if cv.size != Xp.shape[0]:
+            return Xp
+        return Xp[np.argsort(cv)]        # least-infeasible first
+
     # ---- main loop ----------------------------------------------------------
     def run(self, verbose=True):
         t0 = time.time()
@@ -628,7 +657,16 @@ class ActiveLearningMOO:
             res = minimize(prob, algo,
                            ("n_gen", self.cfg.nsga_gen),
                            seed=self.cfg.seed + it, verbose=False)
-            cand = np.atleast_2d(res.X)
+            cand = self._least_infeasible_candidates(res)
+            if cand is None or cand.shape[0] == 0:
+                # nothing usable came back: explore randomly this iteration
+                cand = np.atleast_2d(
+                    self.spec.design_space.lhs(max(self.cfg.n_infill * 4, 32),
+                                               seed=self.cfg.seed + 777 + it))
+            elif res.X is None and verbose:
+                print(f"[Stage 2] iter {it+1}: surrogate NSGA-II found no "
+                      f"feasible design; infilling on the {cand.shape[0]} "
+                      f"least-infeasible population members.")
 
             # ---- infill / acquisition: pick the most UNCERTAIN candidates ----
             # (exploration). You can blend in predicted hypervolume gain later.
@@ -658,6 +696,19 @@ class ActiveLearningMOO:
                       f"+{len(Xinf)} real evals "
                       f"(total {self.evaluator.n_calls}), "
                       f"HV={self.history[-1]:.4g}")
+
+            # crash-safe: persist the FULL archive after every iteration, so an
+            # exception later in the loop can never discard completed real
+            # evaluations (Campaign 4 lost six to a mid-loop crash).
+            ckpt_path = getattr(self, "checkpoint_path", None)
+            if ckpt_path:
+                try:
+                    self.save_checkpoint(
+                        ckpt_path, meta=getattr(self, "checkpoint_meta", None))
+                    if verbose:
+                        print(f"           checkpoint written -> {ckpt_path}")
+                except Exception as exc:            # never kill a live campaign
+                    print(f"           WARNING: checkpoint failed: {exc}")
 
         if verbose:
             print(f"Done in {time.time()-t0:.1f}s, "

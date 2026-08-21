@@ -50,3 +50,4 @@ __pycache__/
 !results_campaign2/**/optimization_results.json
 !ktarget_table.json
 *.py.bak
+*.ipynb

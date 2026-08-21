@@ -1,0 +1,73 @@
+--- a/run_optimization.py	2026-08-05 08:46:49.531795071 +0000
++++ b/run_optimization.py	2026-08-05 08:46:49.591660828 +0000
+@@ -122,6 +122,14 @@
+                     help="override the number of active-learning iterations for "
+                          "THIS run (handy on --resume, e.g. --iters 3 to add 3 "
+                          "more rounds of infill)")
++    ap.add_argument("--n-init", type=int, default=None,
++                    help="override the Stage-1 DOE (Design of Experiments) "
++                         "size, i.e. how many Latin-Hypercube designs are "
++                         "evaluated before active learning starts (default 24; "
++                         "ignored on --resume, where the DOE is already done)")
++    ap.add_argument("--n-infill", type=int, default=None,
++                    help="override how many real evaluations each "
++                         "active-learning iteration adds (default 6)")
+     # ------------------------- NEW: many-core knobs ------------------------ #
+     ap.add_argument("--threads", type=int, default=os.cpu_count(),
+                     help="OpenMP (Open Multi-Processing) threads for EVERY "
+@@ -217,6 +225,10 @@
+ 
+     if args.iters is not None:
+         cfg.n_iter = args.iters     # run exactly this many AL iterations now
++    if args.n_init is not None:
++        cfg.n_init = args.n_init
++    if args.n_infill is not None:
++        cfg.n_infill = args.n_infill
+ 
+     ev = OpenMCEvaluator(spec, k_target=k_target_arg, transport=transport,
+                          workdir="openmc_runs", **schedule)
+--- a/openmc_evaluator.py	2026-08-05 08:46:49.537057336 +0000
++++ b/openmc_evaluator.py	2026-08-05 08:46:49.591976064 +0000
+@@ -64,6 +64,26 @@
+ 
+ import core_geometry as cg
+ import reactor_model as rm
++
++
++def _design_seed(design: dict) -> int:
++    """Deterministic per-design RNG (random number generator) seed.
++
++    Campaigns 1-2 inherited seed=1 from reactor_model._settings() for EVERY
++    evaluation, so the whole archive shared ONE random stream: the surrogate
++    was fitted to a single frozen noise realization, and the F_dh ranking of
++    near-tied designs was an artifact of that stream (measured seed-to-seed
++    sd 0.018 at 4000x60). Hashing the design vector instead keeps every
++    evaluation exactly reproducible (same design -> same seed, also across
++    --resume) while making the noise independent ACROSS designs -- the
++    i.i.d. (independent and identically distributed) assumption the GP
++    (Gaussian Process) noise model actually relies on.
++    """
++    import json as _json
++    import zlib as _zlib
++    key = _json.dumps({k: round(float(v), 10)
++                       for k, v in sorted(design.items())})
++    return 1 + _zlib.crc32(key.encode()) % 2_000_000_000
+ from reactor_optimization import Evaluator, ProblemSpec
+ 
+ 
+@@ -225,6 +245,7 @@
+     def _bol_peaking(self, design: dict, case: Path) -> float:
+         model, _fuel_cells, _lat = rm.make_assembly_model(
+             design, self.op, self.geo, bc="reflective", **self.transport)
++        model.settings.seed = _design_seed(design)
+ 
+         N = self.geo.lattice
+         pitch = design.get("pitch", 1.26)
+@@ -270,6 +291,7 @@
+     def _cycle_length(self, design: dict, case: Path):
+         model, fuel_cells, _lat = rm.make_assembly_model(
+             design, self.op, self.geo, bc="reflective", **self.transport)
++        model.settings.seed = _design_seed(design)
+ 
+         # give each fuel material a volume + mark depletable
+         pin_vol = math.pi * self.geo.fuel_or ** 2 * self.geo.active_height

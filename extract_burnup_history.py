@@ -58,26 +58,45 @@ def k_target_at(table, pitch, refl):
 
 
 def read_case(case: Path):
-    """Concatenate k_inf(t) over the dep_XX chunks of one case."""
+    """Concatenate k_inf(t) over the dep_XX chunks of one case.
+
+    CHUNK SEMANTICS (verified on case_0044, 9 chunks): each chunk's
+    depletion_results.h5 is a RESTART file whose time vector is ALREADY
+    ABSOLUTE and whose leading entries are unpopulated placeholders written
+    as t = 0. Each chunk also repeats the previous chunk's final point:
+
+        dep_00  t = [0, 4.3e6, 1.3e7, 3.0e7, 6.5e7, 1.168e8]
+        dep_01  t = [0, 0, 0, 0, 0, 1.168e8, 1.515e8, 1.861e8]
+        dep_02  t = [0, 0, 0, 0, 0, 0, 0, 1.861e8, 2.207e8, 2.553e8]
+
+    So the correct reconstruction keeps entries with t > 0 (plus the single
+    genuine t = 0 of the first chunk) and drops repeated boundary points.
+    Adding a running offset -- as an earlier version of this script did --
+    double-counts and inflates the axis by roughly 5.4x on a 9-chunk case.
+    """
     import openmc.deplete as dep
     t_all, k_all, ks_all = [], [], []
-    t_off = 0.0
     chunks = sorted(case.glob("dep_*/depletion_results.h5"))
     if not chunks:
         raise SystemExit(f"no depletion_results.h5 under {case}")
-    for ch in chunks:
+    for ci, ch in enumerate(chunks):
         res = dep.Results(str(ch))
-        t, k = res.get_keff()                 # t in s; k -> (n, 2) mean, sd
+        t, k = res.get_keff()                 # t in s (ABSOLUTE); k -> mean, sd
         k = np.atleast_2d(k)
-        start = 1 if (t_all and abs(t[0]) < 1e-9) else 0   # drop dup t=0
-        t_all += list(t[start:] + t_off)
-        k_all += list(k[start:, 0])
-        ks_all += list(k[start:, 1])
-        t_off = t_all[-1]
+        for idx in range(len(t)):
+            ti = float(t[idx])
+            if ti == 0.0 and not (ci == 0 and idx == 0):
+                continue                      # unpopulated placeholder
+            if t_all and abs(ti - t_all[-1]) < 1e-6:
+                continue                      # repeated boundary point
+            if t_all and ti < t_all[-1]:
+                continue                      # never go backwards
+            t_all.append(ti)
+            k_all.append(float(k[idx, 0]))
+            ks_all.append(float(k[idx, 1]))
     t = np.asarray(t_all)
     days = t / 86400.0
-    bu = days * P_SPEC_W_PER_G / 1000.0 * 1.0   # placeholder, fixed below
-    # burnup from specific power: BU[MWd/kgHM] = P_spec[W/g] * t[d] / 1000
+    # BU[MWd/kgHM] = P_spec[W/gHM] * t[days] / 1000
     bu = P_SPEC_W_PER_G * days / 1000.0
     return days, bu, np.asarray(k_all), np.asarray(ks_all)
 
@@ -156,9 +175,13 @@ def main():
                         bbox_inches="tight",
                         dpi=200 if ext == "png" else None)
         plt.close(fig)
+        arch_efpd = float(rec.get("cycle_length", float("nan")))
+        flag = ("" if not (arch_efpd == arch_efpd)
+                else f"  [archive {arch_efpd:.0f} EFPD"
+                     f"{'  OK' if abs(efpd[-1]-arch_efpd) < 0.05*arch_efpd else chr(32)+chr(33)+chr(33)+chr(32)+chr(77)+chr(73)+chr(83)+chr(77)+chr(65)+chr(84)+chr(67)+chr(72)}]")
         print(f"idx{idx}: {len(k)} steps, BOL k_inf={k[0]:.5f}, "
               f"EOL k_inf={k[-1]:.5f} at {efpd[-1]:.0f} EFPD "
-              f"-> {csv}")
+              f"({bu[-1]:.1f} MWd/kgHM){flag} -> {csv}")
 
 
 if __name__ == "__main__":

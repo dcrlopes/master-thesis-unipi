@@ -85,14 +85,49 @@ GUIDE_TUBE_POSITIONS = [
     (14, 5), (14, 8), (14, 11),
 ]
 
-# Where Gd burnable-poison pins go (a typical symmetric pattern). Used only
-# when design['gd_wt'] > 0. Keep modest; too many Gd pins over-flatten and
-# waste neutrons (you will study this trade-off).
-GD_PIN_POSITIONS = [
-    (2, 2), (2, 14), (14, 2), (14, 14),
-    (6, 6), (6, 10), (10, 6), (10, 10),
-    (3, 8), (8, 3), (8, 13), (13, 8),
-]
+# ---------------------------------------------------------------------------
+# CAMPAIGN 5: gadolinia-bearing ROD COUNT is a design variable ("gd_pins").
+#
+# STRATEGY A (interior-first, guide-tube-ringed), adopted after a literature
+# review of vendor and licensing practice (ORNL/TM-2023/3098 optimized
+# 16/20/24-pin maps; U.S. EPR FSAR "central zone" placement; NuScale
+# NuFuel-HTP2 benchmark patterns). The nested ladder is
+#     12 -> 16 -> 20 -> 24 -> 32 -> 40
+# (steps of 4 then 8: past 24 pins no compliant 4-orbit remains). Rules
+# enforced at EVERY level: octant symmetry; no rod in the outer two rows;
+# no face-adjacent Gd-Gd pairs (self-shadowing); every rod face- or
+# diagonally-adjacent to a guide tube; no guide-tube collisions; nesting
+# (pattern(n+) contains pattern(n)), so absorber authority is monotone.
+# ---------------------------------------------------------------------------
+def _orbit(i, j):
+    return sorted({(i, j), (j, i), (16 - i, j), (i, 16 - j),
+                   (16 - i, 16 - j), (16 - j, i), (j, 16 - i),
+                   (16 - j, 16 - i)})
+
+
+_L12 = sorted(set(_orbit(2, 2) + _orbit(6, 6) + _orbit(3, 8)))   # heritage
+GD_PATTERNS = {12: _L12}
+GD_PATTERNS[16] = sorted(set(GD_PATTERNS[12] + _orbit(4, 4)))
+GD_PATTERNS[20] = sorted(set(GD_PATTERNS[16] + _orbit(6, 8)))
+GD_PATTERNS[24] = sorted(set(GD_PATTERNS[20] + _orbit(7, 7)))
+GD_PATTERNS[32] = sorted(set(GD_PATTERNS[24] + _orbit(3, 5)))
+GD_PATTERNS[40] = sorted(set(GD_PATTERNS[32] + _orbit(4, 6)))
+GD_PIN_COUNTS = sorted(GD_PATTERNS)          # [12, 16, 20, 24, 32, 40]
+
+
+def snap_gd_pins(x) -> int:
+    """Nearest available pattern count (the DISCRETE ladder the continuous
+    optimizer variable maps onto)."""
+    x = float(x)
+    return min(GD_PIN_COUNTS, key=lambda n: (abs(n - x), n))
+
+
+def gd_pattern(n_or_x):
+    return GD_PATTERNS[snap_gd_pins(n_or_x)]
+
+
+# back-compatibility: the heritage 12-pin pattern under the historical name
+GD_PIN_POSITIONS = GD_PATTERNS[12]
 
 
 # =============================================================================
@@ -255,8 +290,16 @@ def build_materials(design: dict, op: Operating):
         "fuel_out": make_uo2(e_out, op.fuel_T),
     }
     if gd > 0:
-        # Gd pins use the inner enrichment by convention (edit if you prefer)
-        mats["fuel_gd"] = make_uo2_gd(e_in, gd, op.fuel_T)
+        # CAMPAIGN 5: (a) a gadolinia rod takes the enrichment of the ZONE it
+        # sits in; (b) that enrichment is reduced by 5% RELATIVE per wt% of
+        # Gd2O3 -- the documented low-concentration-gadolinia practice
+        # (Westinghouse/ENUSA, INIS FR0200561; same rule in the INL LWRS
+        # uprate assessment), motivated by the degraded thermal conductivity
+        # of the urania-gadolinia mixture. Floored at natural uranium.
+        red = max(0.0, 1.0 - 0.05 * gd)
+        mats["fuel_gd_in"] = make_uo2_gd(max(0.2, e_in * red), gd, op.fuel_T)
+        mats["fuel_gd_out"] = make_uo2_gd(max(0.2, e_out * red), gd,
+                                          op.fuel_T)
     return mats
 
 
@@ -291,6 +334,7 @@ def build_assembly_universe(design, mats, geo: Geometry17x17, pitch: float):
     lattice-filled universe and the list of distinct fuel cells (for tallies)."""
     N = geo.lattice
     gt = _guide_tube_universe(mats, geo)
+    _gd_set = set(gd_pattern(design.get("gd_pins", 12)))   # CAMPAIGN 5
 
     # which lattice positions count as "inner" (a centered block) vs "outer"
     inner_lo, inner_hi = N // 2 - 4, N // 2 + 4    # central 9x9 block = inner
@@ -302,9 +346,12 @@ def build_assembly_universe(design, mats, geo: Geometry17x17, pitch: float):
             if (i, j) in GUIDE_TUBE_POSITIONS:
                 universes[i, j] = gt
                 continue
-            if "fuel_gd" in mats and (i, j) in GD_PIN_POSITIONS:
-                u = _fuel_pin_universe(mats["fuel_gd"], mats, geo)
-            elif inner_lo <= i <= inner_hi and inner_lo <= j <= inner_hi:
+            in_zone = inner_lo <= i <= inner_hi and inner_lo <= j <= inner_hi
+            if "fuel_gd_in" in mats and (i, j) in _gd_set:
+                u = _fuel_pin_universe(
+                    mats["fuel_gd_in" if in_zone else "fuel_gd_out"],
+                    mats, geo)
+            elif in_zone:
                 u = _fuel_pin_universe(mats["fuel_in"], mats, geo)
             else:
                 u = _fuel_pin_universe(mats["fuel_out"], mats, geo)
@@ -374,7 +421,8 @@ def make_pincell_model(design: dict, op: Operating = Operating(),
 def make_assembly_model(design: dict, op: Operating = Operating(),
                         geo: Geometry17x17 = Geometry17x17(),
                         bc: str = "reflective", reflector: bool = False,
-                        particles=20000, batches=150, inactive=40):
+                        particles=20000, batches=150, inactive=40,
+                        pin_tally: bool = False):
     """One 17x17 assembly, infinite in z (2D). Returns (model, fuel_cells, lattice).
 
     reflector=False  (default, UNCHANGED behaviour)
@@ -421,6 +469,19 @@ def make_assembly_model(design: dict, op: Operating = Operating(),
     bb = ((-half, -half, -1e9), (half, half, 1e9))         # source: fuel region
     model = openmc.Model(geometry=geom, materials=materials,
                          settings=_settings(particles, batches, inactive, bb))
+    if pin_tally:
+        # CAMPAIGN 5: pin-resolved fission map on every transport solve of the
+        # DEPLETION sequence, so assembly F_dH(t) through burnup and at EOL is
+        # recorded in each statepoint (openmc_simulation_n*.h5). Cost: one
+        # NxN mesh tally per solve -- negligible against transport.
+        _mesh = openmc.RegularMesh()
+        _mesh.dimension = (geo.lattice, geo.lattice)
+        _mesh.lower_left = (-half, -half)
+        _mesh.upper_right = (half, half)
+        _t = openmc.Tally(name="asm_pin_fission")
+        _t.filters = [openmc.MeshFilter(_mesh)]
+        _t.scores = ["fission"]
+        model.tallies = openmc.Tallies([_t])
     return model, fuel_cells, lat
 
 

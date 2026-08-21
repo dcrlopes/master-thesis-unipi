@@ -110,6 +110,8 @@ def main():
                          "e.g. ktarget_table.json; legacy 1-D refl-only "
                          "tables still load). Overrides --ktarget; k_target "
                          "is interpolated per design inside the evaluator.")
+    ap.add_argument("--workdir", default="openmc_runs",
+                    help="scratch directory for OpenMC cases (one per campaign!)")
     ap.add_argument("--out", default=".", help="output directory")
     ap.add_argument("--resume", metavar="CHECKPOINT.json", default=None,
                     help="continue from a checkpoint written by a previous run "
@@ -238,7 +240,7 @@ def main():
                          core_particles=args.core_particles,
                          core_batches=args.core_batches,
                          core_inactive=args.core_inactive,
-                         workdir="openmc_runs", **schedule)
+                         workdir=args.workdir, **schedule)
 
     opt = ActiveLearningMOO(spec, ev, cfg)
     # Ensure the output directory exists BEFORE anything tries to write into it
@@ -334,8 +336,12 @@ def main():
                                "particles": args.core_particles,
                                "batches": args.core_batches,
                                "inactive": args.core_inactive},
+                           "gd_model":
+                               "zone-matched enrichment, 5 percent/wt% "
+                               "relative reduction, Strategy-A ladder "
+                               "{12,16,20,24,32,40}",
                            "objective_def":
-                               "peaking = core BOL F_dh (Campaign 4)",
+                               "peaking = core BOL F_dh (Campaign 5)",
                            "schedule": dict(schedule),
                            "geometry": "v2-envelope",
                            "omp_threads": n_threads}
@@ -344,13 +350,7 @@ def main():
 
     path = opt.save(str(Path(args.out) / "optimization_results.json"))
     print("saved ->", path)
-    ckpt = opt.save_checkpoint(ckpt_out,
-                               meta={"k_target": k_target_arg,
-                                     "smoke": bool(args.smoke),
-                                     "transport": dict(transport),
-                                     "schedule": dict(schedule),
-                                     "geometry": "v2-envelope",
-                                     "omp_threads": n_threads})
+    ckpt = opt.save_checkpoint(ckpt_out, meta=opt.checkpoint_meta)
     print(f"checkpoint -> {ckpt}  ({res['n_real_evaluations']} evals total)")
     kt_flag = (f"--ktarget-table {k_target_arg}" if args.ktarget_table
                else f"--ktarget {k_target_arg:.4f}")

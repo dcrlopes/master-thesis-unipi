@@ -841,6 +841,11 @@ def example_reactor_problem() -> ProblemSpec:
         DesignVariable("gd_wt",        0.0,  8.0,  "wt% Gd2O3"),
         DesignVariable("pitch",        1.15, 1.43, "cm"),
         DesignVariable("refl_thick",   2.0,  19.5, "cm"),
+        # CAMPAIGN 5: gadolinia-bearing rod count. Continuous for the
+        # surrogate and NSGA-II; the model snaps to the nested symmetric
+        # ladder {12,16,...,40} (reactor_model.snap_gd_pins) and the snapped
+        # value is recorded per evaluation as "gd_pins_used".
+        DesignVariable("gd_pins",      12.0, 40.0, "rods"),
     ])
     objs = [
         Objective("cycle_length", maximize=True,  label="Cycle length [EFPD]"),

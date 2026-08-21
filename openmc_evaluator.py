@@ -235,7 +235,8 @@ class OpenMCEvaluator(Evaluator):
             "g_peak":  core["fdh_core"] - 2.0,          # CORE peaking <= 2.0
             "g_geom":  cg.geometry_margin(design["pitch"],
                                           design["refl_thick"]),
-            "peaking_asm": peaking,       # assembly F_dh: diagnostic and
+            "peaking_asm": peaking,
+            "gd_pins_used": rm.snap_gd_pins(design.get("gd_pins", 12)),       # assembly F_dh: diagnostic and
                                           # training data for the bridge model
             "keff_core_bol": core["keff_core"],   # free Route-B closure check
             "core_entropy_conv": core["entropy_conv"],  # flag if > inactive
@@ -368,7 +369,8 @@ class OpenMCEvaluator(Evaluator):
     # ------------------------------------------------------------------ #
     def _cycle_length(self, design: dict, case: Path):
         model, fuel_cells, _lat = rm.make_assembly_model(
-            design, self.op, self.geo, bc="reflective", **self.transport)
+            design, self.op, self.geo, bc="reflective", pin_tally=True,
+            **self.transport)
         model.settings.seed = _design_seed(design)
 
         # give each fuel material a volume + mark depletable

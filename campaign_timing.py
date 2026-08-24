@@ -550,6 +550,19 @@ def run_tree(args) -> None:
     if not files:
         sys.exit(f"no statepoints under {wd}")
     recs = [read_statepoint(p) for p in files]
+    # honour the same time window as campaign mode, so a directory shared by
+    # two jobs can be split into its parts
+    after, before = _parse_when(args.after), _parse_when(args.before)
+    n_all = len(recs)
+    if after is not None:
+        recs = [r for r in recs if r["end"] >= after]
+    if before is not None:
+        recs = [r for r in recs if r["end"] <= before]
+    if not recs:
+        sys.exit(f"no statepoints under {wd} inside the requested time window")
+    if len(recs) != n_all:
+        print(f"time window keeps {len(recs)} of {n_all} statepoints "
+              f"(after={args.after}, before={args.before})")
     recs.sort(key=lambda r: r["end"])
     by_fid: dict[tuple, dict] = {}
     for r in recs:
@@ -567,6 +580,8 @@ def run_tree(args) -> None:
     active = calendar - idle
     summary = dict(
         campaign=args.campaign, workdir=str(wd.resolve()),
+        window_after=args.after, window_before=args.before,
+        n_statepoints_in_tree=int(n_all),
         host_reported=args.host or "UNKNOWN (pass --host)",
         omp_threads=args.threads or "UNKNOWN",
         n_statepoints=len(recs),

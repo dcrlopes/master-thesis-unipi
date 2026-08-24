@@ -51,3 +51,6 @@ __pycache__/
 !ktarget_table.json
 *.py.bak
 *.ipynb
+
+# Windows download markers
+*:Zone.Identifier

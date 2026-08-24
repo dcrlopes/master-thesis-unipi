@@ -56,7 +56,11 @@ EVALUATOR = "openmc_evaluator.py"
 OPTIMIZER = "reactor_optimization.py"
 DRIVER = "run_optimization.py"
 
-PATCHES: dict[str, list[tuple[str, str, str]]] = {
+# Each entry is (name, anchor, replacement) or (name, anchor, replacement,
+# already_signature). When the anchor is absent but the signature is already in
+# the file, that change exists in the repository (apply_campaign5.py made some
+# of them) and the patch is reported as satisfied instead of failing.
+PATCHES: dict[str, list[tuple]] = {
     EVALUATOR: [
         ("1a imports",
          "import math\nimport os\nfrom collections import Counter\n",
@@ -222,7 +226,8 @@ PATCHES: dict[str, list[tuple[str, str, str]]] = {
          "                                     \"omp_threads\": n_threads})\n",
          "    # identical meta to the per-iteration checkpoint, so a resume always\n"
          "    # sees core_transport and objective_def whichever write came last\n"
-         "    ckpt = opt.save_checkpoint(ckpt_out, meta=opt.checkpoint_meta)\n"),
+         "    ckpt = opt.save_checkpoint(ckpt_out, meta=opt.checkpoint_meta)\n",
+         "opt.save_checkpoint(ckpt_out, meta=opt.checkpoint_meta)"),
         ("3a version helper",
          "def main():\n    ap = argparse.ArgumentParser()\n",
          "def _openmc_version() -> str:\n"
@@ -236,7 +241,7 @@ PATCHES: dict[str, list[tuple[str, str, str]]] = {
     ],
 }
 
-WORKDIR_PATCHES: list[tuple[str, str, str]] = [
+WORKDIR_PATCHES: list[tuple] = [
     ("3c --workdir flag",
      "    ap.add_argument(\"--out\", default=\".\", help=\"output directory\")\n",
      "    ap.add_argument(\"--out\", default=\".\", help=\"output directory\")\n"
@@ -244,28 +249,49 @@ WORKDIR_PATCHES: list[tuple[str, str, str]] = [
      "                    help=\"directory for the per-design OpenMC case folders \"\n"
      "                         \"(case_NNNN). Give every campaign its own, e.g. \"\n"
      "                         \"openmc_runs_c5, so that campaigns never overwrite \"\n"
-     "                         \"each other's statepoints (default: openmc_runs)\")\n"),
+     "                         \"each other's statepoints (default: openmc_runs)\")\n",
+     "ap.add_argument(\"--workdir\""),
     ("3c evaluator workdir",
      "                         workdir=\"openmc_runs\", **schedule)\n",
-     "                         workdir=args.workdir, **schedule)\n"),
+     "                         workdir=args.workdir, **schedule)\n",
+     "workdir=args.workdir"),
 ]
 
 
-def verify(path: Path, patches) -> list[str]:
+def _unpack(patch):
+    """(name, anchor, replacement) or (name, anchor, replacement, signature)."""
+    already = patch[3] if len(patch) > 3 else None
+    return patch[0], patch[1], patch[2], already
+
+
+def verify(path: Path, patches):
+    """Return (problems, satisfied). A patch counts as satisfied when its anchor
+    is gone but its signature is already in the file."""
     text = path.read_text()
-    problems = []
-    for name, anchor, _ in patches:
+    problems, satisfied = [], []
+    for patch in patches:
+        name, anchor, _, already = _unpack(patch)
+        if already and already in text:
+            satisfied.append(f"{path.name}: '{name}' already present, skipped")
+            continue
         n = text.count(anchor)
-        if n != 1:
-            problems.append(f"{path.name}: anchor '{name}' found {n} times (need 1)")
-    return problems
+        if n == 1:
+            continue
+        problems.append(f"{path.name}: anchor '{name}' found {n} times (need 1)")
+    return problems, satisfied
 
 
 def apply(path: Path, patches) -> None:
     text = path.read_text()
-    for name, anchor, repl in patches:
-        text = text.replace(anchor, repl, 1)
-        print(f"  applied {name}")
+    for patch in patches:
+        name, anchor, repl, already = _unpack(patch)
+        if already and already in text:
+            print(f"  skipped {name} (already in the repository)")
+        elif text.count(anchor) == 1:
+            text = text.replace(anchor, repl, 1)
+            print(f"  applied {name}")
+        else:
+            raise RuntimeError(f"unexpected state for patch {name}")
     path.write_text(text)
 
 
@@ -283,13 +309,17 @@ def main() -> None:
     if not args.no_workdir:
         plan[DRIVER] = plan[DRIVER] + WORKDIR_PATCHES
 
-    problems = []
+    problems, satisfied = [], []
     for fname, patches in plan.items():
         p = root / fname
         if not p.exists():
             problems.append(f"missing file {p}")
             continue
-        problems += verify(p, patches)
+        pb, sa = verify(p, patches)
+        problems += pb
+        satisfied += sa
+    for sa in satisfied:
+        print("  already there: " + sa)
     if problems:
         print("ANCHOR CHECK FAILED, nothing written:")
         for pr in problems:

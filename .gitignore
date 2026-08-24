@@ -54,3 +54,13 @@ __pycache__/
 
 # Windows download markers
 *:Zone.Identifier
+
+# large run artefacts at repository root
+*.h5
+openmc_runs*/
+rescore_runs*/
+run_*.log
+nohup.out
+*.pre-c5.bak
+timing_harvest_*/
+timing_bundle_*.tar.gz

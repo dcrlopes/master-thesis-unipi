@@ -537,6 +537,7 @@ class ActiveLearningMOO:
         self.G = np.empty((0, spec.n_constr))
         self.raw: list[dict] = []
         self.history = []          # hypervolume per iteration
+        self.phase_log: list[dict] = []   # wall time per phase, per iteration
         self._hv_ref_frozen = None # fixed reference point (set after Stage 1)
 
     # ---- surrogate factory --------------------------------------------------
@@ -632,9 +633,15 @@ class ActiveLearningMOO:
                       else None)
             X0 = self.spec.design_space.lhs(self.cfg.n_init,
                                             seed=self.cfg.seed, accept=accept)
+            t_ev0 = time.perf_counter()
             F0, G0, raw0 = self.evaluator.evaluate(X0)
+            t_ev = time.perf_counter() - t_ev0
             self._add(X0, F0, G0, raw0)
+            t_hv0 = time.perf_counter()
             self.history.append(self._hv())
+            self.phase_log.append(dict(
+                stage="DOE", iteration=0, n_eval=int(len(X0)),
+                t_eval_s=t_ev, t_hv_s=time.perf_counter() - t_hv0))
             if verbose:
                 print(f"[Stage 1] {self.cfg.n_init} real evaluations done. "
                       f"HV={self.history[-1]:.4g}")
@@ -647,16 +654,21 @@ class ActiveLearningMOO:
 
         # ---- STAGE 2 : active-learning loop ---------------------------------
         for it in range(self.cfg.n_iter):
+            t_fit0 = time.perf_counter()
             obj_sur = self._new_surrogate().fit(self.X, self.F)
             con_sur = (self._new_surrogate().fit(self.X, self.G)
                        if self.spec.n_constr else None)
+            t_fit = time.perf_counter() - t_fit0
 
             # NSGA-II on the surrogate (cheap):
+            t_nsga0 = time.perf_counter()
             prob = _SurrogateProblem(self.spec, obj_sur, con_sur)
             algo = NSGA2(pop_size=self.cfg.nsga_pop, sampling=LHS())
             res = minimize(prob, algo,
                            ("n_gen", self.cfg.nsga_gen),
                            seed=self.cfg.seed + it, verbose=False)
+            t_nsga = time.perf_counter() - t_nsga0
+            t_acq0 = time.perf_counter()
             cand = self._least_infeasible_candidates(res)
             if cand is None or cand.shape[0] == 0:
                 # nothing usable came back: explore randomly this iteration
@@ -686,11 +698,26 @@ class ActiveLearningMOO:
                 chosen = list(self.spec.design_space.lhs(self.cfg.n_infill,
                                                          seed=self.cfg.seed + 99 + it))
             Xinf = np.array(chosen)
+            t_acq = time.perf_counter() - t_acq0
 
             # evaluate the infill points with the TRUTH:
+            t_ev0 = time.perf_counter()
             Finf, Ginf, rawinf = self.evaluator.evaluate(Xinf)
+            t_ev = time.perf_counter() - t_ev0
             self._add(Xinf, Finf, Ginf, rawinf)
+            t_hv0 = time.perf_counter()
             self.history.append(self._hv())
+            t_hv = time.perf_counter() - t_hv0
+            self.phase_log.append(dict(
+                stage="infill", iteration=len(self.phase_log),
+                n_eval=int(len(Xinf)), n_archive_before=int(len(self.X) - len(Xinf)),
+                t_fit_s=t_fit, t_nsga_s=t_nsga, t_acq_s=t_acq,
+                t_eval_s=t_ev, t_hv_s=t_hv, t_ckpt_s=None))
+            if verbose:
+                print(f"           budget: evaluation {t_ev / 60.0:.1f} min | "
+                      f"optimiser {t_fit + t_nsga + t_acq + t_hv:.1f} s "
+                      f"(fit {t_fit:.1f}, NSGA-II {t_nsga:.1f}, "
+                      f"acquisition {t_acq:.2f}, HV {t_hv:.3f})")
             if verbose:
                 print(f"[Stage 2] iter {it+1}/{self.cfg.n_iter}: "
                       f"+{len(Xinf)} real evals "
@@ -703,8 +730,10 @@ class ActiveLearningMOO:
             ckpt_path = getattr(self, "checkpoint_path", None)
             if ckpt_path:
                 try:
+                    t_ck0 = time.perf_counter()
                     self.save_checkpoint(
                         ckpt_path, meta=getattr(self, "checkpoint_meta", None))
+                    self.phase_log[-1]["t_ckpt_s"] = time.perf_counter() - t_ck0
                     if verbose:
                         print(f"           checkpoint written -> {ckpt_path}")
                 except Exception as exc:            # never kill a live campaign
@@ -765,6 +794,7 @@ class ActiveLearningMOO:
             "hv_ref": (self._hv_ref_frozen.tolist()
                        if self._hv_ref_frozen is not None else None),
             "n_real_evaluations": r["n_real_evaluations"],
+            "phase_log": list(self.phase_log),   # wall time per phase
         }
         if meta:
             out["meta"] = dict(meta)
@@ -806,6 +836,7 @@ class ActiveLearningMOO:
                 f"-- start a fresh run instead of resuming it.")
         self._seed_from_raw(ckpt["all_raw"])
         self.history = list(ckpt.get("hv_history", []))
+        self.phase_log = list(ckpt.get("phase_log", []))
         hv_ref = ckpt.get("hv_ref")
         self._hv_ref_frozen = (np.array(hv_ref, dtype=float)
                                if hv_ref is not None else None)

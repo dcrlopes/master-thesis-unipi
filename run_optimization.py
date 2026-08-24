@@ -76,6 +76,8 @@ Outputs (in --out, default current dir):
 from __future__ import annotations
 
 import argparse
+import platform
+from datetime import datetime, timezone
 import json
 import os
 import warnings
@@ -95,6 +97,14 @@ from pathlib import Path
 # design['refl_thick']. Never mix routes within one resumed session.
 # ---------------------------------------------------------------------------
 K_TARGET = 1.0556
+
+
+def _openmc_version() -> str:
+    try:
+        import openmc
+        return str(openmc.__version__)
+    except Exception:
+        return "unknown"
 
 
 def main():
@@ -344,7 +354,14 @@ def main():
                                "peaking = core BOL F_dh (Campaign 5)",
                            "schedule": dict(schedule),
                            "geometry": "v2-envelope",
-                           "omp_threads": n_threads}
+                           "omp_threads": n_threads,
+                           # provenance for the cost tables
+                           "host": platform.node(),
+                           "cpu_count": os.cpu_count(),
+                           "openmc_version": _openmc_version(),
+                           "workdir": getattr(args, "workdir", "openmc_runs"),
+                           "started_utc": datetime.now(timezone.utc)
+                               .isoformat(timespec="seconds")}
 
     res = opt.run(verbose=True)
 

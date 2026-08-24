@@ -54,7 +54,9 @@ from __future__ import annotations
 import json
 import math
 import os
+import time
 from collections import Counter
+from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
@@ -219,10 +221,20 @@ class OpenMCEvaluator(Evaluator):
         case = self.workdir / f"case_{self.n_calls:04d}"
         case.mkdir(parents=True, exist_ok=True)
 
+        # wall-clock instrumentation: one timer per transport phase, so the
+        # cost tables of the thesis come from the archive, not from a
+        # statepoint reconstruction.
+        t_wall0 = time.time()
+        t0 = time.perf_counter()
         peaking = self._bol_peaking(design, case)      # assembly (diagnostic)
+        t_asm = time.perf_counter() - t0
+        t0 = time.perf_counter()
         core = self._bol_core_peaking(design, case)   # CAMPAIGN 4 objective
+        t_core = time.perf_counter() - t0
+        t0 = time.perf_counter()
         (cycle_efpd, k_bol, k_target_used,
          censored, bu_eoc, n_solves) = self._cycle_length(design, case)
+        t_dep = time.perf_counter() - t0
 
         e_in = design["enrich_inner"]
         e_out = design["enrich_outer"]
@@ -245,6 +257,13 @@ class OpenMCEvaluator(Evaluator):
             "censored": bool(censored),   # True -> EFPD is a LOWER BOUND (cap)
             "bu_eoc_mwd_kg": bu_eoc,                    # EOC burnup [MWd/kgHM]
             "n_dep_solves": n_solves,     # transport solves spent on depletion
+            # wall-clock cost of this evaluation [s] and its phases
+            "t_eval_s":     t_asm + t_core + t_dep,
+            "t_asm_bol_s":  t_asm,
+            "t_core_bol_s": t_core,
+            "t_deplete_s":  t_dep,
+            "t_start_utc":  datetime.fromtimestamp(
+                t_wall0, timezone.utc).isoformat(timespec="seconds"),
         }
         if self.verbose:
             print(f"  [case {self.n_calls:04d}] "
@@ -253,7 +272,8 @@ class OpenMCEvaluator(Evaluator):
                   f"k_target={k_target_used:.4f} "
                   f"-> EFPD={cycle_efpd:7.0f}{'(CEN)' if censored else '     '} "
                   f"F_dh={peaking:.3f} k_bol={k_bol:.4f} "
-                  f"[{n_solves} solves]")
+                  f"[{n_solves} solves, "
+                  f"{(t_asm + t_core + t_dep) / 60.0:.1f} min]")
         return res
 
     # ------------------------------------------------------------------ #

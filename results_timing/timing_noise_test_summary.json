@@ -1,0 +1,23 @@
+{
+  "campaign": "noise_test",
+  "workdir": "/home/diogo/master-thesis-unipi/noise_test",
+  "host_reported": "UNKNOWN (pass --host)",
+  "omp_threads": "UNKNOWN",
+  "n_statepoints": 15,
+  "by_fidelity": {
+    "4000x60(i20)": {
+      "n": 15,
+      "sim_s": 24.264065813000006,
+      "init_s": 95.91157163599999,
+      "transport_s": 23.429883784
+    }
+  },
+  "total_in_solve_s": 120.17563744899999,
+  "total_active_wall_s": 165.645504,
+  "calendar_span_s": 165.645504,
+  "idle_s": 0,
+  "n_idle_gaps": 0,
+  "first_start": "2026-08-04 23:35:11.354496",
+  "last_end": "2026-08-04 23:37:57",
+  "statepoints_without_runtime": 0
+}

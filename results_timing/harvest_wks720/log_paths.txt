@@ -1,0 +1,9 @@
+/home/diogo/bootstrap.log
+/home/diogo/master-thesis-unipi/core_check2.log
+/home/diogo/master-thesis-unipi/core_check.log
+/home/diogo/master-thesis-unipi/core_rescore.log
+/home/diogo/master-thesis-unipi/gd_pin_test.log
+/home/diogo/master-thesis-unipi/rank_c3.log
+/home/diogo/master-thesis-unipi/rank.log
+/home/diogo/master-thesis-unipi/run_c5.log
+/home/diogo/.xorgxrdp.10.log

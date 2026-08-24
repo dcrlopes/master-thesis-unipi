@@ -48,6 +48,11 @@ Flags
     --threads          OpenMP thread count, if you know it and no checkpoint is given
     --host             hostname of the machine that RAN the campaign (the script
                        cannot know it, statepoints do not store it)
+    --skip-cases       comma-separated case indices to drop entirely (files
+                       overwritten by a later job). Reported in the summary
+    --after / --before restrict to statepoints written inside a time window,
+                       'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM'. Use when a directory
+                       holds more than one job
     --session-gap-min  gaps longer than this (minutes) count as idle time, default 30
     --mode             'campaign' (default, needs case_NNNN) or 'tree' (sum every
                        statepoint under --workdir, for rescoring / confirmation runs)
@@ -141,7 +146,20 @@ def _sp_files(d: Path, pattern: str) -> list[Path]:
 PHASES = ("asm_bol", "core_bol", "dep_transport")
 
 
-def analyse_case(case: Path, gap_thr_s: float = 1800.0) -> dict:
+def _parse_when(text):
+    """Accept 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM[:SS]'."""
+    if not text:
+        return None
+    for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M", "%Y-%m-%d"):
+        try:
+            return datetime.strptime(text, fmt)
+        except ValueError:
+            continue
+    raise SystemExit(f"cannot parse date/time {text!r}")
+
+
+def analyse_case(case: Path, gap_thr_s: float = 1800.0,
+                 after=None, before=None) -> dict:
     """Phase breakdown of one case directory.
 
     A case directory can hold files from TWO runs: an evaluation that was lost
@@ -175,6 +193,10 @@ def analyse_case(case: Path, gap_thr_s: float = 1800.0) -> dict:
         for p in _sp_files(d, "openmc_simulation_n*.h5"):
             sps.append(("dep_transport", read_statepoint(p)))
 
+    if after is not None:
+        sps = [(ph, r) for ph, r in sps if r["end"] >= after]
+    if before is not None:
+        sps = [(ph, r) for ph, r in sps if r["end"] <= before]
     if not sps:
         return out
 
@@ -261,7 +283,17 @@ def run_campaign(args) -> None:
     ck = load_checkpoint(args.checkpoint)
 
     gap_thr = args.session_gap_min * 60.0
-    rows = [analyse_case(c, gap_thr) for c in cases]
+    after, before = _parse_when(args.after), _parse_when(args.before)
+    skip = set()
+    if args.skip_cases:
+        skip = {int(x) for x in args.skip_cases.replace(" ", "").split(",") if x}
+    rows = [analyse_case(c, gap_thr, after, before) for c in cases]
+    n_before_skip = len(rows)
+    if skip:
+        rows = [r for r in rows if r["idx"] not in skip]
+        print(f"dropped {n_before_skip - len(rows)} case(s) by --skip-cases "
+              f"{sorted(skip)}: their files were overwritten by a later job, so "
+              f"their wall time is not measurable.")
     rows = [r for r in rows if r["t_start"] is not None]
     if not rows:
         sys.exit("no statepoints found in any case directory")
@@ -275,13 +307,21 @@ def run_campaign(args) -> None:
             r["iteration"] = (r["idx"] - args.n_init) // args.n_infill + 1
 
     # ---- gaps between consecutive evaluations --------------------------------
-    for prev, cur in zip(rows, rows[1:]):
+    # Gaps are computed in TIME order, never in case-index order. A campaign
+    # normally runs its cases in index order, but a directory can be revisited
+    # later (a core-proxy validation, a rescoring, a re-run after a crash), and
+    # then index order and time order disagree. Using index order there would
+    # subtract a later timestamp from an earlier one and yield negative time.
+    chrono = sorted(rows, key=lambda r: r["t_start"])
+    out_of_order = [r["case"] for a, r in zip(rows, rows[1:])
+                    if r["t_start"] < a["t_last_end"]]
+    for prev, cur in zip(chrono, chrono[1:]):
         g = (cur["t_start"] - prev["t_last_end"]).total_seconds()
         cur["gap_before_s"] = g
         boundary = cur["iteration"] != prev["iteration"]
         cur["gap_kind"] = ("session_break" if g > gap_thr else
                            "optimiser" if boundary else "intra")
-    rows[0]["gap_before_s"], rows[0]["gap_kind"] = 0.0, "start"
+    chrono[0]["gap_before_s"], chrono[0]["gap_kind"] = 0.0, "start"
 
     # ---- aggregates -----------------------------------------------------------
     def mean(xs):
@@ -296,7 +336,9 @@ def run_campaign(args) -> None:
 
     eval_wall = sum(r["wall_s"] for r in rows)
     active = eval_wall + sum(opt_gaps) + sum(intra_gaps)
-    calendar = (rows[-1]["t_last_end"] - rows[0]["t_start"]).total_seconds()
+    t_first = min(r["t_start"] for r in rows)
+    t_last = max(r["t_last_end"] for r in rows)
+    calendar = (t_last - t_first).total_seconds()
 
     summary = dict(
         campaign=args.campaign,
@@ -311,7 +353,7 @@ def run_campaign(args) -> None:
                              inactive=rows[0]["inactive_core"])
                         if rows[0]["particles_core"] else None),
         run_path_in_statepoints=rows[0]["path_attr"],
-        n_cases_on_disk=len(rows),
+        n_cases_measured=len(rows),
         n_real_in_checkpoint=ck.get("n_real"),
         n_doe=len(doe), n_infill=len(inf),
         n_iterations=len({r["iteration"] for r in inf}),
@@ -319,8 +361,11 @@ def run_campaign(args) -> None:
         n_dep_solves_total=int(sum(r["n_dep_solves"] for r in rows)),
         mean_dep_solves_per_eval=mean(r["n_dep_solves"] for r in rows),
         statepoints_without_runtime=int(sum(r["runtime_missing"] for r in rows)),
-        first_start=rows[0]["t_start"].isoformat(sep=" "),
-        last_end=rows[-1]["t_last_end"].isoformat(sep=" "),
+        first_start=t_first.isoformat(sep=" "),
+        last_end=t_last.isoformat(sep=" "),
+        out_of_order_cases=list(out_of_order),
+        skipped_cases=sorted(skip),
+        n_cases_on_disk=int(n_before_skip),
         # --- per evaluation ---
         mean_eval_wall_s=mean(r["wall_s"] for r in rows),
         sd_eval_wall_s=float(np.std([r["wall_s"] for r in rows], ddof=1)) if len(rows) > 1 else 0.0,
@@ -330,7 +375,9 @@ def run_campaign(args) -> None:
         mean_eval_wall_infill_s=mean(r["wall_s"] for r in inf),
         # --- per phase inside an evaluation (means over evaluations) ---
         mean_asm_bol_s=mean(r["asm_bol_s"] for r in rows),
-        mean_core_bol_s=mean(r["core_bol_s"] for r in rows),
+        mean_core_bol_s=mean(r["core_bol_s"] for r in rows
+                             if r["core_bol_s"] > 0),
+        n_cases_with_core=int(sum(1 for r in rows if r["core_bol_s"] > 0)),
         mean_dep_transport_s=mean(r["dep_transport_s"] for r in rows),
         mean_overhead_s=mean(r["overhead_s"] for r in rows),
         mean_solve_s_per_dep_solve=(sum(r["dep_transport_s"] for r in rows)
@@ -387,6 +434,15 @@ def run_campaign(args) -> None:
         print(f"\nWARNING: {summary['statepoints_without_runtime']} statepoints "
               f"have no /runtime/ data. Their solve time counts as zero and "
               f"shows up in 'overhead' instead.")
+    if summary["out_of_order_cases"]:
+        n = len(summary["out_of_order_cases"])
+        print(f"\nWARNING: {n} case(s) start BEFORE the previous case index "
+              f"finished, so this directory is not a single chronological run. "
+              f"Files from a later job (core validation, rescoring, a re-run) "
+              f"were written into it. Gaps and the active wall time were "
+              f"computed in time order, but the per-phase means still mix both "
+              f"jobs. Restrict the window with --after / --before to separate "
+              f"them. First few: {summary['out_of_order_cases'][:5]}")
     if summary["n_mixed_cases"]:
         print(f"\nNOTE: {summary['n_mixed_cases']} case directories hold leftovers "
               f"of an earlier, discarded run ({summary['stale_solves']} stale solves, "
@@ -402,7 +458,11 @@ def print_summary(s: dict) -> None:
     print(f"\n=== {s['campaign']} ===")
     print(f"host (as reported by you): {s['host_reported']}   threads: {s['omp_threads']}")
     print(f"assembly transport: {s['transport_assembly']}   core: {s['transport_core']}")
-    print(f"evaluations on disk: {s['n_cases_on_disk']} "
+    if s.get("skipped_cases"):
+        print(f"cases on disk: {s['n_cases_on_disk']}, "
+              f"dropped {len(s['skipped_cases'])} as unmeasurable "
+              f"{s['skipped_cases']}")
+    print(f"evaluations measured: {s['n_cases_measured']} "
           f"(DOE {s['n_doe']}, infill {s['n_infill']} in {s['n_iterations']} iterations)")
     print(f"transport solves: {s['n_solves_total']} "
           f"({s['mean_dep_solves_per_eval']:.1f} depletion solves per evaluation)")
@@ -410,7 +470,12 @@ def print_summary(s: dict) -> None:
           f"(sd {fmt_min(s['sd_eval_wall_s'])}, "
           f"min {fmt_min(s['min_eval_wall_s'])}, max {fmt_min(s['max_eval_wall_s'])})")
     print(f"   assembly BOL solve     : {s['mean_asm_bol_s']:.0f} s")
-    print(f"   core BOL solve         : {s['mean_core_bol_s']:.0f} s")
+    ncore = s.get("n_cases_with_core", 0)
+    if ncore:
+        print(f"   core BOL solve         : {s['mean_core_bol_s']:.0f} s "
+              f"(over the {ncore} case(s) that have one)")
+    else:
+        print("   core BOL solve         : none in this tree")
     print(f"   depletion transport    : {fmt_min(s['mean_dep_transport_s'])} min "
           f"({s['mean_solve_s_per_dep_solve']:.0f} s per solve)")
     print(f"   non-transport overhead : {fmt_min(s['mean_overhead_s'])} min")
@@ -454,7 +519,7 @@ def write_campaign_tex(s: dict, path: str) -> None:
     \\midrule
     Host & {s['host_reported']} & {s['omp_threads']} OpenMP threads \\\\
     Assembly fidelity & ${ta.get('particles', '?')}\\times{ta.get('batches', '?')}$ & particles $\\times$ batches \\\\
-    Evaluations & {s['n_cases_on_disk']} & {s['n_doe']} DOE + {s['n_infill']} infill ({s['n_iterations']} iterations) \\\\
+    Evaluations measured & {s['n_cases_measured']} of {s['n_cases_on_disk']} & {s['n_doe']} DOE + {s['n_infill']} infill ({s['n_iterations']} iterations) \\\\
     Transport solves & {s['n_solves_total']} & {s['mean_dep_solves_per_eval']:.1f} depletion solves per evaluation \\\\
     \\midrule
     Mean evaluation & {fmt_min(s['mean_eval_wall_s'])}\\,min & s.d.\\ {fmt_min(s['sd_eval_wall_s'])}\\,min \\\\
@@ -547,6 +612,20 @@ def main() -> None:
     ap.add_argument("--checkpoint", default=None)
     ap.add_argument("--threads", type=int, default=None)
     ap.add_argument("--host", default=None)
+    ap.add_argument("--skip-cases", default=None,
+                    help="comma-separated case INDICES to drop entirely, e.g. "
+                         "'0,1'. Use for cases whose files a later job "
+                         "overwrote, so the campaign mean is taken over the "
+                         "cases that survived instead of over corrupted ones. "
+                         "The count of dropped cases is reported.")
+    ap.add_argument("--after", default=None,
+                    help="ignore statepoints written BEFORE this instant, "
+                         "'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM'. Excludes an "
+                         "earlier job sharing the directory.")
+    ap.add_argument("--before", default=None,
+                    help="ignore statepoints written AFTER this instant, same "
+                         "format. Excludes a later job, e.g. a core-proxy "
+                         "validation written into an old campaign tree.")
     ap.add_argument("--session-gap-min", type=float, default=30.0)
     ap.add_argument("--mode", choices=("campaign", "tree"), default="campaign")
     ap.add_argument("--out", default="timing")

@@ -488,6 +488,7 @@ def make_assembly_model(design: dict, op: Operating = Operating(),
 def make_core_model(design: dict, op: Operating = Operating(),
                     geo: Geometry17x17 = Geometry17x17(),
                     core_map=None, refl_thick=None, r_fuel=None,
+                    design_map=None,
                     enforce_vessel=True,
                     particles=40000, batches=200, inactive=50):
     """A small 2D multi-assembly core with a HEAVY (steel) reflector and vacuum BC.
@@ -531,6 +532,26 @@ def make_core_model(design: dict, op: Operating = Operating(),
     assembly_pitch = geo.lattice * pitch
     mats = build_materials(design, op)
     asm_u, fuel_cells, _ = build_assembly_universe(design, mats, geo, pitch)
+
+    # ZONED LOADING (apply_zoned_core.py): optional per-position design
+    # overrides, {(row, col): design_dict}. Each distinct override builds its
+    # own materials and assembly universe through the SAME builders as the
+    # base assembly, so pin layout, gadolinia pattern and the gadolinia-rod
+    # enrichment derate stay single-sourced. Variants are cached on their
+    # numeric content, and the lattice pitch is ALWAYS the base design's
+    # pitch (zoning must never change geometry).
+    variant_mats = []
+    _variant_cache = {}
+
+    def _variant_u(d):
+        key = tuple(sorted((k, round(float(v), 9)) for k, v in d.items()
+                           if isinstance(v, (int, float))))
+        if key not in _variant_cache:
+            mv = build_materials(d, op)
+            uv, _fc, _ = build_assembly_universe(d, mv, geo, pitch)
+            variant_mats.extend(mv.values())
+            _variant_cache[key] = uv
+        return _variant_cache[key]
     # Reflector is now the homogenised steel reflector, not borated water -- this
     # is what LABGENE actually has, and it changes the measured assembly->core
     # leakage (so re-run sweep_ktarget.py after this edit).
@@ -545,7 +566,12 @@ def make_core_model(design: dict, op: Operating = Operating(),
     universes = np.empty(core_map.shape, dtype=openmc.Universe)
     for i in range(ny):
         for j in range(nx):
-            universes[i, j] = asm_u if core_map[i, j] == 1 else refl_u
+            if core_map[i, j] != 1:
+                universes[i, j] = refl_u
+            elif design_map is not None and (i, j) in design_map:
+                universes[i, j] = _variant_u(design_map[(i, j)])
+            else:
+                universes[i, j] = asm_u
 
     lat = openmc.RectLattice(name="core")
     lat.lower_left = (-nx * assembly_pitch / 2.0, -ny * assembly_pitch / 2.0)
@@ -589,7 +615,8 @@ def make_core_model(design: dict, op: Operating = Operating(),
     fuel_cell = openmc.Cell(fill=lat, region=-r_fuel_cyl)             # fuel + gaps
     refl_cell = openmc.Cell(fill=refl_mat, region=+r_fuel_cyl & -r_refl_cyl)
     geom = openmc.Geometry([fuel_cell, refl_cell])
-    materials = openmc.Materials([m for m in mats.values()] + [refl_mat])
+    materials = openmc.Materials([m for m in mats.values()]
+                                 + variant_mats + [refl_mat])
 
     # seed the initial fission source inside the fuel cylinder
     bb = ((-r_fuel, -r_fuel, -1e9), (r_fuel, r_fuel, 1e9))

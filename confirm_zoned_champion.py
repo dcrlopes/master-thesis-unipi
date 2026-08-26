@@ -12,8 +12,12 @@ METHOD (and its stated assumptions)
    interpolation, same adaptive burnup schedule, same transport settings
    (taken from the checkpoint meta unless overridden). Cost: about three
    times one campaign depletion, read the expectation printed at start.
-2. One zoned core Beginning of Life (BOL) solve gives the fission-power
-   share s_z of each ring (reused from a previous stage if cached).
+2. Several independent zoned core Beginning of Life (BOL) solves (default
+   eight seeds, about two minutes each) give the fission-power share s_z of
+   each ring, seed-averaged, plus a mean, standard deviation and 95 percent
+   Student confidence interval on the zoned peaking and the zoned core
+   k-effective, with a PASS, INCONCLUSIVE or FAIL verdict against the
+   peaking limit in the same convention as the idx 54 confirmation.
 3. The zoned core reactivity trajectory is estimated as the power-weighted
    mix of the ring k-infinity histories, each ring burning at its relative
    specific power p_z = s_z / (n_z / 32):
@@ -54,8 +58,12 @@ Flags
                     depletion transport override (default: checkpoint meta)
   --core-particles/--core-batches/--core-inactive
                     zoned core BOL solve settings (defaults 100000/170/60)
+  --core-seeds      independent seeds for the zoned core solve (default 8,
+                    about 2 minutes each). Gives the interval and verdict
+                    on the zoned peaking, and seed-averaged ring shares
   --shares-json     optional path to a cached core_bol_solve result dict to
-                    skip the BOL solve (e.g. from zoned_refine runs.json)
+                    skip the BOL solve (e.g. from zoned_refine runs.json),
+                    single solve, no interval
   --threads         OMP_NUM_THREADS
   --out             working directory (default zoned_confirm)
 
@@ -86,6 +94,7 @@ ap.add_argument("--inactive", type=int, default=None)
 ap.add_argument("--core-particles", type=int, default=100000)
 ap.add_argument("--core-batches", type=int, default=170)
 ap.add_argument("--core-inactive", type=int, default=60)
+ap.add_argument("--core-seeds", type=int, default=8)
 ap.add_argument("--shares-json", default=None)
 ap.add_argument("--threads", type=int, default=None)
 ap.add_argument("--out", default="zoned_confirm")
@@ -182,14 +191,43 @@ hist = {name: zn.read_k_history(outdir / f"ring_{name}", q_spec)
 # --------------------------------------------------------------------------- #
 if args.shares_json:
     core = json.loads(Path(args.shares_json).read_text())
-    print(f"shares from {args.shares_json}")
+    fdh_list, k_list = [core["fdh_core"]], [core["keff"]]
+    print(f"shares from {args.shares_json} (single solve, no interval)")
 else:
     dmap = zn.design_map_for(rmap, zdes)
-    core = zn.core_bol_solve(design, dmap, rm.Operating(), rm.Geometry17x17(),
-                             particles=args.core_particles,
-                             batches=args.core_batches,
-                             inactive=args.core_inactive, seed=1,
-                             case=outdir / "core_bol_zoned")
+    seed_p = outdir / "core_zoned_seeds.json"
+    seeds = json.loads(seed_p.read_text()) if seed_p.exists() else {}
+    for nn in range(1, args.core_seeds + 1):
+        key = f"s{nn}"
+        if key not in seeds:
+            seeds[key] = zn.core_bol_solve(
+                design, dmap, rm.Operating(), rm.Geometry17x17(),
+                particles=args.core_particles, batches=args.core_batches,
+                inactive=args.core_inactive, seed=nn,
+                case=outdir / "core_bol_zoned" / f"seed{nn}")
+            seed_p.write_text(json.dumps(seeds, indent=1))
+        rr = seeds[key]
+        print(f"  core seed {nn}: F={rr['fdh_core']:.4f} "
+              f"k={rr['keff']:.5f} ({rr['wall_s']:.0f}s)", flush=True)
+    ns = args.core_seeds
+    fdh_list = [seeds[f"s{n}"]["fdh_core"] for n in range(1, ns + 1)]
+    k_list = [seeds[f"s{n}"]["keff"] for n in range(1, ns + 1)]
+    sh_mean = [sum(seeds[f"s{n}"]["ring_shares"][z]
+                   for n in range(1, ns + 1)) / ns for z in range(3)]
+    core = dict(fdh_core=sum(fdh_list) / ns, keff=sum(k_list) / ns,
+                ring_shares=sh_mean)
+
+fm, fsd, fsem, fhalf = zn.t_ci(fdh_list)
+km_c, ksd_c, _, khalf_c = zn.t_ci(k_list)
+verdict = "single solve, no verdict"
+if len(fdh_list) > 1:
+    verdict = ("PASS" if fm + fhalf <= 2.0 else
+               "INCONCLUSIVE (CI straddles the limit)"
+               if fm - fhalf <= 2.0 else "FAIL")
+    print(f"\nzoned core F: mean {fm:.4f} sd {fsd:.4f} "
+          f"95% CI [{fm - fhalf:.4f}, {fm + fhalf:.4f}]  "
+          f"->  g_peak (2.0): {verdict}")
+    print(f"zoned core k: mean {km_c:.5f} sd {ksd_c:.5f}")
 s = core["ring_shares"]
 n_tot = sum(counts)
 p = [s[z] / (counts[z] / n_tot) for z in range(3)]
@@ -236,6 +274,8 @@ out = dict(idx=args.idx, design=design,
            ring=ring, shares=dict(zip(zn.RING_NAMES, s)),
            rel_power=dict(zip(zn.RING_NAMES, p)),
            F_zoned_bol=core["fdh_core"], k_zoned_bol=core["keff"],
+           F_zoned_sd=fsd, F_zoned_ci95_half=fhalf,
+           n_core_seeds=len(fdh_list), verdict_peak=verdict,
            k_target=k_target, B_eoc_mwd_kg=B_eoc,
            efpd_zoned=efpd_zoned, efpd_uniform=efpd_uniform,
            dEFPD=efpd_zoned - efpd_uniform, censored=censored, note=note,

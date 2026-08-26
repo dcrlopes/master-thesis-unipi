@@ -332,6 +332,22 @@ def pearson(a, b) -> float:
     return num / den if den else float("nan")
 
 
+def t_ci(xs):
+    """Mean, sample standard deviation, standard error, and the half-width
+    of the two-sided 95 percent Student confidence interval. Falls back to
+    the normal critical value 1.96 beyond the tabulated sample sizes."""
+    n = len(xs)
+    m = sum(xs) / n
+    if n < 2:
+        return m, float("nan"), float("nan"), float("nan")
+    sd = math.sqrt(sum((x - m) ** 2 for x in xs) / (n - 1))
+    sem = sd / math.sqrt(n)
+    tcrit = {2: 12.706, 3: 4.303, 4: 3.182, 5: 2.776, 6: 2.571, 7: 2.447,
+             8: 2.365, 9: 2.306, 10: 2.262, 12: 2.201, 16: 2.131,
+             20: 2.093, 24: 2.069, 32: 2.040}.get(n, 1.96)
+    return m, sd, sem, tcrit * sem
+
+
 def set_threads(n):
     if n:
         os.environ["OMP_NUM_THREADS"] = str(int(n))

@@ -26,27 +26,32 @@ under one hour per champion. Fully resumable (runs.json cache).
 
 USAGE (after rescore_zoned_core.py has identified the champions)
 ----------------------------------------------------------------
-  python refine_zoning.py --checkpoint openmc_runs_c5/out/optimization_checkpoint.json --list
+  python refine_zoning.py --checkpoint out_c5/optimization_checkpoint.json --list
 
   setsid nohup python -u refine_zoning.py \\
-      --checkpoint openmc_runs_c5/out/optimization_checkpoint.json \\
-      --idx 44 --case-dir openmc_runs_c5/case_0044 \\
+      --checkpoint out_c5/optimization_checkpoint.json \\
+      --idx 7 --idx 35 --idx 58 --idx 54 --case-root out_c5 \\
       --threads 64 --out zoned_refine > zoned_refine.log 2>&1 < /dev/null &
 
 Flags
   --checkpoint            Block 2 checkpoint json
   --list                  print the archive (idx, objectives, constraints)
                           and exit, to pick champions
-  --idx                   archive index to refine (repeatable)
+  --idx                   archive index to refine (repeatable, processed
+                          sequentially)
   --grid-mc               comma list of centre multipliers
                           (default 1.00,0.95,0.90,0.85,0.80)
   --grid-mp               comma list of periphery multipliers
                           (default 1.000,1.025,1.050,1.075,1.100)
-  --case-dir              the champion's campaign case directory
-                          (openmc_runs_c5/case_NNNN) for automatic slope
-                          extraction from its depletion history
+  --case-root             the campaign workdir (e.g. out_c5). The per
+                          champion case directory is derived as
+                          case_root/case_NNNN, so each --idx gets the
+                          reactivity slope from its OWN depletion history
+  --case-dir              one explicit case directory (single --idx use,
+                          overrides --case-root)
   --slope-pcm-per-mwdkg   manual late-cycle reactivity slope, used when no
-                          --case-dir is given (magnitude, pcm per MWd/kgHM)
+                          case directory is available (magnitude, pcm per
+                          MWd/kgHM)
   --leu-cap               enrichment screen for flagging (default 19.75)
   --particles/--batches/--inactive   core solve settings
                           (defaults 100000 / 170 / 60, campaign values)
@@ -70,6 +75,7 @@ ap.add_argument("--list", action="store_true")
 ap.add_argument("--idx", type=int, action="append", default=[])
 ap.add_argument("--grid-mc", default="1.00,0.95,0.90,0.85,0.80")
 ap.add_argument("--grid-mp", default="1.000,1.025,1.050,1.075,1.100")
+ap.add_argument("--case-root", default=None)
 ap.add_argument("--case-dir", default=None)
 ap.add_argument("--slope-pcm-per-mwdkg", type=float, default=None)
 ap.add_argument("--leu-cap", type=float, default=zn.LEU_CAP_SCREEN)
@@ -111,17 +117,25 @@ q_spec = rm.core_specific_power_w_per_g(op, geo)      # W per gram heavy metal
 grid_mc = [float(x) for x in args.grid_mc.split(",")]
 grid_mp = [float(x) for x in args.grid_mp.split(",")]
 
-# ---- reactivity slope for the cycle-length price ------------------------- #
-slope = args.slope_pcm_per_mwdkg
-if args.case_dir:
-    bu, k = zn.read_k_history(args.case_dir, q_spec)
-    slope = abs(zn.late_slope_pcm_per_mwdkg(bu, k))
-    print(f"slope from {args.case_dir}: {slope:.0f} pcm per MWd/kgHM "
-          f"(last 30% of the trajectory, {len(bu)} points to "
-          f"{bu[-1]:.1f} MWd/kg)")
-if slope is None:
-    print("NOTE: no --case-dir and no --slope-pcm-per-mwdkg, dEFPD_est "
-          "will be omitted.")
+# ---- reactivity slope for the cycle-length price, resolved per champion -- #
+def slope_for(idx):
+    cd = args.case_dir
+    if cd is None and args.case_root:
+        cd = str(Path(args.case_root) / f"case_{idx:04d}")
+    if cd:
+        try:
+            bu, k = zn.read_k_history(cd, q_spec)
+            s = abs(zn.late_slope_pcm_per_mwdkg(bu, k))
+            print(f"slope for idx {idx} from {cd}: {s:.0f} pcm per MWd/kgHM "
+                  f"({len(bu)} points to {bu[-1]:.1f} MWd/kg)")
+            return s
+        except Exception as e:
+            print(f"slope extraction failed for idx {idx} ({e}), falling "
+                  f"back to --slope-pcm-per-mwdkg")
+    if args.slope_pcm_per_mwdkg is None:
+        print(f"NOTE idx {idx}: no slope available, dEFPD_est will be "
+              f"omitted for this champion.")
+    return args.slope_pcm_per_mwdkg
 
 import matplotlib
 matplotlib.use("Agg")
@@ -130,6 +144,7 @@ import matplotlib.pyplot as plt
 for idx in args.idx:
     r = raw[idx]
     design = zn.design_of(r, dv)
+    slope = slope_for(idx)
     tagset = f"{args.particles}x{args.batches}i{args.inactive}"
     print("=" * 78)
     print(f"CHAMPION idx {idx}: "

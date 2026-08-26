@@ -64,3 +64,10 @@ nohup.out
 *.pre-c5.bak
 timing_harvest_*/
 timing_bundle_*.tar.gz
+
+# --- curated campaign archives (committed as the thesis record) ---
+#     Overrides the JSON, PNG and log rules above. The directory must be
+#     re-included before anything inside it can be.
+!campaigns/
+!campaigns/**
+campaigns/**/*:Zone.Identifier

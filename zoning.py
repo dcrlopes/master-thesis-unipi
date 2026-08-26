@@ -260,33 +260,51 @@ def ring_power_shares(pin_map: np.ndarray, rmap: np.ndarray,
 # k(burnup) history of an assembly depletion case                             #
 # --------------------------------------------------------------------------- #
 def read_k_history(case_dir, spec_power_w_per_g: float):
-    """(burnup [MWd/kgHM], k_inf) of an OpenMCEvaluator._cycle_length case.
+    """(burnup [MWd/kgHM], k_inf) merged across ALL depletion chunks.
 
-    The evaluator chains chunks with prev_results, and OpenMC 0.15.x then
-    stores the CUMULATIVE history in every later chunk, so the LAST chunk's
-    depletion_results.h5 holds the whole trajectory. A monotonic-time check
-    guards the assumption. Burnup follows the evaluator's own conversion
-    bu [MWd/kg] = t [d] * spec_power [W/g] / 1000."""
+    The evaluator chains chunks with prev_results. On this OpenMC version the
+    per-chunk results file zero-fills every entry the chunk did not compute,
+    in both the time axis and the k array, so reading the last chunk alone
+    gives a mostly-zero history. Real entries always have k > 0 and their
+    times are cumulative, so all chunks are read and the real entries merged,
+    deduplicated at the chunk boundaries where the restart state repeats.
+    Burnup follows the evaluator conversion bu = t * spec_power / 1000."""
     import openmc.deplete
     chunks = sorted(glob.glob(str(Path(case_dir) / "dep_*" /
                                   "depletion_results.h5")))
     if not chunks:
         raise FileNotFoundError(f"no dep_*/depletion_results.h5 under "
                                 f"{case_dir}")
-    res = openmc.deplete.Results(chunks[-1])
-    try:
-        t_d, karr = res.get_keff(time_units="d")
-    except TypeError:
-        t_s, karr = res.get_keff()
-        t_d = np.asarray(t_s) / 86400.0
-    t_d = np.asarray(t_d, dtype=float)
-    if np.any(np.diff(t_d) < -1e-9):
-        raise RuntimeError(
-            f"non-monotonic time axis in {chunks[-1]}: chunk files are "
-            f"chunk-local on this OpenMC version. Stitch manually or rerun "
-            f"with the cumulative semantics the evaluator assumes.")
-    k = np.asarray(karr, dtype=float)[:, 0]
-    bu = t_d * spec_power_w_per_g / 1000.0
+    pairs = []
+    for ch in chunks:
+        res = openmc.deplete.Results(ch)
+        try:
+            t_d, karr = res.get_keff(time_units="d")
+        except TypeError:
+            t_s, karr = res.get_keff()
+            t_d = np.asarray(t_s) / 86400.0
+        t_d = np.asarray(t_d, dtype=float)
+        kv = np.asarray(karr, dtype=float)[:, 0]
+        real = kv > 0.0
+        pairs.extend(zip(t_d[real], kv[real]))
+    if not pairs:
+        raise RuntimeError(f"no non-zero k entries in any chunk under "
+                           f"{case_dir}")
+    pairs.sort()
+    t_out, k_out = [], []
+    for t, kk in pairs:
+        if t_out and abs(t - t_out[-1]) < 1e-6:
+            continue
+        t_out.append(t)
+        k_out.append(kk)
+    t = np.asarray(t_out)
+    k = np.asarray(k_out)
+    if len(t) < 3:
+        raise RuntimeError(f"only {len(t)} real depletion points under "
+                           f"{case_dir}: cannot fit a slope")
+    if np.any(np.diff(t) <= 0):
+        raise RuntimeError(f"non-monotonic merged time axis under {case_dir}")
+    bu = t * spec_power_w_per_g / 1000.0
     return bu, k
 
 

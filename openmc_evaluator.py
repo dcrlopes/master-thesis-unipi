@@ -429,8 +429,24 @@ class OpenMCEvaluator(Evaluator):
             cdir.mkdir(parents=True, exist_ok=True)
             try:
                 os.chdir(cdir)
-                integrator.integrate()
+                # OpenMC 0.15.3 stopped writing reaction rates into the
+                # results file by default. A restart loaded from such a file
+                # reuses EMPTY rates for its first step, which then depletes
+                # by decay only (verified 27 Aug 2026, test_chunking.py).
+                # Force the rates into the file so prev_results is exact.
+                try:
+                    integrator.integrate(write_rates=True)
+                except TypeError:      # older OpenMC without the kwarg
+                    integrator.integrate()
                 results = openmc.deplete.Results("depletion_results.h5")
+                last_rates = getattr(results[-1], "rates", None)
+                import numpy as _np
+                if last_rates is None or getattr(last_rates, "size", 0) == 0 \
+                        or float(_np.abs(_np.asarray(last_rates)).sum()) == 0.0:
+                    raise RuntimeError(
+                        "depletion results carry no reaction rates: a "
+                        "restarted chunk would deplete its first step by "
+                        "decay only (the write_rates trap).")
             finally:
                 os.chdir(cwd)
             state["chunk"] += 1

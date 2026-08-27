@@ -86,7 +86,10 @@ def run(tag, chunks_of_steps):
         cwd = os.getcwd()
         try:
             os.chdir(cdir)
-            integ.integrate()
+            try:
+                integ.integrate(write_rates=True)
+            except TypeError:
+                integ.integrate()
             res = openmc.deplete.Results("depletion_results.h5")
         finally:
             os.chdir(cwd)

@@ -83,7 +83,17 @@ def _design_seed(design: dict, salt: str = "") -> int:
     """
     import json as _json
     import zlib as _zlib
-    key = _json.dumps({k: round(float(v), 10)
+    def _seed_value(v):
+        # Numeric values keep their previous representation exactly, so the
+        # seeds of every all-numeric campaign design are unchanged. Labels
+        # such as zoning's "zone" key are hashed as strings instead of
+        # raising, which also gives each ring variant its own stream.
+        try:
+            return round(float(v), 10)
+        except (TypeError, ValueError):
+            return str(v)
+
+    key = _json.dumps({k: _seed_value(v)
                        for k, v in sorted(design.items())}) + salt
     return 1 + _zlib.crc32(key.encode()) % 2_000_000_000
 from reactor_optimization import Evaluator, ProblemSpec

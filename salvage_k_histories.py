@@ -126,6 +126,10 @@ def main():
     ap.add_argument("--ktarget-table", default=None)
     ap.add_argument("--k-target", type=float, default=None)
     ap.add_argument("--q-spec", type=float, default=9.9827)
+    ap.add_argument("--cap-label", type=float, default=75.0,
+                    help="burnup ceiling in LABEL units, used to tell a run "
+                         "stopped at the cap from one that stopped because "
+                         "its peak never reached the target")
     ap.add_argument("--out", default="salvage")
     args = ap.parse_args()
 
@@ -179,7 +183,14 @@ def main():
             kt = args.k_target
 
         eoc = crossing(bu_t, kk, kt) if kt is not None else None
-        censored = eoc is None
+        at_cap = rows[-1][0] >= args.cap_label - 1e-6
+        if eoc is not None:
+            status = "crossed"
+        elif at_cap:
+            status = "censored_at_cap"
+        else:
+            status = "never_critical"
+        censored = status == "censored_at_cap"
         rec = dict(
             idx=idx,
             n_blocks=len(chunks),
@@ -194,16 +205,19 @@ def main():
             if rows[-1][1] > 0 else "",
             slope_true_pcm=round(abs(late_slope(bu_t, kk)), 1),
             k_target=round(kt, 5) if kt is not None else "",
+            status=status,
             censored=censored,
             eoc_true_bu=round(eoc, 3) if eoc is not None else "",
             eoc_true_efpd=round(eoc * 1000 / args.q_spec, 1)
             if eoc is not None else "",
         )
         rows_out.append(rec)
-        tail = (f"censored at true {rec['bu_true_final']}"
-                if censored else
-                f"EOC true {rec['eoc_true_bu']} MWd/kg = "
-                f"{rec['eoc_true_efpd']} EFPD")
+        tail = {"crossed": f"EOC true {rec['eoc_true_bu']} MWd/kg = "
+                           f"{rec['eoc_true_efpd']} EFPD",
+                "censored_at_cap": f"censored at true "
+                                   f"{rec['bu_true_final']}",
+                "never_critical": "never reached its target, no cycle",
+                }[status]
         print(f"case {idx:4d}: label {rec['bu_label_final']:6.1f} -> "
               f"true {rec['bu_true_final']:6.1f} MWd/kg  "
               f"(x{rec['overstatement']}), {tail}")

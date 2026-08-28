@@ -177,6 +177,33 @@ def main():
                          "(default 2). Larger = fewer operator restarts but "
                          "up to (chunk-steps - 1) wasted solves past the "
                          "crossing.")
+    # ---------------- constraint definition (Campaign 6) --------------- #
+    # Every default below reproduces the Campaign 5 behaviour, so adding
+    # these flags changes nothing until one is passed explicitly.
+    ap.add_argument("--k-basis", choices=["assembly", "core"],
+                    default="assembly",
+                    help="which eigenvalue the reactivity screen acts on. "
+                         "'assembly' uses k_inf of the single infinite-"
+                         "lattice assembly, the Campaign 5 behaviour. "
+                         "'core' uses k_eff of the 32-assembly core at "
+                         "Beginning of Life, which is the quantity the "
+                         "reactor actually has. The two differ by the "
+                         "leakage gap, measured at 4300 to 8060 pcm across "
+                         "the Campaign 5 archive, so the limit is NOT "
+                         "transferable between bases without thought. "
+                         "'core' requires an explicit --k-max.")
+    ap.add_argument("--k-max", type=float, default=None,
+                    help="upper reactivity bound applied to the eigenvalue "
+                         "selected by --k-basis. Left unset on the assembly "
+                         "basis the evaluator uses its historical 1.35.")
+    ap.add_argument("--k-min", type=float, default=1.02,
+                    help="lower reactivity bound, the criticality floor")
+    ap.add_argument("--f-max", type=float, default=2.0,
+                    help="upper bound on the core radial enthalpy-rise hot "
+                         "channel factor F_dH")
+    ap.add_argument("--enr-max", type=float, default=19.75,
+                    help="LEU (Low Enriched Uranium) enrichment cap in "
+                         "wt%% U-235")
     args = ap.parse_args()
 
     # ROUTE A (float) vs ROUTE B (per-design table) -- computed once, used by
@@ -202,6 +229,7 @@ def main():
     from openmc_evaluator import OpenMCEvaluator
 
     import leu_policy as _leu
+    import zoning as _zn     # ZONED-EVALUATOR: record the map in metadata
     spec = example_reactor_problem()
 
     if args.smoke:
@@ -251,6 +279,11 @@ def main():
                          core_particles=args.core_particles,
                          core_batches=args.core_batches,
                          core_inactive=args.core_inactive,
+                         k_basis=args.k_basis,
+                         k_max=args.k_max,
+                         k_min=args.k_min,
+                         f_max=args.f_max,
+                         enr_max=args.enr_max,
                          workdir=args.workdir, **schedule)
 
     # CONSTRAINT-NORM: the spec's default scales assume the default limits.
@@ -320,6 +353,36 @@ def main():
                           f"differs from current {schedule[key]}. Changing the "
                           f"depletion schedule mid-campaign changes censoring "
                           f"and EOC-interpolation behaviour across sessions.")
+        # Constraint-definition guard. Mixing constraint sets across a
+        # resumed session makes the accumulated archive describe two
+        # different optimization problems, exactly as mixing k_target or
+        # transport fidelity would. The stored g values are NOT recomputed
+        # on load, so a changed limit silently applies only to the NEW
+        # evaluations. Raising here rather than warning, because unlike a
+        # noise-level mismatch this one cannot be reasoned about after
+        # the fact from the archive alone.
+        prev_lim = prev_meta.get("limits")
+        cur_lim = {"k_basis": args.k_basis, "k_max": args.k_max,
+                   "k_min": args.k_min, "f_max": args.f_max,
+                   "enr_max": args.enr_max}
+        if prev_lim is not None:
+            diffs = [k for k, v in cur_lim.items()
+                     if k in prev_lim and prev_lim[k] != v]
+            if diffs:
+                detail = ", ".join(f"{k}: {prev_lim[k]!r} -> {v!r}"
+                                   for k, v in cur_lim.items()
+                                   if k in diffs)
+                raise SystemExit(
+                    "constraint definition differs from the checkpoint "
+                    f"({detail}). Every evaluation sharing a checkpoint "
+                    "must use the same constraint set. Start a fresh "
+                    "campaign instead of resuming this one.")
+        elif args.k_basis != "assembly" or args.k_max is not None:
+            print("!! WARNING: this checkpoint predates constraint-set "
+                  "recording and its limits cannot be verified. It was "
+                  "almost certainly written on the assembly basis at "
+                  "k_max = 1.35. Resuming it under different limits mixes "
+                  "two problems in one archive.")
         prev_geom = prev_meta.get("geometry")
         if prev_geom is not None and prev_geom != "v2-envelope":
             print("!! WARNING: checkpoint was written on a DIFFERENT geometry "
@@ -366,10 +429,25 @@ def main():
                                "peaking = core BOL F_dh (Campaign 5)",
                            "schedule": dict(schedule),
                            "geometry": "v2-envelope",
+                           # the five numbers that define the constrained
+                           # problem, so the archive can state its own
+                           # constraint set without reading the source
+                           "limits": {"k_basis": args.k_basis,
+                                      "k_max": args.k_max,
+                                      "k_min": args.k_min,
+                                      "f_max": args.f_max,
+                                      "enr_max": args.enr_max},
                            "enrichment_policy": {
                                "leu_cap_wtpc": _leu.LEU_CAP_WTPC,
                                "m_p_design": _leu.M_P_DESIGN,
                                "e_search_max_wtpc": _leu.E_SEARCH_MAX},
+                           "zoning_policy": {
+                               "evaluator_zoned": True,
+                               "m_c_design": _zn.M_C_DESIGN,
+                               "m_m_balanced": _zn.evaluator_multipliers()[2],
+                               "m_p_design": _leu.M_P_DESIGN,
+                               "ring_counts": list(
+                                   _zn.ring_counts(_zn.ring_map()))},
                            "omp_threads": n_threads,
                            # provenance for the cost tables
                            "host": platform.node(),

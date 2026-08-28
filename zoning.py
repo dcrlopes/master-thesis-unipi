@@ -155,6 +155,39 @@ def max_zoned_enrichment(base: dict, m_p: float) -> float:
 
 
 # --------------------------------------------------------------------------- #
+# ZONED-EVALUATOR: the FROZEN Campaign 6 loading map the optimizer builds     #
+# --------------------------------------------------------------------------- #
+# Chosen from the Campaign 5 zoned-loading study, whose optimum over all four
+# champions was m_C / m_M / m_P = 0.720 / 0.893 / 1.150. m_P is imported from
+# leu_policy so the search box (E_SEARCH_MAX = LEU_CAP_WTPC / M_P_DESIGN) and
+# the as-built periphery are sized by the SAME number. m_M is not stored: it
+# is re-derived from the fissile balance, so the core-average enrichment
+# multiplier is exactly 1 whatever m_C and m_P say.
+M_C_DESIGN = 0.720
+
+
+def evaluator_multipliers():
+    """(rmap, m_C, m_M, m_P) of the frozen map used by the truth evaluator."""
+    import leu_policy as _leu
+    rmap = ring_map()
+    m_c, m_m, m_p = balanced_multipliers(M_C_DESIGN, _leu.M_P_DESIGN,
+                                         ring_counts(rmap))
+    return rmap, m_c, m_m, m_p
+
+
+def evaluator_design_map(design: dict) -> dict:
+    """{(row, col): design} of the frozen zoned loading for one base design.
+
+    Consumed by reactor_model.make_core_model(design_map=...). Enrichments
+    of each ring are the base values scaled by that ring's multiplier; every
+    other design variable is copied unchanged (zone_designs), so the pin
+    layout, the gadolinia pattern and the zone-enrichment derate of the
+    gadolinia rods stay single-sourced in the builders."""
+    rmap, m_c, m_m, m_p = evaluator_multipliers()
+    return design_map_for(rmap, zone_designs(design, m_c, m_m, m_p))
+
+
+# --------------------------------------------------------------------------- #
 # Archive access (checkpoint written by ActiveLearningMOO.save_checkpoint)    #
 # --------------------------------------------------------------------------- #
 def load_archive(checkpoint_path):

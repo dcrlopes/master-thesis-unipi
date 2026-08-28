@@ -67,6 +67,7 @@ import openmc.deplete
 import core_geometry as cg
 import leu_policy as _leu
 import reactor_model as rm
+import zoning as zn          # ZONED-EVALUATOR: frozen Campaign 6 loading map
 
 
 def _design_seed(design: dict, salt: str = "") -> int:
@@ -362,7 +363,17 @@ class OpenMCEvaluator(Evaluator):
     # measures the true quantity instead of correcting a proxy.           #
     # ------------------------------------------------------------------ #
     def _bol_core_peaking(self, design: dict, case: Path) -> dict:
+        # ZONED-EVALUATOR: build the core the design basis assumes. The
+        # frozen map (m_C = zoning.M_C_DESIGN, balanced m_M, m_P from
+        # leu_policy) is applied on every core solve, so the peaking
+        # objective, g_peak, and, under k_basis="core", the reactivity
+        # window all describe the SAME as-built loading that sized the
+        # enrichment search box. The assembly depletion path is untouched:
+        # the balanced map keeps the core-average enrichment multiplier at
+        # exactly 1, so the base-assembly cycle-length proxy remains
+        # consistent.
         m = rm.make_core_model(design, self.op, self.geo,
+                               design_map=zn.evaluator_design_map(design),
                                particles=self.core_particles,
                                batches=self.core_batches,
                                inactive=self.core_inactive)

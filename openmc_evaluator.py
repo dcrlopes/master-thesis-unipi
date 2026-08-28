@@ -158,6 +158,11 @@ class OpenMCEvaluator(Evaluator):
                  core_particles: int = 100000,
                  core_batches: int = 170,
                  core_inactive: int = 60,
+                 k_basis: str = "assembly",
+                 k_max: float | None = None,
+                 k_min: float = 1.02,
+                 f_max: float = 2.0,
+                 enr_max: float = 19.75,
                  verbose: bool = True):
         super().__init__(spec)
 
@@ -204,6 +209,38 @@ class OpenMCEvaluator(Evaluator):
         self.core_batches = int(core_batches)
         self.core_inactive = int(core_inactive)
 
+        # --- reactivity basis and screening limits --------------------------
+        # g_kmin and g_kmax act on ONE of two quantities:
+        #   "assembly"  k_inf from the reflective-boundary depletion model
+        #   "core"      k_eff of the 2-D core at beginning of life
+        # Excess reactivity is a core budget, so "core" is the physically
+        # correct basis. "assembly" is the historical default and is the
+        # conservative of the two, because k_inf exceeds k_eff always.
+        # Both readings are recorded on every evaluation regardless, so an
+        # archive can be re-scored either way without rerunning transport.
+        if k_basis not in ("assembly", "core"):
+            raise ValueError(
+                f"k_basis must be 'assembly' or 'core', got {k_basis!r}")
+        self.k_basis = k_basis
+        if k_max is None:
+            if k_basis == "core":
+                raise ValueError(
+                    "k_basis='core' requires an explicit k_max. The assembly "
+                    "value of 1.35 must NOT be carried over: measured on "
+                    "c4_full.csv the assembly-to-core gap is 5012 to 7530 pcm "
+                    "(mean 6753 pcm), so reusing it would tighten the "
+                    "constraint by roughly that amount without saying so. "
+                    "Calibrate the core-level budget from the rod-worth study "
+                    "and pass it here.")
+            k_max = 1.35                      # historical assembly default
+        self.k_max = float(k_max)
+        self.k_min = float(k_min)
+        self.f_max = float(f_max)
+        self.enr_max = float(enr_max)
+        if self.k_min >= self.k_max:
+            raise ValueError(f"k_min ({self.k_min}) must be below k_max "
+                             f"({self.k_max})")
+
         self.verbose = verbose
 
         # Specific power depends on geometry (active height, pellet radius,
@@ -248,19 +285,33 @@ class OpenMCEvaluator(Evaluator):
 
         e_in = design["enrich_inner"]
         e_out = design["enrich_outer"]
+        # the quantity the reactivity screen acts on, see k_basis
+        k_core_bol = float(core["keff_core"])
+        k_ref = k_bol if self.k_basis == "assembly" else k_core_bol
         res = {
             "cycle_length": cycle_efpd,                 # objective (maximise)
             "peaking":      core["fdh_core"],           # objective (minimise): CORE F_dh
-            "g_kmin":  1.02 - k_bol,                    # need k_bol >= 1.02
-            "g_kmax":  k_bol - 1.35,                    # and  k_bol <= 1.35
-            "g_enr":   max(e_in, e_out) - 19.75,        # LEU cap
-            "g_peak":  core["fdh_core"] - 2.0,          # CORE peaking <= 2.0
+            # Reactivity screen. k_ref is the quantity selected by k_basis;
+            # both readings follow as diagnostics so the archive can be
+            # re-scored either way without rerunning transport.
+            "g_kmin":  self.k_min - k_ref,
+            "g_kmax":  k_ref - self.k_max,
+            "g_enr":   max(e_in, e_out) - self.enr_max,   # LEU cap
+            "g_peak":  core["fdh_core"] - self.f_max,     # CORE peaking
             "g_geom":  cg.geometry_margin(design["pitch"],
                                           design["refl_thick"]),
             "peaking_asm": peaking,
             "gd_pins_used": rm.snap_gd_pins(design.get("gd_pins", 12)),       # assembly F_dh: diagnostic and
                                           # training data for the bridge model
-            "keff_core_bol": core["keff_core"],   # free Route-B closure check
+            "keff_core_bol": k_core_bol,          # free Route-B closure check
+            # both readings of the reactivity screen, always recorded
+            "k_basis":      self.k_basis,
+            "k_max_used":   self.k_max,
+            "g_kmax_asm":   k_bol - self.k_max,
+            "g_kmax_core":  k_core_bol - self.k_max,
+            "g_kmin_asm":   self.k_min - k_bol,
+            "g_kmin_core":  self.k_min - k_core_bol,
+            "dk_asm_core_pcm": 1.0e5 * (k_bol - k_core_bol),
             "core_entropy_conv": core["entropy_conv"],  # flag if > inactive
             "k_bol":   k_bol,                           # carried for plots
             "k_target": k_target_used,                  # carried for analysis

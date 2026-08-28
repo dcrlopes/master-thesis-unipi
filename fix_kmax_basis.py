@@ -111,7 +111,7 @@ NEW_STORE = '''        self.core_particles = int(core_particles)
                     "k_basis='core' requires an explicit k_max. The assembly "
                     "value of 1.35 must NOT be carried over: measured on "
                     "c4_full.csv the assembly-to-core gap is 5012 to 7530 pcm "
-                    "(mean 6753 pcm), so reusing it would tighten the "
+                    "(mean 6753 pcm), so reusing it would RELAX the "
                     "constraint by roughly that amount without saying so. "
                     "Calibrate the core-level budget from the rod-worth study "
                     "and pass it here.")

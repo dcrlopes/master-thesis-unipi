@@ -862,6 +862,30 @@ class ActiveLearningMOO:
             _blocks = [_m["started_utc"]] if _m.get("started_utc") else []
         self._ckpt_block_starts = list(_blocks)
         # continue case numbering so OpenMC scratch dirs never collide
+        # Bounds guard. load_checkpoint matches variable NAMES but not
+        # BOUNDS, so a checkpoint written under a wider box loads without
+        # complaint. Those points stay in the archive on purpose: they
+        # are valid training data for the surrogate and represent real
+        # spent evaluations. What changes is that NSGA-II can no longer
+        # propose designs there, so the search domain and the training
+        # domain are no longer the same set. Report accordingly.
+        if len(self.X):
+            xl, xu = self.spec.design_space.xl, self.spec.design_space.xu
+            outside = np.any((self.X < xl - 1e-9) | (self.X > xu + 1e-9),
+                             axis=1)
+            if outside.any():
+                print(f"!! WARNING: {int(outside.sum())} of {len(self.X)} "
+                      f"loaded evaluations lie OUTSIDE the current design "
+                      f"box. They are kept as surrogate training data but "
+                      f"cannot be proposed again.")
+                for j, nm in enumerate(self.spec.design_space.names):
+                    col = self.X[:, j]
+                    n_j = int(np.sum((col < xl[j] - 1e-9) |
+                                     (col > xu[j] + 1e-9)))
+                    if n_j:
+                        print(f"     {nm}: {n_j} outside "
+                              f"[{xl[j]:.4g}, {xu[j]:.4g}], observed "
+                              f"range [{col.min():.4g}, {col.max():.4g}]")
         self.evaluator.n_calls = len(ckpt["all_raw"])
         return len(ckpt["all_raw"])
 
@@ -886,10 +910,16 @@ def example_reactor_problem() -> ProblemSpec:
     (exact_constraints), so the DOE and the acquisition never propose a
     design that cannot physically be built."""
     from core_geometry import geometry_margin
+    import leu_policy as _leu
 
     ds = DesignSpace([
-        DesignVariable("enrich_inner", 2.0, 19.75, "%"),
-        DesignVariable("enrich_outer", 2.0, 19.75, "%"),
+        # Upper bound is LEU_CAP_WTPC / M_P_DESIGN, so the highest
+        # enrichment anywhere in the ZONED core stays at or below the
+        # LEU (Low Enriched Uranium) cap by construction. At
+        # M_P_DESIGN = 1.0 this is exactly 19.75, the previous bound.
+        # See leu_policy.py.
+        DesignVariable("enrich_inner", 2.0, _leu.E_SEARCH_MAX, "%"),
+        DesignVariable("enrich_outer", 2.0, _leu.E_SEARCH_MAX, "%"),
         DesignVariable("gd_wt",        0.0,  8.0,  "wt% Gd2O3"),
         DesignVariable("pitch",        1.15, 1.43, "cm"),
         DesignVariable("refl_thick",   2.0,  19.5, "cm"),

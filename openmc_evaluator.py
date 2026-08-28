@@ -65,6 +65,7 @@ import openmc
 import openmc.deplete
 
 import core_geometry as cg
+import leu_policy as _leu
 import reactor_model as rm
 
 
@@ -296,7 +297,14 @@ class OpenMCEvaluator(Evaluator):
             # re-scored either way without rerunning transport.
             "g_kmin":  self.k_min - k_ref,
             "g_kmax":  k_ref - self.k_max,
-            "g_enr":   max(e_in, e_out) - self.enr_max,   # LEU cap
+            # LEU cap audited on the AS-BUILT zoned enrichment, not the
+            # design value: the peripheral ring carries
+            # max(e_in, e_out) * M_P_DESIGN. Satisfied by construction,
+            # because the search box is LEU_CAP_WTPC / M_P_DESIGN. At
+            # M_P_DESIGN = 1.0 this reduces to the previous expression.
+            "g_enr":   (_leu.max_zoned_enrichment_wtpc(e_in, e_out)
+                        - self.enr_max),
+            "e_max_zoned": _leu.max_zoned_enrichment_wtpc(e_in, e_out),
             "g_peak":  core["fdh_core"] - self.f_max,     # CORE peaking
             "g_geom":  cg.geometry_margin(design["pitch"],
                                           design["refl_thick"]),

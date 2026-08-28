@@ -201,6 +201,7 @@ def main():
                                       ActiveLearningMOO)
     from openmc_evaluator import OpenMCEvaluator
 
+    import leu_policy as _leu
     spec = example_reactor_problem()
 
     if args.smoke:
@@ -354,6 +355,10 @@ def main():
                                "peaking = core BOL F_dh (Campaign 5)",
                            "schedule": dict(schedule),
                            "geometry": "v2-envelope",
+                           "enrichment_policy": {
+                               "leu_cap_wtpc": _leu.LEU_CAP_WTPC,
+                               "m_p_design": _leu.M_P_DESIGN,
+                               "e_search_max_wtpc": _leu.E_SEARCH_MAX},
                            "omp_threads": n_threads,
                            # provenance for the cost tables
                            "host": platform.node(),

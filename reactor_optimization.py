@@ -172,6 +172,14 @@ class ProblemSpec:
     # here must also appear in constraint_names, and the truth evaluator must
     # still return it (so it lands in the archive/checkpoint like any other g).
     exact_constraints: dict = field(default_factory=dict)
+    # CONSTRAINT-NORM: positive per-constraint scales for the OPTIMIZER'S
+    # view of G. Physical g values (raw dicts, checkpoints, plots) stay in
+    # their native units; the division happens only where the optimizer
+    # assembles its G matrix. A missing name defaults to 1.0, so an empty
+    # dict reproduces the old behaviour bit for bit. Scales are positive,
+    # so the feasible set is IDENTICAL; only the ranking AMONG infeasible
+    # designs changes.
+    constraint_scales: dict = field(default_factory=dict)
 
     @property
     def n_obj(self):
@@ -184,6 +192,15 @@ class ProblemSpec:
     def exact_ok(self, design: dict) -> bool:
         """True iff the design satisfies every ANALYTIC constraint (g <= 0)."""
         return all(f(design) <= 0.0 for f in self.exact_constraints.values())
+
+    def g_scale(self, name: str) -> float:
+        """CONSTRAINT-NORM: positive scale dividing constraint `name` in the
+        optimizer's G matrix. Defaults to 1.0 (no normalization)."""
+        s = float(self.constraint_scales.get(name, 1.0))
+        if not s > 0.0:
+            raise ValueError(f"constraint scale for {name} must be > 0, "
+                             f"got {s}")
+        return s
 
 
 # =============================================================================
@@ -218,7 +235,10 @@ class Evaluator:
             for j, obj in enumerate(self.spec.objectives):
                 F[i, j] = obj.to_min(res[obj.name])
             for j, cname in enumerate(self.spec.constraint_names):
-                G[i, j] = res[cname]
+                # CONSTRAINT-NORM: pymoo sums raw g into CV, so heterogeneous
+                # units (delta-k, peaking, wt%, cm) would weight constraints
+                # by their units. Divide by each limit: G is dimensionless.
+                G[i, j] = res[cname] / self.spec.g_scale(cname)
             self.n_calls += 1
         return F, G, raw
 
@@ -495,7 +515,8 @@ class _SurrogateProblem(Problem):
         self.spec = spec
         self.obj_surrogate = obj_surrogate
         self.con_surrogate = con_surrogate
-        self._exact_cols = [(spec.constraint_names.index(name), fn)
+        self._exact_cols = [(spec.constraint_names.index(name), fn,
+                             spec.g_scale(name))          # CONSTRAINT-NORM
                             for name, fn in spec.exact_constraints.items()]
 
     def _evaluate(self, X, out, *a, **k):
@@ -504,8 +525,11 @@ class _SurrogateProblem(Problem):
         if self.con_surrogate is not None:
             g_mean, _ = self.con_surrogate.predict(X)
             g_mean = np.atleast_2d(g_mean)
-            for col, fn in self._exact_cols:
-                g_mean[:, col] = [fn(self.spec.design_space.as_dict(x))
+            for col, fn, scl in self._exact_cols:
+                # CONSTRAINT-NORM: the GP columns are trained on normalized G,
+                # so the exact overwrite must be divided by the SAME scale or
+                # the geometry column would re-enter in centimetres.
+                g_mean[:, col] = [fn(self.spec.design_space.as_dict(x)) / scl
                                   for x in np.atleast_2d(X)]
             out["G"] = g_mean
 
@@ -823,7 +847,8 @@ class ActiveLearningMOO:
         X = np.array([[float(r[n]) for n in names] for r in raw_list])
         F = np.array([[obj.to_min(r[obj.name]) for obj in self.spec.objectives]
                       for r in raw_list])
-        G = (np.array([[float(r[c]) for c in self.spec.constraint_names]
+        G = (np.array([[float(r[c]) / self.spec.g_scale(c)   # CONSTRAINT-NORM
+                        for c in self.spec.constraint_names]
                        for r in raw_list])
              if self.spec.n_constr else np.empty((len(raw_list), 0)))
         self._add(X, F, G, [dict(r) for r in raw_list])
@@ -935,7 +960,20 @@ def example_reactor_problem() -> ProblemSpec:
     ]
     constraints = ["g_kmin", "g_kmax", "g_enr", "g_peak", "g_geom"]
     exact = {"g_geom": lambda d: geometry_margin(d["pitch"], d["refl_thick"])}
-    return ProblemSpec(ds, objs, constraints, exact_constraints=exact)
+    # CONSTRAINT-NORM: default scales = each constraint's own limit, so the
+    # optimizer compares FRACTIONAL violations (dimensionless). If the run
+    # overrides a limit (k_basis table, CLI), run_optimization.py re-syncs
+    # these from the evaluator's actual attributes after construction.
+    import core_geometry as _cg
+    scales = {
+        "g_kmin": 1.02,
+        "g_kmax": 1.35,
+        "g_enr":  19.75,
+        "g_peak": 2.0,
+        "g_geom": _cg.R_VESSEL_INNER - _cg.VESSEL_CLEARANCE_CM,
+    }
+    return ProblemSpec(ds, objs, constraints, exact_constraints=exact,
+                       constraint_scales=scales)
 
 
 # =============================================================================

@@ -253,6 +253,17 @@ def main():
                          core_inactive=args.core_inactive,
                          workdir=args.workdir, **schedule)
 
+    # CONSTRAINT-NORM: the spec's default scales assume the default limits.
+    # The evaluator is the single source of truth for k_min / k_max (k_basis
+    # aware), f_max and enr_max, so overwrite the scales from its attributes.
+    import core_geometry as _cg
+    spec.constraint_scales.update({
+        "g_kmin": ev.k_min,
+        "g_kmax": ev.k_max,
+        "g_enr":  ev.enr_max,
+        "g_peak": ev.f_max,
+        "g_geom": _cg.R_VESSEL_INNER - _cg.VESSEL_CLEARANCE_CM,
+    })
     opt = ActiveLearningMOO(spec, ev, cfg)
     # Ensure the output directory exists BEFORE anything tries to write into it
     # (results JSON, checkpoint, and the HV plot all land here). write_text does

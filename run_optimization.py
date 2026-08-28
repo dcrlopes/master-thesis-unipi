@@ -426,7 +426,9 @@ def main():
                                "relative reduction, Strategy-A ladder "
                                "{12,16,20,24,32,40}",
                            "objective_def":
-                               "peaking = core BOL F_dh (Campaign 5)",
+                               "peaking = ZONED core BOL F_dh "
+                               "(m_C 0.720 / balanced m_M / m_P from "
+                               "leu_policy), evaluator-zoned from Campaign 6",
                            "schedule": dict(schedule),
                            "geometry": "v2-envelope",
                            # the five numbers that define the constrained

@@ -99,3 +99,4 @@ tallies.out
 # --- Campaign 5 salvage CSVs (uncomment to ignore) ---
 # campaign5/case_*_corrected.csv
 # campaign5/salvage_summary.csv
+*.bak.norm

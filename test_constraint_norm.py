@@ -118,10 +118,36 @@ def main() -> None:
     print(f"    top-6 by raw CV        : {[rows[i]['idx'] for i in top_raw]}")
     print(f"    top-6 by normalized CV : {[rows[i]['idx'] for i in top_nrm]}")
     print(f"    overlap: {overlap} of 6")
+
+    # 4 -- interpretation, computed from the numbers above ------------------
+    k_raw = sum(max(float(rows[i][n]), 0.0)
+                for i in infeas for n in ("g_kmin", "g_kmax"))
+    k_nrm = sum(max(float(rows[i][n]) / SCALES[n], 0.0)
+                for i in infeas for n in ("g_kmin", "g_kmax"))
+    t_raw = sum(cv_raw[i] for i in infeas)
+    t_nrm = sum(cv_nrm[i] for i in infeas)
+    sh_raw = 100.0 * k_raw / t_raw
+    sh_nrm = 100.0 * k_nrm / t_nrm
     print()
-    print("Interpretation: rho well below 1.0 and an overlap below 6 mean the")
-    print("raw sum was steering the infeasible ranking differently from the")
-    print("fraction-of-limit ranking that the normalized run will use.")
+    print("[4] interpretation")
+    if overlap == 6 and rho > 0.99:
+        print("    The ARCHIVE ranking is essentially unchanged. That is the")
+        print("    expected result when the DOE was pre-screened by the exact")
+        print("    geometry and LEU constraints, so only the peaking limit and")
+        print("    the reactivity window ever fire in the archive, and peaking")
+        print("    dominates under either weighting.")
+        print("    This is NOT evidence that the change is inert. The bias it")
+        print("    removes acts on the SURROGATE population, where NSGA-II")
+        print("    roams the full box and g_geom spans tens of centimetres")
+        print("    against a reactivity window spanning tenths of delta-k.")
+    else:
+        print("    The archive ranking itself changes: the raw sum was")
+        print("    steering the infeasible search differently from the")
+        print("    fraction-of-limit ranking.")
+    print(f"    Measurable effect on the archive: the reactivity window")
+    print(f"    (g_kmin + g_kmax) carries {sh_raw:.2f}% of the raw violation")
+    print(f"    and {sh_nrm:.2f}% of the normalized violation, a factor of")
+    print(f"    {sh_nrm / sh_raw:.2f} more relative weight against peaking.")
 
 
 if __name__ == "__main__":

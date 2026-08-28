@@ -798,6 +798,19 @@ class ActiveLearningMOO:
         }
         if meta:
             out["meta"] = dict(meta)
+            # A resume rebuilds `meta` from scratch, so meta["started_utc"] is
+            # THIS block's start. Keep the campaign start from the checkpoint
+            # being resumed and record every block start separately, so a later
+            # timing reconstruction or archive audit can bound the whole run.
+            this_block = out["meta"].get("started_utc")
+            blocks = list(getattr(self, "_ckpt_block_starts", []))
+            if this_block and this_block not in blocks:
+                blocks.append(this_block)
+            if blocks:
+                out["meta"]["block_started_utc"] = blocks
+            campaign_start = getattr(self, "_ckpt_started_utc", None)
+            if campaign_start:
+                out["meta"]["started_utc"] = campaign_start
         Path(path).write_text(json.dumps(out, indent=2, default=float))
         return path
 
@@ -840,6 +853,14 @@ class ActiveLearningMOO:
         hv_ref = ckpt.get("hv_ref")
         self._hv_ref_frozen = (np.array(hv_ref, dtype=float)
                                if hv_ref is not None else None)
+        # remember when the CAMPAIGN started, not when this block started, so
+        # save_checkpoint() can write it back instead of overwriting it
+        _m = ckpt.get("meta") or {}
+        self._ckpt_started_utc = _m.get("started_utc")
+        _blocks = _m.get("block_started_utc")
+        if not _blocks:
+            _blocks = [_m["started_utc"]] if _m.get("started_utc") else []
+        self._ckpt_block_starts = list(_blocks)
         # continue case numbering so OpenMC scratch dirs never collide
         self.evaluator.n_calls = len(ckpt["all_raw"])
         return len(ckpt["all_raw"])

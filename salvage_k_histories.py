@@ -183,7 +183,9 @@ def main():
             kt = args.k_target
 
         eoc = crossing(bu_t, kk, kt) if kt is not None else None
-        at_cap = rows[-1][0] >= args.cap_label - 1e-6
+        # round-trip through days loses the last digits, so compare
+        # at the scale of a depletion step, not at machine precision
+        at_cap = rows[-1][0] >= args.cap_label - 0.5
         if eoc is not None:
             status = "crossed"
         elif at_cap:

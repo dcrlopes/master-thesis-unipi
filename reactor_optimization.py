@@ -565,6 +565,10 @@ class OptimizerConfig:
                                    # the infill picks (and of each pick from
                                    # the archive) in the unit design box,
                                    # as ||dx/span|| / sqrt(n_var)
+    feas_kappa: float = 1.0        # FEAS-MARGIN: candidates must satisfy
+                                   # g_mean + kappa*g_std <= 0 on the GP
+                                   # constraints to rank first; 0 restores
+                                   # the pure-uncertainty ordering
 
 
 class ActiveLearningMOO:
@@ -737,7 +741,41 @@ class ActiveLearningMOO:
             # candidate is discarded for its predicted objectives.
             _, std = obj_sur.predict(cand)
             score = (std / (std.max(axis=0) + 1e-12)).sum(axis=1)
-            order = np.argsort(-score)
+            # FEAS-MARGIN: block 3 selected five of six infill designs past
+            # the reactivity limit (k_core over 1.35 by 1530 to 7750 pcm)
+            # because the constraint GP is optimistic where the data is
+            # thin and the ranking never asked for margin. Score every
+            # candidate as
+            #     s = max_j ( g_mean_j + kappa * g_std_j )
+            # over the GP-predicted constraints, in the normalised units of
+            # CONSTRAINT-NORM. Exact constraints (geometry, enrichment) are
+            # excluded: the NSGA population satisfies them exactly.
+            # Margin-feasible candidates (s <= 0) rank first, by
+            # uncertainty as before. The rest follow, ordered by s, so
+            # nothing is discarded and the batch always fills. kappa = 0
+            # reproduces the block 3 ranking exactly.
+            g_mean, g_std = con_sur.predict(cand)
+            g_mean = np.atleast_2d(np.asarray(g_mean, dtype=float))
+            g_std = np.atleast_2d(np.asarray(g_std, dtype=float))
+            kappa = float(getattr(self.cfg, "feas_kappa", 1.0))
+            _exact_idx = {self.spec.constraint_names.index(n)
+                          for n in self.spec.exact_constraints}
+            _gp_cols = [j for j in range(g_mean.shape[1])
+                        if j not in _exact_idx]
+            if _gp_cols:
+                s_marg = (g_mean[:, _gp_cols]
+                          + kappa * g_std[:, _gp_cols]).max(axis=1)
+            else:
+                s_marg = np.zeros(len(cand), dtype=float)
+            eligible = s_marg <= 0.0
+            if verbose:
+                print(f"           [acquisition] margin-feasible: "
+                      f"{int(eligible.sum())}/{len(cand)} candidates "
+                      f"at kappa={kappa:g}")
+            order = np.concatenate([
+                np.flatnonzero(eligible)[np.argsort(-score[eligible])],
+                np.flatnonzero(~eligible)[np.argsort(s_marg[~eligible])],
+            ]).astype(int)
             _xl = np.asarray(self.spec.design_space.xl, dtype=float)
             _xu = np.asarray(self.spec.design_space.xu, dtype=float)
             span = np.where(_xu > _xl, _xu - _xl, 1.0)

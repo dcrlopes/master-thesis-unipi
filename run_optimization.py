@@ -220,6 +220,12 @@ def main():
                          "means a mean per-variable spacing of 5%% of range. "
                          "Halved automatically when the surrogate front is "
                          "too small to supply n_infill picks at this value.")
+    ap.add_argument("--feas-kappa", type=float, default=1.0,
+                    help="FEAS-MARGIN: infill candidates must satisfy "
+                         "g_mean + kappa*g_std <= 0 on the surrogate "
+                         "constraints to rank first in the acquisition. "
+                         "Larger kappa is more conservative. 0 restores "
+                         "the pure-uncertainty ranking of block 3.")
     ap.add_argument("--no-efpd-clip", action="store_true",
                     help="EFPD-CLIP: disable capping the surrogate's "
                          "predicted cycle length at the depletion ceiling "
@@ -302,6 +308,7 @@ def main():
     if args.nsga_gen is not None:
         cfg.nsga_gen = int(args.nsga_gen)
     cfg.infill_min_sep = float(args.infill_min_sep)  # BATCH-DIVERSITY
+    cfg.feas_kappa = float(args.feas_kappa)          # FEAS-MARGIN
 
     ev = OpenMCEvaluator(spec, k_target=k_target_arg, transport=transport,
                          core_particles=args.core_particles,
@@ -498,6 +505,7 @@ def main():
                                "nsga_pop": cfg.nsga_pop,
                                "nsga_gen": cfg.nsga_gen,
                                "infill_min_sep": cfg.infill_min_sep,
+                               "feas_kappa": cfg.feas_kappa,
                                "constraint_norm": "g / own limit "
                                                   "(CONSTRAINT-NORM)"},
                            "omp_threads": n_threads,

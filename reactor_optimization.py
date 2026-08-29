@@ -506,7 +506,7 @@ class _SurrogateProblem(Problem):
     (e.g. the vessel-fit g_geom). The acquisition therefore never proposes a
     geometrically unbuildable design, even at iteration 1 when the GP
     (Gaussian Process) has seen almost no data."""
-    def __init__(self, spec, obj_surrogate, con_surrogate):
+    def __init__(self, spec, obj_surrogate, con_surrogate, efpd_cap=None):
         super().__init__(n_var=spec.design_space.n,
                          n_obj=spec.n_obj,
                          n_ieq_constr=spec.n_constr,
@@ -515,12 +515,24 @@ class _SurrogateProblem(Problem):
         self.spec = spec
         self.obj_surrogate = obj_surrogate
         self.con_surrogate = con_surrogate
+        self.efpd_cap = efpd_cap        # EFPD-CLIP (None disables the clip)
         self._exact_cols = [(spec.constraint_names.index(name), fn,
                              spec.g_scale(name))          # CONSTRAINT-NORM
                             for name, fn in spec.exact_constraints.items()]
 
     def _evaluate(self, X, out, *a, **k):
         f_mean, _ = self.obj_surrogate.predict(X)
+        f_mean = np.atleast_2d(np.asarray(f_mean, dtype=float))
+        if self.efpd_cap is not None:
+            # EFPD-CLIP: the truth evaluator censors every cycle length at
+            # the depletion ceiling, but a GP trained on the archive
+            # extrapolates past it (C6 DOE: all 288 sensitivity-study picks
+            # predicted 10448-10810 EFPD against a 10016.7 EFPD cap).
+            # Column 0 is MINUS the cycle length (minimise space), so the
+            # ceiling is a floor at -efpd_cap. On the resulting plateau the
+            # first objective is flat and NSGA-II ranks by peaking alone,
+            # exactly as dominance ranks censored truth points.
+            f_mean[:, 0] = np.maximum(f_mean[:, 0], -float(self.efpd_cap))
         out["F"] = f_mean
         if self.con_surrogate is not None:
             g_mean, _ = self.con_surrogate.predict(X)
@@ -547,6 +559,8 @@ class OptimizerConfig:
     surrogate: str = "gp"       # "gp" or "mlp"
     seed: int = 0
     hv_ref: tuple | None = None # reference point for hypervolume (in MIN space)
+    efpd_cap: float | None = None  # EFPD-CLIP: ceiling on the SURROGATE's
+                                   # predicted cycle length [EFPD]; None = off
 
 
 class ActiveLearningMOO:
@@ -686,7 +700,8 @@ class ActiveLearningMOO:
 
             # NSGA-II on the surrogate (cheap):
             t_nsga0 = time.perf_counter()
-            prob = _SurrogateProblem(self.spec, obj_sur, con_sur)
+            prob = _SurrogateProblem(self.spec, obj_sur, con_sur,
+                                     efpd_cap=self.cfg.efpd_cap)  # EFPD-CLIP
             algo = NSGA2(pop_size=self.cfg.nsga_pop, sampling=LHS())
             res = minimize(prob, algo,
                            ("n_gen", self.cfg.nsga_gen),

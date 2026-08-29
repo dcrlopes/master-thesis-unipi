@@ -204,6 +204,21 @@ def main():
     ap.add_argument("--enr-max", type=float, default=19.75,
                     help="LEU (Low Enriched Uranium) enrichment cap in "
                          "wt%% U-235")
+    ap.add_argument("--nsga-pop", type=int, default=None,
+                    help="NSGA-SET: NSGA-II population on the surrogate, "
+                         "overriding the profile (full run: 60). The C6 "
+                         "sensitivity study measured seed-to-seed HV std "
+                         "12.7 at 60x80 vs 0.59 at 300x400, at <9 s of "
+                         "search per iteration.")
+    ap.add_argument("--nsga-gen", type=int, default=None,
+                    help="NSGA-SET: NSGA-II generations on the surrogate, "
+                         "overriding the profile (full run: 80).")
+    ap.add_argument("--no-efpd-clip", action="store_true",
+                    help="EFPD-CLIP: disable capping the surrogate's "
+                         "predicted cycle length at the depletion ceiling "
+                         "(max_burnup converted to EFPD). The clip is ON by "
+                         "default because the truth evaluator censors "
+                         "there, so predictions beyond it are fiction.")
     args = ap.parse_args()
 
     # ROUTE A (float) vs ROUTE B (per-design table) -- computed once, used by
@@ -274,6 +289,11 @@ def main():
         cfg.n_init = args.n_init
     if args.n_infill is not None:
         cfg.n_infill = args.n_infill
+    # NSGA-SET: surrogate-search setting as a recorded launch decision
+    if args.nsga_pop is not None:
+        cfg.nsga_pop = int(args.nsga_pop)
+    if args.nsga_gen is not None:
+        cfg.nsga_gen = int(args.nsga_gen)
 
     ev = OpenMCEvaluator(spec, k_target=k_target_arg, transport=transport,
                          core_particles=args.core_particles,
@@ -297,6 +317,15 @@ def main():
         "g_peak": ev.f_max,
         "g_geom": _cg.R_VESSEL_INNER - _cg.VESSEL_CLEARANCE_CM,
     })
+    # EFPD-CLIP: cap the surrogate's predicted cycle length at the depletion
+    # ceiling, converted with the same specific power the banner prints
+    # (cap [MWd/kgHM] * 1000 / spec_power [W/gHM] = cap [EFPD]; 100 MWd/kgHM
+    # is 10016.7 EFPD on this geometry). Truth values are untouched.
+    if not args.no_efpd_clip:
+        cfg.efpd_cap = float(schedule["max_burnup"]) * 1000.0 / ev.spec_power
+    _cap_txt = ("off" if cfg.efpd_cap is None else f"{cfg.efpd_cap:.1f} EFPD")
+    print(f"surrogate policy: cycle-length clip {_cap_txt} | "
+          f"NSGA-II {cfg.nsga_pop}x{cfg.nsga_gen} | constraint norm active")
     opt = ActiveLearningMOO(spec, ev, cfg)
     # Ensure the output directory exists BEFORE anything tries to write into it
     # (results JSON, checkpoint, and the HV plot all land here). write_text does
@@ -388,6 +417,12 @@ def main():
             print("!! WARNING: checkpoint was written on a DIFFERENT geometry "
                   f"tag ({prev_geom!r}); its objectives are not comparable "
                   "with the corrected v2-envelope model.")
+        if prev_meta.get("surrogate_policy") is None:
+            print("NOTE: this checkpoint predates the surrogate-policy "
+                  "record. Earlier blocks searched without the EFPD clip "
+                  "and at the profile NSGA setting; archived truth values "
+                  "are unaffected. This block's policy is recorded in "
+                  "meta['surrogate_policy'].")
         n_loaded = opt.load_checkpoint(args.resume)
         added = cfg.n_iter * cfg.n_infill
         print(f"RESUME: loaded {n_loaded} prior real evaluations from "
@@ -450,6 +485,12 @@ def main():
                                "m_p_design": _leu.M_P_DESIGN,
                                "ring_counts": list(
                                    _zn.ring_counts(_zn.ring_map()))},
+                           "surrogate_policy": {
+                               "efpd_cap_efpd": cfg.efpd_cap,
+                               "nsga_pop": cfg.nsga_pop,
+                               "nsga_gen": cfg.nsga_gen,
+                               "constraint_norm": "g / own limit "
+                                                  "(CONSTRAINT-NORM)"},
                            "omp_threads": n_threads,
                            # provenance for the cost tables
                            "host": platform.node(),

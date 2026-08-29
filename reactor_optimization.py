@@ -561,6 +561,10 @@ class OptimizerConfig:
     hv_ref: tuple | None = None # reference point for hypervolume (in MIN space)
     efpd_cap: float | None = None  # EFPD-CLIP: ceiling on the SURROGATE's
                                    # predicted cycle length [EFPD]; None = off
+    infill_min_sep: float = 0.05   # BATCH-DIVERSITY: minimum separation of
+                                   # the infill picks (and of each pick from
+                                   # the archive) in the unit design box,
+                                   # as ||dx/span|| / sqrt(n_var)
 
 
 class ActiveLearningMOO:
@@ -719,24 +723,58 @@ class ActiveLearningMOO:
                       f"feasible design; infilling on the {cand.shape[0]} "
                       f"least-infeasible population members.")
 
-            # ---- infill / acquisition: pick the most UNCERTAIN candidates ----
-            # (exploration). You can blend in predicted hypervolume gain later.
+            # ---- infill / acquisition: most UNCERTAIN candidates, spread ----
+            # BATCH-DIVERSITY: rank by GP uncertainty (exploration, unchanged)
+            # but force a minimum separation between the picks, and between
+            # each pick and the archive, in the unit design box. Block 2
+            # showed why: top-k by uncertainty on a continuous front returns
+            # k neighbours, and the old 1e-6 raw-unit duplicate test let six
+            # copies of one design through (cases 48-53 span 0.03 wt%).
+            # Separation:  ||(a - b) / (xu - xl)|| / sqrt(n_var) >= min_sep,
+            # a mean per-variable fraction of range. If the front cannot
+            # supply n_infill picks at min_sep, halve it and rescan, so a
+            # small front still fills the batch as diversely as it can. No
+            # candidate is discarded for its predicted objectives.
             _, std = obj_sur.predict(cand)
             score = (std / (std.max(axis=0) + 1e-12)).sum(axis=1)
-            # de-duplicate against already-evaluated points
             order = np.argsort(-score)
-            chosen, picked = [], 0
-            for idx in order:
-                x = cand[idx]
-                if self.X.size and np.min(np.linalg.norm(self.X - x, axis=1)) < 1e-6:
-                    continue
-                chosen.append(x); picked += 1
-                if picked >= self.cfg.n_infill:
-                    break
-            if not chosen:                      # fallback: random explore
-                chosen = list(self.spec.design_space.lhs(self.cfg.n_infill,
-                                                         seed=self.cfg.seed + 99 + it))
-            Xinf = np.array(chosen)
+            _xl = np.asarray(self.spec.design_space.xl, dtype=float)
+            _xu = np.asarray(self.spec.design_space.xu, dtype=float)
+            span = np.where(_xu > _xl, _xu - _xl, 1.0)
+            rootn = np.sqrt(float(self.spec.design_space.n))
+
+            def _sep(a, B):
+                if B is None or len(B) == 0:
+                    return np.inf
+                d = (np.atleast_2d(np.asarray(B, dtype=float)) - a) / span
+                return float(np.linalg.norm(d, axis=1).min()) / rootn
+
+            chosen = []
+            min_sep = float(getattr(self.cfg, "infill_min_sep", 0.05))
+            while len(chosen) < self.cfg.n_infill and min_sep > 1e-4:
+                for idx in order:
+                    if len(chosen) >= self.cfg.n_infill:
+                        break
+                    x = cand[idx]
+                    if _sep(x, self.X) < min_sep:
+                        continue
+                    if chosen and _sep(x, np.array(chosen)) < min_sep:
+                        continue
+                    chosen.append(x)
+                if len(chosen) < self.cfg.n_infill:
+                    min_sep *= 0.5          # relax and rescan the ranking
+                    if verbose:
+                        print(f"           [acquisition] diversity relaxed "
+                              f"to min_sep={min_sep:.4f} "
+                              f"({len(chosen)}/{self.cfg.n_infill} picked)")
+            if len(chosen) < self.cfg.n_infill:
+                # candidates exhausted even after relaxation: top up with
+                # space-filling randoms rather than duplicating a pick
+                extra = np.atleast_2d(self.spec.design_space.lhs(
+                    self.cfg.n_infill - len(chosen),
+                    seed=self.cfg.seed + 99 + it))
+                chosen.extend(list(extra))
+            Xinf = np.array(chosen[: self.cfg.n_infill])
             t_acq = time.perf_counter() - t_acq0
 
             # evaluate the infill points with the TRUTH:

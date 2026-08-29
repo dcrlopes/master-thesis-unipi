@@ -213,6 +213,13 @@ def main():
     ap.add_argument("--nsga-gen", type=int, default=None,
                     help="NSGA-SET: NSGA-II generations on the surrogate, "
                          "overriding the profile (full run: 80).")
+    ap.add_argument("--infill-min-sep", type=float, default=0.05,
+                    help="BATCH-DIVERSITY: minimum separation of the infill "
+                         "picks (and of each pick from the archive) in the "
+                         "unit design box, ||dx/span||/sqrt(n_var). 0.05 "
+                         "means a mean per-variable spacing of 5%% of range. "
+                         "Halved automatically when the surrogate front is "
+                         "too small to supply n_infill picks at this value.")
     ap.add_argument("--no-efpd-clip", action="store_true",
                     help="EFPD-CLIP: disable capping the surrogate's "
                          "predicted cycle length at the depletion ceiling "
@@ -294,6 +301,7 @@ def main():
         cfg.nsga_pop = int(args.nsga_pop)
     if args.nsga_gen is not None:
         cfg.nsga_gen = int(args.nsga_gen)
+    cfg.infill_min_sep = float(args.infill_min_sep)  # BATCH-DIVERSITY
 
     ev = OpenMCEvaluator(spec, k_target=k_target_arg, transport=transport,
                          core_particles=args.core_particles,
@@ -489,6 +497,7 @@ def main():
                                "efpd_cap_efpd": cfg.efpd_cap,
                                "nsga_pop": cfg.nsga_pop,
                                "nsga_gen": cfg.nsga_gen,
+                               "infill_min_sep": cfg.infill_min_sep,
                                "constraint_norm": "g / own limit "
                                                   "(CONSTRAINT-NORM)"},
                            "omp_threads": n_threads,

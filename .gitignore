@@ -102,3 +102,10 @@ tallies.out
 *.bak.norm
 *.bak.zoned_ev
 *.bak.norm
+rods_pos*/
+banks_screen*/
+kh_c6/
+kh_probe/
+recheck_entropy/
+verify_mp/
+verify_zoned_ev/

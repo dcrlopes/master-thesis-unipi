@@ -126,6 +126,11 @@ def main() -> None:
     ap.add_argument("--screen", default=None,
                     help="comma list of archive indices for the RE-only "
                          "controllability screen")
+    ap.add_argument("--screen-states", default="RE12,ALLRE,SCRAM",
+                    help="comma list of graded screen states, from "
+                         "RE12 (RE1+RE2 only), ALLRE (all four regulating "
+                         "banks) and SCRAM (all seven banks). Each state "
+                         "adds one core solve per seed per design.")
     ap.add_argument("--margin", type=float, default=1000.0,
                     help="required subcriticality under ALL-RE, in pcm of "
                          "reactivity (default 1000)")
@@ -200,28 +205,40 @@ def main() -> None:
 
     if args.screen:
         idxs = [int(x) for x in args.screen.split(",")]
-        re_pos = [p for b in RE_BANKS for p in BANKS[b]]
-        print(f"[screen] ALL-RE (16 CRAs) controllability, margin "
-              f"{args.margin:.0f} pcm, {len(idxs)} designs")
+        groups = {"RE12": [p for b in ("RE1", "RE2") for p in BANKS[b]],
+                  "ALLRE": [p for b in RE_BANKS for p in BANKS[b]],
+                  "SCRAM": [p for b in SEQUENCE for p in BANKS[b]]}
+        wanted = [w.strip() for w in args.screen_states.split(",")]
+        bad = [w for w in wanted if w not in groups]
+        if bad:
+            raise SystemExit(f"unknown screen states {bad}, choose from "
+                             f"{sorted(groups)}")
+        print(f"[screen] graded controllability, margin {args.margin:.0f} "
+              f"pcm, states {wanted}, {len(idxs)} designs")
         for idx in idxs:
             design, dmap = load_design(idx)
             st = make_state(design, dmap, _design_seed(design, salt="banks"))
             k0, k0s, F0, F0s = st([], f"i{idx}_ARO")
-            kr, krs, Fr, Frs = st(re_pos, f"i{idx}_ALLRE")
-            rho = rho_pcm(k0, kr)
             need = 1e5 * (1.0 - 1.0 / k0)          # excess in reactivity pcm
-            marg = -1e5 * (1.0 - 1.0 / kr)         # subcritical margin, pcm
-            verdict = "CONTROLLABLE" if marg >= args.margin else \
-                      ("subcritical, thin margin" if kr < 1.0
-                       else "NOT controllable by RE banks")
-            print(f"  idx {idx:>3}: k0={k0:.5f}  k(ALL-RE)={kr:.5f}  "
-                  f"RE worth={rho:8.0f} pcm  excess={need:7.0f} pcm  "
-                  f"margin={marg:7.0f} pcm  F(ALL-RE)={Fr:.3f}  {verdict}")
-            results["states"].append(dict(
-                mode="screen", idx=idx, k0=k0, k0_sd=k0s, F0=F0,
-                k_allre=kr, k_sd=krs, F_allre=Fr, F_sd=Frs,
-                re_worth_pcm=rho, excess_pcm=need, margin_pcm=marg,
-                verdict=verdict))
+            rec = dict(mode="screen", idx=idx, k0=k0, k0_sd=k0s, F0=F0,
+                       excess_pcm=need, states={})
+            line = f"  idx {idx:>3}: k0={k0:.5f}  excess={need:7.0f} pcm"
+            verdicts = []
+            for name in wanted:
+                k, ks, F, Fs = st(groups[name], f"i{idx}_{name}")
+                marg = -1e5 * (1.0 - 1.0 / k)      # subcritical margin, pcm
+                ok = marg >= args.margin
+                rec["states"][name] = dict(
+                    k=k, k_sd=ks, F=F, F_sd=Fs,
+                    worth_pcm=rho_pcm(k0, k), margin_pcm=marg, ok=ok)
+                line += (f"  |  {name}: k={k:.5f} "
+                         f"margin={marg:7.0f} {'ok' if ok else 'NO'}")
+                verdicts.append(f"{name}:{'ok' if ok else 'NO'}")
+            # composite reading: operational control by regulating banks,
+            # shutdown authority by everything, SH banks reserved for scram
+            rec["verdict"] = " ".join(verdicts)
+            print(line)
+            results["states"].append(rec)
     else:
         if args.idx is None:
             raise SystemExit("--idx required for --sequence or --banks")

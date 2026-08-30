@@ -1,0 +1,21 @@
+[check] bank geometry
+    7 banks, 32 CRAs of 32 assemblies, full coverage,
+    every bank closed under 90-degree rotation
+    map (bank name, or -- for no rod, .. outside the core):
+       .. SH5 SH3 SH4 SH5  ..
+      SH5 RE2 RE3 RE4 RE2 SH5
+      SH4 RE4 RE1 RE1 RE3 SH3
+      SH3 RE3 RE1 RE1 RE4 SH4
+      SH5 RE2 RE4 RE3 RE2 SH5
+       .. SH5 SH4 SH3 SH5  ..
+multipliers C/M/P = 0.720/0.8933/1.150  (balance-solved middle)
+[screen] graded controllability, margin 1000 pcm, states ['RE12', 'ALLRE', 'SCRAM'], 8 designs
+  idx 107: k0=1.17396  excess=  14818 pcm  |  RE12: k=1.09582 margin=  -8744 NO  |  ALLRE: k=1.01485 margin=  -1463 NO  |  SCRAM: k=0.78569 margin=  27276 ok
+  idx  59: k0=1.07098  excess=   6627 pcm  |  RE12: k=0.99805 margin=    195 NO  |  ALLRE: k=0.92319 margin=   8320 ok  |  SCRAM: k=0.69209 margin=  44491 ok
+  idx  85: k0=1.26157  excess=  20733 pcm  |  RE12: k=1.17447 margin= -14855 NO  |  ALLRE: k=1.08714 margin=  -8016 NO  |  SCRAM: k=0.86297 margin=  15879 ok
+  idx 110: k0=1.13466  excess=  11868 pcm  |  RE12: k=1.06778 margin=  -6347 NO  |  ALLRE: k=0.99559 margin=    443 NO  |  SCRAM: k=0.80588 margin=  24088 ok
+  idx  26: k0=1.19152  excess=  16073 pcm  |  RE12: k=1.11594 margin= -10390 NO  |  ALLRE: k=1.03985 margin=  -3832 NO  |  SCRAM: k=0.89195 margin=  12114 ok
+  idx   7: k0=1.24287  excess=  19541 pcm  |  RE12: k=1.16205 margin= -13945 NO  |  ALLRE: k=1.07953 margin=  -7367 NO  |  SCRAM: k=0.92303 margin=   8339 ok
+  idx 101: k0=1.24592  excess=  19738 pcm  |  RE12: k=1.15989 margin= -13785 NO  |  ALLRE: k=1.07673 margin=  -7126 NO  |  SCRAM: k=0.91503 margin=   9286 ok
+  idx  86: k0=1.27869  excess=  21795 pcm  |  RE12: k=1.18731 margin= -15776 NO  |  ALLRE: k=1.10044 margin=  -9127 NO  |  SCRAM: k=0.92980 margin=   7550 ok
+wrote banks_screen_v3/banks_B4C.json

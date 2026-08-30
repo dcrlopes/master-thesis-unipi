@@ -1,0 +1,9 @@
+multipliers C/M/P = 0.720/0.8933/1.150  (balance-solved middle)
+N= 0 rodded: k=1.27865+/-0.00000  worth=      0 pcm  F=1.5395+/-0.0121
+N= 8 rodded: k=1.25356+/-0.00001  worth=   2509 pcm  F=1.8849+/-0.0204
+N=16 rodded: k=1.21903+/-0.00046  worth=   5962 pcm  F=2.4752+/-0.0083
+N=24 rodded: k=1.14651+/-0.00009  worth=  13214 pcm  F=3.8115+/-0.0386
+N=32 rodded: k=0.92996+/-0.00027  worth=  34869 pcm  F=1.6398+/-0.0132
+
+wrote rods_pos86/ladder_idx86_B4C.json
+next: pick the smallest N whose worth exceeds the cold excess plus 1000 pcm, then rerun with --ladder N and remove one assembly at a time from its pattern for the stuck-rod worth.

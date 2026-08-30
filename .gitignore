@@ -100,3 +100,5 @@ tallies.out
 # campaign5/case_*_corrected.csv
 # campaign5/salvage_summary.csv
 *.bak.norm
+*.bak.zoned_ev
+*.bak.norm

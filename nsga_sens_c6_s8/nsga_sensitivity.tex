@@ -1,0 +1,17 @@
+\begin{table}[htbp]
+\centering
+\caption{Sensitivity of the surrogate search to the NSGA-II population size and generation count. Every setting searches the same frozen Gaussian Process surrogates, fitted once on the complete campaign archive. Values are means over 1 independent random seeds. Agreement is the fraction of the selected infill designs that coincide with those selected by the baseline setting 60x80 at the same seed.}
+\label{tab:nsga_sensitivity}
+\begin{tabular}{llrrrr}
+\toprule
+Population & Generations & HV & feasible & agreement & $t_{\mathrm{search}}$ [s] \\
+\midrule
+60 & 80 & 1902 & 60 & 1.00 $\pm$ 0.00 & 0.4 \\
+80 & 120 & 1905 & 80 & 0.00 $\pm$ 0.00 & 0.8 \\
+120 & 160 & 1941 & 120 & 0.00 $\pm$ 0.00 & 1.5 \\
+200 & 200 & 1941 & 200 & 0.00 $\pm$ 0.00 & 2.8 \\
+200 & 400 & 1944 & 200 & 0.00 $\pm$ 0.00 & 5.6 \\
+300 & 400 & 1946 & 300 & 0.00 $\pm$ 0.00 & 8.2 \\
+\bottomrule
+\end{tabular}
+\end{table}

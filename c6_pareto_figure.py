@@ -31,10 +31,12 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 # block boundaries of Campaign 6: design of experiments, then infill blocks
-BLOCK_EDGES = [0, 42, 60, 66, 84, 120]
-BLOCK_NAMES = ["DOE (block 1)", "Block 2", "Block 3", "Block 4", "Block 5"]
-BLOCK_COLOR = ["#0072B2", "#E69F00", "#009E73", "#CC79A7", "#56B4E9"]
-BLOCK_MARK = ["o", "s", "D", "^", "v"]
+BLOCK_EDGES = [0, 42, 60, 66, 84, 114, 200]
+BLOCK_NAMES = ["DOE (block 1)", "Block 2", "Block 3", "Block 4",
+               "Block 5", "Block 6"]
+BLOCK_COLOR = ["#0072B2", "#E69F00", "#009E73", "#CC79A7", "#56B4E9",
+               "#6A3D9A"]
+BLOCK_MARK = ["o", "s", "D", "^", "v", "P"]
 
 F_LIMIT = 2.0            # screening bound of the campaign
 SCREENS = [1.65, 1.50]   # licensing-style checks at candidate selection
@@ -125,7 +127,7 @@ def main():
     for s in SCREENS:
         ax.axhline(s, color="#888888", lw=0.9, ls=":", zorder=1)
         above = s >= 1.6
-        ax.text(1500, s + (0.012 if above else -0.014),
+        ax.text(4700, s + (0.012 if above else -0.014),
                 f"screen {s:.2f}", color="#666666", fontsize=9,
                 va="bottom" if above else "top")
 
@@ -138,9 +140,14 @@ def main():
 
     # designs ---------------------------------------------------------------
     inf = [r for r in rows if not r["feas"]]
-    ax.scatter([r["efpd"] for r in inf], [r["fdh"] for r in inf],
-               marker="x", s=42, c="#9A9A9A", lw=1.3,
-               label=f"infeasible ({len(inf)})", zorder=2)
+    for b in range(len(BLOCK_NAMES)):
+        pts = [r for r in inf if block_of(r["pos"]) == b]
+        if pts:
+            ax.scatter([r["efpd"] for r in pts], [r["fdh"] for r in pts],
+                       marker="x", s=46, c=BLOCK_COLOR[b], lw=1.4,
+                       alpha=0.85, zorder=2)
+    ax.scatter([], [], marker="x", s=46, c="#444444", lw=1.4,
+               label=f"Infeasible ({len(inf)}, colour = block)")
 
     seen = set()
     for r in rows:
@@ -152,7 +159,7 @@ def main():
             seen.add(b)
             n_b = sum(1 for q in rows
                       if q["feas"] and block_of(q["pos"]) == b)
-            lab = f"{BLOCK_NAMES[b]} feasible ({n_b})"
+            lab = f"{BLOCK_NAMES[b]} Feasible ({n_b})"
         on_front = r["pos"] in front_pos
         ax.scatter(r["efpd"], r["fdh"], marker=BLOCK_MARK[b],
                    s=150 if on_front else 62,
@@ -174,9 +181,9 @@ def main():
             label=f"Pareto front ({len(front)} designs)")
 
     # annotations on the named designs -------------------------------------
-    notes = {40: ("idx 40\n9035 EFPD, F=1.574", (-16, -30), "right"),
-             2: ("idx 2\n9445 EFPD, F=1.655", (12, 12), "left"),
-             59: ("idx 59\nF=1.404", (12, -4), "left")}
+    notes = {71: ("idx 71\n9981 EFPD, F=1.655", (-6, 34), "right"),
+             94: ("idx 94\n9675 EFPD, F=1.587", (-30, -44), "right"),
+             59: ("idx 59\n1054 EFPD, F=1.404", (34, -16), "left")}
     for r in front:
         if r["pos"] in notes:
             txt, off, ha = notes[r["pos"]]
@@ -188,7 +195,7 @@ def main():
 
     # axes ------------------------------------------------------------------
     ax.set_xlim(-150, 10600)
-    ax.set_ylim(1.32, 2.80)
+    ax.set_ylim(1.30, 2.80)
     ax.set_xlabel("Cycle length (EFPD)", fontsize=13)
     ax.set_ylabel(r"Radial enthalpy-rise factor $F_{\Delta H}$ (zoned core)",
                   fontsize=13)

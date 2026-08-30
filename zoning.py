@@ -210,7 +210,7 @@ def is_feasible(raw: dict, constraint_names) -> bool:
 # --------------------------------------------------------------------------- #
 def core_bol_solve(base_design: dict, design_map, op, geo, *,
                    particles: int, batches: int, inactive: int,
-                   seed: int, case: Path) -> dict:
+                   seed: int, case: Path, rodded_map=None) -> dict:
     """One 2D core Beginning of Life (BOL) eigenvalue solve.
 
     Peaking extraction (mask zero-fission bins, then max over mean) and the
@@ -223,7 +223,7 @@ def core_bol_solve(base_design: dict, design_map, op, geo, *,
 
     case = Path(case)
     case.mkdir(parents=True, exist_ok=True)
-    m = rm.make_core_model(base_design, op, geo, design_map=design_map,
+    m = rm.make_core_model(base_design, op, geo, design_map=design_map, rodded_map=rodded_map,
                            particles=particles, batches=batches,
                            inactive=inactive)
     model = m[0] if isinstance(m, tuple) else m

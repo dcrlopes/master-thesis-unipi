@@ -277,73 +277,72 @@ def fig_curve(mdl, out):
 
 # ------------------------------------------------------------------- tier 1
 def tier1(root: Path, mdl):
-    """Audit the AS-BUILT universes by point sampling, through openmc's own
-    containment logic. No transport, no data files."""
-    print("[tier 1] point-sampling audit of the as-built guide-tube cell")
-    try:
-        import sys
-        sys.path.insert(0, str(root))
-        import reactor_model as rm
-        import openmc
-    except Exception as e:                                   # noqa: BLE001
-        print(f"  SKIPPED: cannot import reactor_model/openmc here ({e}). "
-              "Run inside the container.")
-        return
-    mats = rm.make_materials(rm.Operating()) if hasattr(rm, "make_materials")\
-        else None
+    """Point-sampling audit of the lattice clip rule at the model's own
+    radii. Samples the cell square and measures how much of the analytic
+    wall annulus survives inside it, which is exactly the rule an OpenMC
+    lattice applies to the universe. No openmc import, no transport."""
+    print("[tier 1] point-sampling audit of the lattice clip at the "
+          "model radii")
     for pitch in (PITCH_LO, 1.20, 2 * mdl["gt_or"] + 0.01, PITCH_HI):
-        geo = rm.Geometry17x17()
-        uni = rm._guide_tube_universe(mats, geo) if mats is not None else None
-        if uni is None:
-            print("  SKIPPED: make_materials not found, adapt the builder "
-                  "call to this tree.")
-            return
         h = pitch / 2.0
         rng = random.Random(1)
-        n, in_wall = 200_000, 0
+        n, inside = 200_000, 0
+        r2_i, r2_o = mdl["gt_ir"] ** 2, mdl["gt_or"] ** 2
         for _ in range(n):
-            x = rng.uniform(-h, h)
-            y = rng.uniform(-h, h)
-            r = math.hypot(x, y)
-            if mdl["gt_ir"] <= r <= mdl["gt_or"]:
-                # inside the analytic annulus AND inside the cell: this is
-                # wall the lattice keeps. Points of the annulus outside the
-                # cell are, by construction, never sampled, which IS the
-                # clip. Compare kept area with the full annulus.
-                in_wall += 1
-        kept = in_wall / n * pitch * pitch
-        full = math.pi * (mdl["gt_or"] ** 2 - mdl["gt_ir"] ** 2)
-        meas = 100 * (1 - kept / full)
+            # uniform in the WALL annulus: uniform in r^2 and in angle
+            r = math.sqrt(rng.uniform(r2_i, r2_o))
+            t = rng.uniform(0.0, 2.0 * math.pi)
+            if abs(r * math.cos(t)) <= h and abs(r * math.sin(t)) <= h:
+                inside += 1
+        meas = 100.0 * (1.0 - inside / n)
         pred = 100 * clipped_wall_fraction(mdl["gt_ir"], mdl["gt_or"], pitch)
         print(f"  pitch {pitch:.4f}: wall removed, sampled {meas:5.2f}%  "
               f"analytic {pred:5.2f}%  "
-              f"{'ok' if abs(meas - pred) < 0.5 else 'MISMATCH'}")
-    print("  (sampling the cell square and clipping analytically is exactly "
-          "the lattice rule OpenMC applies)")
+              f"{'ok' if abs(meas - pred) < 0.3 else 'MISMATCH'}")
+    print("  (points drawn uniformly in the wall annulus, kept iff inside "
+          "the cell square, which is the lattice rule)")
 
 
 # ---------------------------------------------------------------- rodcheck
 def rodcheck(root: Path):
-    print("[rodcheck] does this tree implement rodded_map?")
-    found = []
+    """Parse the tree with ast and report which functions accept rodded_map
+    or rodded, plus the absorber-pin constants. Regex on the raw signature
+    is unreliable, because a default value containing parentheses ends the
+    match early."""
+    import ast as _ast
+    print("[rodcheck] rodded plumbing on this tree")
+    hits = {}
     for f in ("reactor_model.py", "zoning.py"):
-        src = (root / f).read_text()
-        if re.search(r"def\s+\w+\([^)]*rodded_map", src, re.S):
-            found.append(f)
-    callers = "rod_worth_ladder.py"
-    calls = "rodded_map" in (root / callers).read_text() \
-        if (root / callers).is_file() else False
-    if found:
-        print(f"  implementation found in: {', '.join(found)}. ok")
-    elif calls:
-        print("  rod_worth_ladder.py PASSES rodded_map, but no function in "
-              "reactor_model.py or zoning.py ACCEPTS it on this tree.")
-        print("  The rod implementation lives in unpushed commits on "
-              "another machine. Running the ladder here raises TypeError.")
-        print("  -> locate the machine with the working rod code, commit "
-              "and push it before any controllability study.")
+        path = root / f
+        if not path.is_file():
+            continue
+        tree = _ast.parse(path.read_text())
+        for node in _ast.walk(tree):
+            if not isinstance(node, (_ast.FunctionDef, _ast.AsyncFunctionDef)):
+                continue
+            args = ([a.arg for a in node.args.args]
+                    + [a.arg for a in node.args.kwonlyargs])
+            got = [a for a in args if a in ("rodded_map", "rodded")]
+            if got:
+                hits.setdefault(f, []).append(f"{node.name}({', '.join(got)})")
+    if hits:
+        for f, fns in hits.items():
+            print(f"  {f}: " + ", ".join(fns))
     else:
-        print("  no rodded_map anywhere on this tree.")
+        print("  NOT FOUND. Apply apply_control_rods.py first.")
+        return
+    src = (root / "reactor_model.py").read_text()
+    m = re.search(r"CR_R_ABS,\s*CR_R_GAP,\s*CR_R_CLAD\s*=\s*"
+                  r"([0-9.]+),\s*([0-9.]+),\s*([0-9.]+)", src)
+    if m:
+        abs_r, gap_r, clad_r = (float(x) for x in m.groups())
+        half = PITCH_LO / 2.0
+        print(f"  absorber pin: abs {abs_r}, gap {gap_r}, clad {clad_r} cm")
+        print(f"  clad vs the box-minimum half-pitch {half:.4f} cm: "
+              f"clearance {10*(half-clad_r):+.2f} mm "
+              f"{'ok, never clipped' if clad_r < half else 'CLIPPED'}")
+    for name in ("make_cr_materials", "_cr_gt_universe"):
+        print(f"  {name}: {'present' if name in src else 'MISSING'}")
 
 
 def main():

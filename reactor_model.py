@@ -681,8 +681,12 @@ def make_core_model(design: dict, op: Operating = Operating(),
     fuel_cell = openmc.Cell(fill=lat, region=-r_fuel_cyl)             # fuel + gaps
     refl_cell = openmc.Cell(fill=refl_mat, region=+r_fuel_cyl & -r_refl_cyl)
     geom = openmc.Geometry([fuel_cell, refl_cell])
-    materials = openmc.Materials([m for m in mats.values()]
-                                 + variant_mats + [refl_mat])
+    # CR-MATS: collect from the geometry instead of enumerating lists, so
+    # materials created inside a universe builder (the control-rod absorber,
+    # its helium gap and 304L clad) cannot be omitted from materials.xml.
+    materials = openmc.Materials(
+        set([m for m in mats.values()] + variant_mats + [refl_mat])
+        | set(geom.get_all_materials().values()))
 
     # seed the initial fission source inside the fuel cylinder
     bb = ((-r_fuel, -r_fuel, -1e9), (r_fuel, r_fuel, 1e9))

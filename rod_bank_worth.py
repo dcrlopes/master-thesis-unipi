@@ -11,24 +11,26 @@ operational counterpart: same solver, same conventions, bank semantics.
 
 THE SIX BANKS (position lists, (row, col) on the 6x6 map, corners empty)
 ------------------------------------------------------------------------
-Adapted from the NuScale-like benchmark (16 CRAs of 37 FAs in four banks of
-four, regulating inboard, shutdown outboard), extended with two further
-regulating banks so the core carries 24 CRAs of 32 assemblies:
+Adapted from the NuScale-like benchmark (16 CRAs of 37 FAs, regulating
+inboard, shutdown outboard), extended so EVERY assembly carries a CRA:
+the four RE banks are the complete inner sixteen (C and M rings) and the
+three SH banks are the complete outer sixteen (P ring), 32 CRAs of 32:
 
     RE1  inner ring (C)                 (2,2) (2,3) (3,2) (3,3)
     RE2  M-ring diagonals               (1,1) (1,4) (4,1) (4,4)
     RE3  M-ring edges, orbit A          (1,2) (2,4) (4,3) (3,1)
-    RE4  P-ring corner-adjacent, orbit A (0,1) (1,5) (5,4) (4,0)
+    RE4  M-ring edges, orbit B          (1,3) (3,4) (4,2) (2,1)
     SH3  P-ring edge mids, orbit A      (0,2) (2,5) (5,3) (3,0)
     SH4  P-ring edge mids, orbit B      (0,3) (3,5) (5,2) (2,0)
+    SH5  P-ring corner-adjacent, both orbits (8 CRAs)
+         (0,1) (1,5) (5,4) (4,0) (0,4) (4,5) (5,1) (1,0)
 
-Each bank is one 90-degree rotational orbit, so every bank pattern and every
-prefix of the operational sequence is exactly four-fold symmetric. The eight
-unrodded assemblies (M-edge orbit B and P-corner orbit B) are the two
-mirror orbits, so the unrodded set is symmetric too.
+Every bank is closed under 90-degree rotation (SH5 is the union of the two
+P-corner orbits), so every bank pattern and every prefix of the operational
+sequence is exactly four-fold symmetric, and no assembly is left unrodded.
 
 OPERATIONAL SEQUENCE
-    RE1 -> RE2 -> RE3 -> RE4 -> SH3 -> SH4
+    RE1 -> RE2 -> RE3 -> RE4 -> SH3 -> SH4 -> SH5
 Regulating banks first, inboard to outboard. The controllability criterion
 is that the four RE banks alone hold the core subcritical by the operating
 margin, because SH3 and SH4 are reserved for scram.
@@ -67,11 +69,13 @@ BANKS = {
     "RE1": [(2, 2), (2, 3), (3, 2), (3, 3)],
     "RE2": [(1, 1), (1, 4), (4, 1), (4, 4)],
     "RE3": [(1, 2), (2, 4), (4, 3), (3, 1)],
-    "RE4": [(0, 1), (1, 5), (5, 4), (4, 0)],
+    "RE4": [(1, 3), (3, 4), (4, 2), (2, 1)],
     "SH3": [(0, 2), (2, 5), (5, 3), (3, 0)],
     "SH4": [(0, 3), (3, 5), (5, 2), (2, 0)],
+    "SH5": [(0, 1), (1, 5), (5, 4), (4, 0),
+            (0, 4), (4, 5), (5, 1), (1, 0)],
 }
-SEQUENCE = ["RE1", "RE2", "RE3", "RE4", "SH3", "SH4"]
+SEQUENCE = ["RE1", "RE2", "RE3", "RE4", "SH3", "SH4", "SH5"]
 RE_BANKS = ["RE1", "RE2", "RE3", "RE4"]
 CORE = [(r, c) for r in range(6) for c in range(6)
         if (r, c) not in [(0, 0), (0, 5), (5, 0), (5, 5)]]
@@ -86,21 +90,17 @@ def self_check() -> None:
     print("[check] bank geometry")
     seen = []
     for name, cells in BANKS.items():
-        assert len(cells) == 4, f"{name} has {len(cells)} cells"
+        assert len(cells) in (4, 8), f"{name} has {len(cells)} cells"
         assert all(p in CORE for p in cells), f"{name} leaves the core map"
-        orb = {cells[0]}
-        p = cells[0]
-        for _ in range(3):
-            p = rot(p)
-            orb.add(p)
-        assert orb == set(cells), f"{name} is not one 90-degree orbit"
+        u = set(cells)
+        assert all(rot(p) in u for p in u), \
+            f"{name} is not closed under 90-degree rotation"
         seen += cells
-    assert len(seen) == len(set(seen)) == 24, "banks overlap"
-    unrodded = sorted(set(CORE) - set(seen))
-    u = set(unrodded)
-    assert all(rot(p) in u for p in u), "unrodded set is not symmetric"
-    print(f"    6 banks x 4 CRAs = 24 of 32 assemblies, all orbits closed")
-    print(f"    unrodded (8): {unrodded}")
+    assert len(seen) == len(set(seen)) == 32, \
+        "banks must cover all 32 assemblies exactly once"
+    n_cra = sum(len(c) for c in BANKS.values())
+    print(f"    7 banks, {n_cra} CRAs of 32 assemblies, full coverage,")
+    print(f"    every bank closed under 90-degree rotation")
     print("    map (bank name, or -- for no rod, .. outside the core):")
     grid = [[".." for _ in range(6)] for _ in range(6)]
     for r, c in CORE:

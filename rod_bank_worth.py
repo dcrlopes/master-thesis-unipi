@@ -186,7 +186,7 @@ def main() -> None:
         return state
 
     def rho_pcm(k0, k):
-        return 1e5 * (1.0 / k - 1.0 / k0) * -1.0
+        return 1e5 * (1.0 / k - 1.0 / k0)
 
     def load_design(idx):
         d = {k: float(ck["all_raw"][idx][k]) for k in dv}

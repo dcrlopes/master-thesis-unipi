@@ -381,7 +381,7 @@ def _cr_gt_universe(mats, geo: "Geometry17x17", absorber: str):
           openmc.Cell(fill=crm["cr_he"], region=+r1 & -r2),
           openmc.Cell(fill=crm["cr_ss"], region=+r2 & -r3),
           openmc.Cell(fill=mats["water"], region=+r3 & -r4),
-          openmc.Cell(fill=mats["zirc"], region=+r4 & -r5),
+          openmc.Cell(fill=mats["clad"], region=+r4 & -r5),
           openmc.Cell(fill=mats["water"], region=+r5)]
     return openmc.Universe(name=f"gt_cr_{absorber}", cells=cs)
 

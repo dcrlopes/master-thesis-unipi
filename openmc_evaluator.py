@@ -315,6 +315,7 @@ class OpenMCEvaluator(Evaluator):
             # --ctrl-margin, so earlier campaigns are bit-for-bit unchanged.
             **({"k_allre": (_c := _ctrl_solve(self, design))["keff"],
                 "F_allre": _c["fdh_core"],
+                "t_ctrl_s": _c.get("wall_s"),
                 "g_ctrl":  _c["keff"] - (1.0 - self.ctrl_margin_dk)}
                if getattr(self, "ctrl_margin_dk", None) is not None
                else {}),

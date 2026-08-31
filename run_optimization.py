@@ -77,6 +77,7 @@ from __future__ import annotations
 
 import argparse
 import platform
+import sys as _sys
 from datetime import datetime, timezone
 import json
 import os
@@ -295,7 +296,24 @@ def main():
         transport = dict(particles=800, batches=30, inactive=10)
         schedule = dict(bol_steps=[1.0, 2.0, 4.0], dep_step=6.0,
                         max_burnup=30.0)
+        # CAMPAIGN 8: --smoke lowered only the DEPLETION transport, so the
+        # core-class solves still ran at 100000 x 170. With three of them per
+        # design (unrodded, ALL-RE, RE1+RE2) a smoke run cost about half an
+        # hour on solves that exist only to prove the wiring. Lower them here,
+        # but ONLY for flags the user did not type, so an explicit
+        # --core-particles still wins. Detection is exact (sys.argv), not a
+        # comparison against the argparse default.
+        _smoke_core = {"--core-particles": ("core_particles", 8000),
+                       "--core-batches":   ("core_batches", 60),
+                       "--core-inactive":  ("core_inactive", 20)}
+        _typed = " ".join(_sys.argv[1:])
+        for _flag, (_attr, _val) in _smoke_core.items():
+            if _flag not in _typed:
+                setattr(args, _attr, _val)
         print(">>> SMOKE TEST <<<")
+        print(f"    core solves at {args.core_particles} x "
+              f"{args.core_batches} ({args.core_inactive} inactive); "
+              f"pass --core-particles to override")
     else:
         # 24 + n_iter*6 real evaluations per session; resume in blocks and
         # watch the Hypervolume (HV) plateau to DISCOVER the true budget.

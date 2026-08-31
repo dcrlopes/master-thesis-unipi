@@ -280,7 +280,7 @@ def main():
     # enrichment is e * m_P, so the design variable must stay below
     # enr_max / m_P. Optional floor for the k_min side.
     _e_hi = min(_leu.E_SEARCH_MAX, args.enr_max / _leu.M_P_DESIGN)
-    for _v in spec.variables:
+    for _v in spec.design_space.variables:
         if _v.name in ("enrich_inner", "enrich_outer"):
             _v.high = _e_hi
             if args.enr_box_low is not None:
@@ -528,9 +528,9 @@ def main():
                                "m_p_design": _leu.M_P_DESIGN,
                                "e_search_max_wtpc": _leu.E_SEARCH_MAX,
                                "e_box_used_wtpc": [
-                                   next(v.low for v in spec.variables
+                                   next(v.low for v in spec.design_space.variables
                                         if v.name == "enrich_inner"),
-                                   next(v.high for v in spec.variables
+                                   next(v.high for v in spec.design_space.variables
                                         if v.name == "enrich_inner")]},
                            "zoning_policy": {
                                "evaluator_zoned": True,

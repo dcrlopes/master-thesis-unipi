@@ -171,9 +171,15 @@ def check(apply: bool) -> int:
     for e in EDITS:
         text = Path(e["path"]).read_text()
         n_old, n_new = text.count(e["old"]), text.count(e["new"])
-        state = ("APPLIED" if (n_old == 0 and n_new == 1) else
-                 "ready" if (n_old == 1 and n_new == 0) else
-                 f"FAIL (old x{n_old}, new x{n_new})")
+        # An anchor may legitimately survive INSIDE its own replacement when
+        # the edit only appends (Z1 does: the new block starts with the old
+        # text). Discount those occurrences before judging the state, or a
+        # correctly applied edit reads as FAIL.
+        inside = n_new * e["new"].count(e["old"])
+        n_old_outside = n_old - inside
+        state = ("APPLIED" if (n_new == 1 and n_old_outside == 0) else
+                 "ready" if (n_new == 0 and n_old == 1) else
+                 f"FAIL (old x{n_old_outside} outside, new x{n_new})")
         print(f"  {e['name']:<45s} {state}")
         if state.startswith("FAIL"):
             ok = False

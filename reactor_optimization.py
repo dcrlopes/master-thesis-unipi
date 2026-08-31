@@ -129,7 +129,19 @@ class DesignSpace:
             f"check the design-variable bounds against the constraint.")
 
     def as_dict(self, x: Sequence[float]) -> dict:
-        return {v.name: float(xi) for v, xi in zip(self.variables, x)}
+        d = {v.name: float(xi) for v, xi in zip(self.variables, x)}
+        # CAMPAIGN 8: single-enrichment design space with a fixed pitch.
+        # The optimiser sees "enrich" only. Every downstream consumer
+        # (evaluator, zoning path, k_target interpolation, log line,
+        # archive) keeps reading enrich_inner / enrich_outer / pitch, so
+        # the keys are DERIVED here, at the single vector-to-design choke
+        # point, and nothing else in the pipeline changes.
+        if "enrich" in d:
+            d.setdefault("enrich_inner", d["enrich"])
+            d.setdefault("enrich_outer", d["enrich"])
+            if "pitch" not in d:
+                d["pitch"] = 1.26   # cm, fixed Westinghouse 17x17 pitch (C8)
+        return d
 
 
 class _BoxProblem(Problem):
@@ -1029,16 +1041,19 @@ def example_reactor_problem() -> ProblemSpec:
     import leu_policy as _leu
 
     ds = DesignSpace([
-        # Upper bound is LEU_CAP_WTPC / M_P_DESIGN, so the highest
-        # enrichment anywhere in the ZONED core stays at or below the
-        # LEU (Low Enriched Uranium) cap by construction. At
-        # M_P_DESIGN = 1.0 this is exactly 19.75, the previous bound.
-        # See leu_policy.py.
-        DesignVariable("enrich_inner", 2.0, _leu.E_SEARCH_MAX, "%"),
-        DesignVariable("enrich_outer", 2.0, _leu.E_SEARCH_MAX, "%"),
+        # CAMPAIGN 8: four design variables. ONE assembly enrichment
+        # ("enrich"): the core-level variation comes from the C/M/P ring
+        # multipliers of zoning.py (0.720 / 0.8933 / 1.150), so the
+        # as-built peripheral enrichment is enrich * M_P_DESIGN and the
+        # search-box upper bound stays LEU-capped by construction
+        # (leu_policy.py). Pitch is FIXED at 1.26 cm, the Westinghouse
+        # 17x17 value, derived in DesignSpace.as_dict. The reflector upper
+        # bound is the vessel budget at that pitch with the Campaign 8
+        # clearance (5.08 cm barrel + 2.0 cm downcomer):
+        #   90.0 - 7.08 - 77.231 - 0.02 = 5.669 cm  ->  bound 5.66 cm.
+        DesignVariable("enrich",       2.0, _leu.E_SEARCH_MAX, "%"),
         DesignVariable("gd_wt",        0.0,  8.0,  "wt% Gd2O3"),
-        DesignVariable("pitch",        1.15, 1.43, "cm"),
-        DesignVariable("refl_thick",   2.0,  19.5, "cm"),
+        DesignVariable("refl_thick",   2.0,  5.66, "cm"),
         # CAMPAIGN 5: gadolinia-bearing rod count. Continuous for the
         # surrogate and NSGA-II; the model snaps to the nested symmetric
         # ladder {12,16,...,40} (reactor_model.snap_gd_pins) and the snapped

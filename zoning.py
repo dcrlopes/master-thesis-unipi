@@ -202,6 +202,15 @@ RE_BANK_POSITIONS = frozenset([
     (1, 3), (3, 4), (4, 2), (2, 1),          # RE4  M edges, orbit B
 ])
 
+# CAMPAIGN 8: the first two regulating banks alone (RE1 + RE2, eight
+# assemblies). Recorded next to the ALL-RE screen so the front can be
+# split into designs controllable with two banks and designs needing all
+# four. Must stay a subset of RE_BANK_POSITIONS (checked by the applier).
+RE12_POSITIONS = frozenset([
+    (2, 2), (2, 3), (3, 2), (3, 3),          # RE1  inner ring
+    (1, 1), (1, 4), (4, 1), (4, 4),          # RE2  M diagonals
+])
+
 
 # --------------------------------------------------------------------------- #
 # Archive access (checkpoint written by ActiveLearningMOO.save_checkpoint)    #

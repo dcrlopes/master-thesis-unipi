@@ -281,7 +281,7 @@ def main():
     # enr_max / m_P. Optional floor for the k_min side.
     _e_hi = min(_leu.E_SEARCH_MAX, args.enr_max / _leu.M_P_DESIGN)
     for _v in spec.design_space.variables:
-        if _v.name in ("enrich_inner", "enrich_outer"):
+        if _v.name in ("enrich", "enrich_inner", "enrich_outer"):
             _v.high = _e_hi
             if args.enr_box_low is not None:
                 _v.low = max(_v.low, float(args.enr_box_low))
@@ -529,9 +529,9 @@ def main():
                                "e_search_max_wtpc": _leu.E_SEARCH_MAX,
                                "e_box_used_wtpc": [
                                    next(v.low for v in spec.design_space.variables
-                                        if v.name == "enrich_inner"),
+                                        if v.name in ("enrich", "enrich_inner")),
                                    next(v.high for v in spec.design_space.variables
-                                        if v.name == "enrich_inner")]},
+                                        if v.name in ("enrich", "enrich_inner"))]},
                            "zoning_policy": {
                                "evaluator_zoned": True,
                                "m_c_design": _zn.M_C_DESIGN,

@@ -47,7 +47,10 @@ import numpy as np
 # tightens g_geom uniformly.
 # ---------------------------------------------------------------------------
 R_VESSEL_INNER = 90.0        # cm  (vessel inner radius, ID ~ 1.8 m)
-VESSEL_CLEARANCE_CM = 0.0    # cm  (barrel + downcomer allowance; edit knowingly)
+VESSEL_CLEARANCE_CM = 7.08   # cm  (CAMPAIGN 8: 5.08 cm SS304L core barrel,
+                             #  the NuScale-like benchmark value, plus a
+                             #  2.0 cm downcomer. Sensitivity to 3.7 cm
+                             #  downcomer is run on the candidates only.)
 
 # FUEL_PAD_CM is the radial pad added by reactor_model.make_core_model between
 # the circumscribed fuel envelope R_env and the fuel-bounding cylinder, so that

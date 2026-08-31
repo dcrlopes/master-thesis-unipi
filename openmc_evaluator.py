@@ -307,6 +307,17 @@ class OpenMCEvaluator(Evaluator):
                         - self.enr_max),
             "e_max_zoned": _leu.max_zoned_enrichment_wtpc(e_in, e_out),
             "g_peak":  core["fdh_core"] - self.f_max,     # CORE peaking
+            # CTRL-SCREEN (Campaign 7): operational controllability. One
+            # extra zoned core solve with the sixteen regulating-bank CRAs
+            # (zn.RE_BANK_POSITIONS) fully inserted; SH banks stay out,
+            # reserved for scram. Feasible iff subcritical by the operating
+            # margin. Enabled only when run_optimization passes
+            # --ctrl-margin, so earlier campaigns are bit-for-bit unchanged.
+            **({"k_allre": (_c := _ctrl_solve(self, design))["keff"],
+                "F_allre": _c["fdh_core"],
+                "g_ctrl":  _c["keff"] - (1.0 - self.ctrl_margin_dk)}
+               if getattr(self, "ctrl_margin_dk", None) is not None
+               else {}),
             "g_geom":  cg.geometry_margin(design["pitch"],
                                           design["refl_thick"]),
             "peaking_asm": peaking,
@@ -611,3 +622,22 @@ if __name__ == "__main__":
            "pitch": 1.26, "refl_thick": 12.0}
     print("specific power:", round(ev.spec_power, 2), "W/gHM")
     print(ev.evaluate_one(ref))
+
+
+# --------------------------------------------------------------------------- #
+# CTRL-SCREEN helper (appended by apply_ctrl_constraint.py)                    #
+# --------------------------------------------------------------------------- #
+def _ctrl_solve(ev, design):
+    """One zoned core solve with the sixteen regulating-bank CRAs inserted
+    (zn.RE_BANK_POSITIONS), SH banks out. Same fidelity, zoning path and
+    deterministic seeding as every other core solve; the case directory is
+    keyed by the design hash so re-evaluations reuse it."""
+    tag = _design_seed(design, salt="ctrl") & 0xFFFFFFFF
+    return zn.core_bol_solve(
+        design, zn.evaluator_design_map(design), ev.op, ev.geo,
+        particles=ev.core_particles, batches=ev.core_batches,
+        inactive=ev.core_inactive,
+        seed=_design_seed(design, salt="ctrl"),
+        case=ev.workdir / f"ctrl_{tag:08x}",
+        rodded_map=(set(zn.RE_BANK_POSITIONS),
+                    getattr(ev, "ctrl_absorber", "B4C")))

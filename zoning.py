@@ -188,6 +188,22 @@ def evaluator_design_map(design: dict) -> dict:
 
 
 # --------------------------------------------------------------------------- #
+# CTRL-SCREEN: the sixteen regulating-bank positions (RE1..RE4)               #
+# --------------------------------------------------------------------------- #
+# The complete inner sixteen assemblies: the C ring (RE1), the M-ring
+# diagonals (RE2) and both M-edge orbits (RE3, RE4). The SH banks occupy the
+# outer sixteen and are reserved for scram, so operational controllability
+# means subcritical under ALL-RE. Single source shared by the evaluator's
+# g_ctrl constraint and by rod_bank_worth.py.
+RE_BANK_POSITIONS = frozenset([
+    (2, 2), (2, 3), (3, 2), (3, 3),          # RE1  inner ring
+    (1, 1), (1, 4), (4, 1), (4, 4),          # RE2  M diagonals
+    (1, 2), (2, 4), (4, 3), (3, 1),          # RE3  M edges, orbit A
+    (1, 3), (3, 4), (4, 2), (2, 1),          # RE4  M edges, orbit B
+])
+
+
+# --------------------------------------------------------------------------- #
 # Archive access (checkpoint written by ActiveLearningMOO.save_checkpoint)    #
 # --------------------------------------------------------------------------- #
 def load_archive(checkpoint_path):

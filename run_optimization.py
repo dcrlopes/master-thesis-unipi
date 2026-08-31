@@ -204,6 +204,20 @@ def main():
     ap.add_argument("--enr-max", type=float, default=19.75,
                     help="LEU (Low Enriched Uranium) enrichment cap in "
                          "wt%% U-235")
+    ap.add_argument("--ctrl-margin", type=float, default=None,
+                    help="CTRL-SCREEN: required subcriticality under the "
+                         "fully inserted regulating banks (RE1..RE4), in "
+                         "pcm of dk, e.g. 1000. Adds constraint g_ctrl and "
+                         "one extra core solve per evaluation. Off when "
+                         "absent, reproducing Campaign 6 behaviour.")
+    ap.add_argument("--ctrl-absorber", choices=["B4C", "AIC"],
+                    default="B4C",
+                    help="CTRL-SCREEN: absorber of the regulating CRAs")
+    ap.add_argument("--enr-box-low", type=float, default=None,
+                    help="ENR-BOX: optional lower bound of the enrichment "
+                         "search box in wt%% (design variable), to stop the "
+                         "design of experiments sampling designs that fail "
+                         "k_min. Unset keeps the 2.0 wt%% floor.")
     ap.add_argument("--nsga-pop", type=int, default=None,
                     help="NSGA-SET: NSGA-II population on the surrogate, "
                          "overriding the profile (full run: 60). The C6 "
@@ -259,6 +273,18 @@ def main():
     import leu_policy as _leu
     import zoning as _zn     # ZONED-EVALUATOR: record the map in metadata
     spec = example_reactor_problem()
+    # ENR-BOX (Campaign 7): --enr-max only defined the constraint g_enr; the
+    # search box stayed at leu_policy.E_SEARCH_MAX, so every sample above the
+    # cap paid full depletion before being rejected. Apply the same
+    # cap-over-multiplier rule that sized the LEU box: as-built periphery
+    # enrichment is e * m_P, so the design variable must stay below
+    # enr_max / m_P. Optional floor for the k_min side.
+    _e_hi = min(_leu.E_SEARCH_MAX, args.enr_max / _leu.M_P_DESIGN)
+    for _v in spec.variables:
+        if _v.name in ("enrich_inner", "enrich_outer"):
+            _v.high = _e_hi
+            if args.enr_box_low is not None:
+                _v.low = max(_v.low, float(args.enr_box_low))
 
     if args.smoke:
         # 4 + 1*2 = 6 real evaluations, coarse transport, SHORT adaptive
@@ -332,6 +358,14 @@ def main():
         "g_peak": ev.f_max,
         "g_geom": _cg.R_VESSEL_INNER - _cg.VESSEL_CLEARANCE_CM,
     })
+    # CTRL-SCREEN (Campaign 7): configure the evaluator and register the
+    # constraint only when the flag is given, so the constraint set of every
+    # earlier campaign is untouched and their checkpoints resume unchanged.
+    if args.ctrl_margin is not None:
+        ev.ctrl_margin_dk = float(args.ctrl_margin) * 1.0e-5
+        ev.ctrl_absorber = args.ctrl_absorber
+        spec.constraint_names.append("g_ctrl")
+        spec.constraint_scales["g_ctrl"] = 1.0     # k-units: limit is 1.0
     # EFPD-CLIP: cap the surrogate's predicted cycle length at the depletion
     # ceiling, converted with the same specific power the banner prints
     # (cap [MWd/kgHM] * 1000 / spec_power [W/gHM] = cap [EFPD]; 100 MWd/kgHM
@@ -492,7 +526,12 @@ def main():
                            "enrichment_policy": {
                                "leu_cap_wtpc": _leu.LEU_CAP_WTPC,
                                "m_p_design": _leu.M_P_DESIGN,
-                               "e_search_max_wtpc": _leu.E_SEARCH_MAX},
+                               "e_search_max_wtpc": _leu.E_SEARCH_MAX,
+                               "e_box_used_wtpc": [
+                                   next(v.low for v in spec.variables
+                                        if v.name == "enrich_inner"),
+                                   next(v.high for v in spec.variables
+                                        if v.name == "enrich_inner")]},
                            "zoning_policy": {
                                "evaluator_zoned": True,
                                "m_c_design": _zn.M_C_DESIGN,
@@ -500,6 +539,12 @@ def main():
                                "m_p_design": _leu.M_P_DESIGN,
                                "ring_counts": list(
                                    _zn.ring_counts(_zn.ring_map()))},
+                           "ctrl_screen": {
+                               "enabled": args.ctrl_margin is not None,
+                               "margin_pcm": args.ctrl_margin,
+                               "absorber": args.ctrl_absorber,
+                               "re_positions": sorted(
+                                   _zn.RE_BANK_POSITIONS)},
                            "surrogate_policy": {
                                "efpd_cap_efpd": cfg.efpd_cap,
                                "nsga_pop": cfg.nsga_pop,

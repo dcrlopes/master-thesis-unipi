@@ -33,9 +33,13 @@ EDITS (anchor-verified against campaign6 head bf407cc)
                        regulating positions, next to the map machinery
   openmc_evaluator.py  the g_ctrl entry in the results dict, plus the
                        module-level _ctrl_solve helper
-  run_optimization.py  --ctrl-margin and --ctrl-absorber flags, evaluator
-                       configuration, constraint and scale registration,
-                       checkpoint metadata
+  run_optimization.py  --ctrl-margin, --ctrl-absorber and --enr-box-low
+                       flags, evaluator configuration, constraint and scale
+                       registration, checkpoint metadata, and the ENR-BOX
+                       rule: --enr-max now also narrows the enrichment
+                       search box to enr_max / m_P (it previously set only
+                       the g_enr constraint, so the design of experiments
+                       kept sampling designs it would reject)
 
 Backups: <file>.bak.ctrl. Refuses to run twice (CTRL-SCREEN marker).
 """
@@ -46,6 +50,7 @@ import sys
 from pathlib import Path
 
 MARKER = "CTRL-SCREEN"
+MARKER2 = "ENR-BOX"
 
 FILES = {
     "zoning.py": [
@@ -113,6 +118,42 @@ RE_BANK_POSITIONS = frozenset([
     ap.add_argument("--ctrl-absorber", choices=["B4C", "AIC"],
                     default="B4C",
                     help="CTRL-SCREEN: absorber of the regulating CRAs")
+    ap.add_argument("--enr-box-low", type=float, default=None,
+                    help="ENR-BOX: optional lower bound of the enrichment "
+                         "search box in wt%% (design variable), to stop the "
+                         "design of experiments sampling designs that fail "
+                         "k_min. Unset keeps the 2.0 wt%% floor.")
+''',
+),
+# -- ENR-BOX: an --enr-max below the LEU cap also narrows the SEARCH BOX -----
+(
+'''    spec = example_reactor_problem()
+''',
+'''    spec = example_reactor_problem()
+    # ENR-BOX (Campaign 7): --enr-max only defined the constraint g_enr; the
+    # search box stayed at leu_policy.E_SEARCH_MAX, so every sample above the
+    # cap paid full depletion before being rejected. Apply the same
+    # cap-over-multiplier rule that sized the LEU box: as-built periphery
+    # enrichment is e * m_P, so the design variable must stay below
+    # enr_max / m_P. Optional floor for the k_min side.
+    _e_hi = min(_leu.E_SEARCH_MAX, args.enr_max / _leu.M_P_DESIGN)
+    for _v in spec.variables:
+        if _v.name in ("enrich_inner", "enrich_outer"):
+            _v.high = _e_hi
+            if args.enr_box_low is not None:
+                _v.low = max(_v.low, float(args.enr_box_low))
+''',
+),
+# -- ENR-BOX: record the box actually used ----------------------------------
+(
+'''                               "e_search_max_wtpc": _leu.E_SEARCH_MAX},
+''',
+'''                               "e_search_max_wtpc": _leu.E_SEARCH_MAX,
+                               "e_box_used_wtpc": [
+                                   next(v.low for v in spec.variables
+                                        if v.name == "enrich_inner"),
+                                   next(v.high for v in spec.variables
+                                        if v.name == "enrich_inner")]},
 ''',
 ),
 (
@@ -177,9 +218,9 @@ def main() -> None:
         if not p.is_file():
             sys.exit(f"ABORT: {p} not found. Run from the repository root.")
         text = p.read_text()
-        if MARKER in text:
-            sys.exit(f"REFUSED: {fname} already contains the {MARKER} "
-                     f"marker. Nothing was changed.")
+        if MARKER in text or MARKER2 in text:
+            sys.exit(f"REFUSED: {fname} already contains the {MARKER} or "
+                     f"{MARKER2} marker. Nothing was changed.")
         for i, (anchor, _) in enumerate(edits, 1):
             n = text.count(anchor)
             if n != 1:

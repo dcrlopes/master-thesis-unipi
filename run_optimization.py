@@ -562,7 +562,32 @@ def main():
                                "margin_pcm": args.ctrl_margin,
                                "absorber": args.ctrl_absorber,
                                "re_positions": sorted(
-                                   _zn.RE_BANK_POSITIONS)},
+                                   _zn.RE_BANK_POSITIONS),
+                               # CAMPAIGN 8: provenance of g_ctrl12. Read
+                               # from zoning so the recorded positions can
+                               # never drift from the ones actually solved.
+                               "re12_positions": sorted(
+                                   _zn.RE12_POSITIONS),
+                               "re12_constrained": False,
+                               "bank_definitions": {
+                                   "ALLRE": "RE1 inner ring, RE2 M "
+                                            "diagonals, RE3 and RE4 M edge "
+                                            "orbits (sixteen assemblies)",
+                                   "RE12": "RE1 inner ring and RE2 M "
+                                           "diagonals (eight assemblies)",
+                                   "SH": "outer sixteen assemblies, "
+                                         "reserved for scram, never "
+                                         "inserted in either screen"},
+                               "re12_note": (
+                                   "k_re12 is the beginning-of-life core "
+                                   "eigenvalue with only the first two "
+                                   "regulating banks inserted. g_ctrl12 = "
+                                   "k_re12 - (1 - margin) is RECORDED and "
+                                   "NOT constrained: it never enters "
+                                   "constraint_names, so feasibility is set "
+                                   "by the ALL-RE screen alone and the "
+                                   "front can afterwards be split by "
+                                   "whether two banks suffice.")},
                            "surrogate_policy": {
                                "efpd_cap_efpd": cfg.efpd_cap,
                                "nsga_pop": cfg.nsga_pop,

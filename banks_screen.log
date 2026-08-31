@@ -1,0 +1,21 @@
+[check] bank geometry
+    6 banks x 4 CRAs = 24 of 32 assemblies, all orbits closed
+    unrodded (8): [(0, 4), (1, 0), (1, 3), (2, 1), (3, 4), (4, 2), (4, 5), (5, 1)]
+    map (bank name, or -- for no rod, .. outside the core):
+       .. RE4 SH3 SH4  --  ..
+       -- RE2 RE3  -- RE2 RE4
+      SH4  -- RE1 RE1 RE3 SH3
+      SH3 RE3 RE1 RE1  -- SH4
+      RE4 RE2  -- RE3 RE2  --
+       ..  -- SH4 SH3 RE4  ..
+multipliers C/M/P = 0.720/0.8933/1.150  (balance-solved middle)
+[screen] ALL-RE (16 CRAs) controllability, margin 1000 pcm, 8 designs
+  idx 107: k0=1.17396  k(ALL-RE)=1.03697  RE worth=  -11253 pcm  excess=  14818 pcm  margin=  -3565 pcm  F(ALL-RE)=2.600  NOT controllable by RE banks
+  idx  59: k0=1.07098  k(ALL-RE)=0.94166  RE worth=  -12823 pcm  excess=   6627 pcm  margin=   6195 pcm  F(ALL-RE)=2.662  CONTROLLABLE
+  idx  85: k0=1.26157  k(ALL-RE)=1.11082  RE worth=  -10757 pcm  excess=  20733 pcm  margin=  -9976 pcm  F(ALL-RE)=2.510  NOT controllable by RE banks
+  idx 110: k0=1.13466  k(ALL-RE)=1.01513  RE worth=  -10377 pcm  excess=  11868 pcm  margin=  -1491 pcm  F(ALL-RE)=2.597  NOT controllable by RE banks
+  idx  26: k0=1.19152  k(ALL-RE)=1.05892  RE worth=  -10510 pcm  excess=  16073 pcm  margin=  -5564 pcm  F(ALL-RE)=2.416  NOT controllable by RE banks
+  idx   7: k0=1.24287  k(ALL-RE)=1.10296  RE worth=  -10206 pcm  excess=  19541 pcm  margin=  -9335 pcm  F(ALL-RE)=2.343  NOT controllable by RE banks
+  idx 101: k0=1.24592  k(ALL-RE)=1.09639  RE worth=  -10947 pcm  excess=  19738 pcm  margin=  -8791 pcm  F(ALL-RE)=2.095  NOT controllable by RE banks
+  idx  86: k0=1.27869  k(ALL-RE)=1.12090  RE worth=  -11009 pcm  excess=  21795 pcm  margin= -10786 pcm  F(ALL-RE)=2.100  NOT controllable by RE banks
+wrote banks_screen/banks_B4C.json

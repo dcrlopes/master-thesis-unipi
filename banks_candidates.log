@@ -1,0 +1,22 @@
+[check] bank geometry
+    7 banks, 32 CRAs of 32 assemblies, full coverage,
+    every bank closed under 90-degree rotation
+    map (bank name, or -- for no rod, .. outside the core):
+       .. SH5 SH3 SH4 SH5  ..
+      SH5 RE2 RE3 RE4 RE2 SH5
+      SH4 RE4 RE1 RE1 RE3 SH3
+      SH3 RE3 RE1 RE1 RE4 SH4
+      SH5 RE2 RE4 RE3 RE2 SH5
+       .. SH5 SH4 SH3 SH5  ..
+multipliers C/M/P = 0.720/0.8933/1.150  (balance-solved middle)
+[screen] graded controllability, margin 1000 pcm, states ['ALLRE'], 9 designs
+  idx  31: k0=1.10179  excess=   9239 pcm  |  ALLRE: k=0.94228 margin=   6126 ok
+  idx   1: k0=1.12013  excess=  10725 pcm  |  ALLRE: k=0.96317 margin=   3824 ok
+  idx  39: k0=1.08271  excess=   7639 pcm  |  ALLRE: k=0.95070 margin=   5185 ok
+  idx  34: k0=1.05681  excess=   5376 pcm  |  ALLRE: k=0.91055 margin=   9824 ok
+  idx  22: k0=1.09770  excess=   8900 pcm  |  ALLRE: k=0.92185 margin=   8478 ok
+  idx  69: k0=1.12075  excess=  10774 pcm  |  ALLRE: k=0.95143 margin=   5105 ok
+  idx  78: k0=1.08300  excess=   7664 pcm  |  ALLRE: k=0.87779 margin=  13922 ok
+  idx  28: k0=1.11179  excess=  10055 pcm  |  ALLRE: k=0.94447 margin=   5879 ok
+  idx  11: k0=1.12020  excess=  10730 pcm  |  ALLRE: k=0.94121 margin=   6247 ok
+wrote banks_candidates/banks_B4C.json

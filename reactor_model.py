@@ -551,7 +551,8 @@ def make_core_model(design: dict, op: Operating = Operating(),
                     core_map=None, refl_thick=None, r_fuel=None,
                     design_map=None, rodded_map=None,
                     enforce_vessel=True,
-                    particles=40000, batches=200, inactive=50):
+                    particles=40000, batches=200, inactive=50,
+                    h_active=None, axial_refl_cm=0.0):
     """A small 2D multi-assembly core with a HEAVY (steel) reflector and vacuum BC.
 
     `core_map` is a 2D array of 1 (assembly) / 0 (reflector). Defaults to the
@@ -678,9 +679,38 @@ def make_core_model(design: dict, op: Operating = Operating(),
 
     r_fuel_cyl = openmc.ZCylinder(r=r_fuel)
     r_refl_cyl = openmc.ZCylinder(r=r_outer, boundary_type="vacuum")
-    fuel_cell = openmc.Cell(fill=lat, region=-r_fuel_cyl)             # fuel + gaps
-    refl_cell = openmc.Cell(fill=refl_mat, region=+r_fuel_cyl & -r_refl_cyl)
-    geom = openmc.Geometry([fuel_cell, refl_cell])
+    if h_active is None:
+        # 2D: infinitely tall core, exactly as every campaign evaluated it
+        fuel_cell = openmc.Cell(fill=lat, region=-r_fuel_cyl)         # fuel + gaps
+        refl_cell = openmc.Cell(fill=refl_mat, region=+r_fuel_cyl & -r_refl_cyl)
+        geom = openmc.Geometry([fuel_cell, refl_cell])
+    else:
+        # CORE3D: finite active height, optional borated-water axial
+        # reflectors, vacuum beyond them. The radial steel reflector spans
+        # the full height, including the axial-reflector zones.
+        hz = 0.5 * float(h_active)
+        ax = max(0.0, float(axial_refl_cm))
+        z_lo = openmc.ZPlane(z0=-hz)
+        z_hi = openmc.ZPlane(z0=+hz)
+        if ax > 0.0:
+            z_bot = openmc.ZPlane(z0=-hz - ax, boundary_type="vacuum")
+            z_top = openmc.ZPlane(z0=+hz + ax, boundary_type="vacuum")
+        else:
+            z_lo.boundary_type = "vacuum"
+            z_hi.boundary_type = "vacuum"
+            z_bot, z_top = z_lo, z_hi
+        fuel_cell = openmc.Cell(fill=lat,
+                                region=-r_fuel_cyl & +z_lo & -z_hi)
+        refl_cell = openmc.Cell(fill=refl_mat,
+                                region=+r_fuel_cyl & -r_refl_cyl
+                                & +z_bot & -z_top)
+        cells = [fuel_cell, refl_cell]
+        if ax > 0.0:
+            cells += [openmc.Cell(fill=mats["water"],
+                                  region=-r_fuel_cyl & +z_bot & -z_lo),
+                      openmc.Cell(fill=mats["water"],
+                                  region=-r_fuel_cyl & +z_hi & -z_top)]
+        geom = openmc.Geometry(cells)
     # CR-MATS: collect from the geometry instead of enumerating lists, so
     # materials created inside a universe builder (the control-rod absorber,
     # its helium gap and 304L clad) cannot be omitted from materials.xml.
@@ -688,8 +718,10 @@ def make_core_model(design: dict, op: Operating = Operating(),
         set([m for m in mats.values()] + variant_mats + [refl_mat])
         | set(geom.get_all_materials().values()))
 
-    # seed the initial fission source inside the fuel cylinder
-    bb = ((-r_fuel, -r_fuel, -1e9), (r_fuel, r_fuel, 1e9))
+    # seed the initial fission source inside the fuel cylinder, and within
+    # the active height when the core is finite (CORE3D)
+    zz = 1e9 if h_active is None else 0.5 * float(h_active)
+    bb = ((-r_fuel, -r_fuel, -zz), (r_fuel, r_fuel, zz))
     model = openmc.Model(geometry=geom, materials=materials,
                          settings=_settings(particles, batches, inactive, bb))
     return model, fuel_cells

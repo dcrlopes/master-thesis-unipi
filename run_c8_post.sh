@@ -260,4 +260,30 @@ if os.path.exists(p):
     print("  so the front is unchanged whichever way the re-score falls.")
 PYEOF
 echo
+echo "=============================================================="
+echo " DOWNCOMER 3.7 cm TRADE (stage G)"
+echo "=============================================================="
+python3 - << 'PYEOF'
+import json, os
+a, b = "confirm3d_c8/summary.json", "confirm3d_c8_dc37/summary.json"
+if not (os.path.exists(a) and os.path.exists(b)):
+    print("  stage G not run (set RUN_OPTIONAL=1)"); raise SystemExit
+A, B = json.load(open(a)), json.load(open(b))
+# t_dc = 7.669 - t_refl at pitch 1.26, verified against the runs.json downcomers
+print(f"{'idx':>4} {'refl':>6} {'t_dc':>6} | {'k3D nat':>8} {'k3D 3.7':>8} {'dk':>7} | "
+      f"{'F3D nat':>8} {'F3D 3.7':>8} {'dF':>7}")
+def rho(k): return 1e5*(k-1)/k
+for i in sorted(set(A) & set(B), key=lambda z: int(z)):
+    if "ARO_3Dhw" not in A[i] or "ARO_3Dhw" not in B[i]: continue
+    tr = A[i]["design"]["refl_thick"]
+    k1, k2 = A[i]["ARO_3Dhw"]["k"], B[i]["ARO_3Dhw"]["k"]
+    f1, f2 = A[i]["ARO_3Dhw"]["F"], B[i]["ARO_3Dhw"]["F"]
+    print(f"{i:>4} {tr:6.2f} {7.669-tr:6.3f} | {k1:8.5f} {k2:8.5f} {rho(k2)-rho(k1):7.0f} | "
+          f"{f1:8.3f} {f2:8.3f} {f2-f1:+7.3f}")
+print("\n  dk is the reactivity cost in pcm of trading reflector for downcomer at fixed")
+print("  vessel radius, at BOL with all rods out. The cycle-length effect is NOT")
+print("  measured here, since no depletion is run. Designs 42, 1 and 13 already")
+print("  exceed 3.7 cm natively and need no override.")
+PYEOF
+echo
 say "Next: python3 c8_boron_3d_analysis.py, then commit the json outputs."

@@ -186,13 +186,26 @@ def main():
             pdir = out / f"d{idx}" / "plots"; pdir.mkdir(parents=True, exist_ok=True)
             w = 2 * info["r_vessel_out"] + 2; hgt = info["z_top"] - info["z_bottom"] + 2
             plots = []
-            for basis, width, name in (("xz", (w, hgt), "elevation"), ("xy", (w, w), "plan_fuel")):
-                p = openmc.Plot(); p.basis = basis; p.origin = (0, 0, 0); p.width = width
-                p.pixels = (1800, int(1800 * width[1] / width[0])); p.color_by = "material"; p.filename = str(pdir / name)
-                plots.append(p)
+            zmid = 0.5 * (info["z_bottom"] + info["z_top"])
+            views = (("xz", (w, hgt), (0.0, 0.0, zmid), "elevation"),
+                     ("xy", (w, w), (0.0, 0.0, 0.0), "plan_fuel"),
+                     ("xy", (w, w), (0.0, 0.0, 0.5 * (spec.h_active + spec.plenum)), "plan_plenum"))
+            for basis, width, origin, name in views:
+                pl = openmc.Plot()
+                pl.basis, pl.origin, pl.width = basis, origin, width
+                pl.pixels = (1800, max(200, int(1800 * width[1] / width[0])))
+                pl.color_by = "material"
+                # OpenMC runs with cwd = pdir, so the filename must be the bare
+                # name. A path relative to the repository root would be resolved
+                # INSIDE pdir and the run aborts with "Directory does not exist".
+                pl.filename = name
+                plots.append(pl)
             model.plots = openmc.Plots(plots)
             model.plot_geometry(cwd=str(pdir))
-            print(f"  plots -> {pdir}/elevation.png and plan_fuel.png (check with your eyes before running)")
+            made = sorted(q.name for q in pdir.glob("*.png"))
+            print(f"  plots -> {pdir}/ : {', '.join(made) if made else 'NONE WRITTEN'}")
+            print("  check by eye: three strap bands in the fuel and one in the plenum, the parked")
+            print("  AIC band just above the fuel, and fuel / reflector / barrel / downcomer / vessel")
             continue
         res = summary.get(str(idx), {"design": d, "spec": dataclass_dict(spec)})
         for st in a.states:

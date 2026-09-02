@@ -13,13 +13,15 @@
 #
 # Stages
 #   0  entropy audit of the three flagged front solves      ~1 min   0 solves
+#   A  repair design 53, smoke-contaminated cache entries   ~8 min   2 solves
 #   D  zero-boron ALL-RE margin, 2D and 3D, all 11          ~3.1 h  44 solves
 #   B  boron sweep on the three unswept front members       ~1.4 h  36 solves
 #   C  1000 ppm 3D confirmation, five members lacking one   ~4.2 h  60 solves
 #   E  parked-rod sensitivity, design 47 ARO                ~0.3 h   2 solves
 #   F  g_ctrl re-score of designs 54 and 11, 3 seeds        ~0.3 h   6 solves
 #   G  downcomer 3.7 cm sensitivity, ARO (OPTIONAL)         ~0.9 h  12 solves
-#                                       required total     ~9.3 h 148 solves
+#                                       required total     ~9.5 h 150 solves
+#                                       with stage G      ~10.4 h 162 solves
 #
 # NOT covered, deliberately: the cold-state all-CRAs-minus-one shutdown check
 # of item C2. It needs a shutdown-bank position set (absent from zoning.py),
@@ -100,16 +102,11 @@ preflight() {
     || die "confirm3d.py has no --boron-ppm flag. Run: python fix_confirm3d_cachekey.py --apply"
   echo "  cache-key patch : applied (--boron-ppm present)"
 
-  python3 - << 'PYEOF' || die "design 53 still carries the smoke solve. Rerun it before stage C."
-import json, sys, os
-p = "confirm3d_c8/summary.json"
-if not os.path.exists(p): print("  d53 state       : no summary yet"); sys.exit(0)
-s = json.load(open(p)).get("53")
-if s is None: print("  d53 state       : not present"); sys.exit(0)
-if s["ARO_2D"]["F"] > 1.8:
-    print(f"  d53 ARO F_2D = {s['ARO_2D']['F']:.3f}, expected about 1.500"); sys.exit(1)
-print(f"  d53 state       : clean (ARO F_2D {s['ARO_2D']['F']:.3f})")
-PYEOF
+  if d53_clean; then
+    echo "  d53 state       : clean, stage A will be skipped"
+  else
+    echo "  d53 state       : needs repair, stage A will rerun it (about 8 min)"
+  fi
 
   local nc; nc=$(nproc)
   echo "  cores available : $nc  (requesting $THREADS)"
@@ -129,6 +126,27 @@ PYEOF
 stage_done() { [ -f "$MARK/$1" ]; }
 mark()       { mkdir -p "$MARK"; date -Is > "$MARK/$1"; }
 
+# Design 53 ARO seed 0 was contaminated by a --smoke run that shared its cache
+# key (5000 x 40 reused by a 150000 x 200 run). Clean means: four production
+# ARO entries in runs.json, a peaking below 1.8, and two seeds averaged in
+# both ARO modes. Returns 0 when clean, 1 when the repair is needed. Quiet.
+d53_clean() {
+  python3 - << 'PYEOF' > /dev/null 2>&1
+import json, os, sys
+dr, ds = "confirm3d_c8/runs.json", "confirm3d_c8/summary.json"
+if not (os.path.exists(dr) and os.path.exists(ds)): sys.exit(1)
+runs = json.load(open(dr))
+n = sum(1 for k in runs
+        if k.startswith("53|ARO|") and k.endswith("|150000|200|80|1000.0"))
+try:
+    r = json.load(open(ds))["53"]
+except (KeyError, ValueError):
+    sys.exit(1)
+sys.exit(0 if (n == 4 and r["ARO_2D"]["F"] < 1.8
+               and r["ARO_2D"]["n"] == 2 and r["ARO_3Dhw"]["n"] == 2) else 1)
+PYEOF
+}
+
 # ------------------------------------------------------------------- main --
 if [ "${1:-}" = "--preflight" ]; then preflight; echo "preflight OK, nothing was run."; exit 0; fi
 preflight || exit 1
@@ -145,6 +163,35 @@ else
       confirm3d_c8/d21/ARO_2D_s0 confirm3d_c8/d47/ARO_2D_s0 \
     || say "STAGE 0 returned non-zero, continuing (diagnostic only)"
   mark Z_entropy
+fi
+
+# --- stage A: repair design 53, item from the cache-key collision ----------
+# Must run before stage C, which writes into the same output directory.
+if stage_done A_fix53; then
+  say "STAGE A already done, skipping"
+else
+  if d53_clean; then
+    say "STAGE A  design 53 already clean, nothing to rerun"
+  else
+    say "STAGE A  repair design 53, 2 new solves plus 10 from cache, about 8 min"
+    python -u confirm3d.py --checkpoint "$CKPT" \
+        --designs 53 --states ARO ARI RE12 --seeds 2 --threads $THREADS \
+        --out confirm3d_c8 \
+      || die "stage A failed. Relaunch this script to resume."
+  fi
+  python3 - << 'PYEOF' || die "design 53 is still not clean after stage A. Stop and inspect before stage C."
+import json, sys
+runs = json.load(open("confirm3d_c8/runs.json"))
+r = json.load(open("confirm3d_c8/summary.json"))["53"]
+n = sum(1 for k in runs
+        if k.startswith("53|ARO|") and k.endswith("|150000|200|80|1000.0"))
+print(f"  d53 verify: {len(runs)} cache entries, {n} of 4 production ARO solves, "
+      f"F_2D {r['ARO_2D']['F']:.3f} (want ~1.500), seeds {r['ARO_2D']['n']}/{r['ARO_3Dhw']['n']}, "
+      f"L_ax {r['ARO_Lax_hw']:.4f} (want ~1.0312)")
+sys.exit(0 if (n == 4 and r["ARO_2D"]["F"] < 1.8
+               and r["ARO_2D"]["n"] == 2 and r["ARO_3Dhw"]["n"] == 2) else 1)
+PYEOF
+  mark A_fix53; say "STAGE A complete"
 fi
 
 # --- stage D: zero-boron ALL-RE margin, all 11 -----------------------------

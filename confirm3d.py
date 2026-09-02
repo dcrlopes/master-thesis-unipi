@@ -246,8 +246,17 @@ def main():
                 res[f"{st}_margin2D_pcm"] = -rho_pcm(k2); res[f"{st}_margin3D_pcm"] = -rho_pcm(k3)
         summary[str(idx)] = res
         (out / "summary.json").write_text(json.dumps(summary, indent=1, default=float))
-        print(f"design {idx}: L_ax_hw(ARO) {res['ARO_Lax_hw']:.4f}  F2D {res['ARO_2D']['F']:.3f}  F3D {res['ARO_3Dhw']['F']:.3f}"
-              + (f"  ARI margin 2D/3D {res['ARI_margin2D_pcm']:.0f}/{res['ARI_margin3D_pcm']:.0f} pcm" if "ARI" in a.states else ""))
+        parts = [f"design {idx}:"]
+        if "ARO" in a.states:
+            parts.append(f"L_ax_hw(ARO) {res['ARO_Lax_hw']:.4f}  "
+                         f"F2D {res['ARO_2D']['F']:.3f}  F3D {res['ARO_3Dhw']['F']:.3f}")
+        for _st in ("ARI", "RE12"):
+            if _st in a.states:
+                _m2 = res[f"{_st}_margin2D_pcm"]
+                _m3 = res[f"{_st}_margin3D_pcm"]
+                _lx = res[f"{_st}_Lax_hw"]
+                parts.append(f"{_st} margin 2D/3D {_m2:.0f}/{_m3:.0f} pcm, L_ax {_lx:.4f}")
+        print("  ".join(parts), flush=True)
     if not a.dry_run and not a.plot:
         print(f"wrote {out}/summary.json")
     return 0

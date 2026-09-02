@@ -62,7 +62,7 @@ MARK=".c8_markers"
 NEED_GB=28
 
 say() { echo "$(date -Is)  $*"; }
-die() { echo "FAIL: $*" >&2; exit 1; }
+die() { echo "$(date -Is)  FAIL: $*" >&2; exit 1; }
 
 # --------------------------------------------------------------- preflight --
 preflight() {

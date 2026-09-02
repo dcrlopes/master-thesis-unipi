@@ -109,3 +109,12 @@ kh_probe/
 recheck_entropy/
 verify_mp/
 verify_zoned_ev/
+
+# OpenMC run artefacts from the Campaign 8 post-analysis, never commit
+*.h5
+statepoint.*
+summary.h5
+tallies.out
+boron_c8/design*/
+confirm3d_c8/design*/
+kt_burnup/design*/

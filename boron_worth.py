@@ -247,7 +247,7 @@ def main() -> int:
                     f"& {res.get('boron_share_of_holddown', float('nan')):.2f} \\\\")
     tex = ("\\begin{tabular}{cccccccc}\n\\toprule\n"
            "Design & $\\partial\\rho/\\partial c$ [pcm/ppm] & $W_B$ [pcm] & "
-           "$M_{16}(1000)$ & $M_{16}(0)$ & $M_{2}(1000)$ & $M_{2}(0)$ & boron share \\\\\n"
+           "$M_{16}(1000)$ & $M_{16}(0)$ & $M_{8}(1000)$ & $M_{8}(0)$ & boron share \\\\\n"
            "\\midrule\n" + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n")
     (out / "boron_table.tex").write_text(tex)
     print(f"wrote {out}/summary.json and {out}/boron_table.tex")

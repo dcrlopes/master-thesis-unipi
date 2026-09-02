@@ -129,6 +129,8 @@ def main():
     ap.add_argument("--no-parked-rods", action="store_true")
     ap.add_argument("--refl-override", type=float, default=None,
                     help="replace the design's reflector thickness, e.g. to test a 3.7 cm downcomer")
+    ap.add_argument("--boron-ppm", type=float, default=1000.0,
+                    help="soluble boron of every solve, campaign 1000.0. Use a separate --out per value")
     ap.add_argument("--out", default="confirm3d_c8")
     ap.add_argument("--dry-run", action="store_true"); ap.add_argument("--plot", action="store_true")
     ap.add_argument("--smoke", action="store_true"); ap.add_argument("--selftest", action="store_true")
@@ -160,6 +162,8 @@ def main():
         print(f"FAIL: {e}. Activate openmc-env on the campaign8 branch."); return 2
     os.environ["OMP_NUM_THREADS"] = str(a.threads)
     geo, op = rm.Geometry17x17(), rm.Operating()
+    op.boron_ppm = float(a.boron_ppm)   # Operating is a mutable dataclass
+    print(f"boron  : {op.boron_ppm:.1f} ppm in every solve")
     rmap = zn.ring_map(); nC, nM, nP = zn.ring_counts(rmap)
     m_m = (32 - nC * a.m_center - nP * a.m_periphery) / nM
     rodded = {"ARO": None, "ARI": (set(zn.RE_BANK_POSITIONS), "B4C"), "RE12": (set(zn.RE12_POSITIONS), "B4C")}
@@ -212,7 +216,8 @@ def main():
             for mode in ("2D", "3Dhw"):
                 ks, fs = [], []
                 for s in range(a.seeds):
-                    key = f"{idx}|{st}|{mode}|{s}|{a.refl_override}|{a.refl_steel_vol}|{a.cr_abs_radius}|{a.rod_stack}|{a.no_parked_rods}"
+                    key = (f"{idx}|{st}|{mode}|{s}|{a.refl_override}|{a.refl_steel_vol}|{a.cr_abs_radius}|{a.rod_stack}|{a.no_parked_rods}"
+                           f"|{fid['particles']}|{fid['batches']}|{fid['inactive']}|{a.boron_ppm}")
                     if key in cache:
                         rec = cache[key]
                     else:

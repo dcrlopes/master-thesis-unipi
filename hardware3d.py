@@ -191,13 +191,32 @@ def volume_fractions(geo, pitch: float, spec: HardwareSpec) -> dict:
 
 # -------------------------------------------------------------- materials
 def mix(name, parts, T):
+    """Volume-fraction mixture. parts = {openmc.Material: fraction}.
+
+    openmc.Material.mix_materials() raises NotImplementedError if ANY input
+    carries an S(a,b) table, and make_water() attaches c_H_in_H2O. The
+    campaign solves this in reactor_model.make_heavy_reflector by saving the
+    table, stripping it, mixing, then re-attaching it. The benchmark scripts
+    of Zenodo 15231335 do the same, calling add_s_alpha_beta on the coolant
+    only after every mix_materials call. The same pattern is used here.
+    Re-attaching is correct physics: the hydrogen of the mixture is still
+    bound water."""
     o = _need_openmc()
     mats, fr = list(parts.keys()), list(parts.values())
-    m = o.Material.mix_materials(mats, fr, "vo")
+    saved = {id(x): list(getattr(x, "_sab", [])) for x in mats}
+    had_sab = any(saved[id(x)] for x in mats)
+    for x in mats:
+        if saved[id(x)]:
+            x._sab = []
+    try:
+        m = o.Material.mix_materials(mats, fr, "vo")
+    finally:
+        for x in mats:                      # restore the shared inputs
+            if saved[id(x)]:
+                x._sab = saved[id(x)]
     m.name, m.temperature = name, T
-    if any("water" in (x.name or "") for x in mats):
-        if not any("c_H_in_H2O" in str(s) for s in getattr(m, "_sab", [])):
-            m.add_s_alpha_beta("c_H_in_H2O")
+    if had_sab:
+        m.add_s_alpha_beta("c_H_in_H2O")
     return m
 
 

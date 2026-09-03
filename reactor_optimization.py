@@ -129,7 +129,19 @@ class DesignSpace:
             f"check the design-variable bounds against the constraint.")
 
     def as_dict(self, x: Sequence[float]) -> dict:
-        return {v.name: float(xi) for v, xi in zip(self.variables, x)}
+        d = {v.name: float(xi) for v, xi in zip(self.variables, x)}
+        # CAMPAIGN 8: single-enrichment design space with a fixed pitch.
+        # The optimiser sees "enrich" only. Every downstream consumer
+        # (evaluator, zoning path, k_target interpolation, log line,
+        # archive) keeps reading enrich_inner / enrich_outer / pitch, so
+        # the keys are DERIVED here, at the single vector-to-design choke
+        # point, and nothing else in the pipeline changes.
+        if "enrich" in d:
+            d.setdefault("enrich_inner", d["enrich"])
+            d.setdefault("enrich_outer", d["enrich"])
+            if "pitch" not in d:
+                d["pitch"] = 1.26   # cm, fixed Westinghouse 17x17 pitch (C8)
+        return d
 
 
 class _BoxProblem(Problem):
@@ -172,6 +184,14 @@ class ProblemSpec:
     # here must also appear in constraint_names, and the truth evaluator must
     # still return it (so it lands in the archive/checkpoint like any other g).
     exact_constraints: dict = field(default_factory=dict)
+    # CONSTRAINT-NORM: positive per-constraint scales for the OPTIMIZER'S
+    # view of G. Physical g values (raw dicts, checkpoints, plots) stay in
+    # their native units; the division happens only where the optimizer
+    # assembles its G matrix. A missing name defaults to 1.0, so an empty
+    # dict reproduces the old behaviour bit for bit. Scales are positive,
+    # so the feasible set is IDENTICAL; only the ranking AMONG infeasible
+    # designs changes.
+    constraint_scales: dict = field(default_factory=dict)
 
     @property
     def n_obj(self):
@@ -184,6 +204,15 @@ class ProblemSpec:
     def exact_ok(self, design: dict) -> bool:
         """True iff the design satisfies every ANALYTIC constraint (g <= 0)."""
         return all(f(design) <= 0.0 for f in self.exact_constraints.values())
+
+    def g_scale(self, name: str) -> float:
+        """CONSTRAINT-NORM: positive scale dividing constraint `name` in the
+        optimizer's G matrix. Defaults to 1.0 (no normalization)."""
+        s = float(self.constraint_scales.get(name, 1.0))
+        if not s > 0.0:
+            raise ValueError(f"constraint scale for {name} must be > 0, "
+                             f"got {s}")
+        return s
 
 
 # =============================================================================
@@ -218,7 +247,10 @@ class Evaluator:
             for j, obj in enumerate(self.spec.objectives):
                 F[i, j] = obj.to_min(res[obj.name])
             for j, cname in enumerate(self.spec.constraint_names):
-                G[i, j] = res[cname]
+                # CONSTRAINT-NORM: pymoo sums raw g into CV, so heterogeneous
+                # units (delta-k, peaking, wt%, cm) would weight constraints
+                # by their units. Divide by each limit: G is dimensionless.
+                G[i, j] = res[cname] / self.spec.g_scale(cname)
             self.n_calls += 1
         return F, G, raw
 
@@ -486,7 +518,7 @@ class _SurrogateProblem(Problem):
     (e.g. the vessel-fit g_geom). The acquisition therefore never proposes a
     geometrically unbuildable design, even at iteration 1 when the GP
     (Gaussian Process) has seen almost no data."""
-    def __init__(self, spec, obj_surrogate, con_surrogate):
+    def __init__(self, spec, obj_surrogate, con_surrogate, efpd_cap=None):
         super().__init__(n_var=spec.design_space.n,
                          n_obj=spec.n_obj,
                          n_ieq_constr=spec.n_constr,
@@ -495,17 +527,33 @@ class _SurrogateProblem(Problem):
         self.spec = spec
         self.obj_surrogate = obj_surrogate
         self.con_surrogate = con_surrogate
-        self._exact_cols = [(spec.constraint_names.index(name), fn)
+        self.efpd_cap = efpd_cap        # EFPD-CLIP (None disables the clip)
+        self._exact_cols = [(spec.constraint_names.index(name), fn,
+                             spec.g_scale(name))          # CONSTRAINT-NORM
                             for name, fn in spec.exact_constraints.items()]
 
     def _evaluate(self, X, out, *a, **k):
         f_mean, _ = self.obj_surrogate.predict(X)
+        f_mean = np.atleast_2d(np.asarray(f_mean, dtype=float))
+        if self.efpd_cap is not None:
+            # EFPD-CLIP: the truth evaluator censors every cycle length at
+            # the depletion ceiling, but a GP trained on the archive
+            # extrapolates past it (C6 DOE: all 288 sensitivity-study picks
+            # predicted 10448-10810 EFPD against a 10016.7 EFPD cap).
+            # Column 0 is MINUS the cycle length (minimise space), so the
+            # ceiling is a floor at -efpd_cap. On the resulting plateau the
+            # first objective is flat and NSGA-II ranks by peaking alone,
+            # exactly as dominance ranks censored truth points.
+            f_mean[:, 0] = np.maximum(f_mean[:, 0], -float(self.efpd_cap))
         out["F"] = f_mean
         if self.con_surrogate is not None:
             g_mean, _ = self.con_surrogate.predict(X)
             g_mean = np.atleast_2d(g_mean)
-            for col, fn in self._exact_cols:
-                g_mean[:, col] = [fn(self.spec.design_space.as_dict(x))
+            for col, fn, scl in self._exact_cols:
+                # CONSTRAINT-NORM: the GP columns are trained on normalized G,
+                # so the exact overwrite must be divided by the SAME scale or
+                # the geometry column would re-enter in centimetres.
+                g_mean[:, col] = [fn(self.spec.design_space.as_dict(x)) / scl
                                   for x in np.atleast_2d(X)]
             out["G"] = g_mean
 
@@ -523,6 +571,16 @@ class OptimizerConfig:
     surrogate: str = "gp"       # "gp" or "mlp"
     seed: int = 0
     hv_ref: tuple | None = None # reference point for hypervolume (in MIN space)
+    efpd_cap: float | None = None  # EFPD-CLIP: ceiling on the SURROGATE's
+                                   # predicted cycle length [EFPD]; None = off
+    infill_min_sep: float = 0.05   # BATCH-DIVERSITY: minimum separation of
+                                   # the infill picks (and of each pick from
+                                   # the archive) in the unit design box,
+                                   # as ||dx/span|| / sqrt(n_var)
+    feas_kappa: float = 1.0        # FEAS-MARGIN: candidates must satisfy
+                                   # g_mean + kappa*g_std <= 0 on the GP
+                                   # constraints to rank first; 0 restores
+                                   # the pure-uncertainty ordering
 
 
 class ActiveLearningMOO:
@@ -662,7 +720,8 @@ class ActiveLearningMOO:
 
             # NSGA-II on the surrogate (cheap):
             t_nsga0 = time.perf_counter()
-            prob = _SurrogateProblem(self.spec, obj_sur, con_sur)
+            prob = _SurrogateProblem(self.spec, obj_sur, con_sur,
+                                     efpd_cap=self.cfg.efpd_cap)  # EFPD-CLIP
             algo = NSGA2(pop_size=self.cfg.nsga_pop, sampling=LHS())
             res = minimize(prob, algo,
                            ("n_gen", self.cfg.nsga_gen),
@@ -680,24 +739,92 @@ class ActiveLearningMOO:
                       f"feasible design; infilling on the {cand.shape[0]} "
                       f"least-infeasible population members.")
 
-            # ---- infill / acquisition: pick the most UNCERTAIN candidates ----
-            # (exploration). You can blend in predicted hypervolume gain later.
+            # ---- infill / acquisition: most UNCERTAIN candidates, spread ----
+            # BATCH-DIVERSITY: rank by GP uncertainty (exploration, unchanged)
+            # but force a minimum separation between the picks, and between
+            # each pick and the archive, in the unit design box. Block 2
+            # showed why: top-k by uncertainty on a continuous front returns
+            # k neighbours, and the old 1e-6 raw-unit duplicate test let six
+            # copies of one design through (cases 48-53 span 0.03 wt%).
+            # Separation:  ||(a - b) / (xu - xl)|| / sqrt(n_var) >= min_sep,
+            # a mean per-variable fraction of range. If the front cannot
+            # supply n_infill picks at min_sep, halve it and rescan, so a
+            # small front still fills the batch as diversely as it can. No
+            # candidate is discarded for its predicted objectives.
             _, std = obj_sur.predict(cand)
             score = (std / (std.max(axis=0) + 1e-12)).sum(axis=1)
-            # de-duplicate against already-evaluated points
-            order = np.argsort(-score)
-            chosen, picked = [], 0
-            for idx in order:
-                x = cand[idx]
-                if self.X.size and np.min(np.linalg.norm(self.X - x, axis=1)) < 1e-6:
-                    continue
-                chosen.append(x); picked += 1
-                if picked >= self.cfg.n_infill:
-                    break
-            if not chosen:                      # fallback: random explore
-                chosen = list(self.spec.design_space.lhs(self.cfg.n_infill,
-                                                         seed=self.cfg.seed + 99 + it))
-            Xinf = np.array(chosen)
+            # FEAS-MARGIN: block 3 selected five of six infill designs past
+            # the reactivity limit (k_core over 1.35 by 1530 to 7750 pcm)
+            # because the constraint GP is optimistic where the data is
+            # thin and the ranking never asked for margin. Score every
+            # candidate as
+            #     s = max_j ( g_mean_j + kappa * g_std_j )
+            # over the GP-predicted constraints, in the normalised units of
+            # CONSTRAINT-NORM. Exact constraints (geometry, enrichment) are
+            # excluded: the NSGA population satisfies them exactly.
+            # Margin-feasible candidates (s <= 0) rank first, by
+            # uncertainty as before. The rest follow, ordered by s, so
+            # nothing is discarded and the batch always fills. kappa = 0
+            # reproduces the block 3 ranking exactly.
+            g_mean, g_std = con_sur.predict(cand)
+            g_mean = np.atleast_2d(np.asarray(g_mean, dtype=float))
+            g_std = np.atleast_2d(np.asarray(g_std, dtype=float))
+            kappa = float(getattr(self.cfg, "feas_kappa", 1.0))
+            _exact_idx = {self.spec.constraint_names.index(n)
+                          for n in self.spec.exact_constraints}
+            _gp_cols = [j for j in range(g_mean.shape[1])
+                        if j not in _exact_idx]
+            if _gp_cols:
+                s_marg = (g_mean[:, _gp_cols]
+                          + kappa * g_std[:, _gp_cols]).max(axis=1)
+            else:
+                s_marg = np.zeros(len(cand), dtype=float)
+            eligible = s_marg <= 0.0
+            if verbose:
+                print(f"           [acquisition] margin-feasible: "
+                      f"{int(eligible.sum())}/{len(cand)} candidates "
+                      f"at kappa={kappa:g}")
+            order = np.concatenate([
+                np.flatnonzero(eligible)[np.argsort(-score[eligible])],
+                np.flatnonzero(~eligible)[np.argsort(s_marg[~eligible])],
+            ]).astype(int)
+            _xl = np.asarray(self.spec.design_space.xl, dtype=float)
+            _xu = np.asarray(self.spec.design_space.xu, dtype=float)
+            span = np.where(_xu > _xl, _xu - _xl, 1.0)
+            rootn = np.sqrt(float(self.spec.design_space.n))
+
+            def _sep(a, B):
+                if B is None or len(B) == 0:
+                    return np.inf
+                d = (np.atleast_2d(np.asarray(B, dtype=float)) - a) / span
+                return float(np.linalg.norm(d, axis=1).min()) / rootn
+
+            chosen = []
+            min_sep = float(getattr(self.cfg, "infill_min_sep", 0.05))
+            while len(chosen) < self.cfg.n_infill and min_sep > 1e-4:
+                for idx in order:
+                    if len(chosen) >= self.cfg.n_infill:
+                        break
+                    x = cand[idx]
+                    if _sep(x, self.X) < min_sep:
+                        continue
+                    if chosen and _sep(x, np.array(chosen)) < min_sep:
+                        continue
+                    chosen.append(x)
+                if len(chosen) < self.cfg.n_infill:
+                    min_sep *= 0.5          # relax and rescan the ranking
+                    if verbose:
+                        print(f"           [acquisition] diversity relaxed "
+                              f"to min_sep={min_sep:.4f} "
+                              f"({len(chosen)}/{self.cfg.n_infill} picked)")
+            if len(chosen) < self.cfg.n_infill:
+                # candidates exhausted even after relaxation: top up with
+                # space-filling randoms rather than duplicating a pick
+                extra = np.atleast_2d(self.spec.design_space.lhs(
+                    self.cfg.n_infill - len(chosen),
+                    seed=self.cfg.seed + 99 + it))
+                chosen.extend(list(extra))
+            Xinf = np.array(chosen[: self.cfg.n_infill])
             t_acq = time.perf_counter() - t_acq0
 
             # evaluate the infill points with the TRUTH:
@@ -823,7 +950,8 @@ class ActiveLearningMOO:
         X = np.array([[float(r[n]) for n in names] for r in raw_list])
         F = np.array([[obj.to_min(r[obj.name]) for obj in self.spec.objectives]
                       for r in raw_list])
-        G = (np.array([[float(r[c]) for c in self.spec.constraint_names]
+        G = (np.array([[float(r[c]) / self.spec.g_scale(c)   # CONSTRAINT-NORM
+                        for c in self.spec.constraint_names]
                        for r in raw_list])
              if self.spec.n_constr else np.empty((len(raw_list), 0)))
         self._add(X, F, G, [dict(r) for r in raw_list])
@@ -913,16 +1041,19 @@ def example_reactor_problem() -> ProblemSpec:
     import leu_policy as _leu
 
     ds = DesignSpace([
-        # Upper bound is LEU_CAP_WTPC / M_P_DESIGN, so the highest
-        # enrichment anywhere in the ZONED core stays at or below the
-        # LEU (Low Enriched Uranium) cap by construction. At
-        # M_P_DESIGN = 1.0 this is exactly 19.75, the previous bound.
-        # See leu_policy.py.
-        DesignVariable("enrich_inner", 2.0, _leu.E_SEARCH_MAX, "%"),
-        DesignVariable("enrich_outer", 2.0, _leu.E_SEARCH_MAX, "%"),
+        # CAMPAIGN 8: four design variables. ONE assembly enrichment
+        # ("enrich"): the core-level variation comes from the C/M/P ring
+        # multipliers of zoning.py (0.720 / 0.8933 / 1.150), so the
+        # as-built peripheral enrichment is enrich * M_P_DESIGN and the
+        # search-box upper bound stays LEU-capped by construction
+        # (leu_policy.py). Pitch is FIXED at 1.26 cm, the Westinghouse
+        # 17x17 value, derived in DesignSpace.as_dict. The reflector upper
+        # bound is the vessel budget at that pitch with the Campaign 8
+        # clearance (5.08 cm barrel + 2.0 cm downcomer):
+        #   90.0 - 7.08 - 77.231 - 0.02 = 5.669 cm  ->  bound 5.66 cm.
+        DesignVariable("enrich",       2.0, _leu.E_SEARCH_MAX, "%"),
         DesignVariable("gd_wt",        0.0,  8.0,  "wt% Gd2O3"),
-        DesignVariable("pitch",        1.15, 1.43, "cm"),
-        DesignVariable("refl_thick",   2.0,  19.5, "cm"),
+        DesignVariable("refl_thick",   2.0,  5.66, "cm"),
         # CAMPAIGN 5: gadolinia-bearing rod count. Continuous for the
         # surrogate and NSGA-II; the model snaps to the nested symmetric
         # ladder {12,16,...,40} (reactor_model.snap_gd_pins) and the snapped
@@ -935,7 +1066,20 @@ def example_reactor_problem() -> ProblemSpec:
     ]
     constraints = ["g_kmin", "g_kmax", "g_enr", "g_peak", "g_geom"]
     exact = {"g_geom": lambda d: geometry_margin(d["pitch"], d["refl_thick"])}
-    return ProblemSpec(ds, objs, constraints, exact_constraints=exact)
+    # CONSTRAINT-NORM: default scales = each constraint's own limit, so the
+    # optimizer compares FRACTIONAL violations (dimensionless). If the run
+    # overrides a limit (k_basis table, CLI), run_optimization.py re-syncs
+    # these from the evaluator's actual attributes after construction.
+    import core_geometry as _cg
+    scales = {
+        "g_kmin": 1.02,
+        "g_kmax": 1.35,
+        "g_enr":  19.75,
+        "g_peak": 2.0,
+        "g_geom": _cg.R_VESSEL_INNER - _cg.VESSEL_CLEARANCE_CM,
+    }
+    return ProblemSpec(ds, objs, constraints, exact_constraints=exact,
+                       constraint_scales=scales)
 
 
 # =============================================================================

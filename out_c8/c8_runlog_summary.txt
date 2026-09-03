@@ -1,0 +1,30 @@
+==========================================================================
+RUN LOG SUMMARY: out_c8_run.log
+==========================================================================
+OpenMC 0.15.3   started 2026-09-01 00:48:23   64 OpenMP threads
+--------------------------------------------------------------------------
+OPTIMIZATION PROGRESS
+  DOE          total evals=36   HV=1966.0
+  iter 1/4     total evals=42   HV=1966.0
+  iter 2/4     total evals=48   HV=2022.0
+  iter 3/4     total evals=54   HV=2022.0
+  iter 4/4     total evals=60   HV=2026.0
+--------------------------------------------------------------------------
+CASES: 60   EFPD min/median/max = 0/4710/7976   (1 cases at the 7976 EFPD schedule ceiling)
+       F_dh min/median/max = 1.166/1.234/1.358
+       interpolated k_target range: 1.0820 - 1.0839
+--------------------------------------------------------------------------
+DEPLETION SCHEDULE (first case): 17 steps, total 6160.3 EFPD
+  dt [d]: 50, 100, 200, 401, 601, 401, 401, 401, 401, 401, 401, 401, 401, 401, 401, 401, 401
+  (largest step 601 EFPD -> end-of-cycle interpolation happens across steps this coarse)
+--------------------------------------------------------------------------
+TRANSPORT: 878 solves   mean 37.5 s   total 9.15 h
+           transport solves per case: 14.6
+           mean active rate: 5734 particles/s
+           Monte Carlo sigma(k): mean 223 pcm  (min 144 / max 350)
+--------------------------------------------------------------------------
+ERROR/Traceback lines: 0
+--------------------------------------------------------------------------
+WALL TIME: 75684 s = 21.02 h for 60 evaluations -> 1261 s/eval (21.0 min/eval)
+==========================================================================
+per-case table -> out_c8/c8_cases.csv

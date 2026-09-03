@@ -328,12 +328,72 @@ def _guide_tube_universe(mats, geo: Geometry17x17):
     return openmc.Universe(cells=[inner, tube, outer])
 
 
-def build_assembly_universe(design, mats, geo: Geometry17x17, pitch: float):
+
+CR_R_ABS, CR_R_GAP, CR_R_CLAD = 0.4331, 0.43688, 0.48387   # cm, VERIFY nb cell 1
+
+
+def make_cr_materials(T: float = 600.0):
+    """Absorber-pin materials, atom densities verbatim from the validated
+    NuScale-like notebook (Zenodo 15231335). set_density('sum')."""
+    aic = openmc.Material(name="AIC (80-15-5)")
+    for n, d in (("Ag107", 2.35230e-02), ("Ag109", 2.18540e-02),
+                 ("Cd106", 3.38820e-05), ("Cd108", 2.41660e-05),
+                 ("Cd110", 3.39360e-04), ("Cd111", 3.48210e-04),
+                 ("Cd112", 6.56110e-04), ("Cd113", 3.32750e-04),
+                 ("Cd114", 7.82520e-04), ("Cd116", 2.04430e-04),
+                 ("In113", 3.42190e-04), ("In115", 7.65110e-03)):
+        aic.add_nuclide(n, d)
+    b4c = openmc.Material(name="B4C")
+    for n, d in (("B10", 1.52060e-02), ("B11", 6.15140e-02),
+                 ("C0", 1.89720e-02 + 2.12520e-04)):
+        b4c.add_nuclide(n, d)
+    ss = openmc.Material(name="SS 304L")
+    for n, d in (("Cr50", 7.67780e-04), ("Cr52", 1.48060e-02),
+                 ("Cr53", 1.67890e-03), ("Cr54", 4.17910e-04),
+                 ("Fe54", 3.46200e-03), ("Fe56", 5.43450e-02),
+                 ("Fe57", 1.25510e-03), ("Fe58", 1.67030e-04),
+                 ("Mn55", 1.76040e-03), ("Ni58", 5.60890e-03),
+                 ("Ni60", 2.16050e-03), ("Ni61", 9.39170e-05),
+                 ("Ni62", 2.99450e-04), ("Ni64", 7.62610e-05),
+                 ("Si28", 9.52810e-04), ("Si29", 4.83810e-05),
+                 ("Si30", 3.18930e-05)):
+        ss.add_nuclide(n, d)
+    he = openmc.Material(name="He")
+    he.add_nuclide("He3", 4.80890e-10)
+    he.add_nuclide("He4", 2.40440e-04)
+    for m in (aic, b4c, ss, he):
+        m.set_density("sum")
+        m.temperature = T
+    return {"AIC": aic, "B4C": b4c, "cr_ss": ss, "cr_he": he}
+
+
+def _cr_gt_universe(mats, geo: "Geometry17x17", absorber: str):
+    """Guide tube with a fully inserted rod: absorber, He gap, 304L clad,
+    water annulus, zircaloy tube, water. 2D-valid for FULL insertion only."""
+    assert CR_R_CLAD < geo.gt_ir, "rod clad does not fit this guide tube"
+    crm = make_cr_materials(600.0)
+    r1 = openmc.ZCylinder(r=CR_R_ABS)
+    r2 = openmc.ZCylinder(r=CR_R_GAP)
+    r3 = openmc.ZCylinder(r=CR_R_CLAD)
+    r4 = openmc.ZCylinder(r=geo.gt_ir)
+    r5 = openmc.ZCylinder(r=geo.gt_or)
+    cs = [openmc.Cell(fill=crm[absorber], region=-r1),
+          openmc.Cell(fill=crm["cr_he"], region=+r1 & -r2),
+          openmc.Cell(fill=crm["cr_ss"], region=+r2 & -r3),
+          openmc.Cell(fill=mats["water"], region=+r3 & -r4),
+          openmc.Cell(fill=mats["clad"], region=+r4 & -r5),
+          openmc.Cell(fill=mats["water"], region=+r5)]
+    return openmc.Universe(name=f"gt_cr_{absorber}", cells=cs)
+
+
+def build_assembly_universe(design, mats, geo: Geometry17x17, pitch: float,
+                            rodded=None):
     """A 17x17 lattice. Inner ring of fuel uses 'fuel_in', outer uses
     'fuel_out'; Gd pins (if any) replace selected positions. Returns the
     lattice-filled universe and the list of distinct fuel cells (for tallies)."""
     N = geo.lattice
-    gt = _guide_tube_universe(mats, geo)
+    gt = (_cr_gt_universe(mats, geo, rodded) if rodded
+          else _guide_tube_universe(mats, geo))
     _gd_set = set(gd_pattern(design.get("gd_pins", 12)))   # CAMPAIGN 5
 
     # which lattice positions count as "inner" (a centered block) vs "outer"
@@ -422,7 +482,8 @@ def make_assembly_model(design: dict, op: Operating = Operating(),
                         geo: Geometry17x17 = Geometry17x17(),
                         bc: str = "reflective", reflector: bool = False,
                         particles=20000, batches=150, inactive=40,
-                        pin_tally: bool = False):
+                        pin_tally: bool = False,
+                        rodded=None):
     """One 17x17 assembly, infinite in z (2D). Returns (model, fuel_cells, lattice).
 
     reflector=False  (default, UNCHANGED behaviour)
@@ -448,7 +509,7 @@ def make_assembly_model(design: dict, op: Operating = Operating(),
         (or the core-based K_TARGET(refl_thick) route) before quoting final EFPD."""
     pitch = design.get("pitch", 1.26)
     mats = build_materials(design, op)
-    asm_u, fuel_cells, lat = build_assembly_universe(design, mats, geo, pitch)
+    asm_u, fuel_cells, lat = build_assembly_universe(design, mats, geo, pitch, rodded=rodded)
     half = geo.lattice * pitch / 2.0
     materials = openmc.Materials([m for m in mats.values()])
 
@@ -488,9 +549,10 @@ def make_assembly_model(design: dict, op: Operating = Operating(),
 def make_core_model(design: dict, op: Operating = Operating(),
                     geo: Geometry17x17 = Geometry17x17(),
                     core_map=None, refl_thick=None, r_fuel=None,
-                    design_map=None,
+                    design_map=None, rodded_map=None,
                     enforce_vessel=True,
-                    particles=40000, batches=200, inactive=50):
+                    particles=40000, batches=200, inactive=50,
+                    h_active=None, axial_refl_cm=0.0):
     """A small 2D multi-assembly core with a HEAVY (steel) reflector and vacuum BC.
 
     `core_map` is a 2D array of 1 (assembly) / 0 (reflector). Defaults to the
@@ -540,15 +602,20 @@ def make_core_model(design: dict, op: Operating = Operating(),
     # enrichment derate stay single-sourced. Variants are cached on their
     # numeric content, and the lattice pitch is ALWAYS the base design's
     # pitch (zoning must never change geometry).
+    _rodded_kind = "B4C"
+    if isinstance(rodded_map, tuple):          # (positions, "AIC"/"B4C")
+        rodded_map, _rodded_kind = rodded_map
     variant_mats = []
     _variant_cache = {}
 
-    def _variant_u(d):
-        key = tuple(sorted((k, round(float(v), 9)) for k, v in d.items()
-                           if isinstance(v, (int, float))))
+    def _variant_u(d, rodded=None):
+        key = (rodded,) + tuple(sorted((k, round(float(v), 9))
+                                       for k, v in d.items()
+                                       if isinstance(v, (int, float))))
         if key not in _variant_cache:
             mv = build_materials(d, op)
-            uv, _fc, _ = build_assembly_universe(d, mv, geo, pitch)
+            uv, _fc, _ = build_assembly_universe(d, mv, geo, pitch,
+                                     rodded=rodded)
             variant_mats.extend(mv.values())
             _variant_cache[key] = uv
         return _variant_cache[key]
@@ -569,7 +636,7 @@ def make_core_model(design: dict, op: Operating = Operating(),
             if core_map[i, j] != 1:
                 universes[i, j] = refl_u
             elif design_map is not None and (i, j) in design_map:
-                universes[i, j] = _variant_u(design_map[(i, j)])
+                universes[i, j] = _variant_u(design_map[(i, j)], rodded=(_rodded_kind if (rodded_map is not None and (i, j) in rodded_map) else None))
             else:
                 universes[i, j] = asm_u
 
@@ -612,14 +679,49 @@ def make_core_model(design: dict, op: Operating = Operating(),
 
     r_fuel_cyl = openmc.ZCylinder(r=r_fuel)
     r_refl_cyl = openmc.ZCylinder(r=r_outer, boundary_type="vacuum")
-    fuel_cell = openmc.Cell(fill=lat, region=-r_fuel_cyl)             # fuel + gaps
-    refl_cell = openmc.Cell(fill=refl_mat, region=+r_fuel_cyl & -r_refl_cyl)
-    geom = openmc.Geometry([fuel_cell, refl_cell])
-    materials = openmc.Materials([m for m in mats.values()]
-                                 + variant_mats + [refl_mat])
+    if h_active is None:
+        # 2D: infinitely tall core, exactly as every campaign evaluated it
+        fuel_cell = openmc.Cell(fill=lat, region=-r_fuel_cyl)         # fuel + gaps
+        refl_cell = openmc.Cell(fill=refl_mat, region=+r_fuel_cyl & -r_refl_cyl)
+        geom = openmc.Geometry([fuel_cell, refl_cell])
+    else:
+        # CORE3D: finite active height, optional borated-water axial
+        # reflectors, vacuum beyond them. The radial steel reflector spans
+        # the full height, including the axial-reflector zones.
+        hz = 0.5 * float(h_active)
+        ax = max(0.0, float(axial_refl_cm))
+        z_lo = openmc.ZPlane(z0=-hz)
+        z_hi = openmc.ZPlane(z0=+hz)
+        if ax > 0.0:
+            z_bot = openmc.ZPlane(z0=-hz - ax, boundary_type="vacuum")
+            z_top = openmc.ZPlane(z0=+hz + ax, boundary_type="vacuum")
+        else:
+            z_lo.boundary_type = "vacuum"
+            z_hi.boundary_type = "vacuum"
+            z_bot, z_top = z_lo, z_hi
+        fuel_cell = openmc.Cell(fill=lat,
+                                region=-r_fuel_cyl & +z_lo & -z_hi)
+        refl_cell = openmc.Cell(fill=refl_mat,
+                                region=+r_fuel_cyl & -r_refl_cyl
+                                & +z_bot & -z_top)
+        cells = [fuel_cell, refl_cell]
+        if ax > 0.0:
+            cells += [openmc.Cell(fill=mats["water"],
+                                  region=-r_fuel_cyl & +z_bot & -z_lo),
+                      openmc.Cell(fill=mats["water"],
+                                  region=-r_fuel_cyl & +z_hi & -z_top)]
+        geom = openmc.Geometry(cells)
+    # CR-MATS: collect from the geometry instead of enumerating lists, so
+    # materials created inside a universe builder (the control-rod absorber,
+    # its helium gap and 304L clad) cannot be omitted from materials.xml.
+    materials = openmc.Materials(
+        set([m for m in mats.values()] + variant_mats + [refl_mat])
+        | set(geom.get_all_materials().values()))
 
-    # seed the initial fission source inside the fuel cylinder
-    bb = ((-r_fuel, -r_fuel, -1e9), (r_fuel, r_fuel, 1e9))
+    # seed the initial fission source inside the fuel cylinder, and within
+    # the active height when the core is finite (CORE3D)
+    zz = 1e9 if h_active is None else 0.5 * float(h_active)
+    bb = ((-r_fuel, -r_fuel, -zz), (r_fuel, r_fuel, zz))
     model = openmc.Model(geometry=geom, materials=materials,
                          settings=_settings(particles, batches, inactive, bb))
     return model, fuel_cells

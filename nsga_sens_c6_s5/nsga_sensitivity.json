@@ -1,0 +1,921 @@
+{
+  "archive": {
+    "source": "out_c6/optimization_checkpoint.json",
+    "n_evaluations": 42,
+    "checkpoint_meta": {
+      "k_target": "ktarget_table.json",
+      "smoke": false,
+      "transport": {
+        "particles": 4000,
+        "batches": 60,
+        "inactive": 20
+      },
+      "core_transport": {
+        "particles": 100000,
+        "batches": 170,
+        "inactive": 60
+      },
+      "gd_model": "zone-matched enrichment, 5 percent/wt% relative reduction, Strategy-A ladder {12,16,20,24,32,40}",
+      "objective_def": "peaking = ZONED core BOL F_dh (m_C 0.720 / balanced m_M / m_P from leu_policy), evaluator-zoned from Campaign 6",
+      "schedule": {
+        "bol_steps": [
+          0.5,
+          1.0,
+          2.0,
+          4.0,
+          6.0
+        ],
+        "dep_step": 4.0,
+        "max_burnup": 100.0,
+        "chunk_steps": 2
+      },
+      "geometry": "v2-envelope",
+      "limits": {
+        "k_basis": "core",
+        "k_max": 1.35,
+        "k_min": 1.02,
+        "f_max": 2.0,
+        "enr_max": 19.75
+      },
+      "enrichment_policy": {
+        "leu_cap_wtpc": 19.75,
+        "m_p_design": 1.15,
+        "e_search_max_wtpc": 17.17391304347826
+      },
+      "zoning_policy": {
+        "evaluator_zoned": true,
+        "m_c_design": 0.72,
+        "m_m_balanced": 0.8933333333333335,
+        "m_p_design": 1.15,
+        "ring_counts": [
+          4,
+          12,
+          16
+        ]
+      },
+      "omp_threads": 32,
+      "host": "cac0a1cc00bd",
+      "cpu_count": 32,
+      "openmc_version": "0.15.3",
+      "workdir": "openmc_runs_c6",
+      "started_utc": "2026-08-28T18:17:04+00:00",
+      "block_started_utc": [
+        "2026-08-28T18:17:04+00:00"
+      ]
+    }
+  },
+  "n_feasible_in_archive": 28,
+  "baseline": "60x80",
+  "seeds": [
+    5
+  ],
+  "n_infill": 6,
+  "top_k": 0,
+  "match_tol": 0.02,
+  "hv_ref": [
+    -6776.007652354858,
+    2.069213083344499
+  ],
+  "infeasible_regime": false,
+  "design_variables": [
+    "enrich_inner",
+    "enrich_outer",
+    "gd_wt",
+    "pitch",
+    "refl_thick",
+    "gd_pins"
+  ],
+  "constraint_names": [
+    "g_kmin",
+    "g_kmax",
+    "g_enr",
+    "g_peak",
+    "g_geom"
+  ],
+  "aggregate": [
+    {
+      "pop": 60,
+      "gen": 80,
+      "n_surrogate_evals": 4800,
+      "n_seeds": 1,
+      "is_baseline": true,
+      "cv_min_pop_mean": 0.0,
+      "cv_min_pop_std": 0.0,
+      "cv_mean_pop_mean": 0.0,
+      "cv_mean_pop_std": 0.0,
+      "hv_surrogate_mean": 1914.4351609891892,
+      "hv_surrogate_std": 0.0,
+      "n_feasible_pop_mean": 60.0,
+      "n_feasible_pop_std": 0.0,
+      "t_search_s_mean": 0.4487476569993305,
+      "t_search_s_std": 0.0,
+      "t_acquisition_s_mean": 0.0005991240032017231,
+      "t_acquisition_s_std": 0.0,
+      "agreement_mean": 1.0,
+      "agreement_std": 0.0,
+      "gd_pins_agreement_mean": 1.0,
+      "gd_pins_agreement_std": 0.0,
+      "d_cycle_EFPD_mean": 0.0,
+      "d_cycle_EFPD_std": 0.0,
+      "d_peaking_mean": 0.0,
+      "d_peaking_std": 0.0,
+      "violation_selected_mean_mean": 0.0,
+      "violation_selected_mean_std": 0.0,
+      "n_candidates_used_mean": 60.0,
+      "n_candidates_used_std": 0.0
+    },
+    {
+      "pop": 80,
+      "gen": 120,
+      "n_surrogate_evals": 9600,
+      "n_seeds": 1,
+      "is_baseline": false,
+      "cv_min_pop_mean": 0.0,
+      "cv_min_pop_std": 0.0,
+      "cv_mean_pop_mean": 0.0,
+      "cv_mean_pop_std": 0.0,
+      "hv_surrogate_mean": 1930.772851645594,
+      "hv_surrogate_std": 0.0,
+      "n_feasible_pop_mean": 80.0,
+      "n_feasible_pop_std": 0.0,
+      "t_search_s_mean": 0.8248711460037157,
+      "t_search_s_std": 0.0,
+      "t_acquisition_s_mean": 0.0006153449940029532,
+      "t_acquisition_s_std": 0.0,
+      "agreement_mean": 0.5,
+      "agreement_std": 0.0,
+      "gd_pins_agreement_mean": 1.0,
+      "gd_pins_agreement_std": 0.0,
+      "d_cycle_EFPD_mean": 34.54033033323685,
+      "d_cycle_EFPD_std": 0.0,
+      "d_peaking_mean": 0.013771974931011899,
+      "d_peaking_std": 0.0,
+      "violation_selected_mean_mean": 0.0,
+      "violation_selected_mean_std": 0.0,
+      "n_candidates_used_mean": 80.0,
+      "n_candidates_used_std": 0.0
+    },
+    {
+      "pop": 120,
+      "gen": 160,
+      "n_surrogate_evals": 19200,
+      "n_seeds": 1,
+      "is_baseline": false,
+      "cv_min_pop_mean": 0.0,
+      "cv_min_pop_std": 0.0,
+      "cv_mean_pop_mean": 0.0,
+      "cv_mean_pop_std": 0.0,
+      "hv_surrogate_mean": 1926.7337987031572,
+      "hv_surrogate_std": 0.0,
+      "n_feasible_pop_mean": 120.0,
+      "n_feasible_pop_std": 0.0,
+      "t_search_s_mean": 1.4888314209965756,
+      "t_search_s_std": 0.0,
+      "t_acquisition_s_mean": 0.0006754950009053573,
+      "t_acquisition_s_std": 0.0,
+      "agreement_mean": 0.0,
+      "agreement_std": 0.0,
+      "gd_pins_agreement_mean": 1.0,
+      "gd_pins_agreement_std": 0.0,
+      "d_cycle_EFPD_mean": 34.79254890332959,
+      "d_cycle_EFPD_std": 0.0,
+      "d_peaking_mean": 0.010156505232418178,
+      "d_peaking_std": 0.0,
+      "violation_selected_mean_mean": 0.0,
+      "violation_selected_mean_std": 0.0,
+      "n_candidates_used_mean": 120.0,
+      "n_candidates_used_std": 0.0
+    },
+    {
+      "pop": 200,
+      "gen": 200,
+      "n_surrogate_evals": 40000,
+      "n_seeds": 1,
+      "is_baseline": false,
+      "cv_min_pop_mean": 0.0,
+      "cv_min_pop_std": 0.0,
+      "cv_mean_pop_mean": 0.0,
+      "cv_mean_pop_std": 0.0,
+      "hv_surrogate_mean": 1939.1036158046602,
+      "hv_surrogate_std": 0.0,
+      "n_feasible_pop_mean": 200.0,
+      "n_feasible_pop_std": 0.0,
+      "t_search_s_mean": 2.822517743006756,
+      "t_search_s_std": 0.0,
+      "t_acquisition_s_mean": 0.0007970959995873272,
+      "t_acquisition_s_std": 0.0,
+      "agreement_mean": 0.0,
+      "agreement_std": 0.0,
+      "gd_pins_agreement_mean": 1.0,
+      "gd_pins_agreement_std": 0.0,
+      "d_cycle_EFPD_mean": 68.88143886936632,
+      "d_cycle_EFPD_std": 0.0,
+      "d_peaking_mean": 0.024739336815119417,
+      "d_peaking_std": 0.0,
+      "violation_selected_mean_mean": 0.0,
+      "violation_selected_mean_std": 0.0,
+      "n_candidates_used_mean": 200.0,
+      "n_candidates_used_std": 0.0
+    },
+    {
+      "pop": 200,
+      "gen": 400,
+      "n_surrogate_evals": 80000,
+      "n_seeds": 1,
+      "is_baseline": false,
+      "cv_min_pop_mean": 0.0,
+      "cv_min_pop_std": 0.0,
+      "cv_mean_pop_mean": 0.0,
+      "cv_mean_pop_std": 0.0,
+      "hv_surrogate_mean": 1944.1912996694036,
+      "hv_surrogate_std": 0.0,
+      "n_feasible_pop_mean": 200.0,
+      "n_feasible_pop_std": 0.0,
+      "t_search_s_mean": 5.636017338001693,
+      "t_search_s_std": 0.0,
+      "t_acquisition_s_mean": 0.0007867759995860979,
+      "t_acquisition_s_std": 0.0,
+      "agreement_mean": 0.0,
+      "agreement_std": 0.0,
+      "gd_pins_agreement_mean": 1.0,
+      "gd_pins_agreement_std": 0.0,
+      "d_cycle_EFPD_mean": 91.83978354186365,
+      "d_cycle_EFPD_std": 0.0,
+      "d_peaking_mean": 0.03725802493732999,
+      "d_peaking_std": 0.0,
+      "violation_selected_mean_mean": 0.0,
+      "violation_selected_mean_std": 0.0,
+      "n_candidates_used_mean": 200.0,
+      "n_candidates_used_std": 0.0
+    },
+    {
+      "pop": 300,
+      "gen": 400,
+      "n_surrogate_evals": 120000,
+      "n_seeds": 1,
+      "is_baseline": false,
+      "cv_min_pop_mean": 0.0,
+      "cv_min_pop_std": 0.0,
+      "cv_mean_pop_mean": 0.0,
+      "cv_mean_pop_std": 0.0,
+      "hv_surrogate_mean": 1944.786724294961,
+      "hv_surrogate_std": 0.0,
+      "n_feasible_pop_mean": 300.0,
+      "n_feasible_pop_std": 0.0,
+      "t_search_s_mean": 8.222724751001806,
+      "t_search_s_std": 0.0,
+      "t_acquisition_s_mean": 0.0009312179972766899,
+      "t_acquisition_s_std": 0.0,
+      "agreement_mean": 0.0,
+      "agreement_std": 0.0,
+      "gd_pins_agreement_mean": 1.0,
+      "gd_pins_agreement_std": 0.0,
+      "d_cycle_EFPD_mean": 92.10339647357432,
+      "d_cycle_EFPD_std": 0.0,
+      "d_peaking_mean": 0.037616767375618254,
+      "d_peaking_std": 0.0,
+      "violation_selected_mean_mean": 0.0,
+      "violation_selected_mean_std": 0.0,
+      "n_candidates_used_mean": 300.0,
+      "n_candidates_used_std": 0.0
+    }
+  ],
+  "records": [
+    {
+      "pop": 60,
+      "gen": 80,
+      "seed": 5,
+      "n_surrogate_evals": 4800,
+      "t_search_s": 0.4487476569993305,
+      "t_acquisition_s": 0.0005991240032017231,
+      "had_feasible": true,
+      "n_feasible_pop": 60,
+      "n_front": 60,
+      "hv_surrogate": 1914.4351609891892,
+      "cv_min_pop": 0.0,
+      "cv_mean_pop": 0.0,
+      "n_candidates_available": 60,
+      "n_candidates_used": 60,
+      "used_random_fallback": false,
+      "X_selected": [
+        [
+          17.17352644492961,
+          16.766908262172763,
+          4.411602147399764,
+          1.409974522101536,
+          2.718861692267871,
+          31.507846176873365
+        ],
+        [
+          17.172994118550562,
+          16.72535358525583,
+          4.368949009311134,
+          1.409974522101536,
+          2.967626533049498,
+          32.908724825311396
+        ],
+        [
+          17.172878560354942,
+          16.627474083688394,
+          4.355689791561852,
+          1.4104973748548977,
+          3.4210746788449695,
+          32.870955363115
+        ],
+        [
+          17.172878560354942,
+          16.62821991353375,
+          3.891352051955562,
+          1.4104973748548977,
+          3.4210746788449695,
+          32.870955363115
+        ],
+        [
+          17.172129315601005,
+          16.546920942112145,
+          4.04678432039184,
+          1.4102577804923804,
+          2.719660661188496,
+          33.44328874150526
+        ],
+        [
+          17.172129315601005,
+          16.536712096781947,
+          4.04678432039184,
+          1.4102577804923804,
+          2.7020618564399834,
+          33.44328874150526
+        ]
+      ],
+      "F_selected_pred": [
+        [
+          -10739.089401135992,
+          1.74201661842092
+        ],
+        [
+          -10718.794777797173,
+          1.738664173361348
+        ],
+        [
+          -10705.251704417296,
+          1.7318626273869593
+        ],
+        [
+          -10717.558921507487,
+          1.7319129102795048
+        ],
+        [
+          -10692.605075055784,
+          1.7260850402127554
+        ],
+        [
+          -10690.810056841914,
+          1.7253844525211417
+        ]
+      ],
+      "violation_selected_mean": 0.0,
+      "gd_pins_selected_snapped": [
+        32,
+        32,
+        32,
+        32,
+        32,
+        32
+      ],
+      "agreement": 1.0,
+      "gd_pins_agreement": 1.0,
+      "d_cycle_EFPD": 0.0,
+      "d_peaking": 0.0
+    },
+    {
+      "pop": 80,
+      "gen": 120,
+      "seed": 5,
+      "n_surrogate_evals": 9600,
+      "t_search_s": 0.8248711460037157,
+      "t_acquisition_s": 0.0006153449940029532,
+      "had_feasible": true,
+      "n_feasible_pop": 80,
+      "n_front": 80,
+      "hv_surrogate": 1930.772851645594,
+      "cv_min_pop": 0.0,
+      "cv_mean_pop": 0.0,
+      "n_candidates_available": 80,
+      "n_candidates_used": 80,
+      "used_random_fallback": false,
+      "X_selected": [
+        [
+          17.173812266886582,
+          16.99264400499164,
+          4.475045390070229,
+          1.418999870544378,
+          2.844194265647464,
+          34.32131256162554
+        ],
+        [
+          17.173812266886582,
+          16.995269900582024,
+          4.4494012752839485,
+          1.418999870544378,
+          2.844194265647464,
+          32.85260905105995
+        ],
+        [
+          17.16818152194293,
+          16.848299326774896,
+          4.448606171007114,
+          1.418999870544378,
+          2.844194265647464,
+          33.411010714785654
+        ],
+        [
+          17.173812266886582,
+          16.774859291897442,
+          4.475045390070229,
+          1.418999870544378,
+          2.844194265647464,
+          32.85260905105995
+        ],
+        [
+          17.171517397300004,
+          16.728215890830576,
+          4.551088129529445,
+          1.4153127051473413,
+          2.844194265647464,
+          33.210470466526864
+        ],
+        [
+          17.17324202363605,
+          16.56288284250412,
+          4.22740145854509,
+          1.4076294232075683,
+          2.4311484163136683,
+          31.285434253984125
+        ]
+      ],
+      "F_selected_pred": [
+        [
+          -10761.401384823483,
+          1.7590998026476712
+        ],
+        [
+          -10778.439043584214,
+          1.7596571220815012
+        ],
+        [
+          -10751.829887495905,
+          1.7489379426127396
+        ],
+        [
+          -10747.328521338599,
+          1.743837894996142
+        ],
+        [
+          -10724.848900957708,
+          1.739784536682958
+        ],
+        [
+          -10707.504180555154,
+          1.7272403727476882
+        ]
+      ],
+      "violation_selected_mean": 0.0,
+      "gd_pins_selected_snapped": [
+        32,
+        32,
+        32,
+        32,
+        32,
+        32
+      ],
+      "agreement": 0.5,
+      "gd_pins_agreement": 1.0,
+      "d_cycle_EFPD": 34.54033033323685,
+      "d_peaking": 0.013771974931011899
+    },
+    {
+      "pop": 120,
+      "gen": 160,
+      "seed": 5,
+      "n_surrogate_evals": 19200,
+      "t_search_s": 1.4888314209965756,
+      "t_acquisition_s": 0.0006754950009053573,
+      "had_feasible": true,
+      "n_feasible_pop": 120,
+      "n_front": 120,
+      "hv_surrogate": 1926.7337987031572,
+      "cv_min_pop": 0.0,
+      "cv_mean_pop": 0.0,
+      "n_candidates_available": 120,
+      "n_candidates_used": 120,
+      "used_random_fallback": false,
+      "X_selected": [
+        [
+          17.17336003492842,
+          16.843834224501638,
+          5.128148932003347,
+          1.4199313636460222,
+          2.0988154724281833,
+          30.858811390461806
+        ],
+        [
+          17.173428303069993,
+          16.843834224501638,
+          5.128148932003347,
+          1.4193426600896075,
+          2.0988154724281833,
+          30.858811390461806
+        ],
+        [
+          17.173336678244006,
+          16.776854655256855,
+          5.128148932003347,
+          1.4195061502981867,
+          2.0988154724281833,
+          30.756158438087645
+        ],
+        [
+          17.173336678244006,
+          16.776854655256855,
+          5.571860657640939,
+          1.41909801602286,
+          2.1020369990177876,
+          30.756158438087645
+        ],
+        [
+          17.173336678244006,
+          16.65648308962164,
+          5.128148932003347,
+          1.420302793956133,
+          2.0988154724281833,
+          30.756158438087645
+        ],
+        [
+          17.173345083744383,
+          16.609831053843106,
+          5.571860657640939,
+          1.4165726658192868,
+          2.1585950360003476,
+          30.82749942668233
+        ]
+      ],
+      "F_selected_pred": [
+        [
+          -10764.675064879033,
+          1.749433618182141
+        ],
+        [
+          -10763.213513160845,
+          1.749331789279308
+        ],
+        [
+          -10755.063713622341,
+          1.7446472365598515
+        ],
+        [
+          -10742.528327562915,
+          1.7445746465278613
+        ],
+        [
+          -10738.36422457704,
+          1.7364285852540462
+        ],
+        [
+          -10709.02038637345,
+          1.7324489777739314
+        ]
+      ],
+      "violation_selected_mean": 0.0,
+      "gd_pins_selected_snapped": [
+        32,
+        32,
+        32,
+        32,
+        32,
+        32
+      ],
+      "agreement": 0.0,
+      "gd_pins_agreement": 1.0,
+      "d_cycle_EFPD": 34.79254890332959,
+      "d_peaking": 0.010156505232418178
+    },
+    {
+      "pop": 200,
+      "gen": 200,
+      "seed": 5,
+      "n_surrogate_evals": 40000,
+      "t_search_s": 2.822517743006756,
+      "t_acquisition_s": 0.0007970959995873272,
+      "had_feasible": true,
+      "n_feasible_pop": 200,
+      "n_front": 200,
+      "hv_surrogate": 1939.1036158046602,
+      "cv_min_pop": 0.0,
+      "cv_mean_pop": 0.0,
+      "n_candidates_available": 200,
+      "n_candidates_used": 200,
+      "used_random_fallback": false,
+      "X_selected": [
+        [
+          17.173777342134663,
+          17.08842399491984,
+          5.402733499142847,
+          1.423472052638285,
+          2.2546160691558335,
+          31.2472004888213
+        ],
+        [
+          17.17385142893129,
+          17.059932717020196,
+          5.284267708202529,
+          1.422883804805891,
+          2.099593724868137,
+          31.715866432000027
+        ],
+        [
+          17.172847557693473,
+          17.01412738178706,
+          5.190572039348669,
+          1.4235048034299012,
+          2.140562142396785,
+          31.604057711684693
+        ],
+        [
+          17.17385142893129,
+          16.87588416218838,
+          5.284267708202529,
+          1.4229746459415804,
+          2.596656131371036,
+          30.82867600134675
+        ],
+        [
+          17.17285324569237,
+          16.828453673292266,
+          4.842633265199673,
+          1.4235048034299012,
+          2.2805228083646103,
+          31.66716001798589
+        ],
+        [
+          17.17285324569237,
+          16.825967717241586,
+          4.842633265199673,
+          1.4235048034299012,
+          2.2805228083646103,
+          31.70020285801413
+        ]
+      ],
+      "F_selected_pred": [
+        [
+          -10793.391164418475,
+          1.7675221986202103
+        ],
+        [
+          -10786.714049684895,
+          1.7652404997578464
+        ],
+        [
+          -10786.142361445578,
+          1.7620391958564063
+        ],
+        [
+          -10772.888278002018,
+          1.752235210667533
+        ],
+        [
+          -10769.493806907176,
+          1.7487543018872078
+        ],
+        [
+          -10768.768909513694,
+          1.7485704362841423
+        ]
+      ],
+      "violation_selected_mean": 0.0,
+      "gd_pins_selected_snapped": [
+        32,
+        32,
+        32,
+        32,
+        32,
+        32
+      ],
+      "agreement": 0.0,
+      "gd_pins_agreement": 1.0,
+      "d_cycle_EFPD": 68.88143886936632,
+      "d_peaking": 0.024739336815119417
+    },
+    {
+      "pop": 200,
+      "gen": 400,
+      "seed": 5,
+      "n_surrogate_evals": 80000,
+      "t_search_s": 5.636017338001693,
+      "t_acquisition_s": 0.0007867759995860979,
+      "had_feasible": true,
+      "n_feasible_pop": 200,
+      "n_front": 200,
+      "hv_surrogate": 1944.1912996694036,
+      "cv_min_pop": 0.0,
+      "cv_mean_pop": 0.0,
+      "n_candidates_available": 200,
+      "n_candidates_used": 200,
+      "used_random_fallback": false,
+      "X_selected": [
+        [
+          17.17388469911759,
+          17.172816588237353,
+          5.47575113142453,
+          1.4299428055328987,
+          2.000562949784352,
+          31.88875304884152
+        ],
+        [
+          17.17388469911759,
+          17.172816588237353,
+          5.47575113142453,
+          1.4282034975566338,
+          2.000562949784352,
+          31.88875304884152
+        ],
+        [
+          17.17387692600424,
+          17.11945139201095,
+          5.474359577746282,
+          1.4297465562934406,
+          2.0002149001033906,
+          31.726461813443297
+        ],
+        [
+          17.173811995769498,
+          17.10905449024325,
+          5.401278528860347,
+          1.4294502425531346,
+          2.344197258792228,
+          31.8058712089473
+        ],
+        [
+          17.173884418752596,
+          17.039932442062362,
+          5.401278528860347,
+          1.4294502425531346,
+          2.229713944160399,
+          31.8058712089473
+        ],
+        [
+          17.17387539655998,
+          17.060431386498138,
+          5.287618679283047,
+          1.4273494166079488,
+          2.0816227062628587,
+          31.727974333056654
+        ]
+      ],
+      "F_selected_pred": [
+        [
+          -10809.12921848498,
+          1.7743942821330592
+        ],
+        [
+          -10805.22175427926,
+          1.7741646750967082
+        ],
+        [
+          -10804.577384430642,
+          1.7705352061444015
+        ],
+        [
+          -10803.682089506845,
+          1.7697186946939303
+        ],
+        [
+          -10795.495655446986,
+          1.764739195076727
+        ],
+        [
+          -10797.042535858116,
+          1.765921918661784
+        ]
+      ],
+      "violation_selected_mean": 0.0,
+      "gd_pins_selected_snapped": [
+        32,
+        32,
+        32,
+        32,
+        32,
+        32
+      ],
+      "agreement": 0.0,
+      "gd_pins_agreement": 1.0,
+      "d_cycle_EFPD": 91.83978354186365,
+      "d_peaking": 0.03725802493732999
+    },
+    {
+      "pop": 300,
+      "gen": 400,
+      "seed": 5,
+      "n_surrogate_evals": 120000,
+      "t_search_s": 8.222724751001806,
+      "t_acquisition_s": 0.0009312179972766899,
+      "had_feasible": true,
+      "n_feasible_pop": 300,
+      "n_front": 300,
+      "hv_surrogate": 1944.786724294961,
+      "cv_min_pop": 0.0,
+      "cv_mean_pop": 0.0,
+      "n_candidates_available": 300,
+      "n_candidates_used": 300,
+      "used_random_fallback": false,
+      "X_selected": [
+        [
+          17.173893535977605,
+          17.161275484966207,
+          5.513569776564208,
+          1.4296851979191578,
+          2.0250696346461154,
+          31.799507160319333
+        ],
+        [
+          17.173893535977605,
+          17.146034929048447,
+          5.590887686357476,
+          1.4298072932994017,
+          2.0250696346461154,
+          31.863744906549634
+        ],
+        [
+          17.173865562107927,
+          17.110291981694704,
+          5.621547477946607,
+          1.4299796201669774,
+          2.015400084672172,
+          31.533565885817357
+        ],
+        [
+          17.173865562107927,
+          17.11225060714154,
+          5.621547477946607,
+          1.4296635859491467,
+          2.0321021637312517,
+          31.43210322505286
+        ],
+        [
+          17.173897610433613,
+          17.087481295627303,
+          5.6100384246507105,
+          1.429971912400068,
+          2.2000504012335225,
+          31.412754376509852
+        ],
+        [
+          17.173813929966308,
+          17.07348304134475,
+          5.617722669663082,
+          1.429472470432948,
+          2.0414567185540404,
+          31.32339995891345
+        ]
+      ],
+      "F_selected_pred": [
+        [
+          -10807.313241010954,
+          1.7735424926098888
+        ],
+        [
+          -10803.25838206871,
+          1.7724361889687759
+        ],
+        [
+          -10802.41198203564,
+          1.7699546660148002
+        ],
+        [
+          -10803.0318449119,
+          1.770077070713614
+        ],
+        [
+          -10801.344757702267,
+          1.7683363215047045
+        ],
+        [
+          -10799.370107867615,
+          1.767279686624557
+        ]
+      ],
+      "violation_selected_mean": 0.0,
+      "gd_pins_selected_snapped": [
+        32,
+        32,
+        32,
+        32,
+        32,
+        32
+      ],
+      "agreement": 0.0,
+      "gd_pins_agreement": 1.0,
+      "d_cycle_EFPD": 92.10339647357432,
+      "d_peaking": 0.037616767375618254
+    }
+  ]
+}

@@ -1,0 +1,2009 @@
+ Reading Rh103 from /data/endfb-vii.1-hdf5/neutron/Rh103.h5
+ Reading Rh105 from /data/endfb-vii.1-hdf5/neutron/Rh105.h5
+ Reading Pd102 from /data/endfb-vii.1-hdf5/neutron/Pd102.h5
+ Reading Pd104 from /data/endfb-vii.1-hdf5/neutron/Pd104.h5
+ Reading Pd105 from /data/endfb-vii.1-hdf5/neutron/Pd105.h5
+ Reading Pd106 from /data/endfb-vii.1-hdf5/neutron/Pd106.h5
+ Reading Pd107 from /data/endfb-vii.1-hdf5/neutron/Pd107.h5
+ Reading Pd108 from /data/endfb-vii.1-hdf5/neutron/Pd108.h5
+ Reading Pd110 from /data/endfb-vii.1-hdf5/neutron/Pd110.h5
+ Reading Ag107 from /data/endfb-vii.1-hdf5/neutron/Ag107.h5
+ Reading Ag109 from /data/endfb-vii.1-hdf5/neutron/Ag109.h5
+ Reading Ag110_m1 from /data/endfb-vii.1-hdf5/neutron/Ag110_m1.h5
+ Reading Ag111 from /data/endfb-vii.1-hdf5/neutron/Ag111.h5
+ Reading Cd106 from /data/endfb-vii.1-hdf5/neutron/Cd106.h5
+ WARNING: Negative value(s) found on probability table for nuclide Cd106 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Cd106 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Cd106 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Cd106 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Cd106 at
+          1200K
+ WARNING: Negative value(s) found on probability table for nuclide Cd106 at
+          2500K
+ Reading Cd108 from /data/endfb-vii.1-hdf5/neutron/Cd108.h5
+ Reading Cd110 from /data/endfb-vii.1-hdf5/neutron/Cd110.h5
+ Reading Cd111 from /data/endfb-vii.1-hdf5/neutron/Cd111.h5
+ Reading Cd112 from /data/endfb-vii.1-hdf5/neutron/Cd112.h5
+ Reading Cd113 from /data/endfb-vii.1-hdf5/neutron/Cd113.h5
+ Reading Cd114 from /data/endfb-vii.1-hdf5/neutron/Cd114.h5
+ Reading Cd115_m1 from /data/endfb-vii.1-hdf5/neutron/Cd115_m1.h5
+ Reading Cd116 from /data/endfb-vii.1-hdf5/neutron/Cd116.h5
+ Reading In113 from /data/endfb-vii.1-hdf5/neutron/In113.h5
+ Reading In115 from /data/endfb-vii.1-hdf5/neutron/In115.h5
+ Reading Sn113 from /data/endfb-vii.1-hdf5/neutron/Sn113.h5
+ Reading Sn123 from /data/endfb-vii.1-hdf5/neutron/Sn123.h5
+ WARNING: Negative value(s) found on probability table for nuclide Sn123 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Sn123 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Sn123 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Sn123 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Sn123 at
+          1200K
+ WARNING: Negative value(s) found on probability table for nuclide Sn123 at
+          2500K
+ Reading Sn125 from /data/endfb-vii.1-hdf5/neutron/Sn125.h5
+ Reading Sn126 from /data/endfb-vii.1-hdf5/neutron/Sn126.h5
+ Reading Sb121 from /data/endfb-vii.1-hdf5/neutron/Sb121.h5
+ Reading Sb123 from /data/endfb-vii.1-hdf5/neutron/Sb123.h5
+ Reading Sb124 from /data/endfb-vii.1-hdf5/neutron/Sb124.h5
+ Reading Sb125 from /data/endfb-vii.1-hdf5/neutron/Sb125.h5
+ Reading Sb126 from /data/endfb-vii.1-hdf5/neutron/Sb126.h5
+ Reading Te120 from /data/endfb-vii.1-hdf5/neutron/Te120.h5
+ WARNING: Negative value(s) found on probability table for nuclide Te120 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Te120 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Te120 at
+          1200K
+ WARNING: Negative value(s) found on probability table for nuclide Te120 at
+          2500K
+ Reading Te122 from /data/endfb-vii.1-hdf5/neutron/Te122.h5
+ Reading Te123 from /data/endfb-vii.1-hdf5/neutron/Te123.h5
+ Reading Te124 from /data/endfb-vii.1-hdf5/neutron/Te124.h5
+ Reading Te125 from /data/endfb-vii.1-hdf5/neutron/Te125.h5
+ Reading Te126 from /data/endfb-vii.1-hdf5/neutron/Te126.h5
+ Reading Te127_m1 from /data/endfb-vii.1-hdf5/neutron/Te127_m1.h5
+ Reading Te128 from /data/endfb-vii.1-hdf5/neutron/Te128.h5
+ Reading Te129_m1 from /data/endfb-vii.1-hdf5/neutron/Te129_m1.h5
+ Reading Te130 from /data/endfb-vii.1-hdf5/neutron/Te130.h5
+ Reading Te132 from /data/endfb-vii.1-hdf5/neutron/Te132.h5
+ Reading I127 from /data/endfb-vii.1-hdf5/neutron/I127.h5
+ Reading I129 from /data/endfb-vii.1-hdf5/neutron/I129.h5
+ Reading I130 from /data/endfb-vii.1-hdf5/neutron/I130.h5
+ Reading I131 from /data/endfb-vii.1-hdf5/neutron/I131.h5
+ WARNING: Negative value(s) found on probability table for nuclide I131 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide I131 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide I131 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide I131 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide I131 at 1200K
+ WARNING: Negative value(s) found on probability table for nuclide I131 at 2500K
+ Reading I135 from /data/endfb-vii.1-hdf5/neutron/I135.h5
+ Reading Xe123 from /data/endfb-vii.1-hdf5/neutron/Xe123.h5
+ Reading Xe124 from /data/endfb-vii.1-hdf5/neutron/Xe124.h5
+ Reading Xe126 from /data/endfb-vii.1-hdf5/neutron/Xe126.h5
+ Reading Xe128 from /data/endfb-vii.1-hdf5/neutron/Xe128.h5
+ Reading Xe129 from /data/endfb-vii.1-hdf5/neutron/Xe129.h5
+ Reading Xe130 from /data/endfb-vii.1-hdf5/neutron/Xe130.h5
+ Reading Xe131 from /data/endfb-vii.1-hdf5/neutron/Xe131.h5
+ Reading Xe132 from /data/endfb-vii.1-hdf5/neutron/Xe132.h5
+ Reading Xe133 from /data/endfb-vii.1-hdf5/neutron/Xe133.h5
+ WARNING: Negative value(s) found on probability table for nuclide Xe133 at
+          2500K
+ Reading Xe134 from /data/endfb-vii.1-hdf5/neutron/Xe134.h5
+ Reading Xe135 from /data/endfb-vii.1-hdf5/neutron/Xe135.h5
+ Reading Xe136 from /data/endfb-vii.1-hdf5/neutron/Xe136.h5
+ Reading Cs133 from /data/endfb-vii.1-hdf5/neutron/Cs133.h5
+ Reading Cs134 from /data/endfb-vii.1-hdf5/neutron/Cs134.h5
+ Reading Cs135 from /data/endfb-vii.1-hdf5/neutron/Cs135.h5
+ Reading Cs136 from /data/endfb-vii.1-hdf5/neutron/Cs136.h5
+ WARNING: Negative value(s) found on probability table for nuclide Cs136 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Cs136 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Cs136 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Cs136 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Cs136 at
+          1200K
+ WARNING: Negative value(s) found on probability table for nuclide Cs136 at
+          2500K
+ Reading Cs137 from /data/endfb-vii.1-hdf5/neutron/Cs137.h5
+ Reading Ba130 from /data/endfb-vii.1-hdf5/neutron/Ba130.h5
+ Reading Ba132 from /data/endfb-vii.1-hdf5/neutron/Ba132.h5
+ Reading Ba133 from /data/endfb-vii.1-hdf5/neutron/Ba133.h5
+ Reading Ba134 from /data/endfb-vii.1-hdf5/neutron/Ba134.h5
+ Reading Ba135 from /data/endfb-vii.1-hdf5/neutron/Ba135.h5
+ Reading Ba136 from /data/endfb-vii.1-hdf5/neutron/Ba136.h5
+ Reading Ba137 from /data/endfb-vii.1-hdf5/neutron/Ba137.h5
+ Reading Ba138 from /data/endfb-vii.1-hdf5/neutron/Ba138.h5
+ Reading Ba140 from /data/endfb-vii.1-hdf5/neutron/Ba140.h5
+ Reading La138 from /data/endfb-vii.1-hdf5/neutron/La138.h5
+ Reading La139 from /data/endfb-vii.1-hdf5/neutron/La139.h5
+ Reading La140 from /data/endfb-vii.1-hdf5/neutron/La140.h5
+ Reading Ce136 from /data/endfb-vii.1-hdf5/neutron/Ce136.h5
+ Reading Ce138 from /data/endfb-vii.1-hdf5/neutron/Ce138.h5
+ Reading Ce139 from /data/endfb-vii.1-hdf5/neutron/Ce139.h5
+ Reading Ce140 from /data/endfb-vii.1-hdf5/neutron/Ce140.h5
+ Reading Ce141 from /data/endfb-vii.1-hdf5/neutron/Ce141.h5
+ Reading Ce142 from /data/endfb-vii.1-hdf5/neutron/Ce142.h5
+ Reading Ce143 from /data/endfb-vii.1-hdf5/neutron/Ce143.h5
+ Reading Ce144 from /data/endfb-vii.1-hdf5/neutron/Ce144.h5
+ Reading Pr141 from /data/endfb-vii.1-hdf5/neutron/Pr141.h5
+ Reading Pr142 from /data/endfb-vii.1-hdf5/neutron/Pr142.h5
+ Reading Pr143 from /data/endfb-vii.1-hdf5/neutron/Pr143.h5
+ Reading Nd142 from /data/endfb-vii.1-hdf5/neutron/Nd142.h5
+ Reading Nd143 from /data/endfb-vii.1-hdf5/neutron/Nd143.h5
+ Reading Nd144 from /data/endfb-vii.1-hdf5/neutron/Nd144.h5
+ Reading Nd145 from /data/endfb-vii.1-hdf5/neutron/Nd145.h5
+ Reading Nd146 from /data/endfb-vii.1-hdf5/neutron/Nd146.h5
+ Reading Nd147 from /data/endfb-vii.1-hdf5/neutron/Nd147.h5
+ Reading Nd148 from /data/endfb-vii.1-hdf5/neutron/Nd148.h5
+ Reading Nd150 from /data/endfb-vii.1-hdf5/neutron/Nd150.h5
+ Reading Pm147 from /data/endfb-vii.1-hdf5/neutron/Pm147.h5
+ Reading Pm148 from /data/endfb-vii.1-hdf5/neutron/Pm148.h5
+ Reading Pm148_m1 from /data/endfb-vii.1-hdf5/neutron/Pm148_m1.h5
+ Reading Pm149 from /data/endfb-vii.1-hdf5/neutron/Pm149.h5
+ Reading Pm151 from /data/endfb-vii.1-hdf5/neutron/Pm151.h5
+ Reading Sm144 from /data/endfb-vii.1-hdf5/neutron/Sm144.h5
+ Reading Sm147 from /data/endfb-vii.1-hdf5/neutron/Sm147.h5
+ Reading Sm148 from /data/endfb-vii.1-hdf5/neutron/Sm148.h5
+ Reading Sm149 from /data/endfb-vii.1-hdf5/neutron/Sm149.h5
+ Reading Sm150 from /data/endfb-vii.1-hdf5/neutron/Sm150.h5
+ Reading Sm151 from /data/endfb-vii.1-hdf5/neutron/Sm151.h5
+ Reading Sm152 from /data/endfb-vii.1-hdf5/neutron/Sm152.h5
+ Reading Sm153 from /data/endfb-vii.1-hdf5/neutron/Sm153.h5
+ Reading Sm154 from /data/endfb-vii.1-hdf5/neutron/Sm154.h5
+ Reading Eu151 from /data/endfb-vii.1-hdf5/neutron/Eu151.h5
+ Reading Eu152 from /data/endfb-vii.1-hdf5/neutron/Eu152.h5
+ Reading Eu153 from /data/endfb-vii.1-hdf5/neutron/Eu153.h5
+ Reading Eu154 from /data/endfb-vii.1-hdf5/neutron/Eu154.h5
+ Reading Eu155 from /data/endfb-vii.1-hdf5/neutron/Eu155.h5
+ Reading Eu156 from /data/endfb-vii.1-hdf5/neutron/Eu156.h5
+ WARNING: Negative value(s) found on probability table for nuclide Eu156 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Eu156 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Eu156 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Eu156 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Eu156 at
+          1200K
+ WARNING: Negative value(s) found on probability table for nuclide Eu156 at
+          2500K
+ Reading Eu157 from /data/endfb-vii.1-hdf5/neutron/Eu157.h5
+ Reading Gd153 from /data/endfb-vii.1-hdf5/neutron/Gd153.h5
+ Reading Tb159 from /data/endfb-vii.1-hdf5/neutron/Tb159.h5
+ Reading Tb160 from /data/endfb-vii.1-hdf5/neutron/Tb160.h5
+ Reading Dy156 from /data/endfb-vii.1-hdf5/neutron/Dy156.h5
+ Reading Dy158 from /data/endfb-vii.1-hdf5/neutron/Dy158.h5
+ Reading Dy160 from /data/endfb-vii.1-hdf5/neutron/Dy160.h5
+ Reading Dy161 from /data/endfb-vii.1-hdf5/neutron/Dy161.h5
+ Reading Dy162 from /data/endfb-vii.1-hdf5/neutron/Dy162.h5
+ Reading Dy163 from /data/endfb-vii.1-hdf5/neutron/Dy163.h5
+ Reading Dy164 from /data/endfb-vii.1-hdf5/neutron/Dy164.h5
+ Reading Ho165 from /data/endfb-vii.1-hdf5/neutron/Ho165.h5
+ Reading Ho166_m1 from /data/endfb-vii.1-hdf5/neutron/Ho166_m1.h5
+ Reading Er162 from /data/endfb-vii.1-hdf5/neutron/Er162.h5
+ Reading Er164 from /data/endfb-vii.1-hdf5/neutron/Er164.h5
+ Reading Er166 from /data/endfb-vii.1-hdf5/neutron/Er166.h5
+ Reading Er167 from /data/endfb-vii.1-hdf5/neutron/Er167.h5
+ Reading Er168 from /data/endfb-vii.1-hdf5/neutron/Er168.h5
+ Reading Er170 from /data/endfb-vii.1-hdf5/neutron/Er170.h5
+ Reading Tm168 from /data/endfb-vii.1-hdf5/neutron/Tm168.h5
+ Reading Tm169 from /data/endfb-vii.1-hdf5/neutron/Tm169.h5
+ Reading Tm170 from /data/endfb-vii.1-hdf5/neutron/Tm170.h5
+ Reading Ir191 from /data/endfb-vii.1-hdf5/neutron/Ir191.h5
+ Reading Ir193 from /data/endfb-vii.1-hdf5/neutron/Ir193.h5
+ Reading Hg198 from /data/endfb-vii.1-hdf5/neutron/Hg198.h5
+ Reading Hg199 from /data/endfb-vii.1-hdf5/neutron/Hg199.h5
+ Reading Hg200 from /data/endfb-vii.1-hdf5/neutron/Hg200.h5
+ Reading Hg201 from /data/endfb-vii.1-hdf5/neutron/Hg201.h5
+ Reading Hg202 from /data/endfb-vii.1-hdf5/neutron/Hg202.h5
+ Reading Hg204 from /data/endfb-vii.1-hdf5/neutron/Hg204.h5
+ Reading Tl203 from /data/endfb-vii.1-hdf5/neutron/Tl203.h5
+ Reading Tl205 from /data/endfb-vii.1-hdf5/neutron/Tl205.h5
+ Reading Pb204 from /data/endfb-vii.1-hdf5/neutron/Pb204.h5
+ Reading Pb206 from /data/endfb-vii.1-hdf5/neutron/Pb206.h5
+ Reading Pb207 from /data/endfb-vii.1-hdf5/neutron/Pb207.h5
+ Reading Pb208 from /data/endfb-vii.1-hdf5/neutron/Pb208.h5
+ Reading Bi209 from /data/endfb-vii.1-hdf5/neutron/Bi209.h5
+ Reading Ra223 from /data/endfb-vii.1-hdf5/neutron/Ra223.h5
+ Reading Ra224 from /data/endfb-vii.1-hdf5/neutron/Ra224.h5
+ Reading Ra225 from /data/endfb-vii.1-hdf5/neutron/Ra225.h5
+ Reading Ra226 from /data/endfb-vii.1-hdf5/neutron/Ra226.h5
+ Reading Ac225 from /data/endfb-vii.1-hdf5/neutron/Ac225.h5
+ Reading Ac226 from /data/endfb-vii.1-hdf5/neutron/Ac226.h5
+ Reading Ac227 from /data/endfb-vii.1-hdf5/neutron/Ac227.h5
+ Reading Th227 from /data/endfb-vii.1-hdf5/neutron/Th227.h5
+ Reading Th228 from /data/endfb-vii.1-hdf5/neutron/Th228.h5
+ Reading Th229 from /data/endfb-vii.1-hdf5/neutron/Th229.h5
+ Reading Th230 from /data/endfb-vii.1-hdf5/neutron/Th230.h5
+ Reading Th231 from /data/endfb-vii.1-hdf5/neutron/Th231.h5
+ Reading Th232 from /data/endfb-vii.1-hdf5/neutron/Th232.h5
+ Reading Th233 from /data/endfb-vii.1-hdf5/neutron/Th233.h5
+ Reading Th234 from /data/endfb-vii.1-hdf5/neutron/Th234.h5
+ Reading Pa229 from /data/endfb-vii.1-hdf5/neutron/Pa229.h5
+ Reading Pa230 from /data/endfb-vii.1-hdf5/neutron/Pa230.h5
+ Reading Pa231 from /data/endfb-vii.1-hdf5/neutron/Pa231.h5
+ Reading Pa232 from /data/endfb-vii.1-hdf5/neutron/Pa232.h5
+ Reading Pa233 from /data/endfb-vii.1-hdf5/neutron/Pa233.h5
+ Reading U230 from /data/endfb-vii.1-hdf5/neutron/U230.h5
+ Reading U231 from /data/endfb-vii.1-hdf5/neutron/U231.h5
+ Reading U232 from /data/endfb-vii.1-hdf5/neutron/U232.h5
+ Reading U233 from /data/endfb-vii.1-hdf5/neutron/U233.h5
+ Reading U236 from /data/endfb-vii.1-hdf5/neutron/U236.h5
+ Reading U237 from /data/endfb-vii.1-hdf5/neutron/U237.h5
+ Reading U239 from /data/endfb-vii.1-hdf5/neutron/U239.h5
+ Reading U240 from /data/endfb-vii.1-hdf5/neutron/U240.h5
+ Reading U241 from /data/endfb-vii.1-hdf5/neutron/U241.h5
+ Reading Np234 from /data/endfb-vii.1-hdf5/neutron/Np234.h5
+ Reading Np235 from /data/endfb-vii.1-hdf5/neutron/Np235.h5
+ Reading Np236 from /data/endfb-vii.1-hdf5/neutron/Np236.h5
+ Reading Np237 from /data/endfb-vii.1-hdf5/neutron/Np237.h5
+ Reading Np238 from /data/endfb-vii.1-hdf5/neutron/Np238.h5
+ Reading Np239 from /data/endfb-vii.1-hdf5/neutron/Np239.h5
+ Reading Pu236 from /data/endfb-vii.1-hdf5/neutron/Pu236.h5
+ Reading Pu237 from /data/endfb-vii.1-hdf5/neutron/Pu237.h5
+ Reading Pu238 from /data/endfb-vii.1-hdf5/neutron/Pu238.h5
+ Reading Pu239 from /data/endfb-vii.1-hdf5/neutron/Pu239.h5
+ Reading Pu240 from /data/endfb-vii.1-hdf5/neutron/Pu240.h5
+ Reading Pu241 from /data/endfb-vii.1-hdf5/neutron/Pu241.h5
+ Reading Pu242 from /data/endfb-vii.1-hdf5/neutron/Pu242.h5
+ Reading Pu243 from /data/endfb-vii.1-hdf5/neutron/Pu243.h5
+ Reading Pu244 from /data/endfb-vii.1-hdf5/neutron/Pu244.h5
+ Reading Pu246 from /data/endfb-vii.1-hdf5/neutron/Pu246.h5
+ Reading Am240 from /data/endfb-vii.1-hdf5/neutron/Am240.h5
+ Reading Am241 from /data/endfb-vii.1-hdf5/neutron/Am241.h5
+ Reading Am242 from /data/endfb-vii.1-hdf5/neutron/Am242.h5
+ Reading Am242_m1 from /data/endfb-vii.1-hdf5/neutron/Am242_m1.h5
+ Reading Am243 from /data/endfb-vii.1-hdf5/neutron/Am243.h5
+ Reading Am244 from /data/endfb-vii.1-hdf5/neutron/Am244.h5
+ Reading Am244_m1 from /data/endfb-vii.1-hdf5/neutron/Am244_m1.h5
+ Reading Cm240 from /data/endfb-vii.1-hdf5/neutron/Cm240.h5
+ Reading Cm241 from /data/endfb-vii.1-hdf5/neutron/Cm241.h5
+ Reading Cm242 from /data/endfb-vii.1-hdf5/neutron/Cm242.h5
+ Reading Cm243 from /data/endfb-vii.1-hdf5/neutron/Cm243.h5
+ Reading Cm244 from /data/endfb-vii.1-hdf5/neutron/Cm244.h5
+ Reading Cm245 from /data/endfb-vii.1-hdf5/neutron/Cm245.h5
+ Reading Cm246 from /data/endfb-vii.1-hdf5/neutron/Cm246.h5
+ Reading Cm247 from /data/endfb-vii.1-hdf5/neutron/Cm247.h5
+ Reading Cm248 from /data/endfb-vii.1-hdf5/neutron/Cm248.h5
+ Reading Cm249 from /data/endfb-vii.1-hdf5/neutron/Cm249.h5
+ Reading Cm250 from /data/endfb-vii.1-hdf5/neutron/Cm250.h5
+ Reading Bk245 from /data/endfb-vii.1-hdf5/neutron/Bk245.h5
+ Reading Bk247 from /data/endfb-vii.1-hdf5/neutron/Bk247.h5
+ Reading Bk248 from /data/endfb-vii.1-hdf5/neutron/Bk248.h5
+ Reading Bk249 from /data/endfb-vii.1-hdf5/neutron/Bk249.h5
+ Reading Bk250 from /data/endfb-vii.1-hdf5/neutron/Bk250.h5
+ Reading Cf248 from /data/endfb-vii.1-hdf5/neutron/Cf248.h5
+ Reading Cf249 from /data/endfb-vii.1-hdf5/neutron/Cf249.h5
+ Reading Cf250 from /data/endfb-vii.1-hdf5/neutron/Cf250.h5
+ WARNING: Negative value(s) found on probability table for nuclide Cf250 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Cf250 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Cf250 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Cf250 at
+          1200K
+ Reading Cf251 from /data/endfb-vii.1-hdf5/neutron/Cf251.h5
+ Reading Cf252 from /data/endfb-vii.1-hdf5/neutron/Cf252.h5
+ Reading Cf253 from /data/endfb-vii.1-hdf5/neutron/Cf253.h5
+ Reading Cf254 from /data/endfb-vii.1-hdf5/neutron/Cf254.h5
+ Reading Es251 from /data/endfb-vii.1-hdf5/neutron/Es251.h5
+ Reading Es252 from /data/endfb-vii.1-hdf5/neutron/Es252.h5
+ Reading Es253 from /data/endfb-vii.1-hdf5/neutron/Es253.h5
+ Reading Es254 from /data/endfb-vii.1-hdf5/neutron/Es254.h5
+ Reading Es254_m1 from /data/endfb-vii.1-hdf5/neutron/Es254_m1.h5
+ Reading Es255 from /data/endfb-vii.1-hdf5/neutron/Es255.h5
+ Reading Fm255 from /data/endfb-vii.1-hdf5/neutron/Fm255.h5
+ Reading Au197 from /data/endfb-vii.1-hdf5/neutron/Au197.h5
+ Reading Hg196 from /data/endfb-vii.1-hdf5/neutron/Hg196.h5
+ Reading Bk246 from /data/endfb-vii.1-hdf5/neutron/Bk246.h5
+ Reading Be9 from /data/endfb-vii.1-hdf5/neutron/Be9.h5
+ Reading Ca48 from /data/endfb-vii.1-hdf5/neutron/Ca48.h5
+ Reading Co58_m1 from /data/endfb-vii.1-hdf5/neutron/Co58_m1.h5
+ Reading Lu175 from /data/endfb-vii.1-hdf5/neutron/Lu175.h5
+ Reading Lu176 from /data/endfb-vii.1-hdf5/neutron/Lu176.h5
+ Reading Hf174 from /data/endfb-vii.1-hdf5/neutron/Hf174.h5
+ Reading Hf176 from /data/endfb-vii.1-hdf5/neutron/Hf176.h5
+ Reading Hf177 from /data/endfb-vii.1-hdf5/neutron/Hf177.h5
+ Reading Hf178 from /data/endfb-vii.1-hdf5/neutron/Hf178.h5
+ Reading Hf179 from /data/endfb-vii.1-hdf5/neutron/Hf179.h5
+ Reading Hf180 from /data/endfb-vii.1-hdf5/neutron/Hf180.h5
+ Reading Ta180 from /data/endfb-vii.1-hdf5/neutron/Ta180.h5
+ Reading Ta181 from /data/endfb-vii.1-hdf5/neutron/Ta181.h5
+ Reading Ta182 from /data/endfb-vii.1-hdf5/neutron/Ta182.h5
+ Reading W180 from /data/endfb-vii.1-hdf5/neutron/W180.h5
+ Reading W182 from /data/endfb-vii.1-hdf5/neutron/W182.h5
+ Reading W183 from /data/endfb-vii.1-hdf5/neutron/W183.h5
+ Reading W184 from /data/endfb-vii.1-hdf5/neutron/W184.h5
+ Reading W186 from /data/endfb-vii.1-hdf5/neutron/W186.h5
+ Reading Re185 from /data/endfb-vii.1-hdf5/neutron/Re185.h5
+ Reading Re187 from /data/endfb-vii.1-hdf5/neutron/Re187.h5
+ Reading Cf246 from /data/endfb-vii.1-hdf5/neutron/Cf246.h5
+ Maximum neutron transport energy: 20000000 eV for H1
+ Initializing source particles...
+
+ ====================>     K EIGENVALUE SIMULATION     <====================
+
+  Bat./Gen.      k       Entropy         Average k
+  =========   ========   ========   ====================
+        1/1    1.12262    5.95817
+        2/1    1.15691    5.95730
+        3/1    1.14523    5.95931
+        4/1    1.12805    5.95826
+        5/1    1.14110    5.96135
+        6/1    1.13044    5.96049
+        7/1    1.11133    5.95626
+        8/1    1.09889    5.96238
+        9/1    1.12181    5.95262
+       10/1    1.12116    5.96708
+       11/1    1.13743    5.96039
+       12/1    1.14684    5.95935
+       13/1    1.13530    5.95526
+       14/1    1.15310    5.96755
+       15/1    1.08372    5.96451
+       16/1    1.11789    5.96076
+       17/1    1.13098    5.95447
+       18/1    1.13495    5.96522
+       19/1    1.09675    5.95877
+       20/1    1.10195    5.96872
+       21/1    1.09333    5.95042
+       22/1    1.11651    5.97132    1.10492 +/- 0.01159
+       23/1    1.10182    5.96531    1.10389 +/- 0.00677
+       24/1    1.10558    5.95823    1.10431 +/- 0.00481
+       25/1    1.10739    5.95076    1.10492 +/- 0.00377
+       26/1    1.10270    5.96035    1.10455 +/- 0.00310
+       27/1    1.09714    5.95341    1.10349 +/- 0.00283
+       28/1    1.13930    5.96352    1.10797 +/- 0.00510
+       29/1    1.11218    5.95445    1.10844 +/- 0.00452
+       30/1    1.14918    5.94930    1.11251 +/- 0.00574
+       31/1    1.08927    5.96411    1.11040 +/- 0.00561
+       32/1    1.11116    5.93968    1.11046 +/- 0.00512
+       33/1    1.13168    5.95541    1.11209 +/- 0.00498
+       34/1    1.14511    5.95964    1.11445 +/- 0.00518
+       35/1    1.07739    5.94980    1.11198 +/- 0.00542
+       36/1    1.12683    5.95885    1.11291 +/- 0.00515
+       37/1    1.11294    5.95015    1.11291 +/- 0.00484
+       38/1    1.07562    5.95996    1.11084 +/- 0.00501
+       39/1    1.17207    5.96417    1.11406 +/- 0.00573
+       40/1    1.12861    5.96096    1.11479 +/- 0.00549
+       41/1    1.11984    5.96080    1.11503 +/- 0.00523
+       42/1    1.06670    5.96535    1.11283 +/- 0.00544
+       43/1    1.16225    5.96335    1.11498 +/- 0.00563
+       44/1    1.09343    5.95438    1.11408 +/- 0.00546
+       45/1    1.16167    5.96341    1.11599 +/- 0.00558
+       46/1    1.05944    5.96380    1.11381 +/- 0.00578
+       47/1    1.12631    5.95651    1.11428 +/- 0.00558
+       48/1    1.08984    5.95686    1.11340 +/- 0.00545
+       49/1    1.07756    5.95288    1.11217 +/- 0.00540
+       50/1    1.11988    5.95401    1.11242 +/- 0.00522
+       51/1    1.08724    5.95046    1.11161 +/- 0.00512
+       52/1    1.13128    5.95591    1.11223 +/- 0.00499
+       53/1    1.11190    5.95226    1.11222 +/- 0.00484
+       54/1    1.10138    5.95464    1.11190 +/- 0.00471
+       55/1    1.13287    5.96384    1.11250 +/- 0.00461
+       56/1    1.11121    5.96280    1.11246 +/- 0.00448
+       57/1    1.13362    5.96723    1.11303 +/- 0.00439
+       58/1    1.11302    5.95888    1.11303 +/- 0.00428
+       59/1    1.08134    5.95767    1.11222 +/- 0.00424
+       60/1    1.12668    5.95527    1.11258 +/- 0.00415
+ Creating state point statepoint.60.h5...
+
+ =======================>     TIMING STATISTICS     <=======================
+
+ Total time for initialization     = 4.5470e+00 seconds
+   Reading cross sections          = 3.9972e+00 seconds
+ Total time in simulation          = 3.3710e+01 seconds
+   Time in transport only          = 3.3673e+01 seconds
+   Time in inactive batches        = 6.5823e+00 seconds
+   Time in active batches          = 2.7128e+01 seconds
+   Time synchronizing fission bank = 7.2167e-03 seconds
+     Sampling source sites         = 4.7439e-03 seconds
+     SEND/RECV source sites        = 2.2669e-03 seconds
+   Time accumulating tallies       = 6.0619e-03 seconds
+   Time writing statepoints        = 4.6926e-03 seconds
+ Total time for finalization       = 2.3131e-04 seconds
+ Total time elapsed                = 3.8590e+01 seconds
+ Calculation Rate (inactive)       = 12153.8 particles/second
+ Calculation Rate (active)         = 5897.95 particles/second
+
+ ============================>     RESULTS     <============================
+
+ k-effective (Collision)     = 1.11473 +/- 0.00339
+ k-effective (Track-length)  = 1.11258 +/- 0.00415
+ k-effective (Absorption)    = 1.11708 +/- 0.00293
+ Combined k-effective        = 1.11573 +/- 0.00269
+ Leakage Fraction            = 0.00000 +/- 0.00000
+
+ Creating state point openmc_simulation_n16.h5...
+[openmc.deplete] t=532245975.3411012 (final operator evaluation)
+ Maximum neutron transport energy: 20000000 eV for H1
+ Initializing source particles...
+
+ ====================>     K EIGENVALUE SIMULATION     <====================
+
+  Bat./Gen.      k       Entropy         Average k
+  =========   ========   ========   ====================
+        1/1    1.09428    5.95550
+        2/1    1.05470    5.95716
+        3/1    1.11429    5.96755
+        4/1    1.08166    5.96115
+        5/1    1.10680    5.95942
+        6/1    1.11757    5.96196
+        7/1    1.12365    5.96306
+        8/1    1.12172    5.95609
+        9/1    1.15396    5.95472
+       10/1    1.11850    5.95758
+       11/1    1.08961    5.96660
+       12/1    1.10577    5.95759
+       13/1    1.12139    5.96136
+       14/1    1.11344    5.96225
+       15/1    1.08228    5.94900
+       16/1    1.16077    5.96541
+       17/1    1.06052    5.95720
+       18/1    1.09968    5.96256
+       19/1    1.08072    5.96357
+       20/1    1.10607    5.95350
+       21/1    1.10046    5.96354
+       22/1    1.10690    5.96477    1.10368 +/- 0.00322
+       23/1    1.10007    5.96526    1.10248 +/- 0.00221
+       24/1    1.12509    5.96587    1.10813 +/- 0.00586
+       25/1    1.11423    5.96181    1.10935 +/- 0.00470
+       26/1    1.12415    5.95299    1.11181 +/- 0.00456
+       27/1    1.12683    5.96062    1.11396 +/- 0.00441
+       28/1    1.12287    5.95801    1.11507 +/- 0.00398
+       29/1    1.11972    5.96423    1.11559 +/- 0.00355
+       30/1    1.10100    5.96329    1.11413 +/- 0.00349
+       31/1    1.09021    5.95695    1.11196 +/- 0.00384
+       32/1    1.08599    5.96700    1.10979 +/- 0.00412
+       33/1    1.09528    5.96267    1.10868 +/- 0.00395
+       34/1    1.07002    5.97015    1.10592 +/- 0.00458
+       35/1    1.09017    5.96936    1.10487 +/- 0.00439
+       36/1    1.10212    5.96083    1.10469 +/- 0.00411
+       37/1    1.07041    5.96841    1.10268 +/- 0.00436
+       38/1    1.11021    5.95732    1.10310 +/- 0.00413
+       39/1    1.12313    5.96472    1.10415 +/- 0.00405
+       40/1    1.09706    5.95969    1.10380 +/- 0.00385
+       41/1    1.08901    5.95863    1.10309 +/- 0.00373
+       42/1    1.09378    5.96053    1.10267 +/- 0.00358
+       43/1    1.09733    5.95554    1.10244 +/- 0.00343
+       44/1    1.11115    5.95606    1.10280 +/- 0.00331
+       45/1    1.11340    5.96964    1.10322 +/- 0.00320
+       46/1    1.11555    5.97010    1.10370 +/- 0.00311
+       47/1    1.05805    5.95673    1.10201 +/- 0.00344
+       48/1    1.08557    5.95143    1.10142 +/- 0.00336
+       49/1    1.08706    5.95486    1.10093 +/- 0.00328
+       50/1    1.11632    5.95969    1.10144 +/- 0.00321
+       51/1    1.11912    5.96062    1.10201 +/- 0.00316
+       52/1    1.11331    5.94976    1.10236 +/- 0.00308
+       53/1    1.07569    5.95935    1.10155 +/- 0.00309
+       54/1    1.09893    5.94960    1.10148 +/- 0.00300
+       55/1    1.07488    5.95585    1.10072 +/- 0.00301
+       56/1    1.07580    5.95593    1.10002 +/- 0.00301
+       57/1    1.10671    5.97019    1.10021 +/- 0.00293
+       58/1    1.09491    5.94838    1.10007 +/- 0.00286
+       59/1    1.09918    5.96052    1.10004 +/- 0.00278
+       60/1    1.09532    5.96448    1.09993 +/- 0.00271
+ Creating state point statepoint.60.h5...
+
+ =======================>     TIMING STATISTICS     <=======================
+
+ Total time for initialization     = 0.0000e+00 seconds
+   Reading cross sections          = 0.0000e+00 seconds
+ Total time in simulation          = 3.4163e+01 seconds
+   Time in transport only          = 3.4123e+01 seconds
+   Time in inactive batches        = 6.4922e+00 seconds
+   Time in active batches          = 2.7671e+01 seconds
+   Time synchronizing fission bank = 7.8038e-03 seconds
+     Sampling source sites         = 5.3570e-03 seconds
+     SEND/RECV source sites        = 2.2473e-03 seconds
+   Time accumulating tallies       = 6.0181e-03 seconds
+   Time writing statepoints        = 9.3084e-03 seconds
+ Total time for finalization       = 2.8364e-04 seconds
+ Total time elapsed                = 3.4478e+01 seconds
+ Calculation Rate (inactive)       = 12322.4 particles/second
+ Calculation Rate (active)         = 5782.33 particles/second
+
+ ============================>     RESULTS     <============================
+
+ k-effective (Collision)     = 1.09984 +/- 0.00230
+ k-effective (Track-length)  = 1.09993 +/- 0.00271
+ k-effective (Absorption)    = 1.10238 +/- 0.00261
+ Combined k-effective        = 1.10080 +/- 0.00200
+ Leakage Fraction            = 0.00000 +/- 0.00000
+
+ Creating state point openmc_simulation_n17.h5...
+                                %%%%%%%%%%%%%%%
+                           %%%%%%%%%%%%%%%%%%%%%%%%
+                        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                                    %%%%%%%%%%%%%%%%%%%%%%%%
+                                     %%%%%%%%%%%%%%%%%%%%%%%%
+                 ###############      %%%%%%%%%%%%%%%%%%%%%%%%
+                ##################     %%%%%%%%%%%%%%%%%%%%%%%
+                ###################     %%%%%%%%%%%%%%%%%%%%%%%
+                ####################     %%%%%%%%%%%%%%%%%%%%%%
+                #####################     %%%%%%%%%%%%%%%%%%%%%
+                ######################     %%%%%%%%%%%%%%%%%%%%
+                #######################     %%%%%%%%%%%%%%%%%%
+                 #######################     %%%%%%%%%%%%%%%%%
+                 ######################     %%%%%%%%%%%%%%%%%
+                  ####################     %%%%%%%%%%%%%%%%%
+                    #################     %%%%%%%%%%%%%%%%%
+                     ###############     %%%%%%%%%%%%%%%%
+                       ############     %%%%%%%%%%%%%%%
+                          ########     %%%%%%%%%%%%%%
+                                      %%%%%%%%%%%
+
+                 | The OpenMC Monte Carlo Code
+       Copyright | 2011-2025 MIT, UChicago Argonne LLC, and contributors
+         License | https://docs.openmc.org/en/latest/license.html
+         Version | 0.15.3
+     Commit Hash | 27e38e894697bb32a1dac7848d2618818b6b8daf
+       Date/Time | 2026-08-29 05:02:22
+   MPI Processes | 1
+  OpenMP Threads | 32
+
+ Reading settings XML file...
+ Reading cross sections XML file...
+ Reading chain file: /data/chain_endfb71_pwr.xml...
+ Reading materials XML file...
+ Reading geometry XML file...
+ Reading H1 from /data/endfb-vii.1-hdf5/neutron/H1.h5
+ Reading H2 from /data/endfb-vii.1-hdf5/neutron/H2.h5
+ Reading B10 from /data/endfb-vii.1-hdf5/neutron/B10.h5
+ Reading B11 from /data/endfb-vii.1-hdf5/neutron/B11.h5
+ Reading O16 from /data/endfb-vii.1-hdf5/neutron/O16.h5
+ Reading O17 from /data/endfb-vii.1-hdf5/neutron/O17.h5
+ Reading Cr50 from /data/endfb-vii.1-hdf5/neutron/Cr50.h5
+ Reading Cr52 from /data/endfb-vii.1-hdf5/neutron/Cr52.h5
+ Reading Cr53 from /data/endfb-vii.1-hdf5/neutron/Cr53.h5
+ Reading Cr54 from /data/endfb-vii.1-hdf5/neutron/Cr54.h5
+ Reading Fe54 from /data/endfb-vii.1-hdf5/neutron/Fe54.h5
+ Reading Fe56 from /data/endfb-vii.1-hdf5/neutron/Fe56.h5
+ Reading Fe57 from /data/endfb-vii.1-hdf5/neutron/Fe57.h5
+ Reading Fe58 from /data/endfb-vii.1-hdf5/neutron/Fe58.h5
+ Reading Zr90 from /data/endfb-vii.1-hdf5/neutron/Zr90.h5
+ Reading Zr91 from /data/endfb-vii.1-hdf5/neutron/Zr91.h5
+ Reading Zr92 from /data/endfb-vii.1-hdf5/neutron/Zr92.h5
+ Reading Zr94 from /data/endfb-vii.1-hdf5/neutron/Zr94.h5
+ Reading Zr96 from /data/endfb-vii.1-hdf5/neutron/Zr96.h5
+ Reading Sn112 from /data/endfb-vii.1-hdf5/neutron/Sn112.h5
+ Reading Sn114 from /data/endfb-vii.1-hdf5/neutron/Sn114.h5
+ Reading Sn115 from /data/endfb-vii.1-hdf5/neutron/Sn115.h5
+ Reading Sn116 from /data/endfb-vii.1-hdf5/neutron/Sn116.h5
+ Reading Sn117 from /data/endfb-vii.1-hdf5/neutron/Sn117.h5
+ Reading Sn118 from /data/endfb-vii.1-hdf5/neutron/Sn118.h5
+ Reading Sn119 from /data/endfb-vii.1-hdf5/neutron/Sn119.h5
+ Reading Sn120 from /data/endfb-vii.1-hdf5/neutron/Sn120.h5
+ Reading Sn122 from /data/endfb-vii.1-hdf5/neutron/Sn122.h5
+ Reading Sn124 from /data/endfb-vii.1-hdf5/neutron/Sn124.h5
+ Reading He3 from /data/endfb-vii.1-hdf5/neutron/He3.h5
+ Reading He4 from /data/endfb-vii.1-hdf5/neutron/He4.h5
+ Reading U234 from /data/endfb-vii.1-hdf5/neutron/U234.h5
+ Reading U235 from /data/endfb-vii.1-hdf5/neutron/U235.h5
+ Reading U238 from /data/endfb-vii.1-hdf5/neutron/U238.h5
+ Reading Gd152 from /data/endfb-vii.1-hdf5/neutron/Gd152.h5
+ Reading Gd154 from /data/endfb-vii.1-hdf5/neutron/Gd154.h5
+ Reading Gd155 from /data/endfb-vii.1-hdf5/neutron/Gd155.h5
+ Reading Gd156 from /data/endfb-vii.1-hdf5/neutron/Gd156.h5
+ Reading Gd157 from /data/endfb-vii.1-hdf5/neutron/Gd157.h5
+ Reading Gd158 from /data/endfb-vii.1-hdf5/neutron/Gd158.h5
+ Reading Gd160 from /data/endfb-vii.1-hdf5/neutron/Gd160.h5
+ Reading c_H_in_H2O from /data/endfb-vii.1-hdf5/neutron/c_H_in_H2O.h5
+ Minimum neutron data temperature: 0 K
+ Maximum neutron data temperature: 1.7976931348623157e+308 K
+ Reading tallies XML file...
+ Preparing distributed cell instances...
+ Reading plot XML file...
+ Writing summary.h5 file...
+[openmc.deplete] t=532245975.3411012 s, dt=34617624.412429355 s, source=1490490.1687271548
+[openmc.deplete] t=566863599.7535306 s, dt=34617624.412429355 s, source=1490490.1687271548
+ Reading H3 from /data/endfb-vii.1-hdf5/neutron/H3.h5
+ Reading Li6 from /data/endfb-vii.1-hdf5/neutron/Li6.h5
+ Reading Li7 from /data/endfb-vii.1-hdf5/neutron/Li7.h5
+ Reading N14 from /data/endfb-vii.1-hdf5/neutron/N14.h5
+ Reading N15 from /data/endfb-vii.1-hdf5/neutron/N15.h5
+ Reading F19 from /data/endfb-vii.1-hdf5/neutron/F19.h5
+ Reading Na22 from /data/endfb-vii.1-hdf5/neutron/Na22.h5
+ WARNING: Negative value(s) found on probability table for nuclide Na22 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Na22 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Na22 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Na22 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Na22 at 1200K
+ WARNING: Negative value(s) found on probability table for nuclide Na22 at 2500K
+ Reading Na23 from /data/endfb-vii.1-hdf5/neutron/Na23.h5
+ Reading Mg24 from /data/endfb-vii.1-hdf5/neutron/Mg24.h5
+ Reading Mg25 from /data/endfb-vii.1-hdf5/neutron/Mg25.h5
+ Reading Mg26 from /data/endfb-vii.1-hdf5/neutron/Mg26.h5
+ Reading Al27 from /data/endfb-vii.1-hdf5/neutron/Al27.h5
+ Reading Si28 from /data/endfb-vii.1-hdf5/neutron/Si28.h5
+ Reading Si29 from /data/endfb-vii.1-hdf5/neutron/Si29.h5
+ Reading Si30 from /data/endfb-vii.1-hdf5/neutron/Si30.h5
+ Reading P31 from /data/endfb-vii.1-hdf5/neutron/P31.h5
+ Reading S32 from /data/endfb-vii.1-hdf5/neutron/S32.h5
+ Reading S33 from /data/endfb-vii.1-hdf5/neutron/S33.h5
+ Reading S34 from /data/endfb-vii.1-hdf5/neutron/S34.h5
+ Reading S36 from /data/endfb-vii.1-hdf5/neutron/S36.h5
+ Reading Cl35 from /data/endfb-vii.1-hdf5/neutron/Cl35.h5
+ Reading Cl37 from /data/endfb-vii.1-hdf5/neutron/Cl37.h5
+ Reading Ar36 from /data/endfb-vii.1-hdf5/neutron/Ar36.h5
+ WARNING: Negative value(s) found on probability table for nuclide Ar36 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Ar36 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Ar36 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Ar36 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Ar36 at 1200K
+ WARNING: Negative value(s) found on probability table for nuclide Ar36 at 2500K
+ Reading Ar38 from /data/endfb-vii.1-hdf5/neutron/Ar38.h5
+ Reading Ar40 from /data/endfb-vii.1-hdf5/neutron/Ar40.h5
+ Reading K39 from /data/endfb-vii.1-hdf5/neutron/K39.h5
+ Reading K40 from /data/endfb-vii.1-hdf5/neutron/K40.h5
+ Reading K41 from /data/endfb-vii.1-hdf5/neutron/K41.h5
+ Reading Ca40 from /data/endfb-vii.1-hdf5/neutron/Ca40.h5
+ Reading Ca42 from /data/endfb-vii.1-hdf5/neutron/Ca42.h5
+ Reading Ca43 from /data/endfb-vii.1-hdf5/neutron/Ca43.h5
+ Reading Ca44 from /data/endfb-vii.1-hdf5/neutron/Ca44.h5
+ Reading Ca46 from /data/endfb-vii.1-hdf5/neutron/Ca46.h5
+ Reading Sc45 from /data/endfb-vii.1-hdf5/neutron/Sc45.h5
+ Reading Ti46 from /data/endfb-vii.1-hdf5/neutron/Ti46.h5
+ Reading Ti47 from /data/endfb-vii.1-hdf5/neutron/Ti47.h5
+ Reading Ti48 from /data/endfb-vii.1-hdf5/neutron/Ti48.h5
+ Reading Ti49 from /data/endfb-vii.1-hdf5/neutron/Ti49.h5
+ Reading Ti50 from /data/endfb-vii.1-hdf5/neutron/Ti50.h5
+ Reading V50 from /data/endfb-vii.1-hdf5/neutron/V50.h5
+ Reading V51 from /data/endfb-vii.1-hdf5/neutron/V51.h5
+ Reading Mn55 from /data/endfb-vii.1-hdf5/neutron/Mn55.h5
+ Reading Co58 from /data/endfb-vii.1-hdf5/neutron/Co58.h5
+ Reading Co59 from /data/endfb-vii.1-hdf5/neutron/Co59.h5
+ Reading Ni58 from /data/endfb-vii.1-hdf5/neutron/Ni58.h5
+ Reading Ni59 from /data/endfb-vii.1-hdf5/neutron/Ni59.h5
+ Reading Ni60 from /data/endfb-vii.1-hdf5/neutron/Ni60.h5
+ Reading Ni61 from /data/endfb-vii.1-hdf5/neutron/Ni61.h5
+ Reading Ni62 from /data/endfb-vii.1-hdf5/neutron/Ni62.h5
+ Reading Ni64 from /data/endfb-vii.1-hdf5/neutron/Ni64.h5
+ Reading Cu63 from /data/endfb-vii.1-hdf5/neutron/Cu63.h5
+ Reading Cu65 from /data/endfb-vii.1-hdf5/neutron/Cu65.h5
+ Reading Zn64 from /data/endfb-vii.1-hdf5/neutron/Zn64.h5
+ Reading Zn65 from /data/endfb-vii.1-hdf5/neutron/Zn65.h5
+ Reading Zn66 from /data/endfb-vii.1-hdf5/neutron/Zn66.h5
+ Reading Zn67 from /data/endfb-vii.1-hdf5/neutron/Zn67.h5
+ Reading Zn68 from /data/endfb-vii.1-hdf5/neutron/Zn68.h5
+ Reading Zn70 from /data/endfb-vii.1-hdf5/neutron/Zn70.h5
+ Reading Ga69 from /data/endfb-vii.1-hdf5/neutron/Ga69.h5
+ Reading Ga71 from /data/endfb-vii.1-hdf5/neutron/Ga71.h5
+ Reading Ge70 from /data/endfb-vii.1-hdf5/neutron/Ge70.h5
+ Reading Ge72 from /data/endfb-vii.1-hdf5/neutron/Ge72.h5
+ Reading Ge73 from /data/endfb-vii.1-hdf5/neutron/Ge73.h5
+ Reading Ge74 from /data/endfb-vii.1-hdf5/neutron/Ge74.h5
+ Reading Ge76 from /data/endfb-vii.1-hdf5/neutron/Ge76.h5
+ Reading As74 from /data/endfb-vii.1-hdf5/neutron/As74.h5
+ Reading As75 from /data/endfb-vii.1-hdf5/neutron/As75.h5
+ Reading Se74 from /data/endfb-vii.1-hdf5/neutron/Se74.h5
+ Reading Se76 from /data/endfb-vii.1-hdf5/neutron/Se76.h5
+ Reading Se77 from /data/endfb-vii.1-hdf5/neutron/Se77.h5
+ Reading Se78 from /data/endfb-vii.1-hdf5/neutron/Se78.h5
+ Reading Se79 from /data/endfb-vii.1-hdf5/neutron/Se79.h5
+ WARNING: Negative value(s) found on probability table for nuclide Se79 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Se79 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Se79 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Se79 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Se79 at 1200K
+ Reading Se80 from /data/endfb-vii.1-hdf5/neutron/Se80.h5
+ Reading Se82 from /data/endfb-vii.1-hdf5/neutron/Se82.h5
+ Reading Br79 from /data/endfb-vii.1-hdf5/neutron/Br79.h5
+ Reading Br81 from /data/endfb-vii.1-hdf5/neutron/Br81.h5
+ Reading Kr78 from /data/endfb-vii.1-hdf5/neutron/Kr78.h5
+ Reading Kr80 from /data/endfb-vii.1-hdf5/neutron/Kr80.h5
+ Reading Kr82 from /data/endfb-vii.1-hdf5/neutron/Kr82.h5
+ Reading Kr83 from /data/endfb-vii.1-hdf5/neutron/Kr83.h5
+ Reading Kr84 from /data/endfb-vii.1-hdf5/neutron/Kr84.h5
+ Reading Kr85 from /data/endfb-vii.1-hdf5/neutron/Kr85.h5
+ Reading Kr86 from /data/endfb-vii.1-hdf5/neutron/Kr86.h5
+ Reading Rb85 from /data/endfb-vii.1-hdf5/neutron/Rb85.h5
+ Reading Rb86 from /data/endfb-vii.1-hdf5/neutron/Rb86.h5
+ Reading Rb87 from /data/endfb-vii.1-hdf5/neutron/Rb87.h5
+ Reading Sr84 from /data/endfb-vii.1-hdf5/neutron/Sr84.h5
+ Reading Sr86 from /data/endfb-vii.1-hdf5/neutron/Sr86.h5
+ Reading Sr87 from /data/endfb-vii.1-hdf5/neutron/Sr87.h5
+ Reading Sr88 from /data/endfb-vii.1-hdf5/neutron/Sr88.h5
+ Reading Sr89 from /data/endfb-vii.1-hdf5/neutron/Sr89.h5
+ Reading Sr90 from /data/endfb-vii.1-hdf5/neutron/Sr90.h5
+ Reading Y89 from /data/endfb-vii.1-hdf5/neutron/Y89.h5
+ Reading Y90 from /data/endfb-vii.1-hdf5/neutron/Y90.h5
+ Reading Y91 from /data/endfb-vii.1-hdf5/neutron/Y91.h5
+ Reading Zr93 from /data/endfb-vii.1-hdf5/neutron/Zr93.h5
+ Reading Zr95 from /data/endfb-vii.1-hdf5/neutron/Zr95.h5
+ Reading Nb93 from /data/endfb-vii.1-hdf5/neutron/Nb93.h5
+ Reading Nb94 from /data/endfb-vii.1-hdf5/neutron/Nb94.h5
+ WARNING: Negative value(s) found on probability table for nuclide Nb94 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Nb94 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Nb94 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Nb94 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Nb94 at 1200K
+ WARNING: Negative value(s) found on probability table for nuclide Nb94 at 2500K
+ Reading Nb95 from /data/endfb-vii.1-hdf5/neutron/Nb95.h5
+ WARNING: Negative value(s) found on probability table for nuclide Nb95 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Nb95 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Nb95 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Nb95 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Nb95 at 1200K
+ Reading Mo92 from /data/endfb-vii.1-hdf5/neutron/Mo92.h5
+ Reading Mo94 from /data/endfb-vii.1-hdf5/neutron/Mo94.h5
+ Reading Mo95 from /data/endfb-vii.1-hdf5/neutron/Mo95.h5
+ Reading Mo96 from /data/endfb-vii.1-hdf5/neutron/Mo96.h5
+ Reading Mo97 from /data/endfb-vii.1-hdf5/neutron/Mo97.h5
+ Reading Mo98 from /data/endfb-vii.1-hdf5/neutron/Mo98.h5
+ Reading Mo99 from /data/endfb-vii.1-hdf5/neutron/Mo99.h5
+ WARNING: Negative value(s) found on probability table for nuclide Mo99 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Mo99 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Mo99 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Mo99 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Mo99 at 1200K
+ WARNING: Negative value(s) found on probability table for nuclide Mo99 at 2500K
+ Reading Mo100 from /data/endfb-vii.1-hdf5/neutron/Mo100.h5
+ Reading Tc99 from /data/endfb-vii.1-hdf5/neutron/Tc99.h5
+ Reading Ru96 from /data/endfb-vii.1-hdf5/neutron/Ru96.h5
+ Reading Ru98 from /data/endfb-vii.1-hdf5/neutron/Ru98.h5
+ Reading Ru99 from /data/endfb-vii.1-hdf5/neutron/Ru99.h5
+ Reading Ru100 from /data/endfb-vii.1-hdf5/neutron/Ru100.h5
+ Reading Ru101 from /data/endfb-vii.1-hdf5/neutron/Ru101.h5
+ Reading Ru102 from /data/endfb-vii.1-hdf5/neutron/Ru102.h5
+ Reading Ru103 from /data/endfb-vii.1-hdf5/neutron/Ru103.h5
+ Reading Ru104 from /data/endfb-vii.1-hdf5/neutron/Ru104.h5
+ Reading Ru105 from /data/endfb-vii.1-hdf5/neutron/Ru105.h5
+ Reading Ru106 from /data/endfb-vii.1-hdf5/neutron/Ru106.h5
+ Reading Rh103 from /data/endfb-vii.1-hdf5/neutron/Rh103.h5
+ Reading Rh105 from /data/endfb-vii.1-hdf5/neutron/Rh105.h5
+ Reading Pd102 from /data/endfb-vii.1-hdf5/neutron/Pd102.h5
+ Reading Pd104 from /data/endfb-vii.1-hdf5/neutron/Pd104.h5
+ Reading Pd105 from /data/endfb-vii.1-hdf5/neutron/Pd105.h5
+ Reading Pd106 from /data/endfb-vii.1-hdf5/neutron/Pd106.h5
+ Reading Pd107 from /data/endfb-vii.1-hdf5/neutron/Pd107.h5
+ Reading Pd108 from /data/endfb-vii.1-hdf5/neutron/Pd108.h5
+ Reading Pd110 from /data/endfb-vii.1-hdf5/neutron/Pd110.h5
+ Reading Ag107 from /data/endfb-vii.1-hdf5/neutron/Ag107.h5
+ Reading Ag109 from /data/endfb-vii.1-hdf5/neutron/Ag109.h5
+ Reading Ag110_m1 from /data/endfb-vii.1-hdf5/neutron/Ag110_m1.h5
+ Reading Ag111 from /data/endfb-vii.1-hdf5/neutron/Ag111.h5
+ Reading Cd106 from /data/endfb-vii.1-hdf5/neutron/Cd106.h5
+ WARNING: Negative value(s) found on probability table for nuclide Cd106 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Cd106 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Cd106 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Cd106 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Cd106 at
+          1200K
+ WARNING: Negative value(s) found on probability table for nuclide Cd106 at
+          2500K
+ Reading Cd108 from /data/endfb-vii.1-hdf5/neutron/Cd108.h5
+ Reading Cd110 from /data/endfb-vii.1-hdf5/neutron/Cd110.h5
+ Reading Cd111 from /data/endfb-vii.1-hdf5/neutron/Cd111.h5
+ Reading Cd112 from /data/endfb-vii.1-hdf5/neutron/Cd112.h5
+ Reading Cd113 from /data/endfb-vii.1-hdf5/neutron/Cd113.h5
+ Reading Cd114 from /data/endfb-vii.1-hdf5/neutron/Cd114.h5
+ Reading Cd115_m1 from /data/endfb-vii.1-hdf5/neutron/Cd115_m1.h5
+ Reading Cd116 from /data/endfb-vii.1-hdf5/neutron/Cd116.h5
+ Reading In113 from /data/endfb-vii.1-hdf5/neutron/In113.h5
+ Reading In115 from /data/endfb-vii.1-hdf5/neutron/In115.h5
+ Reading Sn113 from /data/endfb-vii.1-hdf5/neutron/Sn113.h5
+ Reading Sn123 from /data/endfb-vii.1-hdf5/neutron/Sn123.h5
+ WARNING: Negative value(s) found on probability table for nuclide Sn123 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Sn123 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Sn123 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Sn123 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Sn123 at
+          1200K
+ WARNING: Negative value(s) found on probability table for nuclide Sn123 at
+          2500K
+ Reading Sn125 from /data/endfb-vii.1-hdf5/neutron/Sn125.h5
+ Reading Sn126 from /data/endfb-vii.1-hdf5/neutron/Sn126.h5
+ Reading Sb121 from /data/endfb-vii.1-hdf5/neutron/Sb121.h5
+ Reading Sb123 from /data/endfb-vii.1-hdf5/neutron/Sb123.h5
+ Reading Sb124 from /data/endfb-vii.1-hdf5/neutron/Sb124.h5
+ Reading Sb125 from /data/endfb-vii.1-hdf5/neutron/Sb125.h5
+ Reading Sb126 from /data/endfb-vii.1-hdf5/neutron/Sb126.h5
+ Reading Te120 from /data/endfb-vii.1-hdf5/neutron/Te120.h5
+ WARNING: Negative value(s) found on probability table for nuclide Te120 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Te120 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Te120 at
+          1200K
+ WARNING: Negative value(s) found on probability table for nuclide Te120 at
+          2500K
+ Reading Te122 from /data/endfb-vii.1-hdf5/neutron/Te122.h5
+ Reading Te123 from /data/endfb-vii.1-hdf5/neutron/Te123.h5
+ Reading Te124 from /data/endfb-vii.1-hdf5/neutron/Te124.h5
+ Reading Te125 from /data/endfb-vii.1-hdf5/neutron/Te125.h5
+ Reading Te126 from /data/endfb-vii.1-hdf5/neutron/Te126.h5
+ Reading Te127_m1 from /data/endfb-vii.1-hdf5/neutron/Te127_m1.h5
+ Reading Te128 from /data/endfb-vii.1-hdf5/neutron/Te128.h5
+ Reading Te129_m1 from /data/endfb-vii.1-hdf5/neutron/Te129_m1.h5
+ Reading Te130 from /data/endfb-vii.1-hdf5/neutron/Te130.h5
+ Reading Te132 from /data/endfb-vii.1-hdf5/neutron/Te132.h5
+ Reading I127 from /data/endfb-vii.1-hdf5/neutron/I127.h5
+ Reading I129 from /data/endfb-vii.1-hdf5/neutron/I129.h5
+ Reading I130 from /data/endfb-vii.1-hdf5/neutron/I130.h5
+ Reading I131 from /data/endfb-vii.1-hdf5/neutron/I131.h5
+ WARNING: Negative value(s) found on probability table for nuclide I131 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide I131 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide I131 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide I131 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide I131 at 1200K
+ WARNING: Negative value(s) found on probability table for nuclide I131 at 2500K
+ Reading I135 from /data/endfb-vii.1-hdf5/neutron/I135.h5
+ Reading Xe123 from /data/endfb-vii.1-hdf5/neutron/Xe123.h5
+ Reading Xe124 from /data/endfb-vii.1-hdf5/neutron/Xe124.h5
+ Reading Xe126 from /data/endfb-vii.1-hdf5/neutron/Xe126.h5
+ Reading Xe128 from /data/endfb-vii.1-hdf5/neutron/Xe128.h5
+ Reading Xe129 from /data/endfb-vii.1-hdf5/neutron/Xe129.h5
+ Reading Xe130 from /data/endfb-vii.1-hdf5/neutron/Xe130.h5
+ Reading Xe131 from /data/endfb-vii.1-hdf5/neutron/Xe131.h5
+ Reading Xe132 from /data/endfb-vii.1-hdf5/neutron/Xe132.h5
+ Reading Xe133 from /data/endfb-vii.1-hdf5/neutron/Xe133.h5
+ WARNING: Negative value(s) found on probability table for nuclide Xe133 at
+          2500K
+ Reading Xe134 from /data/endfb-vii.1-hdf5/neutron/Xe134.h5
+ Reading Xe135 from /data/endfb-vii.1-hdf5/neutron/Xe135.h5
+ Reading Xe136 from /data/endfb-vii.1-hdf5/neutron/Xe136.h5
+ Reading Cs133 from /data/endfb-vii.1-hdf5/neutron/Cs133.h5
+ Reading Cs134 from /data/endfb-vii.1-hdf5/neutron/Cs134.h5
+ Reading Cs135 from /data/endfb-vii.1-hdf5/neutron/Cs135.h5
+ Reading Cs136 from /data/endfb-vii.1-hdf5/neutron/Cs136.h5
+ WARNING: Negative value(s) found on probability table for nuclide Cs136 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Cs136 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Cs136 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Cs136 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Cs136 at
+          1200K
+ WARNING: Negative value(s) found on probability table for nuclide Cs136 at
+          2500K
+ Reading Cs137 from /data/endfb-vii.1-hdf5/neutron/Cs137.h5
+ Reading Ba130 from /data/endfb-vii.1-hdf5/neutron/Ba130.h5
+ Reading Ba132 from /data/endfb-vii.1-hdf5/neutron/Ba132.h5
+ Reading Ba133 from /data/endfb-vii.1-hdf5/neutron/Ba133.h5
+ Reading Ba134 from /data/endfb-vii.1-hdf5/neutron/Ba134.h5
+ Reading Ba135 from /data/endfb-vii.1-hdf5/neutron/Ba135.h5
+ Reading Ba136 from /data/endfb-vii.1-hdf5/neutron/Ba136.h5
+ Reading Ba137 from /data/endfb-vii.1-hdf5/neutron/Ba137.h5
+ Reading Ba138 from /data/endfb-vii.1-hdf5/neutron/Ba138.h5
+ Reading Ba140 from /data/endfb-vii.1-hdf5/neutron/Ba140.h5
+ Reading La138 from /data/endfb-vii.1-hdf5/neutron/La138.h5
+ Reading La139 from /data/endfb-vii.1-hdf5/neutron/La139.h5
+ Reading La140 from /data/endfb-vii.1-hdf5/neutron/La140.h5
+ Reading Ce136 from /data/endfb-vii.1-hdf5/neutron/Ce136.h5
+ Reading Ce138 from /data/endfb-vii.1-hdf5/neutron/Ce138.h5
+ Reading Ce139 from /data/endfb-vii.1-hdf5/neutron/Ce139.h5
+ Reading Ce140 from /data/endfb-vii.1-hdf5/neutron/Ce140.h5
+ Reading Ce141 from /data/endfb-vii.1-hdf5/neutron/Ce141.h5
+ Reading Ce142 from /data/endfb-vii.1-hdf5/neutron/Ce142.h5
+ Reading Ce143 from /data/endfb-vii.1-hdf5/neutron/Ce143.h5
+ Reading Ce144 from /data/endfb-vii.1-hdf5/neutron/Ce144.h5
+ Reading Pr141 from /data/endfb-vii.1-hdf5/neutron/Pr141.h5
+ Reading Pr142 from /data/endfb-vii.1-hdf5/neutron/Pr142.h5
+ Reading Pr143 from /data/endfb-vii.1-hdf5/neutron/Pr143.h5
+ Reading Nd142 from /data/endfb-vii.1-hdf5/neutron/Nd142.h5
+ Reading Nd143 from /data/endfb-vii.1-hdf5/neutron/Nd143.h5
+ Reading Nd144 from /data/endfb-vii.1-hdf5/neutron/Nd144.h5
+ Reading Nd145 from /data/endfb-vii.1-hdf5/neutron/Nd145.h5
+ Reading Nd146 from /data/endfb-vii.1-hdf5/neutron/Nd146.h5
+ Reading Nd147 from /data/endfb-vii.1-hdf5/neutron/Nd147.h5
+ Reading Nd148 from /data/endfb-vii.1-hdf5/neutron/Nd148.h5
+ Reading Nd150 from /data/endfb-vii.1-hdf5/neutron/Nd150.h5
+ Reading Pm147 from /data/endfb-vii.1-hdf5/neutron/Pm147.h5
+ Reading Pm148 from /data/endfb-vii.1-hdf5/neutron/Pm148.h5
+ Reading Pm148_m1 from /data/endfb-vii.1-hdf5/neutron/Pm148_m1.h5
+ Reading Pm149 from /data/endfb-vii.1-hdf5/neutron/Pm149.h5
+ Reading Pm151 from /data/endfb-vii.1-hdf5/neutron/Pm151.h5
+ Reading Sm144 from /data/endfb-vii.1-hdf5/neutron/Sm144.h5
+ Reading Sm147 from /data/endfb-vii.1-hdf5/neutron/Sm147.h5
+ Reading Sm148 from /data/endfb-vii.1-hdf5/neutron/Sm148.h5
+ Reading Sm149 from /data/endfb-vii.1-hdf5/neutron/Sm149.h5
+ Reading Sm150 from /data/endfb-vii.1-hdf5/neutron/Sm150.h5
+ Reading Sm151 from /data/endfb-vii.1-hdf5/neutron/Sm151.h5
+ Reading Sm152 from /data/endfb-vii.1-hdf5/neutron/Sm152.h5
+ Reading Sm153 from /data/endfb-vii.1-hdf5/neutron/Sm153.h5
+ Reading Sm154 from /data/endfb-vii.1-hdf5/neutron/Sm154.h5
+ Reading Eu151 from /data/endfb-vii.1-hdf5/neutron/Eu151.h5
+ Reading Eu152 from /data/endfb-vii.1-hdf5/neutron/Eu152.h5
+ Reading Eu153 from /data/endfb-vii.1-hdf5/neutron/Eu153.h5
+ Reading Eu154 from /data/endfb-vii.1-hdf5/neutron/Eu154.h5
+ Reading Eu155 from /data/endfb-vii.1-hdf5/neutron/Eu155.h5
+ Reading Eu156 from /data/endfb-vii.1-hdf5/neutron/Eu156.h5
+ WARNING: Negative value(s) found on probability table for nuclide Eu156 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Eu156 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Eu156 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Eu156 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Eu156 at
+          1200K
+ WARNING: Negative value(s) found on probability table for nuclide Eu156 at
+          2500K
+ Reading Eu157 from /data/endfb-vii.1-hdf5/neutron/Eu157.h5
+ Reading Gd153 from /data/endfb-vii.1-hdf5/neutron/Gd153.h5
+ Reading Tb159 from /data/endfb-vii.1-hdf5/neutron/Tb159.h5
+ Reading Tb160 from /data/endfb-vii.1-hdf5/neutron/Tb160.h5
+ Reading Dy156 from /data/endfb-vii.1-hdf5/neutron/Dy156.h5
+ Reading Dy158 from /data/endfb-vii.1-hdf5/neutron/Dy158.h5
+ Reading Dy160 from /data/endfb-vii.1-hdf5/neutron/Dy160.h5
+ Reading Dy161 from /data/endfb-vii.1-hdf5/neutron/Dy161.h5
+ Reading Dy162 from /data/endfb-vii.1-hdf5/neutron/Dy162.h5
+ Reading Dy163 from /data/endfb-vii.1-hdf5/neutron/Dy163.h5
+ Reading Dy164 from /data/endfb-vii.1-hdf5/neutron/Dy164.h5
+ Reading Ho165 from /data/endfb-vii.1-hdf5/neutron/Ho165.h5
+ Reading Ho166_m1 from /data/endfb-vii.1-hdf5/neutron/Ho166_m1.h5
+ Reading Er162 from /data/endfb-vii.1-hdf5/neutron/Er162.h5
+ Reading Er164 from /data/endfb-vii.1-hdf5/neutron/Er164.h5
+ Reading Er166 from /data/endfb-vii.1-hdf5/neutron/Er166.h5
+ Reading Er167 from /data/endfb-vii.1-hdf5/neutron/Er167.h5
+ Reading Er168 from /data/endfb-vii.1-hdf5/neutron/Er168.h5
+ Reading Er170 from /data/endfb-vii.1-hdf5/neutron/Er170.h5
+ Reading Tm168 from /data/endfb-vii.1-hdf5/neutron/Tm168.h5
+ Reading Tm169 from /data/endfb-vii.1-hdf5/neutron/Tm169.h5
+ Reading Tm170 from /data/endfb-vii.1-hdf5/neutron/Tm170.h5
+ Reading Hg196 from /data/endfb-vii.1-hdf5/neutron/Hg196.h5
+ Reading Hg199 from /data/endfb-vii.1-hdf5/neutron/Hg199.h5
+ Reading Hg200 from /data/endfb-vii.1-hdf5/neutron/Hg200.h5
+ Reading Hg201 from /data/endfb-vii.1-hdf5/neutron/Hg201.h5
+ Reading Hg202 from /data/endfb-vii.1-hdf5/neutron/Hg202.h5
+ Reading Hg204 from /data/endfb-vii.1-hdf5/neutron/Hg204.h5
+ Reading Tl203 from /data/endfb-vii.1-hdf5/neutron/Tl203.h5
+ Reading Tl205 from /data/endfb-vii.1-hdf5/neutron/Tl205.h5
+ Reading Pb204 from /data/endfb-vii.1-hdf5/neutron/Pb204.h5
+ Reading Pb206 from /data/endfb-vii.1-hdf5/neutron/Pb206.h5
+ Reading Pb207 from /data/endfb-vii.1-hdf5/neutron/Pb207.h5
+ Reading Pb208 from /data/endfb-vii.1-hdf5/neutron/Pb208.h5
+ Reading Bi209 from /data/endfb-vii.1-hdf5/neutron/Bi209.h5
+ Reading Ra223 from /data/endfb-vii.1-hdf5/neutron/Ra223.h5
+ Reading Ra224 from /data/endfb-vii.1-hdf5/neutron/Ra224.h5
+ Reading Ra225 from /data/endfb-vii.1-hdf5/neutron/Ra225.h5
+ Reading Ra226 from /data/endfb-vii.1-hdf5/neutron/Ra226.h5
+ Reading Ac225 from /data/endfb-vii.1-hdf5/neutron/Ac225.h5
+ Reading Ac226 from /data/endfb-vii.1-hdf5/neutron/Ac226.h5
+ Reading Ac227 from /data/endfb-vii.1-hdf5/neutron/Ac227.h5
+ Reading Th227 from /data/endfb-vii.1-hdf5/neutron/Th227.h5
+ Reading Th228 from /data/endfb-vii.1-hdf5/neutron/Th228.h5
+ Reading Th229 from /data/endfb-vii.1-hdf5/neutron/Th229.h5
+ Reading Th230 from /data/endfb-vii.1-hdf5/neutron/Th230.h5
+ Reading Th231 from /data/endfb-vii.1-hdf5/neutron/Th231.h5
+ Reading Th232 from /data/endfb-vii.1-hdf5/neutron/Th232.h5
+ Reading Th233 from /data/endfb-vii.1-hdf5/neutron/Th233.h5
+ Reading Th234 from /data/endfb-vii.1-hdf5/neutron/Th234.h5
+ Reading Pa229 from /data/endfb-vii.1-hdf5/neutron/Pa229.h5
+ Reading Pa230 from /data/endfb-vii.1-hdf5/neutron/Pa230.h5
+ Reading Pa231 from /data/endfb-vii.1-hdf5/neutron/Pa231.h5
+ Reading Pa232 from /data/endfb-vii.1-hdf5/neutron/Pa232.h5
+ Reading Pa233 from /data/endfb-vii.1-hdf5/neutron/Pa233.h5
+ Reading U230 from /data/endfb-vii.1-hdf5/neutron/U230.h5
+ Reading U231 from /data/endfb-vii.1-hdf5/neutron/U231.h5
+ Reading U232 from /data/endfb-vii.1-hdf5/neutron/U232.h5
+ Reading U233 from /data/endfb-vii.1-hdf5/neutron/U233.h5
+ Reading U236 from /data/endfb-vii.1-hdf5/neutron/U236.h5
+ Reading U237 from /data/endfb-vii.1-hdf5/neutron/U237.h5
+ Reading U239 from /data/endfb-vii.1-hdf5/neutron/U239.h5
+ Reading U240 from /data/endfb-vii.1-hdf5/neutron/U240.h5
+ Reading U241 from /data/endfb-vii.1-hdf5/neutron/U241.h5
+ Reading Np234 from /data/endfb-vii.1-hdf5/neutron/Np234.h5
+ Reading Np235 from /data/endfb-vii.1-hdf5/neutron/Np235.h5
+ Reading Np236 from /data/endfb-vii.1-hdf5/neutron/Np236.h5
+ Reading Np237 from /data/endfb-vii.1-hdf5/neutron/Np237.h5
+ Reading Np238 from /data/endfb-vii.1-hdf5/neutron/Np238.h5
+ Reading Np239 from /data/endfb-vii.1-hdf5/neutron/Np239.h5
+ Reading Pu236 from /data/endfb-vii.1-hdf5/neutron/Pu236.h5
+ Reading Pu237 from /data/endfb-vii.1-hdf5/neutron/Pu237.h5
+ Reading Pu238 from /data/endfb-vii.1-hdf5/neutron/Pu238.h5
+ Reading Pu239 from /data/endfb-vii.1-hdf5/neutron/Pu239.h5
+ Reading Pu240 from /data/endfb-vii.1-hdf5/neutron/Pu240.h5
+ Reading Pu241 from /data/endfb-vii.1-hdf5/neutron/Pu241.h5
+ Reading Pu242 from /data/endfb-vii.1-hdf5/neutron/Pu242.h5
+ Reading Pu243 from /data/endfb-vii.1-hdf5/neutron/Pu243.h5
+ Reading Pu244 from /data/endfb-vii.1-hdf5/neutron/Pu244.h5
+ Reading Pu246 from /data/endfb-vii.1-hdf5/neutron/Pu246.h5
+ Reading Am240 from /data/endfb-vii.1-hdf5/neutron/Am240.h5
+ Reading Am241 from /data/endfb-vii.1-hdf5/neutron/Am241.h5
+ Reading Am242 from /data/endfb-vii.1-hdf5/neutron/Am242.h5
+ Reading Am242_m1 from /data/endfb-vii.1-hdf5/neutron/Am242_m1.h5
+ Reading Am243 from /data/endfb-vii.1-hdf5/neutron/Am243.h5
+ Reading Am244 from /data/endfb-vii.1-hdf5/neutron/Am244.h5
+ Reading Am244_m1 from /data/endfb-vii.1-hdf5/neutron/Am244_m1.h5
+ Reading Cm240 from /data/endfb-vii.1-hdf5/neutron/Cm240.h5
+ Reading Cm241 from /data/endfb-vii.1-hdf5/neutron/Cm241.h5
+ Reading Cm242 from /data/endfb-vii.1-hdf5/neutron/Cm242.h5
+ Reading Cm243 from /data/endfb-vii.1-hdf5/neutron/Cm243.h5
+ Reading Cm244 from /data/endfb-vii.1-hdf5/neutron/Cm244.h5
+ Reading Cm245 from /data/endfb-vii.1-hdf5/neutron/Cm245.h5
+ Reading Cm246 from /data/endfb-vii.1-hdf5/neutron/Cm246.h5
+ Reading Cm247 from /data/endfb-vii.1-hdf5/neutron/Cm247.h5
+ Reading Cm248 from /data/endfb-vii.1-hdf5/neutron/Cm248.h5
+ Reading Cm249 from /data/endfb-vii.1-hdf5/neutron/Cm249.h5
+ Reading Cm250 from /data/endfb-vii.1-hdf5/neutron/Cm250.h5
+ Reading Bk245 from /data/endfb-vii.1-hdf5/neutron/Bk245.h5
+ Reading Bk246 from /data/endfb-vii.1-hdf5/neutron/Bk246.h5
+ Reading Bk247 from /data/endfb-vii.1-hdf5/neutron/Bk247.h5
+ Reading Bk248 from /data/endfb-vii.1-hdf5/neutron/Bk248.h5
+ Reading Bk249 from /data/endfb-vii.1-hdf5/neutron/Bk249.h5
+ Reading Bk250 from /data/endfb-vii.1-hdf5/neutron/Bk250.h5
+ Reading Cf248 from /data/endfb-vii.1-hdf5/neutron/Cf248.h5
+ Reading Cf249 from /data/endfb-vii.1-hdf5/neutron/Cf249.h5
+ Reading Cf250 from /data/endfb-vii.1-hdf5/neutron/Cf250.h5
+ WARNING: Negative value(s) found on probability table for nuclide Cf250 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Cf250 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Cf250 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Cf250 at
+          1200K
+ Reading Cf251 from /data/endfb-vii.1-hdf5/neutron/Cf251.h5
+ Reading Cf252 from /data/endfb-vii.1-hdf5/neutron/Cf252.h5
+ Reading Cf253 from /data/endfb-vii.1-hdf5/neutron/Cf253.h5
+ Reading Cf254 from /data/endfb-vii.1-hdf5/neutron/Cf254.h5
+ Reading Es251 from /data/endfb-vii.1-hdf5/neutron/Es251.h5
+ Reading Es252 from /data/endfb-vii.1-hdf5/neutron/Es252.h5
+ Reading Es253 from /data/endfb-vii.1-hdf5/neutron/Es253.h5
+ Reading Es254 from /data/endfb-vii.1-hdf5/neutron/Es254.h5
+ Reading Es254_m1 from /data/endfb-vii.1-hdf5/neutron/Es254_m1.h5
+ Reading Es255 from /data/endfb-vii.1-hdf5/neutron/Es255.h5
+ Reading Fm255 from /data/endfb-vii.1-hdf5/neutron/Fm255.h5
+ Reading Hg198 from /data/endfb-vii.1-hdf5/neutron/Hg198.h5
+ Reading Ir191 from /data/endfb-vii.1-hdf5/neutron/Ir191.h5
+ Reading Ir193 from /data/endfb-vii.1-hdf5/neutron/Ir193.h5
+ Reading Au197 from /data/endfb-vii.1-hdf5/neutron/Au197.h5
+ Reading Be9 from /data/endfb-vii.1-hdf5/neutron/Be9.h5
+ Reading Ca48 from /data/endfb-vii.1-hdf5/neutron/Ca48.h5
+ Reading Co58_m1 from /data/endfb-vii.1-hdf5/neutron/Co58_m1.h5
+ Reading Lu175 from /data/endfb-vii.1-hdf5/neutron/Lu175.h5
+ Reading Lu176 from /data/endfb-vii.1-hdf5/neutron/Lu176.h5
+ Reading Hf174 from /data/endfb-vii.1-hdf5/neutron/Hf174.h5
+ Reading Hf176 from /data/endfb-vii.1-hdf5/neutron/Hf176.h5
+ Reading Hf177 from /data/endfb-vii.1-hdf5/neutron/Hf177.h5
+ Reading Hf178 from /data/endfb-vii.1-hdf5/neutron/Hf178.h5
+ Reading Hf179 from /data/endfb-vii.1-hdf5/neutron/Hf179.h5
+ Reading Hf180 from /data/endfb-vii.1-hdf5/neutron/Hf180.h5
+ Reading Ta180 from /data/endfb-vii.1-hdf5/neutron/Ta180.h5
+ Reading Ta181 from /data/endfb-vii.1-hdf5/neutron/Ta181.h5
+ Reading Ta182 from /data/endfb-vii.1-hdf5/neutron/Ta182.h5
+ Reading W180 from /data/endfb-vii.1-hdf5/neutron/W180.h5
+ Reading W182 from /data/endfb-vii.1-hdf5/neutron/W182.h5
+ Reading W183 from /data/endfb-vii.1-hdf5/neutron/W183.h5
+ Reading W184 from /data/endfb-vii.1-hdf5/neutron/W184.h5
+ Reading W186 from /data/endfb-vii.1-hdf5/neutron/W186.h5
+ Reading Re185 from /data/endfb-vii.1-hdf5/neutron/Re185.h5
+ Reading Re187 from /data/endfb-vii.1-hdf5/neutron/Re187.h5
+ Reading Cf246 from /data/endfb-vii.1-hdf5/neutron/Cf246.h5
+ Maximum neutron transport energy: 20000000 eV for H1
+ Initializing source particles...
+
+ ====================>     K EIGENVALUE SIMULATION     <====================
+
+  Bat./Gen.      k       Entropy         Average k
+  =========   ========   ========   ====================
+        1/1    1.14298    5.96781
+        2/1    1.06685    5.95920
+        3/1    1.11112    5.95903
+        4/1    1.12386    5.95741
+        5/1    1.08099    5.96814
+        6/1    1.08987    5.95977
+        7/1    1.11050    5.95541
+        8/1    1.12996    5.96216
+        9/1    1.09361    5.96137
+       10/1    1.10072    5.97008
+       11/1    1.03036    5.95813
+       12/1    1.09855    5.96576
+       13/1    1.07330    5.95996
+       14/1    1.07108    5.95115
+       15/1    1.08449    5.96612
+       16/1    1.08837    5.96101
+       17/1    1.06649    5.96135
+       18/1    1.08730    5.96415
+       19/1    1.09915    5.96478
+       20/1    1.09191    5.96648
+       21/1    1.06609    5.96251
+       22/1    1.08586    5.96302    1.07597 +/- 0.00988
+       23/1    1.07004    5.96252    1.07399 +/- 0.00604
+       24/1    1.04341    5.96948    1.06635 +/- 0.00876
+       25/1    1.10391    5.95944    1.07386 +/- 0.01012
+       26/1    1.12028    5.95269    1.08160 +/- 0.01132
+       27/1    1.11382    5.96489    1.08620 +/- 0.01062
+       28/1    1.10372    5.97122    1.08839 +/- 0.00945
+       29/1    1.09281    5.96090    1.08888 +/- 0.00835
+       30/1    1.11894    5.95347    1.09189 +/- 0.00805
+       31/1    1.08019    5.96072    1.09082 +/- 0.00736
+       32/1    1.07852    5.95487    1.08980 +/- 0.00680
+       33/1    1.04362    5.97103    1.08625 +/- 0.00719
+       34/1    1.09081    5.95612    1.08657 +/- 0.00667
+       35/1    1.09287    5.96907    1.08699 +/- 0.00622
+       36/1    1.10691    5.95788    1.08824 +/- 0.00595
+       37/1    1.08048    5.95866    1.08778 +/- 0.00561
+       38/1    1.09399    5.95887    1.08813 +/- 0.00530
+       39/1    1.05102    5.96041    1.08617 +/- 0.00538
+       40/1    1.05673    5.96893    1.08470 +/- 0.00531
+       41/1    1.07839    5.96002    1.08440 +/- 0.00506
+       42/1    1.09675    5.96584    1.08496 +/- 0.00486
+       43/1    1.12266    5.95583    1.08660 +/- 0.00492
+       44/1    1.03907    5.95180    1.08462 +/- 0.00511
+       45/1    1.07597    5.96040    1.08427 +/- 0.00492
+       46/1    1.07561    5.96283    1.08394 +/- 0.00473
+       47/1    1.08223    5.96876    1.08388 +/- 0.00456
+       48/1    1.06257    5.96640    1.08312 +/- 0.00446
+       49/1    1.05984    5.96283    1.08231 +/- 0.00437
+       50/1    1.13443    5.96969    1.08405 +/- 0.00457
+       51/1    1.08007    5.96637    1.08392 +/- 0.00442
+       52/1    1.07891    5.96554    1.08377 +/- 0.00428
+       53/1    1.06233    5.96208    1.08312 +/- 0.00420
+       54/1    1.04768    5.95880    1.08208 +/- 0.00421
+       55/1    1.08650    5.95689    1.08220 +/- 0.00409
+       56/1    1.08459    5.96119    1.08227 +/- 0.00397
+       57/1    1.06605    5.96275    1.08183 +/- 0.00389
+       58/1    1.07205    5.96086    1.08157 +/- 0.00379
+       59/1    1.06567    5.96671    1.08116 +/- 0.00372
+       60/1    1.10660    5.95555    1.08180 +/- 0.00368
+ Creating state point statepoint.60.h5...
+
+ =======================>     TIMING STATISTICS     <=======================
+
+ Total time for initialization     = 4.5227e+00 seconds
+   Reading cross sections          = 3.9825e+00 seconds
+ Total time in simulation          = 3.4317e+01 seconds
+   Time in transport only          = 3.4281e+01 seconds
+   Time in inactive batches        = 6.6115e+00 seconds
+   Time in active batches          = 2.7706e+01 seconds
+   Time synchronizing fission bank = 9.9500e-03 seconds
+     Sampling source sites         = 7.5192e-03 seconds
+     SEND/RECV source sites        = 2.2208e-03 seconds
+   Time accumulating tallies       = 2.2592e-03 seconds
+   Time writing statepoints        = 4.7404e-03 seconds
+ Total time for finalization       = 2.3163e-04 seconds
+ Total time elapsed                = 3.9174e+01 seconds
+ Calculation Rate (inactive)       = 12100.2 particles/second
+ Calculation Rate (active)         = 5774.97 particles/second
+
+ ============================>     RESULTS     <============================
+
+ k-effective (Collision)     = 1.07901 +/- 0.00265
+ k-effective (Track-length)  = 1.08180 +/- 0.00368
+ k-effective (Absorption)    = 1.08153 +/- 0.00305
+ Combined k-effective        = 1.07933 +/- 0.00254
+ Leakage Fraction            = 0.00000 +/- 0.00000
+
+ Creating state point openmc_simulation_n18.h5...
+[openmc.deplete] t=601481224.16596 (final operator evaluation)
+ Maximum neutron transport energy: 20000000 eV for H1
+ Initializing source particles...
+
+ ====================>     K EIGENVALUE SIMULATION     <====================
+
+  Bat./Gen.      k       Entropy         Average k
+  =========   ========   ========   ====================
+        1/1    1.10304    5.96839
+        2/1    1.07211    5.96136
+        3/1    1.07020    5.96374
+        4/1    1.10724    5.96065
+        5/1    1.04286    5.95366
+        6/1    1.08147    5.95704
+        7/1    1.08302    5.97138
+        8/1    1.13366    5.96635
+        9/1    1.06488    5.96070
+       10/1    1.08819    5.95820
+       11/1    1.09708    5.95210
+       12/1    1.06141    5.94541
+       13/1    1.05752    5.96161
+       14/1    1.03877    5.95826
+       15/1    1.05920    5.96287
+       16/1    1.08621    5.96141
+       17/1    1.05354    5.96718
+       18/1    1.08066    5.97075
+       19/1    1.03899    5.96432
+       20/1    1.05188    5.95460
+       21/1    1.09112    5.96967
+       22/1    1.09071    5.96245    1.09092 +/- 0.00021
+       23/1    1.04034    5.96587    1.07406 +/- 0.01686
+       24/1    1.11284    5.96141    1.08375 +/- 0.01537
+       25/1    1.06549    5.96053    1.08010 +/- 0.01245
+       26/1    1.06876    5.96179    1.07821 +/- 0.01034
+       27/1    1.04344    5.95598    1.07324 +/- 0.01005
+       28/1    1.07729    5.96259    1.07375 +/- 0.00872
+       29/1    1.04305    5.95893    1.07034 +/- 0.00841
+       30/1    1.08321    5.96533    1.07162 +/- 0.00763
+       31/1    1.07560    5.94997    1.07199 +/- 0.00691
+       32/1    1.07760    5.96155    1.07245 +/- 0.00633
+       33/1    1.07342    5.96025    1.07253 +/- 0.00582
+       34/1    1.09448    5.96018    1.07410 +/- 0.00561
+       35/1    1.06735    5.95865    1.07365 +/- 0.00525
+       36/1    1.07103    5.96067    1.07348 +/- 0.00491
+       37/1    1.08865    5.95563    1.07437 +/- 0.00470
+       38/1    1.09540    5.95964    1.07554 +/- 0.00458
+       39/1    1.04348    5.96405    1.07385 +/- 0.00465
+       40/1    1.06900    5.96674    1.07361 +/- 0.00442
+       41/1    1.04523    5.96589    1.07226 +/- 0.00441
+       42/1    1.09412    5.96422    1.07325 +/- 0.00432
+       43/1    1.06574    5.96250    1.07293 +/- 0.00414
+       44/1    1.08147    5.97142    1.07328 +/- 0.00398
+       45/1    1.08068    5.96775    1.07358 +/- 0.00383
+       46/1    1.07163    5.96784    1.07350 +/- 0.00368
+       47/1    1.07882    5.96928    1.07370 +/- 0.00355
+       48/1    1.03001    5.96157    1.07214 +/- 0.00376
+       49/1    1.06554    5.95721    1.07191 +/- 0.00363
+       50/1    1.03348    5.97141    1.07063 +/- 0.00374
+       51/1    1.05760    5.96538    1.07021 +/- 0.00364
+       52/1    1.07259    5.96244    1.07029 +/- 0.00352
+       53/1    1.07101    5.96406    1.07031 +/- 0.00342
+       54/1    1.05040    5.95276    1.06972 +/- 0.00337
+       55/1    1.06092    5.96364    1.06947 +/- 0.00328
+       56/1    1.06285    5.96704    1.06929 +/- 0.00319
+       57/1    1.09252    5.96016    1.06991 +/- 0.00317
+       58/1    1.09337    5.95650    1.07053 +/- 0.00314
+       59/1    1.06969    5.96082    1.07051 +/- 0.00306
+       60/1    1.06666    5.95498    1.07041 +/- 0.00299
+ Creating state point statepoint.60.h5...
+
+ =======================>     TIMING STATISTICS     <=======================
+
+ Total time for initialization     = 0.0000e+00 seconds
+   Reading cross sections          = 0.0000e+00 seconds
+ Total time in simulation          = 3.4200e+01 seconds
+   Time in transport only          = 3.4147e+01 seconds
+   Time in inactive batches        = 6.5091e+00 seconds
+   Time in active batches          = 2.7691e+01 seconds
+   Time synchronizing fission bank = 1.1426e-02 seconds
+     Sampling source sites         = 9.1408e-03 seconds
+     SEND/RECV source sites        = 2.0536e-03 seconds
+   Time accumulating tallies       = 1.4661e-02 seconds
+   Time writing statepoints        = 9.6934e-03 seconds
+ Total time for finalization       = 2.9195e-04 seconds
+ Total time elapsed                = 3.4514e+01 seconds
+ Calculation Rate (inactive)       = 12290.5 particles/second
+ Calculation Rate (active)         = 5778.14 particles/second
+
+ ============================>     RESULTS     <============================
+
+ k-effective (Collision)     = 1.06830 +/- 0.00234
+ k-effective (Track-length)  = 1.07041 +/- 0.00299
+ k-effective (Absorption)    = 1.07165 +/- 0.00250
+ Combined k-effective        = 1.06975 +/- 0.00206
+ Leakage Fraction            = 0.00000 +/- 0.00000
+
+ Creating state point openmc_simulation_n19.h5...
+                                %%%%%%%%%%%%%%%
+                           %%%%%%%%%%%%%%%%%%%%%%%%
+                        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                                    %%%%%%%%%%%%%%%%%%%%%%%%
+                                     %%%%%%%%%%%%%%%%%%%%%%%%
+                 ###############      %%%%%%%%%%%%%%%%%%%%%%%%
+                ##################     %%%%%%%%%%%%%%%%%%%%%%%
+                ###################     %%%%%%%%%%%%%%%%%%%%%%%
+                ####################     %%%%%%%%%%%%%%%%%%%%%%
+                #####################     %%%%%%%%%%%%%%%%%%%%%
+                ######################     %%%%%%%%%%%%%%%%%%%%
+                #######################     %%%%%%%%%%%%%%%%%%
+                 #######################     %%%%%%%%%%%%%%%%%
+                 ######################     %%%%%%%%%%%%%%%%%
+                  ####################     %%%%%%%%%%%%%%%%%
+                    #################     %%%%%%%%%%%%%%%%%
+                     ###############     %%%%%%%%%%%%%%%%
+                       ############     %%%%%%%%%%%%%%%
+                          ########     %%%%%%%%%%%%%%
+                                      %%%%%%%%%%%
+
+                 | The OpenMC Monte Carlo Code
+       Copyright | 2011-2025 MIT, UChicago Argonne LLC, and contributors
+         License | https://docs.openmc.org/en/latest/license.html
+         Version | 0.15.3
+     Commit Hash | 27e38e894697bb32a1dac7848d2618818b6b8daf
+       Date/Time | 2026-08-29 05:04:18
+   MPI Processes | 1
+  OpenMP Threads | 32
+
+ Reading settings XML file...
+ Reading cross sections XML file...
+ Reading chain file: /data/chain_endfb71_pwr.xml...
+ Reading materials XML file...
+ Reading geometry XML file...
+ Reading H1 from /data/endfb-vii.1-hdf5/neutron/H1.h5
+ Reading H2 from /data/endfb-vii.1-hdf5/neutron/H2.h5
+ Reading B10 from /data/endfb-vii.1-hdf5/neutron/B10.h5
+ Reading B11 from /data/endfb-vii.1-hdf5/neutron/B11.h5
+ Reading O16 from /data/endfb-vii.1-hdf5/neutron/O16.h5
+ Reading O17 from /data/endfb-vii.1-hdf5/neutron/O17.h5
+ Reading Cr50 from /data/endfb-vii.1-hdf5/neutron/Cr50.h5
+ Reading Cr52 from /data/endfb-vii.1-hdf5/neutron/Cr52.h5
+ Reading Cr53 from /data/endfb-vii.1-hdf5/neutron/Cr53.h5
+ Reading Cr54 from /data/endfb-vii.1-hdf5/neutron/Cr54.h5
+ Reading Fe54 from /data/endfb-vii.1-hdf5/neutron/Fe54.h5
+ Reading Fe56 from /data/endfb-vii.1-hdf5/neutron/Fe56.h5
+ Reading Fe57 from /data/endfb-vii.1-hdf5/neutron/Fe57.h5
+ Reading Fe58 from /data/endfb-vii.1-hdf5/neutron/Fe58.h5
+ Reading Zr90 from /data/endfb-vii.1-hdf5/neutron/Zr90.h5
+ Reading Zr91 from /data/endfb-vii.1-hdf5/neutron/Zr91.h5
+ Reading Zr92 from /data/endfb-vii.1-hdf5/neutron/Zr92.h5
+ Reading Zr94 from /data/endfb-vii.1-hdf5/neutron/Zr94.h5
+ Reading Zr96 from /data/endfb-vii.1-hdf5/neutron/Zr96.h5
+ Reading Sn112 from /data/endfb-vii.1-hdf5/neutron/Sn112.h5
+ Reading Sn114 from /data/endfb-vii.1-hdf5/neutron/Sn114.h5
+ Reading Sn115 from /data/endfb-vii.1-hdf5/neutron/Sn115.h5
+ Reading Sn116 from /data/endfb-vii.1-hdf5/neutron/Sn116.h5
+ Reading Sn117 from /data/endfb-vii.1-hdf5/neutron/Sn117.h5
+ Reading Sn118 from /data/endfb-vii.1-hdf5/neutron/Sn118.h5
+ Reading Sn119 from /data/endfb-vii.1-hdf5/neutron/Sn119.h5
+ Reading Sn120 from /data/endfb-vii.1-hdf5/neutron/Sn120.h5
+ Reading Sn122 from /data/endfb-vii.1-hdf5/neutron/Sn122.h5
+ Reading Sn124 from /data/endfb-vii.1-hdf5/neutron/Sn124.h5
+ Reading He3 from /data/endfb-vii.1-hdf5/neutron/He3.h5
+ Reading He4 from /data/endfb-vii.1-hdf5/neutron/He4.h5
+ Reading U234 from /data/endfb-vii.1-hdf5/neutron/U234.h5
+ Reading U235 from /data/endfb-vii.1-hdf5/neutron/U235.h5
+ Reading U238 from /data/endfb-vii.1-hdf5/neutron/U238.h5
+ Reading Gd152 from /data/endfb-vii.1-hdf5/neutron/Gd152.h5
+ Reading Gd154 from /data/endfb-vii.1-hdf5/neutron/Gd154.h5
+ Reading Gd155 from /data/endfb-vii.1-hdf5/neutron/Gd155.h5
+ Reading Gd156 from /data/endfb-vii.1-hdf5/neutron/Gd156.h5
+ Reading Gd157 from /data/endfb-vii.1-hdf5/neutron/Gd157.h5
+ Reading Gd158 from /data/endfb-vii.1-hdf5/neutron/Gd158.h5
+ Reading Gd160 from /data/endfb-vii.1-hdf5/neutron/Gd160.h5
+ Reading c_H_in_H2O from /data/endfb-vii.1-hdf5/neutron/c_H_in_H2O.h5
+ Minimum neutron data temperature: 0 K
+ Maximum neutron data temperature: 1.7976931348623157e+308 K
+ Reading tallies XML file...
+ Preparing distributed cell instances...
+ Reading plot XML file...
+ Writing summary.h5 file...
+[openmc.deplete] t=601481224.16596 s, dt=34617624.412429355 s, source=1490490.1687271548
+[openmc.deplete] t=636098848.5783893 s, dt=34617624.412429355 s, source=1490490.1687271548
+ Reading H3 from /data/endfb-vii.1-hdf5/neutron/H3.h5
+ Reading Li6 from /data/endfb-vii.1-hdf5/neutron/Li6.h5
+ Reading Li7 from /data/endfb-vii.1-hdf5/neutron/Li7.h5
+ Reading N14 from /data/endfb-vii.1-hdf5/neutron/N14.h5
+ Reading N15 from /data/endfb-vii.1-hdf5/neutron/N15.h5
+ Reading F19 from /data/endfb-vii.1-hdf5/neutron/F19.h5
+ Reading Na22 from /data/endfb-vii.1-hdf5/neutron/Na22.h5
+ WARNING: Negative value(s) found on probability table for nuclide Na22 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Na22 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Na22 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Na22 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Na22 at 1200K
+ WARNING: Negative value(s) found on probability table for nuclide Na22 at 2500K
+ Reading Na23 from /data/endfb-vii.1-hdf5/neutron/Na23.h5
+ Reading Mg24 from /data/endfb-vii.1-hdf5/neutron/Mg24.h5
+ Reading Mg25 from /data/endfb-vii.1-hdf5/neutron/Mg25.h5
+ Reading Mg26 from /data/endfb-vii.1-hdf5/neutron/Mg26.h5
+ Reading Al27 from /data/endfb-vii.1-hdf5/neutron/Al27.h5
+ Reading Si28 from /data/endfb-vii.1-hdf5/neutron/Si28.h5
+ Reading Si29 from /data/endfb-vii.1-hdf5/neutron/Si29.h5
+ Reading Si30 from /data/endfb-vii.1-hdf5/neutron/Si30.h5
+ Reading P31 from /data/endfb-vii.1-hdf5/neutron/P31.h5
+ Reading S32 from /data/endfb-vii.1-hdf5/neutron/S32.h5
+ Reading S33 from /data/endfb-vii.1-hdf5/neutron/S33.h5
+ Reading S34 from /data/endfb-vii.1-hdf5/neutron/S34.h5
+ Reading S36 from /data/endfb-vii.1-hdf5/neutron/S36.h5
+ Reading Cl35 from /data/endfb-vii.1-hdf5/neutron/Cl35.h5
+ Reading Cl37 from /data/endfb-vii.1-hdf5/neutron/Cl37.h5
+ Reading Ar36 from /data/endfb-vii.1-hdf5/neutron/Ar36.h5
+ WARNING: Negative value(s) found on probability table for nuclide Ar36 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Ar36 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Ar36 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Ar36 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Ar36 at 1200K
+ WARNING: Negative value(s) found on probability table for nuclide Ar36 at 2500K
+ Reading Ar38 from /data/endfb-vii.1-hdf5/neutron/Ar38.h5
+ Reading Ar40 from /data/endfb-vii.1-hdf5/neutron/Ar40.h5
+ Reading K39 from /data/endfb-vii.1-hdf5/neutron/K39.h5
+ Reading K40 from /data/endfb-vii.1-hdf5/neutron/K40.h5
+ Reading K41 from /data/endfb-vii.1-hdf5/neutron/K41.h5
+ Reading Ca40 from /data/endfb-vii.1-hdf5/neutron/Ca40.h5
+ Reading Ca42 from /data/endfb-vii.1-hdf5/neutron/Ca42.h5
+ Reading Ca43 from /data/endfb-vii.1-hdf5/neutron/Ca43.h5
+ Reading Ca44 from /data/endfb-vii.1-hdf5/neutron/Ca44.h5
+ Reading Ca46 from /data/endfb-vii.1-hdf5/neutron/Ca46.h5
+ Reading Sc45 from /data/endfb-vii.1-hdf5/neutron/Sc45.h5
+ Reading Ti46 from /data/endfb-vii.1-hdf5/neutron/Ti46.h5
+ Reading Ti47 from /data/endfb-vii.1-hdf5/neutron/Ti47.h5
+ Reading Ti48 from /data/endfb-vii.1-hdf5/neutron/Ti48.h5
+ Reading Ti49 from /data/endfb-vii.1-hdf5/neutron/Ti49.h5
+ Reading Ti50 from /data/endfb-vii.1-hdf5/neutron/Ti50.h5
+ Reading V50 from /data/endfb-vii.1-hdf5/neutron/V50.h5
+ Reading V51 from /data/endfb-vii.1-hdf5/neutron/V51.h5
+ Reading Mn55 from /data/endfb-vii.1-hdf5/neutron/Mn55.h5
+ Reading Co58 from /data/endfb-vii.1-hdf5/neutron/Co58.h5
+ Reading Co59 from /data/endfb-vii.1-hdf5/neutron/Co59.h5
+ Reading Ni58 from /data/endfb-vii.1-hdf5/neutron/Ni58.h5
+ Reading Ni59 from /data/endfb-vii.1-hdf5/neutron/Ni59.h5
+ Reading Ni60 from /data/endfb-vii.1-hdf5/neutron/Ni60.h5
+ Reading Ni61 from /data/endfb-vii.1-hdf5/neutron/Ni61.h5
+ Reading Ni62 from /data/endfb-vii.1-hdf5/neutron/Ni62.h5
+ Reading Ni64 from /data/endfb-vii.1-hdf5/neutron/Ni64.h5
+ Reading Cu63 from /data/endfb-vii.1-hdf5/neutron/Cu63.h5
+ Reading Cu65 from /data/endfb-vii.1-hdf5/neutron/Cu65.h5
+ Reading Zn64 from /data/endfb-vii.1-hdf5/neutron/Zn64.h5
+ Reading Zn65 from /data/endfb-vii.1-hdf5/neutron/Zn65.h5
+ Reading Zn66 from /data/endfb-vii.1-hdf5/neutron/Zn66.h5
+ Reading Zn67 from /data/endfb-vii.1-hdf5/neutron/Zn67.h5
+ Reading Zn68 from /data/endfb-vii.1-hdf5/neutron/Zn68.h5
+ Reading Zn70 from /data/endfb-vii.1-hdf5/neutron/Zn70.h5
+ Reading Ga69 from /data/endfb-vii.1-hdf5/neutron/Ga69.h5
+ Reading Ga71 from /data/endfb-vii.1-hdf5/neutron/Ga71.h5
+ Reading Ge70 from /data/endfb-vii.1-hdf5/neutron/Ge70.h5
+ Reading Ge72 from /data/endfb-vii.1-hdf5/neutron/Ge72.h5
+ Reading Ge73 from /data/endfb-vii.1-hdf5/neutron/Ge73.h5
+ Reading Ge74 from /data/endfb-vii.1-hdf5/neutron/Ge74.h5
+ Reading Ge76 from /data/endfb-vii.1-hdf5/neutron/Ge76.h5
+ Reading As74 from /data/endfb-vii.1-hdf5/neutron/As74.h5
+ Reading As75 from /data/endfb-vii.1-hdf5/neutron/As75.h5
+ Reading Se74 from /data/endfb-vii.1-hdf5/neutron/Se74.h5
+ Reading Se76 from /data/endfb-vii.1-hdf5/neutron/Se76.h5
+ Reading Se77 from /data/endfb-vii.1-hdf5/neutron/Se77.h5
+ Reading Se78 from /data/endfb-vii.1-hdf5/neutron/Se78.h5
+ Reading Se79 from /data/endfb-vii.1-hdf5/neutron/Se79.h5
+ WARNING: Negative value(s) found on probability table for nuclide Se79 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Se79 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Se79 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Se79 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Se79 at 1200K
+ Reading Se80 from /data/endfb-vii.1-hdf5/neutron/Se80.h5
+ Reading Se82 from /data/endfb-vii.1-hdf5/neutron/Se82.h5
+ Reading Br79 from /data/endfb-vii.1-hdf5/neutron/Br79.h5
+ Reading Br81 from /data/endfb-vii.1-hdf5/neutron/Br81.h5
+ Reading Kr78 from /data/endfb-vii.1-hdf5/neutron/Kr78.h5
+ Reading Kr80 from /data/endfb-vii.1-hdf5/neutron/Kr80.h5
+ Reading Kr82 from /data/endfb-vii.1-hdf5/neutron/Kr82.h5
+ Reading Kr83 from /data/endfb-vii.1-hdf5/neutron/Kr83.h5
+ Reading Kr84 from /data/endfb-vii.1-hdf5/neutron/Kr84.h5
+ Reading Kr85 from /data/endfb-vii.1-hdf5/neutron/Kr85.h5
+ Reading Kr86 from /data/endfb-vii.1-hdf5/neutron/Kr86.h5
+ Reading Rb85 from /data/endfb-vii.1-hdf5/neutron/Rb85.h5
+ Reading Rb86 from /data/endfb-vii.1-hdf5/neutron/Rb86.h5
+ Reading Rb87 from /data/endfb-vii.1-hdf5/neutron/Rb87.h5
+ Reading Sr84 from /data/endfb-vii.1-hdf5/neutron/Sr84.h5
+ Reading Sr86 from /data/endfb-vii.1-hdf5/neutron/Sr86.h5
+ Reading Sr87 from /data/endfb-vii.1-hdf5/neutron/Sr87.h5
+ Reading Sr88 from /data/endfb-vii.1-hdf5/neutron/Sr88.h5
+ Reading Sr89 from /data/endfb-vii.1-hdf5/neutron/Sr89.h5
+ Reading Sr90 from /data/endfb-vii.1-hdf5/neutron/Sr90.h5
+ Reading Y89 from /data/endfb-vii.1-hdf5/neutron/Y89.h5
+ Reading Y90 from /data/endfb-vii.1-hdf5/neutron/Y90.h5
+ Reading Y91 from /data/endfb-vii.1-hdf5/neutron/Y91.h5
+ Reading Zr93 from /data/endfb-vii.1-hdf5/neutron/Zr93.h5
+ Reading Zr95 from /data/endfb-vii.1-hdf5/neutron/Zr95.h5
+ Reading Nb93 from /data/endfb-vii.1-hdf5/neutron/Nb93.h5
+ Reading Nb94 from /data/endfb-vii.1-hdf5/neutron/Nb94.h5
+ WARNING: Negative value(s) found on probability table for nuclide Nb94 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Nb94 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Nb94 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Nb94 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Nb94 at 1200K
+ WARNING: Negative value(s) found on probability table for nuclide Nb94 at 2500K
+ Reading Nb95 from /data/endfb-vii.1-hdf5/neutron/Nb95.h5
+ WARNING: Negative value(s) found on probability table for nuclide Nb95 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Nb95 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Nb95 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Nb95 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Nb95 at 1200K
+ Reading Mo92 from /data/endfb-vii.1-hdf5/neutron/Mo92.h5
+ Reading Mo94 from /data/endfb-vii.1-hdf5/neutron/Mo94.h5
+ Reading Mo95 from /data/endfb-vii.1-hdf5/neutron/Mo95.h5
+ Reading Mo96 from /data/endfb-vii.1-hdf5/neutron/Mo96.h5
+ Reading Mo97 from /data/endfb-vii.1-hdf5/neutron/Mo97.h5
+ Reading Mo98 from /data/endfb-vii.1-hdf5/neutron/Mo98.h5
+ Reading Mo99 from /data/endfb-vii.1-hdf5/neutron/Mo99.h5
+ WARNING: Negative value(s) found on probability table for nuclide Mo99 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Mo99 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Mo99 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Mo99 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Mo99 at 1200K
+ WARNING: Negative value(s) found on probability table for nuclide Mo99 at 2500K
+ Reading Mo100 from /data/endfb-vii.1-hdf5/neutron/Mo100.h5
+ Reading Tc99 from /data/endfb-vii.1-hdf5/neutron/Tc99.h5
+ Reading Ru96 from /data/endfb-vii.1-hdf5/neutron/Ru96.h5
+ Reading Ru98 from /data/endfb-vii.1-hdf5/neutron/Ru98.h5
+ Reading Ru99 from /data/endfb-vii.1-hdf5/neutron/Ru99.h5
+ Reading Ru100 from /data/endfb-vii.1-hdf5/neutron/Ru100.h5
+ Reading Ru101 from /data/endfb-vii.1-hdf5/neutron/Ru101.h5
+ Reading Ru102 from /data/endfb-vii.1-hdf5/neutron/Ru102.h5
+ Reading Ru103 from /data/endfb-vii.1-hdf5/neutron/Ru103.h5
+ Reading Ru104 from /data/endfb-vii.1-hdf5/neutron/Ru104.h5
+ Reading Ru105 from /data/endfb-vii.1-hdf5/neutron/Ru105.h5
+ Reading Ru106 from /data/endfb-vii.1-hdf5/neutron/Ru106.h5
+ Reading Rh103 from /data/endfb-vii.1-hdf5/neutron/Rh103.h5
+ Reading Rh105 from /data/endfb-vii.1-hdf5/neutron/Rh105.h5
+ Reading Pd102 from /data/endfb-vii.1-hdf5/neutron/Pd102.h5
+ Reading Pd104 from /data/endfb-vii.1-hdf5/neutron/Pd104.h5
+ Reading Pd105 from /data/endfb-vii.1-hdf5/neutron/Pd105.h5
+ Reading Pd106 from /data/endfb-vii.1-hdf5/neutron/Pd106.h5
+ Reading Pd107 from /data/endfb-vii.1-hdf5/neutron/Pd107.h5
+ Reading Pd108 from /data/endfb-vii.1-hdf5/neutron/Pd108.h5
+ Reading Pd110 from /data/endfb-vii.1-hdf5/neutron/Pd110.h5
+ Reading Ag107 from /data/endfb-vii.1-hdf5/neutron/Ag107.h5
+ Reading Ag109 from /data/endfb-vii.1-hdf5/neutron/Ag109.h5
+ Reading Ag110_m1 from /data/endfb-vii.1-hdf5/neutron/Ag110_m1.h5
+ Reading Ag111 from /data/endfb-vii.1-hdf5/neutron/Ag111.h5
+ Reading Cd106 from /data/endfb-vii.1-hdf5/neutron/Cd106.h5
+ WARNING: Negative value(s) found on probability table for nuclide Cd106 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Cd106 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Cd106 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Cd106 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Cd106 at
+          1200K
+ WARNING: Negative value(s) found on probability table for nuclide Cd106 at
+          2500K
+ Reading Cd108 from /data/endfb-vii.1-hdf5/neutron/Cd108.h5
+ Reading Cd110 from /data/endfb-vii.1-hdf5/neutron/Cd110.h5
+ Reading Cd111 from /data/endfb-vii.1-hdf5/neutron/Cd111.h5
+ Reading Cd112 from /data/endfb-vii.1-hdf5/neutron/Cd112.h5
+ Reading Cd113 from /data/endfb-vii.1-hdf5/neutron/Cd113.h5
+ Reading Cd114 from /data/endfb-vii.1-hdf5/neutron/Cd114.h5
+ Reading Cd115_m1 from /data/endfb-vii.1-hdf5/neutron/Cd115_m1.h5
+ Reading Cd116 from /data/endfb-vii.1-hdf5/neutron/Cd116.h5
+ Reading In113 from /data/endfb-vii.1-hdf5/neutron/In113.h5
+ Reading In115 from /data/endfb-vii.1-hdf5/neutron/In115.h5
+ Reading Sn113 from /data/endfb-vii.1-hdf5/neutron/Sn113.h5
+ Reading Sn123 from /data/endfb-vii.1-hdf5/neutron/Sn123.h5
+ WARNING: Negative value(s) found on probability table for nuclide Sn123 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Sn123 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Sn123 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Sn123 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Sn123 at
+          1200K
+ WARNING: Negative value(s) found on probability table for nuclide Sn123 at
+          2500K
+ Reading Sn125 from /data/endfb-vii.1-hdf5/neutron/Sn125.h5
+ Reading Sn126 from /data/endfb-vii.1-hdf5/neutron/Sn126.h5
+ Reading Sb121 from /data/endfb-vii.1-hdf5/neutron/Sb121.h5
+ Reading Sb123 from /data/endfb-vii.1-hdf5/neutron/Sb123.h5
+ Reading Sb124 from /data/endfb-vii.1-hdf5/neutron/Sb124.h5
+ Reading Sb125 from /data/endfb-vii.1-hdf5/neutron/Sb125.h5
+ Reading Sb126 from /data/endfb-vii.1-hdf5/neutron/Sb126.h5
+ Reading Te120 from /data/endfb-vii.1-hdf5/neutron/Te120.h5
+ WARNING: Negative value(s) found on probability table for nuclide Te120 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Te120 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Te120 at
+          1200K
+ WARNING: Negative value(s) found on probability table for nuclide Te120 at
+          2500K
+ Reading Te122 from /data/endfb-vii.1-hdf5/neutron/Te122.h5
+ Reading Te123 from /data/endfb-vii.1-hdf5/neutron/Te123.h5
+ Reading Te124 from /data/endfb-vii.1-hdf5/neutron/Te124.h5
+ Reading Te125 from /data/endfb-vii.1-hdf5/neutron/Te125.h5
+ Reading Te126 from /data/endfb-vii.1-hdf5/neutron/Te126.h5
+ Reading Te127_m1 from /data/endfb-vii.1-hdf5/neutron/Te127_m1.h5
+ Reading Te128 from /data/endfb-vii.1-hdf5/neutron/Te128.h5
+ Reading Te129_m1 from /data/endfb-vii.1-hdf5/neutron/Te129_m1.h5
+ Reading Te130 from /data/endfb-vii.1-hdf5/neutron/Te130.h5
+ Reading Te132 from /data/endfb-vii.1-hdf5/neutron/Te132.h5
+ Reading I127 from /data/endfb-vii.1-hdf5/neutron/I127.h5
+ Reading I129 from /data/endfb-vii.1-hdf5/neutron/I129.h5
+ Reading I130 from /data/endfb-vii.1-hdf5/neutron/I130.h5
+ Reading I131 from /data/endfb-vii.1-hdf5/neutron/I131.h5
+ WARNING: Negative value(s) found on probability table for nuclide I131 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide I131 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide I131 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide I131 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide I131 at 1200K
+ WARNING: Negative value(s) found on probability table for nuclide I131 at 2500K
+ Reading I135 from /data/endfb-vii.1-hdf5/neutron/I135.h5
+ Reading Xe123 from /data/endfb-vii.1-hdf5/neutron/Xe123.h5
+ Reading Xe124 from /data/endfb-vii.1-hdf5/neutron/Xe124.h5
+ Reading Xe126 from /data/endfb-vii.1-hdf5/neutron/Xe126.h5
+ Reading Xe128 from /data/endfb-vii.1-hdf5/neutron/Xe128.h5
+ Reading Xe129 from /data/endfb-vii.1-hdf5/neutron/Xe129.h5
+ Reading Xe130 from /data/endfb-vii.1-hdf5/neutron/Xe130.h5
+ Reading Xe131 from /data/endfb-vii.1-hdf5/neutron/Xe131.h5
+ Reading Xe132 from /data/endfb-vii.1-hdf5/neutron/Xe132.h5
+ Reading Xe133 from /data/endfb-vii.1-hdf5/neutron/Xe133.h5
+ WARNING: Negative value(s) found on probability table for nuclide Xe133 at
+          2500K
+ Reading Xe134 from /data/endfb-vii.1-hdf5/neutron/Xe134.h5
+ Reading Xe135 from /data/endfb-vii.1-hdf5/neutron/Xe135.h5
+ Reading Xe136 from /data/endfb-vii.1-hdf5/neutron/Xe136.h5
+ Reading Cs133 from /data/endfb-vii.1-hdf5/neutron/Cs133.h5
+ Reading Cs134 from /data/endfb-vii.1-hdf5/neutron/Cs134.h5
+ Reading Cs135 from /data/endfb-vii.1-hdf5/neutron/Cs135.h5
+ Reading Cs136 from /data/endfb-vii.1-hdf5/neutron/Cs136.h5
+ WARNING: Negative value(s) found on probability table for nuclide Cs136 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Cs136 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Cs136 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Cs136 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Cs136 at
+          1200K
+ WARNING: Negative value(s) found on probability table for nuclide Cs136 at
+          2500K
+ Reading Cs137 from /data/endfb-vii.1-hdf5/neutron/Cs137.h5
+ Reading Ba130 from /data/endfb-vii.1-hdf5/neutron/Ba130.h5
+ Reading Ba132 from /data/endfb-vii.1-hdf5/neutron/Ba132.h5
+ Reading Ba133 from /data/endfb-vii.1-hdf5/neutron/Ba133.h5
+ Reading Ba134 from /data/endfb-vii.1-hdf5/neutron/Ba134.h5
+ Reading Ba135 from /data/endfb-vii.1-hdf5/neutron/Ba135.h5
+ Reading Ba136 from /data/endfb-vii.1-hdf5/neutron/Ba136.h5
+ Reading Ba137 from /data/endfb-vii.1-hdf5/neutron/Ba137.h5
+ Reading Ba138 from /data/endfb-vii.1-hdf5/neutron/Ba138.h5
+ Reading Ba140 from /data/endfb-vii.1-hdf5/neutron/Ba140.h5
+ Reading La138 from /data/endfb-vii.1-hdf5/neutron/La138.h5
+ Reading La139 from /data/endfb-vii.1-hdf5/neutron/La139.h5
+ Reading La140 from /data/endfb-vii.1-hdf5/neutron/La140.h5
+ Reading Ce136 from /data/endfb-vii.1-hdf5/neutron/Ce136.h5
+ Reading Ce138 from /data/endfb-vii.1-hdf5/neutron/Ce138.h5
+ Reading Ce139 from /data/endfb-vii.1-hdf5/neutron/Ce139.h5
+ Reading Ce140 from /data/endfb-vii.1-hdf5/neutron/Ce140.h5
+ Reading Ce141 from /data/endfb-vii.1-hdf5/neutron/Ce141.h5
+ Reading Ce142 from /data/endfb-vii.1-hdf5/neutron/Ce142.h5
+ Reading Ce143 from /data/endfb-vii.1-hdf5/neutron/Ce143.h5
+ Reading Ce144 from /data/endfb-vii.1-hdf5/neutron/Ce144.h5
+ Reading Pr141 from /data/endfb-vii.1-hdf5/neutron/Pr141.h5
+ Reading Pr142 from /data/endfb-vii.1-hdf5/neutron/Pr142.h5
+ Reading Pr143 from /data/endfb-vii.1-hdf5/neutron/Pr143.h5
+ Reading Nd142 from /data/endfb-vii.1-hdf5/neutron/Nd142.h5
+ Reading Nd143 from /data/endfb-vii.1-hdf5/neutron/Nd143.h5
+ Reading Nd144 from /data/endfb-vii.1-hdf5/neutron/Nd144.h5
+ Reading Nd145 from /data/endfb-vii.1-hdf5/neutron/Nd145.h5
+ Reading Nd146 from /data/endfb-vii.1-hdf5/neutron/Nd146.h5
+ Reading Nd147 from /data/endfb-vii.1-hdf5/neutron/Nd147.h5
+ Reading Nd148 from /data/endfb-vii.1-hdf5/neutron/Nd148.h5
+ Reading Nd150 from /data/endfb-vii.1-hdf5/neutron/Nd150.h5
+ Reading Pm147 from /data/endfb-vii.1-hdf5/neutron/Pm147.h5
+ Reading Pm148 from /data/endfb-vii.1-hdf5/neutron/Pm148.h5
+ Reading Pm148_m1 from /data/endfb-vii.1-hdf5/neutron/Pm148_m1.h5
+ Reading Pm149 from /data/endfb-vii.1-hdf5/neutron/Pm149.h5
+ Reading Pm151 from /data/endfb-vii.1-hdf5/neutron/Pm151.h5
+ Reading Sm144 from /data/endfb-vii.1-hdf5/neutron/Sm144.h5
+ Reading Sm147 from /data/endfb-vii.1-hdf5/neutron/Sm147.h5
+ Reading Sm148 from /data/endfb-vii.1-hdf5/neutron/Sm148.h5
+ Reading Sm149 from /data/endfb-vii.1-hdf5/neutron/Sm149.h5
+ Reading Sm150 from /data/endfb-vii.1-hdf5/neutron/Sm150.h5
+ Reading Sm151 from /data/endfb-vii.1-hdf5/neutron/Sm151.h5
+ Reading Sm152 from /data/endfb-vii.1-hdf5/neutron/Sm152.h5
+ Reading Sm153 from /data/endfb-vii.1-hdf5/neutron/Sm153.h5
+ Reading Sm154 from /data/endfb-vii.1-hdf5/neutron/Sm154.h5
+ Reading Eu151 from /data/endfb-vii.1-hdf5/neutron/Eu151.h5
+ Reading Eu152 from /data/endfb-vii.1-hdf5/neutron/Eu152.h5
+ Reading Eu153 from /data/endfb-vii.1-hdf5/neutron/Eu153.h5
+ Reading Eu154 from /data/endfb-vii.1-hdf5/neutron/Eu154.h5
+ Reading Eu155 from /data/endfb-vii.1-hdf5/neutron/Eu155.h5
+ Reading Eu156 from /data/endfb-vii.1-hdf5/neutron/Eu156.h5
+ WARNING: Negative value(s) found on probability table for nuclide Eu156 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Eu156 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Eu156 at 600K
+ WARNING: Negative value(s) found on probability table for nuclide Eu156 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Eu156 at
+          1200K
+ WARNING: Negative value(s) found on probability table for nuclide Eu156 at
+          2500K
+ Reading Eu157 from /data/endfb-vii.1-hdf5/neutron/Eu157.h5
+ Reading Gd153 from /data/endfb-vii.1-hdf5/neutron/Gd153.h5
+ Reading Tb159 from /data/endfb-vii.1-hdf5/neutron/Tb159.h5
+ Reading Tb160 from /data/endfb-vii.1-hdf5/neutron/Tb160.h5
+ Reading Dy156 from /data/endfb-vii.1-hdf5/neutron/Dy156.h5
+ Reading Dy158 from /data/endfb-vii.1-hdf5/neutron/Dy158.h5
+ Reading Dy160 from /data/endfb-vii.1-hdf5/neutron/Dy160.h5
+ Reading Dy161 from /data/endfb-vii.1-hdf5/neutron/Dy161.h5
+ Reading Dy162 from /data/endfb-vii.1-hdf5/neutron/Dy162.h5
+ Reading Dy163 from /data/endfb-vii.1-hdf5/neutron/Dy163.h5
+ Reading Dy164 from /data/endfb-vii.1-hdf5/neutron/Dy164.h5
+ Reading Ho165 from /data/endfb-vii.1-hdf5/neutron/Ho165.h5
+ Reading Ho166_m1 from /data/endfb-vii.1-hdf5/neutron/Ho166_m1.h5
+ Reading Er162 from /data/endfb-vii.1-hdf5/neutron/Er162.h5
+ Reading Er164 from /data/endfb-vii.1-hdf5/neutron/Er164.h5
+ Reading Er166 from /data/endfb-vii.1-hdf5/neutron/Er166.h5
+ Reading Er167 from /data/endfb-vii.1-hdf5/neutron/Er167.h5
+ Reading Er168 from /data/endfb-vii.1-hdf5/neutron/Er168.h5
+ Reading Er170 from /data/endfb-vii.1-hdf5/neutron/Er170.h5
+ Reading Tm168 from /data/endfb-vii.1-hdf5/neutron/Tm168.h5
+ Reading Tm169 from /data/endfb-vii.1-hdf5/neutron/Tm169.h5
+ Reading Tm170 from /data/endfb-vii.1-hdf5/neutron/Tm170.h5
+ Reading Hg199 from /data/endfb-vii.1-hdf5/neutron/Hg199.h5
+ Reading Hg200 from /data/endfb-vii.1-hdf5/neutron/Hg200.h5
+ Reading Hg201 from /data/endfb-vii.1-hdf5/neutron/Hg201.h5
+ Reading Hg202 from /data/endfb-vii.1-hdf5/neutron/Hg202.h5
+ Reading Hg204 from /data/endfb-vii.1-hdf5/neutron/Hg204.h5
+ Reading Tl203 from /data/endfb-vii.1-hdf5/neutron/Tl203.h5
+ Reading Tl205 from /data/endfb-vii.1-hdf5/neutron/Tl205.h5
+ Reading Pb204 from /data/endfb-vii.1-hdf5/neutron/Pb204.h5
+ Reading Pb206 from /data/endfb-vii.1-hdf5/neutron/Pb206.h5
+ Reading Pb207 from /data/endfb-vii.1-hdf5/neutron/Pb207.h5
+ Reading Pb208 from /data/endfb-vii.1-hdf5/neutron/Pb208.h5
+ Reading Bi209 from /data/endfb-vii.1-hdf5/neutron/Bi209.h5
+ Reading Ra223 from /data/endfb-vii.1-hdf5/neutron/Ra223.h5
+ Reading Ra224 from /data/endfb-vii.1-hdf5/neutron/Ra224.h5
+ Reading Ra225 from /data/endfb-vii.1-hdf5/neutron/Ra225.h5
+ Reading Ra226 from /data/endfb-vii.1-hdf5/neutron/Ra226.h5
+ Reading Ac225 from /data/endfb-vii.1-hdf5/neutron/Ac225.h5
+ Reading Ac226 from /data/endfb-vii.1-hdf5/neutron/Ac226.h5
+ Reading Ac227 from /data/endfb-vii.1-hdf5/neutron/Ac227.h5
+ Reading Th227 from /data/endfb-vii.1-hdf5/neutron/Th227.h5
+ Reading Th228 from /data/endfb-vii.1-hdf5/neutron/Th228.h5
+ Reading Th229 from /data/endfb-vii.1-hdf5/neutron/Th229.h5
+ Reading Th230 from /data/endfb-vii.1-hdf5/neutron/Th230.h5
+ Reading Th231 from /data/endfb-vii.1-hdf5/neutron/Th231.h5
+ Reading Th232 from /data/endfb-vii.1-hdf5/neutron/Th232.h5
+ Reading Th233 from /data/endfb-vii.1-hdf5/neutron/Th233.h5
+ Reading Th234 from /data/endfb-vii.1-hdf5/neutron/Th234.h5
+ Reading Pa229 from /data/endfb-vii.1-hdf5/neutron/Pa229.h5
+ Reading Pa230 from /data/endfb-vii.1-hdf5/neutron/Pa230.h5
+ Reading Pa231 from /data/endfb-vii.1-hdf5/neutron/Pa231.h5
+ Reading Pa232 from /data/endfb-vii.1-hdf5/neutron/Pa232.h5
+ Reading Pa233 from /data/endfb-vii.1-hdf5/neutron/Pa233.h5
+ Reading U230 from /data/endfb-vii.1-hdf5/neutron/U230.h5
+ Reading U231 from /data/endfb-vii.1-hdf5/neutron/U231.h5
+ Reading U232 from /data/endfb-vii.1-hdf5/neutron/U232.h5
+ Reading U233 from /data/endfb-vii.1-hdf5/neutron/U233.h5
+ Reading U236 from /data/endfb-vii.1-hdf5/neutron/U236.h5
+ Reading U237 from /data/endfb-vii.1-hdf5/neutron/U237.h5
+ Reading U239 from /data/endfb-vii.1-hdf5/neutron/U239.h5
+ Reading U240 from /data/endfb-vii.1-hdf5/neutron/U240.h5
+ Reading U241 from /data/endfb-vii.1-hdf5/neutron/U241.h5
+ Reading Np234 from /data/endfb-vii.1-hdf5/neutron/Np234.h5
+ Reading Np235 from /data/endfb-vii.1-hdf5/neutron/Np235.h5
+ Reading Np236 from /data/endfb-vii.1-hdf5/neutron/Np236.h5
+ Reading Np237 from /data/endfb-vii.1-hdf5/neutron/Np237.h5
+ Reading Np238 from /data/endfb-vii.1-hdf5/neutron/Np238.h5
+ Reading Np239 from /data/endfb-vii.1-hdf5/neutron/Np239.h5
+ Reading Pu236 from /data/endfb-vii.1-hdf5/neutron/Pu236.h5
+ Reading Pu237 from /data/endfb-vii.1-hdf5/neutron/Pu237.h5
+ Reading Pu238 from /data/endfb-vii.1-hdf5/neutron/Pu238.h5
+ Reading Pu239 from /data/endfb-vii.1-hdf5/neutron/Pu239.h5
+ Reading Pu240 from /data/endfb-vii.1-hdf5/neutron/Pu240.h5
+ Reading Pu241 from /data/endfb-vii.1-hdf5/neutron/Pu241.h5
+ Reading Pu242 from /data/endfb-vii.1-hdf5/neutron/Pu242.h5
+ Reading Pu243 from /data/endfb-vii.1-hdf5/neutron/Pu243.h5
+ Reading Pu244 from /data/endfb-vii.1-hdf5/neutron/Pu244.h5
+ Reading Pu246 from /data/endfb-vii.1-hdf5/neutron/Pu246.h5
+ Reading Am240 from /data/endfb-vii.1-hdf5/neutron/Am240.h5
+ Reading Am241 from /data/endfb-vii.1-hdf5/neutron/Am241.h5
+ Reading Am242 from /data/endfb-vii.1-hdf5/neutron/Am242.h5
+ Reading Am242_m1 from /data/endfb-vii.1-hdf5/neutron/Am242_m1.h5
+ Reading Am243 from /data/endfb-vii.1-hdf5/neutron/Am243.h5
+ Reading Am244 from /data/endfb-vii.1-hdf5/neutron/Am244.h5
+ Reading Am244_m1 from /data/endfb-vii.1-hdf5/neutron/Am244_m1.h5
+ Reading Cm240 from /data/endfb-vii.1-hdf5/neutron/Cm240.h5
+ Reading Cm241 from /data/endfb-vii.1-hdf5/neutron/Cm241.h5
+ Reading Cm242 from /data/endfb-vii.1-hdf5/neutron/Cm242.h5
+ Reading Cm243 from /data/endfb-vii.1-hdf5/neutron/Cm243.h5
+ Reading Cm244 from /data/endfb-vii.1-hdf5/neutron/Cm244.h5
+ Reading Cm245 from /data/endfb-vii.1-hdf5/neutron/Cm245.h5
+ Reading Cm246 from /data/endfb-vii.1-hdf5/neutron/Cm246.h5
+ Reading Cm247 from /data/endfb-vii.1-hdf5/neutron/Cm247.h5
+ Reading Cm248 from /data/endfb-vii.1-hdf5/neutron/Cm248.h5
+ Reading Cm249 from /data/endfb-vii.1-hdf5/neutron/Cm249.h5
+ Reading Cm250 from /data/endfb-vii.1-hdf5/neutron/Cm250.h5
+ Reading Bk245 from /data/endfb-vii.1-hdf5/neutron/Bk245.h5
+ Reading Bk247 from /data/endfb-vii.1-hdf5/neutron/Bk247.h5
+ Reading Bk248 from /data/endfb-vii.1-hdf5/neutron/Bk248.h5
+ Reading Bk249 from /data/endfb-vii.1-hdf5/neutron/Bk249.h5
+ Reading Bk250 from /data/endfb-vii.1-hdf5/neutron/Bk250.h5
+ Reading Cf248 from /data/endfb-vii.1-hdf5/neutron/Cf248.h5
+ Reading Cf249 from /data/endfb-vii.1-hdf5/neutron/Cf249.h5
+ Reading Cf250 from /data/endfb-vii.1-hdf5/neutron/Cf250.h5
+ WARNING: Negative value(s) found on probability table for nuclide Cf250 at 250K
+ WARNING: Negative value(s) found on probability table for nuclide Cf250 at 294K
+ WARNING: Negative value(s) found on probability table for nuclide Cf250 at 900K
+ WARNING: Negative value(s) found on probability table for nuclide Cf250 at
+          1200K
+ Reading Cf251 from /data/endfb-vii.1-hdf5/neutron/Cf251.h5
+ Reading Cf252 from /data/endfb-vii.1-hdf5/neutron/Cf252.h5
+ Reading Cf253 from /data/endfb-vii.1-hdf5/neutron/Cf253.h5
+ Reading Cf254 from /data/endfb-vii.1-hdf5/neutron/Cf254.h5
+ Reading Es251 from /data/endfb-vii.1-hdf5/neutron/Es251.h5
+ Reading Es252 from /data/endfb-vii.1-hdf5/neutron/Es252.h5
+ Reading Es253 from /data/endfb-vii.1-hdf5/neutron/Es253.h5
+ Reading Es254 from /data/endfb-vii.1-hdf5/neutron/Es254.h5
+ Reading Es254_m1 from /data/endfb-vii.1-hdf5/neutron/Es254_m1.h5
+ Reading Es255 from /data/endfb-vii.1-hdf5/neutron/Es255.h5
+ Reading Fm255 from /data/endfb-vii.1-hdf5/neutron/Fm255.h5
+ Reading Ir193 from /data/endfb-vii.1-hdf5/neutron/Ir193.h5
+ Reading Au197 from /data/endfb-vii.1-hdf5/neutron/Au197.h5
+ Reading Hg196 from /data/endfb-vii.1-hdf5/neutron/Hg196.h5
+ Reading Hg198 from /data/endfb-vii.1-hdf5/neutron/Hg198.h5
+ Reading Ir191 from /data/endfb-vii.1-hdf5/neutron/Ir191.h5
+ Reading Be9 from /data/endfb-vii.1-hdf5/neutron/Be9.h5
+ Reading Ca48 from /data/endfb-vii.1-hdf5/neutron/Ca48.h5
+ Reading Co58_m1 from /data/endfb-vii.1-hdf5/neutron/Co58_m1.h5
+ Reading Lu175 from /data/endfb-vii.1-hdf5/neutron/Lu175.h5
+ Reading Lu176 from /data/endfb-vii.1-hdf5/neutron/Lu176.h5
+ Reading Hf174 from /data/endfb-vii.1-hdf5/neutron/Hf174.h5
+ Reading Hf176 from /data/endfb-vii.1-hdf5/neutron/Hf176.h5
+ Reading Hf177 from /data/endfb-vii.1-hdf5/neutron/Hf177.h5
+ Reading Hf178 from /data/endfb-vii.1-hdf5/neutron/Hf178.h5
+ Reading Hf179 from /data/endfb-vii.1-hdf5/neutron/Hf179.h5
+ Reading Hf180 from /data/endfb-vii.1-hdf5/neutron/Hf180.h5
+ Reading Ta180 from /data/endfb-vii.1-hdf5/neutron/Ta180.h5
+ Reading Ta181 from /data/endfb-vii.1-hdf5/neutron/Ta181.h5
+ Reading Ta182 from /data/endfb-vii.1-hdf5/neutron/Ta182.h5
+ Reading W180 from /data/endfb-vii.1-hdf5/neutron/W180.h5
+ Reading W182 from /data/endfb-vii.1-hdf5/neutron/W182.h5
+ Reading W183 from /data/endfb-vii.1-hdf5/neutron/W183.h5
+ Reading W184 from /data/endfb-vii.1-hdf5/neutron/W184.h5
+ Reading W186 from /data/endfb-vii.1-hdf5/neutron/W186.h5
+ Reading Re185 from /data/endfb-vii.1-hdf5/neutron/Re185.h5
+ Reading Re187 from /data/endfb-vii.1-hdf5/neutron/Re187.h5
+ Reading Bk246 from /data/endfb-vii.1-hdf5/neutron/Bk246.h5
+ Reading Cf246 from /data/endfb-vii.1-hdf5/neutron/Cf246.h5
+ Maximum neutron transport energy: 20000000 eV for H1
+ Initializing source particles...
+
+ ====================>     K EIGENVALUE SIMULATION     <====================
+
+  Bat./Gen.      k       Entropy         Average k
+  =========   ========   ========   ====================
+        1/1    1.04595    5.96416
+        2/1    1.05644    5.97105
+        3/1    1.02808    5.96695
+        4/1    1.04252    5.95968
+        5/1    1.03067    5.96239
+        6/1    1.04952    5.96909
+        7/1    1.06349    5.96377
+        8/1    1.02919    5.96085
+        9/1    1.04768    5.96320
+       10/1    1.03697    5.96710
+       11/1    1.06341    5.97127
+       12/1    1.06302    5.96452
+       13/1    1.00210    5.96871
+       14/1    1.04230    5.96450
+       15/1    1.05447    5.96299
+       16/1    1.06244    5.96739
+       17/1    1.05415    5.95909
+       18/1    1.06239    5.97237
+       19/1    1.09040    5.96538
+       20/1    1.05243    5.96095
+       21/1    1.04709    5.95807
+       22/1    1.07153    5.96318    1.05931 +/- 0.01222
+       23/1    1.03961    5.96218    1.05274 +/- 0.00964
+       24/1    1.01715    5.96237    1.04384 +/- 0.01121
+       25/1    1.04707    5.95974    1.04449 +/- 0.00871
+       26/1    1.08332    5.94588    1.05096 +/- 0.00961
+       27/1    1.04817    5.95989    1.05056 +/- 0.00813
+       28/1    1.07534    5.96523    1.05366 +/- 0.00770
+       29/1    1.04695    5.96132    1.05291 +/- 0.00683
+       30/1    1.08118    5.96604    1.05574 +/- 0.00673
+       31/1    1.07575    5.96677    1.05756 +/- 0.00635
+       32/1    1.05875    5.95454    1.05766 +/- 0.00580
+       33/1    1.03814    5.95355    1.05616 +/- 0.00554
+       34/1    1.02994    5.96629    1.05428 +/- 0.00546
+       35/1    1.05035    5.96947    1.05402 +/- 0.00509
+       36/1    1.04720    5.96383    1.05360 +/- 0.00478
+       37/1    1.03178    5.95960    1.05231 +/- 0.00467
+       38/1    1.02878    5.96960    1.05100 +/- 0.00459
+       39/1    1.04647    5.94615    1.05077 +/- 0.00435
+       40/1    1.07910    5.96330    1.05218 +/- 0.00437
+       41/1    1.05850    5.95306    1.05248 +/- 0.00416
+       42/1    1.01918    5.95819    1.05097 +/- 0.00425
+       43/1    1.06292    5.95947    1.05149 +/- 0.00409
+       44/1    1.05884    5.96087    1.05180 +/- 0.00393
+       45/1    1.05995    5.95899    1.05212 +/- 0.00378
+       46/1    1.07777    5.96054    1.05311 +/- 0.00377
+       47/1    1.06522    5.96670    1.05356 +/- 0.00365
+       48/1    1.06914    5.96031    1.05411 +/- 0.00356
+       49/1    1.05840    5.95461    1.05426 +/- 0.00344
+       50/1    1.06615    5.96117    1.05466 +/- 0.00335
+       51/1    1.05689    5.97153    1.05473 +/- 0.00324
+       52/1    1.05182    5.96105    1.05464 +/- 0.00314
+       53/1    1.06663    5.95905    1.05500 +/- 0.00306
+       54/1    1.08114    5.96258    1.05577 +/- 0.00307
+       55/1    1.04170    5.94797    1.05537 +/- 0.00301
+       56/1    1.04603    5.96516    1.05511 +/- 0.00293
+       57/1    1.05938    5.96966    1.05522 +/- 0.00286
+       58/1    1.05270    5.95212    1.05516 +/- 0.00278
+       59/1    1.01240    5.96113    1.05406 +/- 0.00292
+       60/1    1.07847    5.96531    1.05467 +/- 0.00291
+ Creating state point statepoint.60.h5...
+
+ =======================>     TIMING STATISTICS     <=======================
+
+ Total time for initialization     = 4.5266e+00 seconds
+   Reading cross sections          = 3.9736e+00 seconds
+ Total time in simulation          = 3.4255e+01 seconds
+   Time in transport only          = 3.4223e+01 seconds
+   Time in inactive batches        = 6.5490e+00 seconds
+   Time in active batches          = 2.7706e+01 seconds
+   Time synchronizing fission bank = 9.2557e-03 seconds
+     Sampling source sites         = 7.0298e-03 seconds
+     SEND/RECV source sites        = 2.0226e-03 seconds
+   Time accumulating tallies       = 1.5737e-03 seconds
+   Time writing statepoints        = 4.8225e-03 seconds
+ Total time for finalization       = 2.3082e-04 seconds
+ Total time elapsed                = 3.9111e+01 seconds
+ Calculation Rate (inactive)       = 12215.6 particles/second
+ Calculation Rate (active)         = 5774.9 particles/second
+
+ ============================>     RESULTS     <============================
+
+ k-effective (Collision)     = 1.05489 +/- 0.00253
+ k-effective (Track-length)  = 1.05467 +/- 0.00291
+ k-effective (Absorption)    = 1.05321 +/- 0.00194
+ Combined k-effective        = 1.05374 +/- 0.00173
+ Leakage Fraction            = 0.00000 +/- 0.00000
+
+ Creating state point openmc_simulation_n20.h5...
+[openmc.deplete] t=670716472.9908186 (final operator evaluation)
+ Maximum neutron transport energy: 20000000 eV for H1
+ Initializing source particles...
+
+ ====================>     K EIGENVALUE SIMULATION     <====================
+
+  Bat./Gen.      k       Entropy         Average k
+  =========   ========   ========   ====================
+        1/1    1.02292    5.95328
+        2/1    1.02538    5.95619
+        3/1    1.04577    5.96285
+        4/1    1.04495    5.96324
+        5/1    1.07162    5.96064
+        6/1    1.04974    5.95944
+        7/1    1.05554    5.96537
+        8/1    0.99179    5.95739
+        9/1    1.01732    5.95686
+       10/1    1.04460    5.96542
+       11/1    0.98708    5.94580
+       12/1    0.99856    5.96828
+       13/1    1.02374    5.95391
+       14/1    1.04671    5.95593
+       15/1    1.02945    5.96173
+       16/1    1.03717    5.97578
+       17/1    1.06326    5.96506
+       18/1    1.03640    5.95259
+       19/1    1.05273    5.96037
+       20/1    1.04091    5.95682
+       21/1    1.06038    5.95112
+       22/1    1.05955    5.96455    1.05997 +/- 0.00041
+       23/1    1.01932    5.96348    1.04642 +/- 0.01355
+       24/1    1.01768    5.96972    1.03923 +/- 0.01198
+       25/1    1.03699    5.96294    1.03878 +/- 0.00929
+       26/1    1.03254    5.95952    1.03774 +/- 0.00766
+       27/1    1.04949    5.96441    1.03942 +/- 0.00668
+       28/1    1.06676    5.96058    1.04284 +/- 0.00672
+       29/1    1.02578    5.96280    1.04094 +/- 0.00622
+       30/1    1.03635    5.94916    1.04048 +/- 0.00559
+       31/1    1.02860    5.96671    1.03940 +/- 0.00517
+       32/1    1.05694    5.95721    1.04086 +/- 0.00494
+       33/1    1.03222    5.96870    1.04020 +/- 0.00459
+       34/1    1.05474    5.96089    1.04124 +/- 0.00437
+       35/1    1.03043    5.96024    1.04052 +/- 0.00414
+       36/1    1.02740    5.96880    1.03970 +/- 0.00395
+       37/1    1.05999    5.94988    1.04089 +/- 0.00390
+       38/1    1.01262    5.96037    1.03932 +/- 0.00400
+       39/1    1.00954    5.97532    1.03775 +/- 0.00410
+       40/1    1.06201    5.96732    1.03897 +/- 0.00407
+       41/1    1.03061    5.96182    1.03857 +/- 0.00389
+       42/1    1.02900    5.96305    1.03813 +/- 0.00374
+       43/1    1.04479    5.95640    1.03842 +/- 0.00358
+       44/1    1.02191    5.95218    1.03773 +/- 0.00350
+       45/1    1.07143    5.94857    1.03908 +/- 0.00362
+       46/1    1.03855    5.95424    1.03906 +/- 0.00347
+       47/1    1.02503    5.94963    1.03854 +/- 0.00338
+       48/1    1.05742    5.96056    1.03922 +/- 0.00333
+       49/1    1.02574    5.95563    1.03875 +/- 0.00325
+       50/1    1.08229    5.96999    1.04020 +/- 0.00345
+       51/1    1.02156    5.96561    1.03960 +/- 0.00340
+       52/1    1.03138    5.95942    1.03934 +/- 0.00330
+       53/1    1.02195    5.96868    1.03882 +/- 0.00324
+       54/1    1.07495    5.96105    1.03988 +/- 0.00332
+       55/1    1.00878    5.96341    1.03899 +/- 0.00334
+       56/1    1.05558    5.96671    1.03945 +/- 0.00328
+       57/1    1.05625    5.96850    1.03991 +/- 0.00322
+       58/1    1.06087    5.96158    1.04046 +/- 0.00318
+       59/1    1.03967    5.95586    1.04044 +/- 0.00310
+       60/1    1.04352    5.96679    1.04051 +/- 0.00302
+ Creating state point statepoint.60.h5...
+
+ =======================>     TIMING STATISTICS     <=======================
+
+ Total time for initialization     = 0.0000e+00 seconds
+   Reading cross sections          = 0.0000e+00 seconds
+ Total time in simulation          = 3.4547e+01 seconds
+   Time in transport only          = 3.4506e+01 seconds
+   Time in inactive batches        = 6.5842e+00 seconds
+   Time in active batches          = 2.7963e+01 seconds
+   Time synchronizing fission bank = 1.1272e-02 seconds
+     Sampling source sites         = 8.9717e-03 seconds
+     SEND/RECV source sites        = 2.0748e-03 seconds
+   Time accumulating tallies       = 1.5280e-03 seconds
+   Time writing statepoints        = 9.3209e-03 seconds
+ Total time for finalization       = 3.0425e-04 seconds
+ Total time elapsed                = 3.4860e+01 seconds
+ Calculation Rate (inactive)       = 12150.3 particles/second
+ Calculation Rate (active)         = 5721.81 particles/second
+
+ ============================>     RESULTS     <============================
+
+ k-effective (Collision)     = 1.04013 +/- 0.00228
+ k-effective (Track-length)  = 1.04051 +/- 0.00302
+ k-effective (Absorption)    = 1.03631 +/- 0.00263
+ Combined k-effective        = 1.03875 +/- 0.00218
+ Leakage Fraction            = 0.00000 +/- 0.00000
+
+ Creating state point openmc_simulation_n21.h5...
+  [case 0041] e=( 4.50/17.02) Gd=4.69 p=1.167 refl=  4.7 k_target=1.0625 -> EFPD=   7142      F_dh=1.466 k_b
+ol=1.3227 [22 solves, 21.0 min]
+[Stage 1] 42 real evaluations done. HV=1288
+Done in 38950.0s, 42 total real evaluations.
+saved -> out_c6/optimization_results.json
+checkpoint -> out_c6/optimization_checkpoint.json  (42 evals total)
+   to add more later:  python run_optimization.py --resume out_c6/optimization_checkpoint.json --ktarget-tab
+le ktarget_table.json --particles 4000 --batches 60 --inactive 20 --max-burnup 100 --dep-step 4
+saved -> out_c6/optimization_openmc.png
+ubuntu@ip-172-31-28-165:~/master-thesis-unipi$ print('uncensored cycle_length range: %.1f to %.1f' % (min(x[
+'cycle_length'] for x in non), max(x['cycle_length'] for x in non)))
+

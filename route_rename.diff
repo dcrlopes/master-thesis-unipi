@@ -1,0 +1,103 @@
+diff --git a/openmc_evaluator.py b/openmc_evaluator.py
+index 6c89e12..e80097a 100644
+--- a/openmc_evaluator.py
++++ b/openmc_evaluator.py
+@@ -9,7 +9,7 @@ Per design it returns (cycle_length_EFPD, peaking) + constraints by:
+      normalise power per gram of heavy metal,
+   3. running an ADAPTIVE depletion (see below) at the CORE specific power,
+   4. interpolating the burnup where k_inf crosses a leakage-corrected EOC
+-     (End Of Cycle) target -- Route A frozen value or Route B per-design
++     (End Of Cycle) target -- a frozen value (legacy) or the Route B per-design
+      table -- and converting that burnup to EFPD,
+   5. reading the BOL (Beginning Of Life) pin-power tally for the radial
+      peaking factor F_dh,
+@@ -103,7 +103,7 @@ class OpenMCEvaluator(Evaluator):
+         Must match example_reactor_problem(): objectives {cycle_length,
+         peaking}, constraints {g_kmin, g_kmax, g_enr, g_peak, g_geom}.
+     k_target : float | str | dict
+-        ROUTE A -- a single float: the FROZEN leakage-corrected EOC target,
++        FROZEN TARGET (legacy) -- a single float: the FROZEN leakage-corrected EOC target,
+         the SAME value for every design regardless of refl_thick.
+         ROUTE B -- a path to (or an already-loaded dict of) the JSON table
+         written by sweep_ktarget.py; k_target is interpolated per design.
+@@ -146,7 +146,7 @@ class OpenMCEvaluator(Evaluator):
+                  verbose: bool = True):
+         super().__init__(spec)
+ 
+-        # ROUTE A (float) vs ROUTE B (1-D or 2-D table) -- detected once here;
++        # FROZEN TARGET (float) vs ROUTE B (1-D or 2-D table) -- detected once here;
+         # _k_target_for() does the per-design lookup every evaluation.
+         self.k_target = None
+         self._kt_1d = None          # (refl_grid, k_target_grid)
+@@ -271,7 +271,7 @@ class OpenMCEvaluator(Evaluator):
+         return float((fm / fm.mean()).max())
+ 
+     # ------------------------------------------------------------------ #
+-    # EOC target for THIS design -- frozen (Route A), refl-interpolated   #
++    # EOC target for THIS design -- frozen (legacy), refl-interpolated    #
+     # (Route B, 1-D legacy table) or (pitch, refl)-interpolated (2-D)     #
+     # ------------------------------------------------------------------ #
+     def _k_target_for(self, design: dict) -> float:
+diff --git a/run_optimization.py b/run_optimization.py
+index 6d62e2d..f1fe80b 100644
+--- a/run_optimization.py
++++ b/run_optimization.py
+@@ -82,8 +82,11 @@ import warnings
+ from pathlib import Path
+ 
+ # ---------------------------------------------------------------------------
+-# ROUTE A default: a single FROZEN leakage-corrected EOC (End Of Cycle)
+-# target, the SAME for every design regardless of refl_thick. Measure ONCE
++# FROZEN TARGET (legacy, formerly labelled 'ROUTE A' in this file): a
++# single FROZEN leakage-corrected EOC (End Of Cycle) target, the SAME for
++# every design regardless of refl_thick. NOTE: in reactor_model.py,
++# sweep_ktarget.py and the thesis, 'Route A' means the reflected-assembly
++# sleeve model, NOT this constant. Measure ONCE
+ # (run measure_leakage_target.py on THIS machine) and paste the value here.
+ # The 4.55/4.05, pitch 1.26 reference on the OLD geometry gave ~1.085 -- the
+ # frozen 32-assembly geometry WILL give a different number, so re-measure
+@@ -102,7 +105,7 @@ def main():
+     ap.add_argument("--smoke", action="store_true",
+                     help="tiny config to validate the whole chain end-to-end")
+     ap.add_argument("--ktarget", type=float, default=K_TARGET,
+-                    help="ROUTE A: frozen leakage-corrected EOC target "
++                    help="FROZEN TARGET (legacy): frozen leakage-corrected EOC target "
+                          "(k_inf), one value for every design")
+     ap.add_argument("--ktarget-table", default=None, metavar="PATH.json",
+                     help="ROUTE B: path to the k_target JSON table written by "
+@@ -163,7 +166,7 @@ def main():
+                          "crossing.")
+     args = ap.parse_args()
+ 
+-    # ROUTE A (float) vs ROUTE B (per-design table) -- computed once, used by
++    # FROZEN TARGET (float) vs ROUTE B (per-design table) -- computed once, used by
+     # the evaluator, the resume check, and both status prints below.
+     # --ktarget-table wins if both are given.
+     k_target_arg = args.ktarget_table or args.ktarget
+@@ -247,8 +250,8 @@ def main():
+         prev_meta = json.loads(Path(args.resume).read_text()).get("meta", {})
+         prev_kt = prev_meta.get("k_target")
+         if prev_kt is not None:
+-            # Numeric vs numeric (both Route A): tolerate float noise. Any
+-            # other combination (a table PATH string, or Route A meeting
++            # Numeric vs numeric (both frozen targets): tolerate float noise. Any
++            # other combination (a table PATH string, or a frozen target meeting
+             # Route B): compare as text so a route switch is always caught.
+             if isinstance(prev_kt, (int, float)) and isinstance(k_target_arg, (int, float)):
+                 kt_mismatch = abs(prev_kt - k_target_arg) > 1e-9
+diff --git a/sweep_ktarget.py b/sweep_ktarget.py
+index 8da7a57..cdaaa0f 100644
+--- a/sweep_ktarget.py
++++ b/sweep_ktarget.py
+@@ -23,6 +23,11 @@ WHY THE OLD 1-D TABLE (ktarget_vs_refl.json) MUST BE THROWN AWAY
+ 
+ ROUTE A vs ROUTE B (unchanged rule)
+ -----------------------------------
++ROUTE A (thesis nomenclature): the reflected-assembly SLEEVE model,
++make_assembly_model(reflector=True), where the leakage is computed by
++the transport solver inside the depletion. Implemented, not used in
++any campaign. (The frozen constant K_TARGET of run_optimization.py is
++a legacy calibration option, not a route.)
+ ROUTE B (this script): depletion runs at infinite medium (bc="reflective");
+ ALL leakage enters through K_TARGET. *** DO NOT COMBINE *** with an explicit
+ reflector in the depletion model (reflector=True), or reflector leakage is

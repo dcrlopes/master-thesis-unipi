@@ -155,6 +155,64 @@ def max_zoned_enrichment(base: dict, m_p: float) -> float:
 
 
 # --------------------------------------------------------------------------- #
+# ZONED-EVALUATOR: the FROZEN Campaign 6 loading map the optimizer builds     #
+# --------------------------------------------------------------------------- #
+# Chosen from the Campaign 5 zoned-loading study, whose optimum over all four
+# champions was m_C / m_M / m_P = 0.720 / 0.893 / 1.150. m_P is imported from
+# leu_policy so the search box (E_SEARCH_MAX = LEU_CAP_WTPC / M_P_DESIGN) and
+# the as-built periphery are sized by the SAME number. m_M is not stored: it
+# is re-derived from the fissile balance, so the core-average enrichment
+# multiplier is exactly 1 whatever m_C and m_P say.
+M_C_DESIGN = 0.720
+
+
+def evaluator_multipliers():
+    """(rmap, m_C, m_M, m_P) of the frozen map used by the truth evaluator."""
+    import leu_policy as _leu
+    rmap = ring_map()
+    m_c, m_m, m_p = balanced_multipliers(M_C_DESIGN, _leu.M_P_DESIGN,
+                                         ring_counts(rmap))
+    return rmap, m_c, m_m, m_p
+
+
+def evaluator_design_map(design: dict) -> dict:
+    """{(row, col): design} of the frozen zoned loading for one base design.
+
+    Consumed by reactor_model.make_core_model(design_map=...). Enrichments
+    of each ring are the base values scaled by that ring's multiplier; every
+    other design variable is copied unchanged (zone_designs), so the pin
+    layout, the gadolinia pattern and the zone-enrichment derate of the
+    gadolinia rods stay single-sourced in the builders."""
+    rmap, m_c, m_m, m_p = evaluator_multipliers()
+    return design_map_for(rmap, zone_designs(design, m_c, m_m, m_p))
+
+
+# --------------------------------------------------------------------------- #
+# CTRL-SCREEN: the sixteen regulating-bank positions (RE1..RE4)               #
+# --------------------------------------------------------------------------- #
+# The complete inner sixteen assemblies: the C ring (RE1), the M-ring
+# diagonals (RE2) and both M-edge orbits (RE3, RE4). The SH banks occupy the
+# outer sixteen and are reserved for scram, so operational controllability
+# means subcritical under ALL-RE. Single source shared by the evaluator's
+# g_ctrl constraint and by rod_bank_worth.py.
+RE_BANK_POSITIONS = frozenset([
+    (2, 2), (2, 3), (3, 2), (3, 3),          # RE1  inner ring
+    (1, 1), (1, 4), (4, 1), (4, 4),          # RE2  M diagonals
+    (1, 2), (2, 4), (4, 3), (3, 1),          # RE3  M edges, orbit A
+    (1, 3), (3, 4), (4, 2), (2, 1),          # RE4  M edges, orbit B
+])
+
+# CAMPAIGN 8: the first two regulating banks alone (RE1 + RE2, eight
+# assemblies). Recorded next to the ALL-RE screen so the front can be
+# split into designs controllable with two banks and designs needing all
+# four. Must stay a subset of RE_BANK_POSITIONS (checked by the applier).
+RE12_POSITIONS = frozenset([
+    (2, 2), (2, 3), (3, 2), (3, 3),          # RE1  inner ring
+    (1, 1), (1, 4), (4, 1), (4, 4),          # RE2  M diagonals
+])
+
+
+# --------------------------------------------------------------------------- #
 # Archive access (checkpoint written by ActiveLearningMOO.save_checkpoint)    #
 # --------------------------------------------------------------------------- #
 def load_archive(checkpoint_path):
@@ -177,7 +235,8 @@ def is_feasible(raw: dict, constraint_names) -> bool:
 # --------------------------------------------------------------------------- #
 def core_bol_solve(base_design: dict, design_map, op, geo, *,
                    particles: int, batches: int, inactive: int,
-                   seed: int, case: Path) -> dict:
+                   seed: int, case: Path, rodded_map=None,
+                   h_active=None, axial_refl_cm=0.0) -> dict:
     """One 2D core Beginning of Life (BOL) eigenvalue solve.
 
     Peaking extraction (mask zero-fission bins, then max over mean) and the
@@ -190,9 +249,11 @@ def core_bol_solve(base_design: dict, design_map, op, geo, *,
 
     case = Path(case)
     case.mkdir(parents=True, exist_ok=True)
-    m = rm.make_core_model(base_design, op, geo, design_map=design_map,
+    m = rm.make_core_model(base_design, op, geo, design_map=design_map, rodded_map=rodded_map,
                            particles=particles, batches=batches,
-                           inactive=inactive)
+                           inactive=inactive,
+                           h_active=h_active,            # CORE3D passthrough
+                           axial_refl_cm=axial_refl_cm)
     model = m[0] if isinstance(m, tuple) else m
     model.settings.seed = int(seed)
 

@@ -77,6 +77,7 @@ from __future__ import annotations
 
 import argparse
 import platform
+import sys as _sys
 from datetime import datetime, timezone
 import json
 import os
@@ -177,6 +178,75 @@ def main():
                          "(default 2). Larger = fewer operator restarts but "
                          "up to (chunk-steps - 1) wasted solves past the "
                          "crossing.")
+    # ---------------- constraint definition (Campaign 6) --------------- #
+    # Every default below reproduces the Campaign 5 behaviour, so adding
+    # these flags changes nothing until one is passed explicitly.
+    ap.add_argument("--k-basis", choices=["assembly", "core"],
+                    default="assembly",
+                    help="which eigenvalue the reactivity screen acts on. "
+                         "'assembly' uses k_inf of the single infinite-"
+                         "lattice assembly, the Campaign 5 behaviour. "
+                         "'core' uses k_eff of the 32-assembly core at "
+                         "Beginning of Life, which is the quantity the "
+                         "reactor actually has. The two differ by the "
+                         "leakage gap, measured at 4300 to 8060 pcm across "
+                         "the Campaign 5 archive, so the limit is NOT "
+                         "transferable between bases without thought. "
+                         "'core' requires an explicit --k-max.")
+    ap.add_argument("--k-max", type=float, default=None,
+                    help="upper reactivity bound applied to the eigenvalue "
+                         "selected by --k-basis. Left unset on the assembly "
+                         "basis the evaluator uses its historical 1.35.")
+    ap.add_argument("--k-min", type=float, default=1.02,
+                    help="lower reactivity bound, the criticality floor")
+    ap.add_argument("--f-max", type=float, default=2.0,
+                    help="upper bound on the core radial enthalpy-rise hot "
+                         "channel factor F_dH")
+    ap.add_argument("--enr-max", type=float, default=19.75,
+                    help="LEU (Low Enriched Uranium) enrichment cap in "
+                         "wt%% U-235")
+    ap.add_argument("--ctrl-margin", type=float, default=None,
+                    help="CTRL-SCREEN: required subcriticality under the "
+                         "fully inserted regulating banks (RE1..RE4), in "
+                         "pcm of dk, e.g. 1000. Adds constraint g_ctrl and "
+                         "one extra core solve per evaluation. Off when "
+                         "absent, reproducing Campaign 6 behaviour.")
+    ap.add_argument("--ctrl-absorber", choices=["B4C", "AIC"],
+                    default="B4C",
+                    help="CTRL-SCREEN: absorber of the regulating CRAs")
+    ap.add_argument("--enr-box-low", type=float, default=None,
+                    help="ENR-BOX: optional lower bound of the enrichment "
+                         "search box in wt%% (design variable), to stop the "
+                         "design of experiments sampling designs that fail "
+                         "k_min. Unset keeps the 2.0 wt%% floor.")
+    ap.add_argument("--nsga-pop", type=int, default=None,
+                    help="NSGA-SET: NSGA-II population on the surrogate, "
+                         "overriding the profile (full run: 60). The C6 "
+                         "sensitivity study measured seed-to-seed HV std "
+                         "12.7 at 60x80 vs 0.59 at 300x400, at <9 s of "
+                         "search per iteration.")
+    ap.add_argument("--nsga-gen", type=int, default=None,
+                    help="NSGA-SET: NSGA-II generations on the surrogate, "
+                         "overriding the profile (full run: 80).")
+    ap.add_argument("--infill-min-sep", type=float, default=0.05,
+                    help="BATCH-DIVERSITY: minimum separation of the infill "
+                         "picks (and of each pick from the archive) in the "
+                         "unit design box, ||dx/span||/sqrt(n_var). 0.05 "
+                         "means a mean per-variable spacing of 5%% of range. "
+                         "Halved automatically when the surrogate front is "
+                         "too small to supply n_infill picks at this value.")
+    ap.add_argument("--feas-kappa", type=float, default=1.0,
+                    help="FEAS-MARGIN: infill candidates must satisfy "
+                         "g_mean + kappa*g_std <= 0 on the surrogate "
+                         "constraints to rank first in the acquisition. "
+                         "Larger kappa is more conservative. 0 restores "
+                         "the pure-uncertainty ranking of block 3.")
+    ap.add_argument("--no-efpd-clip", action="store_true",
+                    help="EFPD-CLIP: disable capping the surrogate's "
+                         "predicted cycle length at the depletion ceiling "
+                         "(max_burnup converted to EFPD). The clip is ON by "
+                         "default because the truth evaluator censors "
+                         "there, so predictions beyond it are fiction.")
     args = ap.parse_args()
 
     # ROUTE A (float) vs ROUTE B (per-design table) -- computed once, used by
@@ -202,7 +272,20 @@ def main():
     from openmc_evaluator import OpenMCEvaluator
 
     import leu_policy as _leu
+    import zoning as _zn     # ZONED-EVALUATOR: record the map in metadata
     spec = example_reactor_problem()
+    # ENR-BOX (Campaign 7): --enr-max only defined the constraint g_enr; the
+    # search box stayed at leu_policy.E_SEARCH_MAX, so every sample above the
+    # cap paid full depletion before being rejected. Apply the same
+    # cap-over-multiplier rule that sized the LEU box: as-built periphery
+    # enrichment is e * m_P, so the design variable must stay below
+    # enr_max / m_P. Optional floor for the k_min side.
+    _e_hi = min(_leu.E_SEARCH_MAX, args.enr_max / _leu.M_P_DESIGN)
+    for _v in spec.design_space.variables:
+        if _v.name in ("enrich", "enrich_inner", "enrich_outer"):
+            _v.high = _e_hi
+            if args.enr_box_low is not None:
+                _v.low = max(_v.low, float(args.enr_box_low))
 
     if args.smoke:
         # 4 + 1*2 = 6 real evaluations, coarse transport, SHORT adaptive
@@ -213,7 +296,24 @@ def main():
         transport = dict(particles=800, batches=30, inactive=10)
         schedule = dict(bol_steps=[1.0, 2.0, 4.0], dep_step=6.0,
                         max_burnup=30.0)
+        # CAMPAIGN 8: --smoke lowered only the DEPLETION transport, so the
+        # core-class solves still ran at 100000 x 170. With three of them per
+        # design (unrodded, ALL-RE, RE1+RE2) a smoke run cost about half an
+        # hour on solves that exist only to prove the wiring. Lower them here,
+        # but ONLY for flags the user did not type, so an explicit
+        # --core-particles still wins. Detection is exact (sys.argv), not a
+        # comparison against the argparse default.
+        _smoke_core = {"--core-particles": ("core_particles", 8000),
+                       "--core-batches":   ("core_batches", 60),
+                       "--core-inactive":  ("core_inactive", 20)}
+        _typed = " ".join(_sys.argv[1:])
+        for _flag, (_attr, _val) in _smoke_core.items():
+            if _flag not in _typed:
+                setattr(args, _attr, _val)
         print(">>> SMOKE TEST <<<")
+        print(f"    core solves at {args.core_particles} x "
+              f"{args.core_batches} ({args.core_inactive} inactive); "
+              f"pass --core-particles to override")
     else:
         # 24 + n_iter*6 real evaluations per session; resume in blocks and
         # watch the Hypervolume (HV) plateau to DISCOVER the true budget.
@@ -246,13 +346,53 @@ def main():
         cfg.n_init = args.n_init
     if args.n_infill is not None:
         cfg.n_infill = args.n_infill
+    # NSGA-SET: surrogate-search setting as a recorded launch decision
+    if args.nsga_pop is not None:
+        cfg.nsga_pop = int(args.nsga_pop)
+    if args.nsga_gen is not None:
+        cfg.nsga_gen = int(args.nsga_gen)
+    cfg.infill_min_sep = float(args.infill_min_sep)  # BATCH-DIVERSITY
+    cfg.feas_kappa = float(args.feas_kappa)          # FEAS-MARGIN
 
     ev = OpenMCEvaluator(spec, k_target=k_target_arg, transport=transport,
                          core_particles=args.core_particles,
                          core_batches=args.core_batches,
                          core_inactive=args.core_inactive,
+                         k_basis=args.k_basis,
+                         k_max=args.k_max,
+                         k_min=args.k_min,
+                         f_max=args.f_max,
+                         enr_max=args.enr_max,
                          workdir=args.workdir, **schedule)
 
+    # CONSTRAINT-NORM: the spec's default scales assume the default limits.
+    # The evaluator is the single source of truth for k_min / k_max (k_basis
+    # aware), f_max and enr_max, so overwrite the scales from its attributes.
+    import core_geometry as _cg
+    spec.constraint_scales.update({
+        "g_kmin": ev.k_min,
+        "g_kmax": ev.k_max,
+        "g_enr":  ev.enr_max,
+        "g_peak": ev.f_max,
+        "g_geom": _cg.R_VESSEL_INNER - _cg.VESSEL_CLEARANCE_CM,
+    })
+    # CTRL-SCREEN (Campaign 7): configure the evaluator and register the
+    # constraint only when the flag is given, so the constraint set of every
+    # earlier campaign is untouched and their checkpoints resume unchanged.
+    if args.ctrl_margin is not None:
+        ev.ctrl_margin_dk = float(args.ctrl_margin) * 1.0e-5
+        ev.ctrl_absorber = args.ctrl_absorber
+        spec.constraint_names.append("g_ctrl")
+        spec.constraint_scales["g_ctrl"] = 1.0     # k-units: limit is 1.0
+    # EFPD-CLIP: cap the surrogate's predicted cycle length at the depletion
+    # ceiling, converted with the same specific power the banner prints
+    # (cap [MWd/kgHM] * 1000 / spec_power [W/gHM] = cap [EFPD]; 100 MWd/kgHM
+    # is 10016.7 EFPD on this geometry). Truth values are untouched.
+    if not args.no_efpd_clip:
+        cfg.efpd_cap = float(schedule["max_burnup"]) * 1000.0 / ev.spec_power
+    _cap_txt = ("off" if cfg.efpd_cap is None else f"{cfg.efpd_cap:.1f} EFPD")
+    print(f"surrogate policy: cycle-length clip {_cap_txt} | "
+          f"NSGA-II {cfg.nsga_pop}x{cfg.nsga_gen} | constraint norm active")
     opt = ActiveLearningMOO(spec, ev, cfg)
     # Ensure the output directory exists BEFORE anything tries to write into it
     # (results JSON, checkpoint, and the HV plot all land here). write_text does
@@ -309,11 +449,47 @@ def main():
                           f"differs from current {schedule[key]}. Changing the "
                           f"depletion schedule mid-campaign changes censoring "
                           f"and EOC-interpolation behaviour across sessions.")
+        # Constraint-definition guard. Mixing constraint sets across a
+        # resumed session makes the accumulated archive describe two
+        # different optimization problems, exactly as mixing k_target or
+        # transport fidelity would. The stored g values are NOT recomputed
+        # on load, so a changed limit silently applies only to the NEW
+        # evaluations. Raising here rather than warning, because unlike a
+        # noise-level mismatch this one cannot be reasoned about after
+        # the fact from the archive alone.
+        prev_lim = prev_meta.get("limits")
+        cur_lim = {"k_basis": args.k_basis, "k_max": args.k_max,
+                   "k_min": args.k_min, "f_max": args.f_max,
+                   "enr_max": args.enr_max}
+        if prev_lim is not None:
+            diffs = [k for k, v in cur_lim.items()
+                     if k in prev_lim and prev_lim[k] != v]
+            if diffs:
+                detail = ", ".join(f"{k}: {prev_lim[k]!r} -> {v!r}"
+                                   for k, v in cur_lim.items()
+                                   if k in diffs)
+                raise SystemExit(
+                    "constraint definition differs from the checkpoint "
+                    f"({detail}). Every evaluation sharing a checkpoint "
+                    "must use the same constraint set. Start a fresh "
+                    "campaign instead of resuming this one.")
+        elif args.k_basis != "assembly" or args.k_max is not None:
+            print("!! WARNING: this checkpoint predates constraint-set "
+                  "recording and its limits cannot be verified. It was "
+                  "almost certainly written on the assembly basis at "
+                  "k_max = 1.35. Resuming it under different limits mixes "
+                  "two problems in one archive.")
         prev_geom = prev_meta.get("geometry")
         if prev_geom is not None and prev_geom != "v2-envelope":
             print("!! WARNING: checkpoint was written on a DIFFERENT geometry "
                   f"tag ({prev_geom!r}); its objectives are not comparable "
                   "with the corrected v2-envelope model.")
+        if prev_meta.get("surrogate_policy") is None:
+            print("NOTE: this checkpoint predates the surrogate-policy "
+                  "record. Earlier blocks searched without the EFPD clip "
+                  "and at the profile NSGA setting; archived truth values "
+                  "are unaffected. This block's policy is recorded in "
+                  "meta['surrogate_policy'].")
         n_loaded = opt.load_checkpoint(args.resume)
         added = cfg.n_iter * cfg.n_infill
         print(f"RESUME: loaded {n_loaded} prior real evaluations from "
@@ -352,13 +528,74 @@ def main():
                                "relative reduction, Strategy-A ladder "
                                "{12,16,20,24,32,40}",
                            "objective_def":
-                               "peaking = core BOL F_dh (Campaign 5)",
+                               "peaking = ZONED core BOL F_dh "
+                               "(m_C 0.720 / balanced m_M / m_P from "
+                               "leu_policy), evaluator-zoned from Campaign 6",
                            "schedule": dict(schedule),
                            "geometry": "v2-envelope",
+                           # the five numbers that define the constrained
+                           # problem, so the archive can state its own
+                           # constraint set without reading the source
+                           "limits": {"k_basis": args.k_basis,
+                                      "k_max": args.k_max,
+                                      "k_min": args.k_min,
+                                      "f_max": args.f_max,
+                                      "enr_max": args.enr_max},
                            "enrichment_policy": {
                                "leu_cap_wtpc": _leu.LEU_CAP_WTPC,
                                "m_p_design": _leu.M_P_DESIGN,
-                               "e_search_max_wtpc": _leu.E_SEARCH_MAX},
+                               "e_search_max_wtpc": _leu.E_SEARCH_MAX,
+                               "e_box_used_wtpc": [
+                                   next(v.low for v in spec.design_space.variables
+                                        if v.name in ("enrich", "enrich_inner")),
+                                   next(v.high for v in spec.design_space.variables
+                                        if v.name in ("enrich", "enrich_inner"))]},
+                           "zoning_policy": {
+                               "evaluator_zoned": True,
+                               "m_c_design": _zn.M_C_DESIGN,
+                               "m_m_balanced": _zn.evaluator_multipliers()[2],
+                               "m_p_design": _leu.M_P_DESIGN,
+                               "ring_counts": list(
+                                   _zn.ring_counts(_zn.ring_map()))},
+                           "ctrl_screen": {
+                               "enabled": args.ctrl_margin is not None,
+                               "margin_pcm": args.ctrl_margin,
+                               "absorber": args.ctrl_absorber,
+                               "re_positions": sorted(
+                                   _zn.RE_BANK_POSITIONS),
+                               # CAMPAIGN 8: provenance of g_ctrl12. Read
+                               # from zoning so the recorded positions can
+                               # never drift from the ones actually solved.
+                               "re12_positions": sorted(
+                                   _zn.RE12_POSITIONS),
+                               "re12_constrained": False,
+                               "bank_definitions": {
+                                   "ALLRE": "RE1 inner ring, RE2 M "
+                                            "diagonals, RE3 and RE4 M edge "
+                                            "orbits (sixteen assemblies)",
+                                   "RE12": "RE1 inner ring and RE2 M "
+                                           "diagonals (eight assemblies)",
+                                   "SH": "outer sixteen assemblies, "
+                                         "reserved for scram, never "
+                                         "inserted in either screen"},
+                               "re12_note": (
+                                   "k_re12 is the beginning-of-life core "
+                                   "eigenvalue with only the first two "
+                                   "regulating banks inserted. g_ctrl12 = "
+                                   "k_re12 - (1 - margin) is RECORDED and "
+                                   "NOT constrained: it never enters "
+                                   "constraint_names, so feasibility is set "
+                                   "by the ALL-RE screen alone and the "
+                                   "front can afterwards be split by "
+                                   "whether two banks suffice.")},
+                           "surrogate_policy": {
+                               "efpd_cap_efpd": cfg.efpd_cap,
+                               "nsga_pop": cfg.nsga_pop,
+                               "nsga_gen": cfg.nsga_gen,
+                               "infill_min_sep": cfg.infill_min_sep,
+                               "feas_kappa": cfg.feas_kappa,
+                               "constraint_norm": "g / own limit "
+                                                  "(CONSTRAINT-NORM)"},
                            "omp_threads": n_threads,
                            # provenance for the cost tables
                            "host": platform.node(),

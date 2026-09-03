@@ -1,0 +1,173 @@
+{
+ "47": {
+  "design": {
+   "enrich_inner": 4.394066736987654,
+   "enrich_outer": 4.394066736987654,
+   "gd_wt": 2.8777643630368823,
+   "pitch": 1.26,
+   "refl_thick": 3.969,
+   "gd_pins": 12.00000001208255
+  },
+  "spec": {
+   "h_active": 120.0,
+   "bottom_nozzle": 10.16,
+   "top_nozzle": 9.02,
+   "end_cap": 1.205,
+   "plenum": 13.49,
+   "upper_gap": 8.481,
+   "grid_height": 4.445,
+   "grid1_offset": 3.555,
+   "grid_span": 41.4,
+   "n_grids": 4,
+   "grid_box_in": 1.2242,
+   "nozzle_ss_bottom": 0.172,
+   "nozzle_ss_top": 0.177,
+   "spring_r": 0.0646,
+   "cr_empty_gt": 8.386,
+   "cr_end_plug": 4.859,
+   "cr_aic": 30.48,
+   "cr_upper_plenum": 23.176,
+   "cr_r_aic": 0.4267,
+   "cr_r_b4c": 0.4229,
+   "cr_clad_ir": 0.4369,
+   "cr_clad_or": 0.4839,
+   "n_cr_per_assembly": 24,
+   "barrel": 5.08,
+   "r_vessel_in": 90.0,
+   "vessel_wall": 10.0,
+   "include_vessel_wall": true,
+   "water_below": 15.0,
+   "water_above": 15.0,
+   "refl_steel_vol": null,
+   "cr_abs_radius": null,
+   "rod_stack": "benchmark",
+   "model_parked_rods": true
+  },
+  "ARO_2D": {
+   "k": 1.098002799537801,
+   "F": 1.5127369560557091,
+   "n": 2
+  },
+  "ARO_3Dhw": {
+   "k": 1.0654294050564135,
+   "F": 1.483854941041223,
+   "n": 2
+  },
+  "ARO_Lax_hw": 1.0305730199737286,
+  "ARO_dk_pcm": 2784.420949254243
+ },
+ "21": {
+  "design": {
+   "enrich_inner": 7.8139038506087175,
+   "enrich_outer": 7.8139038506087175,
+   "gd_wt": 3.1055803735693526,
+   "pitch": 1.26,
+   "refl_thick": 3.969,
+   "gd_pins": 29.07110707495274
+  },
+  "spec": {
+   "h_active": 120.0,
+   "bottom_nozzle": 10.16,
+   "top_nozzle": 9.02,
+   "end_cap": 1.205,
+   "plenum": 13.49,
+   "upper_gap": 8.481,
+   "grid_height": 4.445,
+   "grid1_offset": 3.555,
+   "grid_span": 41.4,
+   "n_grids": 4,
+   "grid_box_in": 1.2242,
+   "nozzle_ss_bottom": 0.172,
+   "nozzle_ss_top": 0.177,
+   "spring_r": 0.0646,
+   "cr_empty_gt": 8.386,
+   "cr_end_plug": 4.859,
+   "cr_aic": 30.48,
+   "cr_upper_plenum": 23.176,
+   "cr_r_aic": 0.4267,
+   "cr_r_b4c": 0.4229,
+   "cr_clad_ir": 0.4369,
+   "cr_clad_or": 0.4839,
+   "n_cr_per_assembly": 24,
+   "barrel": 5.08,
+   "r_vessel_in": 90.0,
+   "vessel_wall": 10.0,
+   "include_vessel_wall": true,
+   "water_below": 15.0,
+   "water_above": 15.0,
+   "refl_steel_vol": null,
+   "cr_abs_radius": null,
+   "rod_stack": "benchmark",
+   "model_parked_rods": true
+  },
+  "ARO_2D": {
+   "k": 1.125342554059701,
+   "F": 1.5948419284178332,
+   "n": 2
+  },
+  "ARO_3Dhw": {
+   "k": 1.0938964058451404,
+   "F": 1.57051137828544,
+   "n": 2
+  },
+  "ARO_Lax_hw": 1.0287469161124683,
+  "ARO_dk_pcm": 2554.5036050367944
+ },
+ "59": {
+  "design": {
+   "enrich_inner": 9.344628549500714,
+   "enrich_outer": 9.344628549500714,
+   "gd_wt": 4.319213688594048,
+   "pitch": 1.26,
+   "refl_thick": 3.969,
+   "gd_pins": 36.361888117785526
+  },
+  "spec": {
+   "h_active": 120.0,
+   "bottom_nozzle": 10.16,
+   "top_nozzle": 9.02,
+   "end_cap": 1.205,
+   "plenum": 13.49,
+   "upper_gap": 8.481,
+   "grid_height": 4.445,
+   "grid1_offset": 3.555,
+   "grid_span": 41.4,
+   "n_grids": 4,
+   "grid_box_in": 1.2242,
+   "nozzle_ss_bottom": 0.172,
+   "nozzle_ss_top": 0.177,
+   "spring_r": 0.0646,
+   "cr_empty_gt": 8.386,
+   "cr_end_plug": 4.859,
+   "cr_aic": 30.48,
+   "cr_upper_plenum": 23.176,
+   "cr_r_aic": 0.4267,
+   "cr_r_b4c": 0.4229,
+   "cr_clad_ir": 0.4369,
+   "cr_clad_or": 0.4839,
+   "n_cr_per_assembly": 24,
+   "barrel": 5.08,
+   "r_vessel_in": 90.0,
+   "vessel_wall": 10.0,
+   "include_vessel_wall": true,
+   "water_below": 15.0,
+   "water_above": 15.0,
+   "refl_steel_vol": null,
+   "cr_abs_radius": null,
+   "rod_stack": "benchmark",
+   "model_parked_rods": true
+  },
+  "ARO_2D": {
+   "k": 1.1185628610257146,
+   "F": 1.6389506625437598,
+   "n": 2
+  },
+  "ARO_3Dhw": {
+   "k": 1.087816831419224,
+   "F": 1.6196676178641618,
+   "n": 2
+  },
+  "ARO_Lax_hw": 1.0282639767270172,
+  "ARO_dk_pcm": 2526.8116537589412
+ }
+}

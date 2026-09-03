@@ -1,0 +1,69 @@
+{
+ "schema": 3,
+ "refl_thick_cm": [
+  2.0,
+  2.6,
+  3.2,
+  3.8,
+  4.4,
+  5.0,
+  5.66
+ ],
+ "k_target": [
+  1.083942,
+  1.083623,
+  1.083305,
+  1.082986,
+  1.082668,
+  1.082349,
+  1.081999
+ ],
+ "k_target_2d_fit": [
+  1.053496,
+  1.053186,
+  1.052877,
+  1.052567,
+  1.052257,
+  1.051948,
+  1.051607
+ ],
+ "k_target_2d_raw": [
+  1.053406,
+  1.052997,
+  1.052784,
+  1.053129,
+  1.052325,
+  1.051918,
+  1.051287
+ ],
+ "k_target_sigma_pcm": [
+  53.2,
+  47.2,
+  51.5,
+  48.5,
+  59.9,
+  57.5,
+  57.6
+ ],
+ "fit_slope_per_cm": -0.0005159748351828573,
+ "fit_intercept": 1.0545277548969332,
+ "fit_chi2_per_dof": 0.378,
+ "k_inf_assembly": 1.2860645298264108,
+ "axial_leakage_factor": 1.0289,
+ "axial_leakage_range": [
+  1.0282,
+  1.0298
+ ],
+ "axial_source": "axial_merged_B4C.json, 6 designs, L_ax 1.0282-1.0298",
+ "pitch_cm_fixed": 1.26,
+ "vessel_clearance_cm": 7.08,
+ "max_refl_in_budget_cm": 5.669,
+ "design": {
+  "enrich_inner": 4.55,
+  "enrich_outer": 4.05,
+  "gd_wt": 0.0
+ },
+ "geometry": "v2-envelope (no fuel clipping; corners+annulus reflector)",
+ "provenance_note": "2D eigenvalues swept before VESSEL_CLEARANCE_CM was raised to 7.08 cm. The clearance enters only g_geom and the sweep's printed annotation, never the transport model, and every core solve used enforce_vessel=False, so the eigenvalues are unaffected.",
+ "note": "Campaign 8: pitch fixed at 1.26 cm. k_target = (k_inf/k_eff_2Dcore) * L_ax, weighted linear fit in t_refl. 3D-consistent end of cycle."
+}

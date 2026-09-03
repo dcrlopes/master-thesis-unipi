@@ -67,6 +67,7 @@ import openmc.deplete
 import core_geometry as cg
 import leu_policy as _leu
 import reactor_model as rm
+import zoning as zn          # ZONED-EVALUATOR: frozen Campaign 6 loading map
 
 
 def _design_seed(design: dict, salt: str = "") -> int:
@@ -306,6 +307,29 @@ class OpenMCEvaluator(Evaluator):
                         - self.enr_max),
             "e_max_zoned": _leu.max_zoned_enrichment_wtpc(e_in, e_out),
             "g_peak":  core["fdh_core"] - self.f_max,     # CORE peaking
+            # CTRL-SCREEN (Campaign 7): operational controllability. One
+            # extra zoned core solve with the sixteen regulating-bank CRAs
+            # (zn.RE_BANK_POSITIONS) fully inserted; SH banks stay out,
+            # reserved for scram. Feasible iff subcritical by the operating
+            # margin. Enabled only when run_optimization passes
+            # --ctrl-margin, so earlier campaigns are bit-for-bit unchanged.
+            **({"k_allre": (_c := _ctrl_solve(self, design))["keff"],
+                "F_allre": _c["fdh_core"],
+                "t_ctrl_s": _c.get("wall_s"),
+                "g_ctrl":  _c["keff"] - (1.0 - self.ctrl_margin_dk),
+                # CAMPAIGN 8: first-two-banks reading (RE1 + RE2, eight
+                # CRAs). RECORDED ONLY: g_ctrl12 is not appended to
+                # constraint_names, so it never enters feasibility. It
+                # lets the front be split by whether the first two banks
+                # alone hold the core subcritical by the same margin.
+                "k_re12": (_c2 := _ctrl_solve(self, design,
+                                              positions=zn.RE12_POSITIONS,
+                                              salt="ctrl12"))["keff"],
+                "F_re12": _c2["fdh_core"],
+                "t_ctrl12_s": _c2.get("wall_s"),
+                "g_ctrl12": _c2["keff"] - (1.0 - self.ctrl_margin_dk)}
+               if getattr(self, "ctrl_margin_dk", None) is not None
+               else {}),
             "g_geom":  cg.geometry_margin(design["pitch"],
                                           design["refl_thick"]),
             "peaking_asm": peaking,
@@ -334,6 +358,13 @@ class OpenMCEvaluator(Evaluator):
             "t_start_utc":  datetime.fromtimestamp(
                 t_wall0, timezone.utc).isoformat(timespec="seconds"),
         }
+        # CAMPAIGN 8: the control solves are real evaluation cost. Fold
+        # them into t_eval_s so the cost tables and the case line report
+        # the whole evaluation. Campaign 7 under-reported t_eval_s by the
+        # ctrl share, 12.6 per cent over that archive.
+        for _tk in ("t_ctrl_s", "t_ctrl12_s"):
+            if res.get(_tk):
+                res["t_eval_s"] += float(res[_tk])
         if self.verbose:
             print(f"  [case {self.n_calls:04d}] "
                   f"e=({e_in:5.2f}/{e_out:5.2f}) Gd={design['gd_wt']:4.2f} "
@@ -342,7 +373,7 @@ class OpenMCEvaluator(Evaluator):
                   f"-> EFPD={cycle_efpd:7.0f}{'(CEN)' if censored else '     '} "
                   f"F_dh={peaking:.3f} k_bol={k_bol:.4f} "
                   f"[{n_solves} solves, "
-                  f"{(t_asm + t_core + t_dep) / 60.0:.1f} min]")
+                  f"{res['t_eval_s'] / 60.0:.1f} min]")
         return res
 
     # ------------------------------------------------------------------ #
@@ -362,7 +393,17 @@ class OpenMCEvaluator(Evaluator):
     # measures the true quantity instead of correcting a proxy.           #
     # ------------------------------------------------------------------ #
     def _bol_core_peaking(self, design: dict, case: Path) -> dict:
+        # ZONED-EVALUATOR: build the core the design basis assumes. The
+        # frozen map (m_C = zoning.M_C_DESIGN, balanced m_M, m_P from
+        # leu_policy) is applied on every core solve, so the peaking
+        # objective, g_peak, and, under k_basis="core", the reactivity
+        # window all describe the SAME as-built loading that sized the
+        # enrichment search box. The assembly depletion path is untouched:
+        # the balanced map keeps the core-average enrichment multiplier at
+        # exactly 1, so the base-assembly cycle-length proxy remains
+        # consistent.
         m = rm.make_core_model(design, self.op, self.geo,
+                               design_map=zn.evaluator_design_map(design),
                                particles=self.core_particles,
                                batches=self.core_batches,
                                inactive=self.core_inactive)
@@ -600,3 +641,25 @@ if __name__ == "__main__":
            "pitch": 1.26, "refl_thick": 12.0}
     print("specific power:", round(ev.spec_power, 2), "W/gHM")
     print(ev.evaluate_one(ref))
+
+
+# --------------------------------------------------------------------------- #
+# CTRL-SCREEN helper (appended by apply_ctrl_constraint.py)                    #
+# --------------------------------------------------------------------------- #
+def _ctrl_solve(ev, design, positions=None, salt="ctrl"):
+    """One zoned core solve with a set of regulating-bank CRAs inserted,
+    SH banks out. Same fidelity, zoning path and deterministic seeding as
+    every other core solve; the case directory is keyed by the design hash
+    AND the salt, so the ALL-RE and the RE1+RE2 readings each reuse their
+    own cache. Defaults (positions=None, salt="ctrl") reproduce the
+    Campaign 7 ALL-RE behaviour bit for bit."""
+    pos = zn.RE_BANK_POSITIONS if positions is None else positions
+    tag = _design_seed(design, salt=salt) & 0xFFFFFFFF
+    return zn.core_bol_solve(
+        design, zn.evaluator_design_map(design), ev.op, ev.geo,
+        particles=ev.core_particles, batches=ev.core_batches,
+        inactive=ev.core_inactive,
+        seed=_design_seed(design, salt=salt),
+        case=ev.workdir / f"{salt}_{tag:08x}",
+        rodded_map=(set(pos),
+                    getattr(ev, "ctrl_absorber", "B4C")))

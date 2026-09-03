@@ -1,0 +1,6 @@
+position 15: reported peaking 1.7321, entropy_conv 89
+re-solving at inactive=120, batches=230
+  seed 1: F=1.7024  k=1.13133
+  seed 2: F=1.7115  k=1.13117
+
+mean F = 1.7069   reported = 1.7321   shift = -0.0252

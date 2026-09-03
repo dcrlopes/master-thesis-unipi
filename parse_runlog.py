@@ -33,7 +33,8 @@ from collections import Counter
 
 RE_CASE = re.compile(
     r"\[case (\d+)\] e=\(\s*([\d.]+)/\s*([\d.]+)\) Gd=([\d.]+) p=([\d.]+) "
-    r"refl=\s*([\d.]+) k_target=([\d.]+) -> EFPD=\s*([\d.]+) F_dh=([\d.]+) "
+    r"refl=\s*([\d.]+) k_target=([\d.]+) -> EFPD=\s*([\d.]+)"
+    r"(?:\(CEN\))?\s+F_dh=([\d.]+) "
     r"k_bol=([\d.]+)")
 RE_STAGE1 = re.compile(r"\[Stage 1\] (\d+) real evaluations done\. HV=([\d.]+)")
 RE_STAGE2 = re.compile(

@@ -23,6 +23,11 @@ WHY THE OLD 1-D TABLE (ktarget_vs_refl.json) MUST BE THROWN AWAY
 
 ROUTE A vs ROUTE B (unchanged rule)
 -----------------------------------
+ROUTE A (thesis nomenclature): the reflected-assembly SLEEVE model,
+make_assembly_model(reflector=True), where the leakage is computed by
+the transport solver inside the depletion. Implemented, not used in
+any campaign. (The frozen constant K_TARGET of run_optimization.py is
+a legacy calibration option, not a route.)
 ROUTE B (this script): depletion runs at infinite medium (bc="reflective");
 ALL leakage enters through K_TARGET. *** DO NOT COMBINE *** with an explicit
 reflector in the depletion model (reflector=True), or reflector leakage is

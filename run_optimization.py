@@ -85,8 +85,11 @@ import warnings
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
-# ROUTE A default: a single FROZEN leakage-corrected EOC (End Of Cycle)
-# target, the SAME for every design regardless of refl_thick. Measure ONCE
+# FROZEN TARGET (legacy, formerly labelled 'ROUTE A' in this file): a
+# single FROZEN leakage-corrected EOC (End Of Cycle) target, the SAME for
+# every design regardless of refl_thick. NOTE: in reactor_model.py,
+# sweep_ktarget.py and the thesis, 'Route A' means the reflected-assembly
+# sleeve model, NOT this constant. Measure ONCE
 # (run measure_leakage_target.py on THIS machine) and paste the value here.
 # The 4.55/4.05, pitch 1.26 reference on the OLD geometry gave ~1.085 -- the
 # frozen 32-assembly geometry WILL give a different number, so re-measure
@@ -113,7 +116,7 @@ def main():
     ap.add_argument("--smoke", action="store_true",
                     help="tiny config to validate the whole chain end-to-end")
     ap.add_argument("--ktarget", type=float, default=K_TARGET,
-                    help="ROUTE A: frozen leakage-corrected EOC target "
+                    help="FROZEN TARGET (legacy): frozen leakage-corrected EOC target "
                          "(k_inf), one value for every design")
     ap.add_argument("--ktarget-table", default=None, metavar="PATH.json",
                     help="ROUTE B: path to the k_target JSON table written by "
@@ -249,7 +252,7 @@ def main():
                          "there, so predictions beyond it are fiction.")
     args = ap.parse_args()
 
-    # ROUTE A (float) vs ROUTE B (per-design table) -- computed once, used by
+    # FROZEN TARGET (float) vs ROUTE B (per-design table) -- computed once, used by
     # the evaluator, the resume check, and both status prints below.
     # --ktarget-table wins if both are given.
     k_target_arg = args.ktarget_table or args.ktarget
@@ -407,8 +410,8 @@ def main():
         prev_meta = json.loads(Path(args.resume).read_text()).get("meta", {})
         prev_kt = prev_meta.get("k_target")
         if prev_kt is not None:
-            # Numeric vs numeric (both Route A): tolerate float noise. Any
-            # other combination (a table PATH string, or Route A meeting
+            # Numeric vs numeric (both frozen targets): tolerate float noise. Any
+            # other combination (a table PATH string, or a frozen target meeting
             # Route B): compare as text so a route switch is always caught.
             if isinstance(prev_kt, (int, float)) and isinstance(k_target_arg, (int, float)):
                 kt_mismatch = abs(prev_kt - k_target_arg) > 1e-9

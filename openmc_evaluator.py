@@ -9,7 +9,7 @@ Per design it returns (cycle_length_EFPD, peaking) + constraints by:
      normalise power per gram of heavy metal,
   3. running an ADAPTIVE depletion (see below) at the CORE specific power,
   4. interpolating the burnup where k_inf crosses a leakage-corrected EOC
-     (End Of Cycle) target -- Route A frozen value or Route B per-design
+     (End Of Cycle) target -- a frozen value (legacy) or the Route B per-design
      table -- and converting that burnup to EFPD,
   5. reading the BOL (Beginning Of Life) pin-power tally for the radial
      peaking factor F_dh,
@@ -117,7 +117,7 @@ class OpenMCEvaluator(Evaluator):
         Must match example_reactor_problem(): objectives {cycle_length,
         peaking}, constraints {g_kmin, g_kmax, g_enr, g_peak, g_geom}.
     k_target : float | str | dict
-        ROUTE A -- a single float: the FROZEN leakage-corrected EOC target,
+        FROZEN TARGET (legacy) -- a single float: the FROZEN leakage-corrected EOC target,
         the SAME value for every design regardless of refl_thick.
         ROUTE B -- a path to (or an already-loaded dict of) the JSON table
         written by sweep_ktarget.py; k_target is interpolated per design.
@@ -168,7 +168,7 @@ class OpenMCEvaluator(Evaluator):
                  verbose: bool = True):
         super().__init__(spec)
 
-        # ROUTE A (float) vs ROUTE B (1-D or 2-D table) -- detected once here;
+        # FROZEN TARGET (float) vs ROUTE B (1-D or 2-D table) -- detected once here;
         # _k_target_for() does the per-design lookup every evaluation.
         self.k_target = None
         self._kt_1d = None          # (refl_grid, k_target_grid)
@@ -480,7 +480,7 @@ class OpenMCEvaluator(Evaluator):
         return float((fm / fm.mean()).max())
 
     # ------------------------------------------------------------------ #
-    # EOC target for THIS design -- frozen (Route A), refl-interpolated   #
+    # EOC target for THIS design -- frozen (legacy), refl-interpolated    #
     # (Route B, 1-D legacy table) or (pitch, refl)-interpolated (2-D)     #
     # ------------------------------------------------------------------ #
     def _k_target_for(self, design: dict) -> float:

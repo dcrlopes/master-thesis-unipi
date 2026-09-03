@@ -1,0 +1,56 @@
+{
+ "54": {
+  "ppm": [
+   1000.0
+  ],
+  "states": {
+   "ARO": {},
+   "ARI": {
+    "1000.0": 0.9903816734607233
+   },
+   "RE12": {}
+  },
+  "rho_ARO_pcm": {},
+  "differential_by_interval_pcm_per_ppm": {},
+  "margin_ARI_pcm": {
+   "1000.0": 971.2
+  },
+  "worth_ARI_pcm": {},
+  "margin_RE12_pcm": {},
+  "worth_RE12_pcm": {},
+  "archive": {
+   "keff_core_bol": 1.1584330610635154,
+   "k_allre": 0.9901675569878627,
+   "k_re12": 1.075352408966784,
+   "cycle_length": 3977.211490009607,
+   "peaking": 1.6145672474982586
+  }
+ },
+ "11": {
+  "ppm": [
+   1000.0
+  ],
+  "states": {
+   "ARO": {},
+   "ARI": {
+    "1000.0": 0.9905336416878328
+   },
+   "RE12": {}
+  },
+  "rho_ARO_pcm": {},
+  "differential_by_interval_pcm_per_ppm": {},
+  "margin_ARI_pcm": {
+   "1000.0": 955.7
+  },
+  "worth_ARI_pcm": {},
+  "margin_RE12_pcm": {},
+  "worth_RE12_pcm": {},
+  "archive": {
+   "keff_core_bol": 1.1443705179320276,
+   "k_allre": 0.990631772213625,
+   "k_re12": 1.0687747985829035,
+   "cycle_length": 4835.272032582204,
+   "peaking": 1.61252311702995
+  }
+ }
+}

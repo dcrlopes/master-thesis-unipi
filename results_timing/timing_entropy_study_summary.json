@@ -1,0 +1,29 @@
+{
+  "campaign": "entropy_study",
+  "workdir": "/home/diogo/master-thesis-unipi/entropy_study",
+  "host_reported": "UNKNOWN (pass --host)",
+  "omp_threads": "UNKNOWN",
+  "n_statepoints": 6,
+  "by_fidelity": {
+    "4000x60(i20)": {
+      "n": 3,
+      "sim_s": 4.179524226,
+      "init_s": 17.672212747,
+      "transport_s": 4.051033895000001
+    },
+    "16000x120(i30)": {
+      "n": 3,
+      "sim_s": 28.334131528,
+      "init_s": 17.492126701,
+      "transport_s": 27.472047212
+    }
+  },
+  "total_in_solve_s": 67.677995202,
+  "total_active_wall_s": 84.242869,
+  "calendar_span_s": 84.242869,
+  "idle_s": 0,
+  "n_idle_gaps": 0,
+  "first_start": "2026-08-05 12:04:51.757131",
+  "last_end": "2026-08-05 12:06:16",
+  "statepoints_without_runtime": 0
+}

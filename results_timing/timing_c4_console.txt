@@ -1,0 +1,19 @@
+
+=== C4 ===
+host (as reported by you): wks720   threads: 64
+assembly transport: {'particles': 16000, 'batches': 120, 'inactive': 30}   core: {'particles': 100000, 'batches': 170, 'inactive': 60}
+evaluations on disk: 54 (DOE 36, infill 18 in 3 iterations)
+transport solves: 1254 (21.2 depletion solves per evaluation)
+mean evaluation wall time : 118.9 min (sd 16.3, min 64.4, max 134.8)
+   assembly BOL solve     : 18 s
+   core BOL solve         : 104 s
+   depletion transport    : 107.1 min (303 s per solve)
+   non-transport overhead : 9.7 min
+mean optimiser time per iteration (GP + NSGA-II + acquisition + HV + checkpoint): 0.2 min over 2 boundaries
+DOE phase total    : 67:47:08
+infill phase total : 39:13:25
+ACTIVE wall time   : 107:08:04  (= 107.1 h, 6857 core-hours)
+calendar span      : 183:50:22 incl. 1 idle gap(s) totalling 76:42:18
+first start 2026-08-12 23:56:04.010524   last end 2026-08-20 15:46:26
+
+NOTE: 1 gap(s) longer than 30.0 min were treated as idle time (blocks run in separate sessions). They are excluded from the active wall time.

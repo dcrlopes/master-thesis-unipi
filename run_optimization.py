@@ -76,6 +76,8 @@ Outputs (in --out, default current dir):
 from __future__ import annotations
 
 import argparse
+import platform
+from datetime import datetime, timezone
 import json
 import os
 import warnings
@@ -97,6 +99,14 @@ from pathlib import Path
 K_TARGET = 1.0556
 
 
+def _openmc_version() -> str:
+    try:
+        import openmc
+        return str(openmc.__version__)
+    except Exception:
+        return "unknown"
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--smoke", action="store_true",
@@ -110,6 +120,8 @@ def main():
                          "e.g. ktarget_table.json; legacy 1-D refl-only "
                          "tables still load). Overrides --ktarget; k_target "
                          "is interpolated per design inside the evaluator.")
+    ap.add_argument("--workdir", default="openmc_runs",
+                    help="scratch directory for OpenMC cases (one per campaign!)")
     ap.add_argument("--out", default=".", help="output directory")
     ap.add_argument("--resume", metavar="CHECKPOINT.json", default=None,
                     help="continue from a checkpoint written by a previous run "
@@ -136,6 +148,10 @@ def main():
                          "OpenMC transport solve (statepoint runs AND the "
                          "in-memory depletion transport). Default: all cores "
                          "the machine reports (os.cpu_count()).")
+    # CAMPAIGN 4: transport settings for the core-BOL peaking solve
+    ap.add_argument("--core-particles", type=int, default=100000)
+    ap.add_argument("--core-batches", type=int, default=170)
+    ap.add_argument("--core-inactive", type=int, default=60)
     ap.add_argument("--particles", type=int, default=None,
                     help="override particles per batch (full-run default 20000, "
                          "smoke default 800)")
@@ -185,6 +201,7 @@ def main():
                                       ActiveLearningMOO)
     from openmc_evaluator import OpenMCEvaluator
 
+    import leu_policy as _leu
     spec = example_reactor_problem()
 
     if args.smoke:
@@ -231,7 +248,10 @@ def main():
         cfg.n_infill = args.n_infill
 
     ev = OpenMCEvaluator(spec, k_target=k_target_arg, transport=transport,
-                         workdir="openmc_runs", **schedule)
+                         core_particles=args.core_particles,
+                         core_batches=args.core_batches,
+                         core_inactive=args.core_inactive,
+                         workdir=args.workdir, **schedule)
 
     opt = ActiveLearningMOO(spec, ev, cfg)
     # Ensure the output directory exists BEFORE anything tries to write into it
@@ -259,6 +279,15 @@ def main():
                       f"from current {k_target_arg!r}. Objectives across "
                       f"sessions will be inconsistent -- match --ktarget / "
                       f"--ktarget-table to the checkpoint's value.")
+        prev_core = prev_meta.get("core_transport")
+        cur_core = {"particles": args.core_particles,
+                    "batches": args.core_batches,
+                    "inactive": args.core_inactive}
+        if prev_core is not None and dict(prev_core) != cur_core:
+            raise SystemExit(
+                "core transport settings differ from the checkpoint: "
+                f"{prev_core} vs {cur_core}. Every evaluation sharing a "
+                "checkpoint must use identical core settings.")
         prev_tr = prev_meta.get("transport")
         if prev_tr and any(int(prev_tr.get(k, -1)) != int(transport[k])
                            for k in ("particles", "batches", "inactive")):
@@ -308,17 +337,42 @@ def main():
           f"MWd/kg = {schedule['max_burnup']*1000/ev.spec_power:.0f} EFPD | "
           f"geometry v2-envelope (g_geom active)")
 
+    # crash-safe per-iteration checkpointing (same path and meta as the final
+    # write below, so a resume reads an identical file either way)
+    opt.checkpoint_path = ckpt_out
+    opt.checkpoint_meta = {"k_target": k_target_arg,
+                           "smoke": bool(args.smoke),
+                           "transport": dict(transport),
+                           "core_transport": {
+                               "particles": args.core_particles,
+                               "batches": args.core_batches,
+                               "inactive": args.core_inactive},
+                           "gd_model":
+                               "zone-matched enrichment, 5 percent/wt% "
+                               "relative reduction, Strategy-A ladder "
+                               "{12,16,20,24,32,40}",
+                           "objective_def":
+                               "peaking = core BOL F_dh (Campaign 5)",
+                           "schedule": dict(schedule),
+                           "geometry": "v2-envelope",
+                           "enrichment_policy": {
+                               "leu_cap_wtpc": _leu.LEU_CAP_WTPC,
+                               "m_p_design": _leu.M_P_DESIGN,
+                               "e_search_max_wtpc": _leu.E_SEARCH_MAX},
+                           "omp_threads": n_threads,
+                           # provenance for the cost tables
+                           "host": platform.node(),
+                           "cpu_count": os.cpu_count(),
+                           "openmc_version": _openmc_version(),
+                           "workdir": getattr(args, "workdir", "openmc_runs"),
+                           "started_utc": datetime.now(timezone.utc)
+                               .isoformat(timespec="seconds")}
+
     res = opt.run(verbose=True)
 
     path = opt.save(str(Path(args.out) / "optimization_results.json"))
     print("saved ->", path)
-    ckpt = opt.save_checkpoint(ckpt_out,
-                               meta={"k_target": k_target_arg,
-                                     "smoke": bool(args.smoke),
-                                     "transport": dict(transport),
-                                     "schedule": dict(schedule),
-                                     "geometry": "v2-envelope",
-                                     "omp_threads": n_threads})
+    ckpt = opt.save_checkpoint(ckpt_out, meta=opt.checkpoint_meta)
     print(f"checkpoint -> {ckpt}  ({res['n_real_evaluations']} evals total)")
     kt_flag = (f"--ktarget-table {k_target_arg}" if args.ktarget_table
                else f"--ktarget {k_target_arg:.4f}")

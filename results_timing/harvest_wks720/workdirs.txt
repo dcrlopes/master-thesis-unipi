@@ -1,0 +1,3 @@
+/home/diogo/master-thesis-unipi/openmc_runs
+/home/diogo/master-thesis-unipi/openmc_runs_c3
+/home/diogo/master-thesis-unipi/openmc_runs_c5

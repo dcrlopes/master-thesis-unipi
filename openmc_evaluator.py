@@ -54,7 +54,9 @@ from __future__ import annotations
 import json
 import math
 import os
+import time
 from collections import Counter
+from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
@@ -63,10 +65,11 @@ import openmc
 import openmc.deplete
 
 import core_geometry as cg
+import leu_policy as _leu
 import reactor_model as rm
 
 
-def _design_seed(design: dict) -> int:
+def _design_seed(design: dict, salt: str = "") -> int:
     """Deterministic per-design RNG (random number generator) seed.
 
     Campaigns 1-2 inherited seed=1 from reactor_model._settings() for EVERY
@@ -81,8 +84,18 @@ def _design_seed(design: dict) -> int:
     """
     import json as _json
     import zlib as _zlib
-    key = _json.dumps({k: round(float(v), 10)
-                       for k, v in sorted(design.items())})
+    def _seed_value(v):
+        # Numeric values keep their previous representation exactly, so the
+        # seeds of every all-numeric campaign design are unchanged. Labels
+        # such as zoning's "zone" key are hashed as strings instead of
+        # raising, which also gives each ring variant its own stream.
+        try:
+            return round(float(v), 10)
+        except (TypeError, ValueError):
+            return str(v)
+
+    key = _json.dumps({k: _seed_value(v)
+                       for k, v in sorted(design.items())}) + salt
     return 1 + _zlib.crc32(key.encode()) % 2_000_000_000
 from reactor_optimization import Evaluator, ProblemSpec
 
@@ -143,6 +156,14 @@ class OpenMCEvaluator(Evaluator):
                  dep_step: float = DEFAULT_DEP_STEP,
                  chunk_steps: int = DEFAULT_CHUNK_STEPS,
                  max_burnup: float = DEFAULT_MAX_BURNUP,
+                 core_particles: int = 100000,
+                 core_batches: int = 170,
+                 core_inactive: int = 60,
+                 k_basis: str = "assembly",
+                 k_max: float | None = None,
+                 k_min: float = 1.02,
+                 f_max: float = 2.0,
+                 enr_max: float = 19.75,
                  verbose: bool = True):
         super().__init__(spec)
 
@@ -181,6 +202,46 @@ class OpenMCEvaluator(Evaluator):
         if sum(self.bol_steps) >= self.max_burnup:
             raise ValueError("max_burnup must exceed the BOL block "
                              f"({sum(self.bol_steps)} MWd/kg).")
+        # CAMPAIGN 4: transport settings for the core-BOL peaking solve.
+        # Defaults are the core_rescore screen settings; the inactive count is
+        # deliberately generous because the finite core has a real source
+        # transient (one screened design converged only at batch 94).
+        self.core_particles = int(core_particles)
+        self.core_batches = int(core_batches)
+        self.core_inactive = int(core_inactive)
+
+        # --- reactivity basis and screening limits --------------------------
+        # g_kmin and g_kmax act on ONE of two quantities:
+        #   "assembly"  k_inf from the reflective-boundary depletion model
+        #   "core"      k_eff of the 2-D core at beginning of life
+        # Excess reactivity is a core budget, so "core" is the physically
+        # correct basis. "assembly" is the historical default and is the
+        # conservative of the two, because k_inf exceeds k_eff always.
+        # Both readings are recorded on every evaluation regardless, so an
+        # archive can be re-scored either way without rerunning transport.
+        if k_basis not in ("assembly", "core"):
+            raise ValueError(
+                f"k_basis must be 'assembly' or 'core', got {k_basis!r}")
+        self.k_basis = k_basis
+        if k_max is None:
+            if k_basis == "core":
+                raise ValueError(
+                    "k_basis='core' requires an explicit k_max. The assembly "
+                    "value of 1.35 must NOT be carried over: measured on "
+                    "c4_full.csv the assembly-to-core gap is 5012 to 7530 pcm "
+                    "(mean 6753 pcm), so reusing it would tighten the "
+                    "constraint by roughly that amount without saying so. "
+                    "Calibrate the core-level budget from the rod-worth study "
+                    "and pass it here.")
+            k_max = 1.35                      # historical assembly default
+        self.k_max = float(k_max)
+        self.k_min = float(k_min)
+        self.f_max = float(f_max)
+        self.enr_max = float(enr_max)
+        if self.k_min >= self.k_max:
+            raise ValueError(f"k_min ({self.k_min}) must be below k_max "
+                             f"({self.k_max})")
+
         self.verbose = verbose
 
         # Specific power depends on geometry (active height, pellet radius,
@@ -208,26 +269,70 @@ class OpenMCEvaluator(Evaluator):
         case = self.workdir / f"case_{self.n_calls:04d}"
         case.mkdir(parents=True, exist_ok=True)
 
-        peaking = self._bol_peaking(design, case)
+        # wall-clock instrumentation: one timer per transport phase, so the
+        # cost tables of the thesis come from the archive, not from a
+        # statepoint reconstruction.
+        t_wall0 = time.time()
+        t0 = time.perf_counter()
+        peaking = self._bol_peaking(design, case)      # assembly (diagnostic)
+        t_asm = time.perf_counter() - t0
+        t0 = time.perf_counter()
+        core = self._bol_core_peaking(design, case)   # CAMPAIGN 4 objective
+        t_core = time.perf_counter() - t0
+        t0 = time.perf_counter()
         (cycle_efpd, k_bol, k_target_used,
          censored, bu_eoc, n_solves) = self._cycle_length(design, case)
+        t_dep = time.perf_counter() - t0
 
         e_in = design["enrich_inner"]
         e_out = design["enrich_outer"]
+        # the quantity the reactivity screen acts on, see k_basis
+        k_core_bol = float(core["keff_core"])
+        k_ref = k_bol if self.k_basis == "assembly" else k_core_bol
         res = {
             "cycle_length": cycle_efpd,                 # objective (maximise)
-            "peaking":      peaking,                    # objective (minimise)
-            "g_kmin":  1.02 - k_bol,                    # need k_bol >= 1.02
-            "g_kmax":  k_bol - 1.35,                    # and  k_bol <= 1.35
-            "g_enr":   max(e_in, e_out) - 19.75,        # LEU cap
-            "g_peak":  peaking - 2.0,                   # peaking <= 2.0
+            "peaking":      core["fdh_core"],           # objective (minimise): CORE F_dh
+            # Reactivity screen. k_ref is the quantity selected by k_basis;
+            # both readings follow as diagnostics so the archive can be
+            # re-scored either way without rerunning transport.
+            "g_kmin":  self.k_min - k_ref,
+            "g_kmax":  k_ref - self.k_max,
+            # LEU cap audited on the AS-BUILT zoned enrichment, not the
+            # design value: the peripheral ring carries
+            # max(e_in, e_out) * M_P_DESIGN. Satisfied by construction,
+            # because the search box is LEU_CAP_WTPC / M_P_DESIGN. At
+            # M_P_DESIGN = 1.0 this reduces to the previous expression.
+            "g_enr":   (_leu.max_zoned_enrichment_wtpc(e_in, e_out)
+                        - self.enr_max),
+            "e_max_zoned": _leu.max_zoned_enrichment_wtpc(e_in, e_out),
+            "g_peak":  core["fdh_core"] - self.f_max,     # CORE peaking
             "g_geom":  cg.geometry_margin(design["pitch"],
                                           design["refl_thick"]),
+            "peaking_asm": peaking,
+            "gd_pins_used": rm.snap_gd_pins(design.get("gd_pins", 12)),       # assembly F_dh: diagnostic and
+                                          # training data for the bridge model
+            "keff_core_bol": k_core_bol,          # free Route-B closure check
+            # both readings of the reactivity screen, always recorded
+            "k_basis":      self.k_basis,
+            "k_max_used":   self.k_max,
+            "g_kmax_asm":   k_bol - self.k_max,
+            "g_kmax_core":  k_core_bol - self.k_max,
+            "g_kmin_asm":   self.k_min - k_bol,
+            "g_kmin_core":  self.k_min - k_core_bol,
+            "dk_asm_core_pcm": 1.0e5 * (k_bol - k_core_bol),
+            "core_entropy_conv": core["entropy_conv"],  # flag if > inactive
             "k_bol":   k_bol,                           # carried for plots
             "k_target": k_target_used,                  # carried for analysis
             "censored": bool(censored),   # True -> EFPD is a LOWER BOUND (cap)
             "bu_eoc_mwd_kg": bu_eoc,                    # EOC burnup [MWd/kgHM]
             "n_dep_solves": n_solves,     # transport solves spent on depletion
+            # wall-clock cost of this evaluation [s] and its phases
+            "t_eval_s":     t_asm + t_core + t_dep,
+            "t_asm_bol_s":  t_asm,
+            "t_core_bol_s": t_core,
+            "t_deplete_s":  t_dep,
+            "t_start_utc":  datetime.fromtimestamp(
+                t_wall0, timezone.utc).isoformat(timespec="seconds"),
         }
         if self.verbose:
             print(f"  [case {self.n_calls:04d}] "
@@ -236,12 +341,75 @@ class OpenMCEvaluator(Evaluator):
                   f"k_target={k_target_used:.4f} "
                   f"-> EFPD={cycle_efpd:7.0f}{'(CEN)' if censored else '     '} "
                   f"F_dh={peaking:.3f} k_bol={k_bol:.4f} "
-                  f"[{n_solves} solves]")
+                  f"[{n_solves} solves, "
+                  f"{(t_asm + t_core + t_dep) / 60.0:.1f} min]")
         return res
 
     # ------------------------------------------------------------------ #
     # BOL radial peaking from a fresh-assembly mesh tally                 #
     # ------------------------------------------------------------------ #
+    # ------------------------------------------------------------------ #
+    # CAMPAIGN 4: BOL radial peaking on the FULL 32-assembly CORE.        #
+    #                                                                    #
+    # Campaign 3 optimised the single-assembly proxy. The core_rescore    #
+    # study (36 feasible designs, 3-8 seeds each) measured                #
+    # Spearman rho(assembly, core) = +0.89 GLOBALLY but a scrambled       #
+    # ordering inside the near-optimal set: assembly ranks 1/2/3 fell to  #
+    # core ranks 11/9/12, while assembly #14 rose to core #4. A linear    #
+    # bridge correction F_core/F_asm = 1.400 - 0.0045 refl + 0.343 pitch  #
+    # explains only R^2 = 0.746 -- too weak to optimise through. One      #
+    # extra BOL transport solve (~2 min of a ~110 min evaluation, ~3%)    #
+    # measures the true quantity instead of correcting a proxy.           #
+    # ------------------------------------------------------------------ #
+    def _bol_core_peaking(self, design: dict, case: Path) -> dict:
+        m = rm.make_core_model(design, self.op, self.geo,
+                               particles=self.core_particles,
+                               batches=self.core_batches,
+                               inactive=self.core_inactive)
+        model = m[0] if isinstance(m, tuple) else m
+        model.settings.seed = _design_seed(design, salt="core")
+
+        N = self.geo.lattice
+        pitch = design.get("pitch", 1.26)
+        try:
+            nx = ny = cg.CORE_MAP_32.shape[0]
+        except Exception:
+            nx = ny = 6
+        half = nx * N * pitch / 2.0
+
+        mesh = openmc.RegularMesh()
+        mesh.dimension = (nx * N, ny * N)
+        mesh.lower_left = (-half, -half)
+        mesh.upper_right = (half, half)
+        t = openmc.Tally(name="core_pin_fission")
+        t.filters = [openmc.MeshFilter(mesh)]
+        t.scores = ["fission"]
+        model.tallies = openmc.Tallies([t])
+
+        cdir = case / "core_bol"
+        cdir.mkdir(parents=True, exist_ok=True)
+        sp_path = model.run(cwd=str(cdir), output=False)
+        with openmc.StatePoint(sp_path) as sp:
+            keff = float(sp.keff.nominal_value)
+            v = sp.get_tally(name="core_pin_fission").get_values(
+                scores=["fission"]).reshape(ny * N, nx * N)
+            H = np.asarray(getattr(sp, "entropy", []), dtype=float)
+
+        # mask guide tubes, removed corners and reflector (all zero-fission)
+        f = np.ma.masked_equal(v, 0.0)
+        fdh = float((f / f.mean()).max())
+
+        # source-convergence sentinel
+        conv = None
+        if H.size:
+            tail = H[self.core_inactive + (len(H) - self.core_inactive) // 2:]
+            mu, sd = float(tail.mean()), float(tail.std(ddof=1))
+            Hs = np.convolve(H, np.ones(3) / 3.0, mode="same")
+            Hs[0], Hs[-1] = H[0], H[-1]
+            bad = np.where(~((Hs >= mu - 3 * sd) & (Hs <= mu + 3 * sd)))[0]
+            conv = int(bad[-1]) + 2 if len(bad) else 1
+        return dict(fdh_core=fdh, keff_core=keff, entropy_conv=conv)
+
     def _bol_peaking(self, design: dict, case: Path) -> float:
         model, _fuel_cells, _lat = rm.make_assembly_model(
             design, self.op, self.geo, bc="reflective", **self.transport)
@@ -290,7 +458,8 @@ class OpenMCEvaluator(Evaluator):
     # ------------------------------------------------------------------ #
     def _cycle_length(self, design: dict, case: Path):
         model, fuel_cells, _lat = rm.make_assembly_model(
-            design, self.op, self.geo, bc="reflective", **self.transport)
+            design, self.op, self.geo, bc="reflective", pin_tally=True,
+            **self.transport)
         model.settings.seed = _design_seed(design)
 
         # give each fuel material a volume + mark depletable
@@ -329,8 +498,24 @@ class OpenMCEvaluator(Evaluator):
             cdir.mkdir(parents=True, exist_ok=True)
             try:
                 os.chdir(cdir)
-                integrator.integrate()
+                # OpenMC 0.15.3 stopped writing reaction rates into the
+                # results file by default. A restart loaded from such a file
+                # reuses EMPTY rates for its first step, which then depletes
+                # by decay only (verified 27 Aug 2026, test_chunking.py).
+                # Force the rates into the file so prev_results is exact.
+                try:
+                    integrator.integrate(write_rates=True)
+                except TypeError:      # older OpenMC without the kwarg
+                    integrator.integrate()
                 results = openmc.deplete.Results("depletion_results.h5")
+                last_rates = getattr(results[-1], "rates", None)
+                import numpy as _np
+                if last_rates is None or getattr(last_rates, "size", 0) == 0 \
+                        or float(_np.abs(_np.asarray(last_rates)).sum()) == 0.0:
+                    raise RuntimeError(
+                        "depletion results carry no reaction rates: a "
+                        "restarted chunk would deplete its first step by "
+                        "decay only (the write_rates trap).")
             finally:
                 os.chdir(cwd)
             state["chunk"] += 1

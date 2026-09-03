@@ -1,0 +1,10 @@
+/home/diogo/master-thesis-unipi/out_c3_atf75/optimization_checkpoint.json
+/home/diogo/master-thesis-unipi/out_c3_atf75/optimization_results.json
+/home/diogo/master-thesis-unipi/out_c4/optimization_checkpoint.json
+/home/diogo/master-thesis-unipi/out_c4/optimization_results.json
+/home/diogo/master-thesis-unipi/out_smoke/optimization_checkpoint.json
+/home/diogo/master-thesis-unipi/out_smoke/optimization_results.json
+/home/diogo/master-thesis-unipi/results_campaign2/block1/optimization_checkpoint.json
+/home/diogo/master-thesis-unipi/results_campaign2/block1/optimization_results.json
+/home/diogo/master-thesis-unipi/results_campaign2/block2/out/optimization_checkpoint.json
+/home/diogo/master-thesis-unipi/results_campaign2/block2/out/optimization_results.json

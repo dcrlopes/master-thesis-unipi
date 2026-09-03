@@ -1,0 +1,23 @@
+dropped 2 case(s) by --skip-cases [0, 1]: their files were overwritten by a later job, so their wall time is not measurable.
+
+=== C3 ===
+host (as reported by you): wks720   threads: 64
+assembly transport: {'particles': 16000, 'batches': 120, 'inactive': 30}   core: None
+cases on disk: 72, dropped 2 as unmeasurable [0, 1]
+evaluations measured: 70 (DOE 34, infill 36 in 6 iterations)
+transport solves: 1480 (20.1 depletion solves per evaluation)
+mean evaluation wall time : 102.0 min (sd 20.4, min 37.4, max 131.1)
+   assembly BOL solve     : 17 s
+   core BOL solve         : none in this tree
+   depletion transport    : 92.6 min (276 s per solve)
+   non-transport overhead : 9.1 min
+mean optimiser time per iteration (GP + NSGA-II + acquisition + HV + checkpoint): 0.2 min over 4 boundaries
+DOE phase total    : 60:58:01
+infill phase total : 58:00:33
+ACTIVE wall time   : 119:08:10  (= 119.1 h, 7625 core-hours)
+calendar span      : 130:03:15 incl. 2 idle gap(s) totalling 10:55:05
+first start 2026-08-05 15:57:07.667453   last end 2026-08-11 02:00:23
+
+WARNING: checkpoint says 72 evaluations, 70 case directories found. Partial tree, or a block ran in another workdir.
+
+NOTE: 2 gap(s) longer than 30.0 min were treated as idle time (blocks run in separate sessions). They are excluded from the active wall time.

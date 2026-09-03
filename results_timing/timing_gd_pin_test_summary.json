@@ -1,0 +1,29 @@
+{
+  "campaign": "gd_pin_test",
+  "workdir": "/home/diogo/master-thesis-unipi/gd_pin_test",
+  "host_reported": "UNKNOWN (pass --host)",
+  "omp_threads": "UNKNOWN",
+  "n_statepoints": 16,
+  "by_fidelity": {
+    "64000x140(i40)": {
+      "n": 8,
+      "sim_s": 345.739819247,
+      "init_s": 48.257446031,
+      "transport_s": 335.052698985
+    },
+    "100000x170(i60)": {
+      "n": 8,
+      "sim_s": 772.7850044569999,
+      "init_s": 60.507055523999995,
+      "transport_s": 752.796258133
+    }
+  },
+  "total_in_solve_s": 1227.289325259,
+  "total_active_wall_s": 1277.741377,
+  "calendar_span_s": 1277.741377,
+  "idle_s": 0,
+  "n_idle_gaps": 0,
+  "first_start": "2026-08-20 19:48:46.258623",
+  "last_end": "2026-08-20 20:10:04",
+  "statepoints_without_runtime": 0
+}

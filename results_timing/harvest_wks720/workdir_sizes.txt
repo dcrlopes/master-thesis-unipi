@@ -1,0 +1,3 @@
+6.2G	/home/diogo/master-thesis-unipi/openmc_runs
+6.7G	/home/diogo/master-thesis-unipi/openmc_runs_c3
+4.5G	/home/diogo/master-thesis-unipi/openmc_runs_c5

@@ -537,6 +537,7 @@ class ActiveLearningMOO:
         self.G = np.empty((0, spec.n_constr))
         self.raw: list[dict] = []
         self.history = []          # hypervolume per iteration
+        self.phase_log: list[dict] = []   # wall time per phase, per iteration
         self._hv_ref_frozen = None # fixed reference point (set after Stage 1)
 
     # ---- surrogate factory --------------------------------------------------
@@ -591,6 +592,35 @@ class ActiveLearningMOO:
             return 0.0
         return float(HV(ref_point=ref)(front[keep]))
 
+    @staticmethod
+    def _least_infeasible_candidates(res):
+        """Candidate matrix from a pymoo Result, valid even when the run ended
+        with NO feasible solution.
+
+        pymoo reports res.X = None in that case. The information is still in
+        the final population, so rank it by total constraint violation and hand
+        back the least-infeasible designs: with an empty feasible set the
+        useful search direction is toward the constraint boundary, which is
+        precisely what a zero-feasible campaign must explore. Returns None only
+        if the population is unavailable too, leaving the caller's random
+        fallback in charge."""
+        X = getattr(res, "X", None)
+        if X is not None:
+            X = np.atleast_2d(X)
+            if X.ndim == 2 and X.shape[0] > 0 and X.dtype != object:
+                return X
+        pop = getattr(res, "pop", None)
+        if pop is None or len(pop) == 0:
+            return None
+        Xp = np.atleast_2d(np.asarray(pop.get("X"), dtype=float))
+        try:
+            cv = np.asarray(pop.get("CV"), dtype=float).ravel()
+        except Exception:
+            return Xp
+        if cv.size != Xp.shape[0]:
+            return Xp
+        return Xp[np.argsort(cv)]        # least-infeasible first
+
     # ---- main loop ----------------------------------------------------------
     def run(self, verbose=True):
         t0 = time.time()
@@ -603,9 +633,15 @@ class ActiveLearningMOO:
                       else None)
             X0 = self.spec.design_space.lhs(self.cfg.n_init,
                                             seed=self.cfg.seed, accept=accept)
+            t_ev0 = time.perf_counter()
             F0, G0, raw0 = self.evaluator.evaluate(X0)
+            t_ev = time.perf_counter() - t_ev0
             self._add(X0, F0, G0, raw0)
+            t_hv0 = time.perf_counter()
             self.history.append(self._hv())
+            self.phase_log.append(dict(
+                stage="DOE", iteration=0, n_eval=int(len(X0)),
+                t_eval_s=t_ev, t_hv_s=time.perf_counter() - t_hv0))
             if verbose:
                 print(f"[Stage 1] {self.cfg.n_init} real evaluations done. "
                       f"HV={self.history[-1]:.4g}")
@@ -618,17 +654,31 @@ class ActiveLearningMOO:
 
         # ---- STAGE 2 : active-learning loop ---------------------------------
         for it in range(self.cfg.n_iter):
+            t_fit0 = time.perf_counter()
             obj_sur = self._new_surrogate().fit(self.X, self.F)
             con_sur = (self._new_surrogate().fit(self.X, self.G)
                        if self.spec.n_constr else None)
+            t_fit = time.perf_counter() - t_fit0
 
             # NSGA-II on the surrogate (cheap):
+            t_nsga0 = time.perf_counter()
             prob = _SurrogateProblem(self.spec, obj_sur, con_sur)
             algo = NSGA2(pop_size=self.cfg.nsga_pop, sampling=LHS())
             res = minimize(prob, algo,
                            ("n_gen", self.cfg.nsga_gen),
                            seed=self.cfg.seed + it, verbose=False)
-            cand = np.atleast_2d(res.X)
+            t_nsga = time.perf_counter() - t_nsga0
+            t_acq0 = time.perf_counter()
+            cand = self._least_infeasible_candidates(res)
+            if cand is None or cand.shape[0] == 0:
+                # nothing usable came back: explore randomly this iteration
+                cand = np.atleast_2d(
+                    self.spec.design_space.lhs(max(self.cfg.n_infill * 4, 32),
+                                               seed=self.cfg.seed + 777 + it))
+            elif res.X is None and verbose:
+                print(f"[Stage 2] iter {it+1}: surrogate NSGA-II found no "
+                      f"feasible design; infilling on the {cand.shape[0]} "
+                      f"least-infeasible population members.")
 
             # ---- infill / acquisition: pick the most UNCERTAIN candidates ----
             # (exploration). You can blend in predicted hypervolume gain later.
@@ -648,16 +698,46 @@ class ActiveLearningMOO:
                 chosen = list(self.spec.design_space.lhs(self.cfg.n_infill,
                                                          seed=self.cfg.seed + 99 + it))
             Xinf = np.array(chosen)
+            t_acq = time.perf_counter() - t_acq0
 
             # evaluate the infill points with the TRUTH:
+            t_ev0 = time.perf_counter()
             Finf, Ginf, rawinf = self.evaluator.evaluate(Xinf)
+            t_ev = time.perf_counter() - t_ev0
             self._add(Xinf, Finf, Ginf, rawinf)
+            t_hv0 = time.perf_counter()
             self.history.append(self._hv())
+            t_hv = time.perf_counter() - t_hv0
+            self.phase_log.append(dict(
+                stage="infill", iteration=len(self.phase_log),
+                n_eval=int(len(Xinf)), n_archive_before=int(len(self.X) - len(Xinf)),
+                t_fit_s=t_fit, t_nsga_s=t_nsga, t_acq_s=t_acq,
+                t_eval_s=t_ev, t_hv_s=t_hv, t_ckpt_s=None))
+            if verbose:
+                print(f"           budget: evaluation {t_ev / 60.0:.1f} min | "
+                      f"optimiser {t_fit + t_nsga + t_acq + t_hv:.1f} s "
+                      f"(fit {t_fit:.1f}, NSGA-II {t_nsga:.1f}, "
+                      f"acquisition {t_acq:.2f}, HV {t_hv:.3f})")
             if verbose:
                 print(f"[Stage 2] iter {it+1}/{self.cfg.n_iter}: "
                       f"+{len(Xinf)} real evals "
                       f"(total {self.evaluator.n_calls}), "
                       f"HV={self.history[-1]:.4g}")
+
+            # crash-safe: persist the FULL archive after every iteration, so an
+            # exception later in the loop can never discard completed real
+            # evaluations (Campaign 4 lost six to a mid-loop crash).
+            ckpt_path = getattr(self, "checkpoint_path", None)
+            if ckpt_path:
+                try:
+                    t_ck0 = time.perf_counter()
+                    self.save_checkpoint(
+                        ckpt_path, meta=getattr(self, "checkpoint_meta", None))
+                    self.phase_log[-1]["t_ckpt_s"] = time.perf_counter() - t_ck0
+                    if verbose:
+                        print(f"           checkpoint written -> {ckpt_path}")
+                except Exception as exc:            # never kill a live campaign
+                    print(f"           WARNING: checkpoint failed: {exc}")
 
         if verbose:
             print(f"Done in {time.time()-t0:.1f}s, "
@@ -714,9 +794,23 @@ class ActiveLearningMOO:
             "hv_ref": (self._hv_ref_frozen.tolist()
                        if self._hv_ref_frozen is not None else None),
             "n_real_evaluations": r["n_real_evaluations"],
+            "phase_log": list(self.phase_log),   # wall time per phase
         }
         if meta:
             out["meta"] = dict(meta)
+            # A resume rebuilds `meta` from scratch, so meta["started_utc"] is
+            # THIS block's start. Keep the campaign start from the checkpoint
+            # being resumed and record every block start separately, so a later
+            # timing reconstruction or archive audit can bound the whole run.
+            this_block = out["meta"].get("started_utc")
+            blocks = list(getattr(self, "_ckpt_block_starts", []))
+            if this_block and this_block not in blocks:
+                blocks.append(this_block)
+            if blocks:
+                out["meta"]["block_started_utc"] = blocks
+            campaign_start = getattr(self, "_ckpt_started_utc", None)
+            if campaign_start:
+                out["meta"]["started_utc"] = campaign_start
         Path(path).write_text(json.dumps(out, indent=2, default=float))
         return path
 
@@ -755,10 +849,43 @@ class ActiveLearningMOO:
                 f"-- start a fresh run instead of resuming it.")
         self._seed_from_raw(ckpt["all_raw"])
         self.history = list(ckpt.get("hv_history", []))
+        self.phase_log = list(ckpt.get("phase_log", []))
         hv_ref = ckpt.get("hv_ref")
         self._hv_ref_frozen = (np.array(hv_ref, dtype=float)
                                if hv_ref is not None else None)
+        # remember when the CAMPAIGN started, not when this block started, so
+        # save_checkpoint() can write it back instead of overwriting it
+        _m = ckpt.get("meta") or {}
+        self._ckpt_started_utc = _m.get("started_utc")
+        _blocks = _m.get("block_started_utc")
+        if not _blocks:
+            _blocks = [_m["started_utc"]] if _m.get("started_utc") else []
+        self._ckpt_block_starts = list(_blocks)
         # continue case numbering so OpenMC scratch dirs never collide
+        # Bounds guard. load_checkpoint matches variable NAMES but not
+        # BOUNDS, so a checkpoint written under a wider box loads without
+        # complaint. Those points stay in the archive on purpose: they
+        # are valid training data for the surrogate and represent real
+        # spent evaluations. What changes is that NSGA-II can no longer
+        # propose designs there, so the search domain and the training
+        # domain are no longer the same set. Report accordingly.
+        if len(self.X):
+            xl, xu = self.spec.design_space.xl, self.spec.design_space.xu
+            outside = np.any((self.X < xl - 1e-9) | (self.X > xu + 1e-9),
+                             axis=1)
+            if outside.any():
+                print(f"!! WARNING: {int(outside.sum())} of {len(self.X)} "
+                      f"loaded evaluations lie OUTSIDE the current design "
+                      f"box. They are kept as surrogate training data but "
+                      f"cannot be proposed again.")
+                for j, nm in enumerate(self.spec.design_space.names):
+                    col = self.X[:, j]
+                    n_j = int(np.sum((col < xl[j] - 1e-9) |
+                                     (col > xu[j] + 1e-9)))
+                    if n_j:
+                        print(f"     {nm}: {n_j} outside "
+                              f"[{xl[j]:.4g}, {xu[j]:.4g}], observed "
+                              f"range [{col.min():.4g}, {col.max():.4g}]")
         self.evaluator.n_calls = len(ckpt["all_raw"])
         return len(ckpt["all_raw"])
 
@@ -783,13 +910,24 @@ def example_reactor_problem() -> ProblemSpec:
     (exact_constraints), so the DOE and the acquisition never propose a
     design that cannot physically be built."""
     from core_geometry import geometry_margin
+    import leu_policy as _leu
 
     ds = DesignSpace([
-        DesignVariable("enrich_inner", 2.0, 19.75, "%"),
-        DesignVariable("enrich_outer", 2.0, 19.75, "%"),
+        # Upper bound is LEU_CAP_WTPC / M_P_DESIGN, so the highest
+        # enrichment anywhere in the ZONED core stays at or below the
+        # LEU (Low Enriched Uranium) cap by construction. At
+        # M_P_DESIGN = 1.0 this is exactly 19.75, the previous bound.
+        # See leu_policy.py.
+        DesignVariable("enrich_inner", 2.0, _leu.E_SEARCH_MAX, "%"),
+        DesignVariable("enrich_outer", 2.0, _leu.E_SEARCH_MAX, "%"),
         DesignVariable("gd_wt",        0.0,  8.0,  "wt% Gd2O3"),
         DesignVariable("pitch",        1.15, 1.43, "cm"),
         DesignVariable("refl_thick",   2.0,  19.5, "cm"),
+        # CAMPAIGN 5: gadolinia-bearing rod count. Continuous for the
+        # surrogate and NSGA-II; the model snaps to the nested symmetric
+        # ladder {12,16,...,40} (reactor_model.snap_gd_pins) and the snapped
+        # value is recorded per evaluation as "gd_pins_used".
+        DesignVariable("gd_pins",      12.0, 40.0, "rods"),
     ])
     objs = [
         Objective("cycle_length", maximize=True,  label="Cycle length [EFPD]"),

@@ -220,7 +220,7 @@ stage_kt13() {               # closure 1: validate_ktarget_burnup rewrites summa
     say "  design 13 already in kt_burnup/summary.json"; return 0; fi
   cp kt_burnup/summary.json kt_burnup/summary.json.bak_$(date +%Y%m%d)
   python -u validate_ktarget_burnup.py --checkpoint "$CKPT" --designs $DESIGNS --ktarget-table ktarget_table_c8.json \
-      --seeds 2 --threads "$THREADS" --chain "$CHAIN" --out kt_burnup || return 1
+      --seeds 3 --threads "$THREADS" --chain "$CHAIN" --out kt_burnup || return 1
   python -c "import json,sys; s=json.load(open('kt_burnup/summary.json')); print('  kt_burnup designs:', sorted(int(r['idx']) for r in s)); sys.exit(0 if len(s)==11 else 1)"
 }
 

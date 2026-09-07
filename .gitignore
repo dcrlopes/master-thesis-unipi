@@ -118,3 +118,15 @@ tallies.out
 boron_c8/design*/
 confirm3d_c8/design*/
 kt_burnup/design*/
+
+# --- night-run bookkeeping, never versioned ---
+.c8_markers/
+.c8_markers_post/
+*.bak_*
+*.bak2
+
+# --- night-run bookkeeping, never versioned ---
+.c8_markers/
+.c8_markers_post/
+*.bak_*
+*.bak2

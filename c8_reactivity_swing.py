@@ -199,7 +199,7 @@ def main():
                     h[f"{st}_margin_bol_{tier.lower()}_pcm"] = s3[key]
                     h[f"{st}_margin_peak_{tier.lower()}_pcm"] = s3[key] - hump_pos
         if str(i) in kh:
-            hk = kh[str(i)]
+            hk = kh[str(i)].get("analysis", kh[str(i)])
             h["chunked_k_peak"] = hk.get("k_peak"); h["chunked_hump_vs_bol_pcm"] = hk.get("hump_vs_bol_pcm")
             if h["chunked_k_peak"] is not None:
                 h["chunked_minus_single_shot_peak_pcm"] = 1e5 * (h["chunked_k_peak"] - h["k_peak"]) / h["k_peak"]

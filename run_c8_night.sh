@@ -2,7 +2,7 @@
 # =============================================================================
 # run_c8_night.sh -- Campaign 8: everything still open on the three Notion
 # tasks, in one detached job for wks720. Version 1, 4 September 2026, written
-# against commit f60b78a of branch campaign8. Supersedes run_c8_stageA.sh and
+# against commit af3332a of branch main. Supersedes run_c8_stageA.sh and
 # shares its marker directory, so stages already finished there are skipped.
 #
 #  stage        what                                          solves   time
@@ -88,7 +88,10 @@ preflight() {
   echo "  openmc      : $(python -c 'import openmc; print(openmc.__version__)')"
   [ "$(python -c 'import openmc; print(openmc.__version__)')" = "0.15.3" ] || die "openmc is not 0.15.3, this is not the campaign environment"
   echo "  branch      : $(git branch --show-current)"
-  [ "$(git branch --show-current)" = "campaign8" ] || die "wrong branch. Run: git checkout campaign8"
+  BRANCH=$(git branch --show-current)
+  [ "$BRANCH" = "main" ] || die "wrong branch ($BRANCH). This work lives on main. Run: git checkout main"
+  DIRTY=$(git status --porcelain | head -5)
+  [ -z "$DIRTY" ] || { echo "  uncommitted changes:"; echo "$DIRTY" | sed "s/^/    /"; }
   echo "  threads     : $THREADS of $(nproc) available"
   [ -n "${OPENMC_CROSS_SECTIONS:-}" ] && [ -f "$OPENMC_CROSS_SECTIONS" ] \
     || die "OPENMC_CROSS_SECTIONS is not set or the file is missing. Expected \$HOME/openmc_data/endfb-vii.1-hdf5/cross_sections.xml"

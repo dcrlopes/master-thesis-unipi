@@ -1,0 +1,63 @@
+=== Campaign 7 k histories from out_c7/run.log.gz: 60 cases found, 60 records ===
+  case    0:  6 states, k_bol 0.9936, peak 1.0082 at  13.5 MWd/kg, hump  +1456 pcm, swing peak->EOC  -4022 pcm, EFPD    55  <-- k[0] 0.99359 != k_bol 1.11856
+  case    1: 18 states, k_bol 1.2244, peak 1.2486 at  21.5 MWd/kg, hump  +1588 pcm, swing peak->EOC  15260 pcm, EFPD  5487
+  case    2: 12 states, k_bol 1.2007, peak 1.1869 at   0.5 MWd/kg, hump   -966 pcm, swing peak->EOC  10297 pcm, EFPD  3663
+  case    3: 12 states, k_bol 1.2522, peak 1.2319 at   0.5 MWd/kg, hump  -1319 pcm, swing peak->EOC  13285 pcm, EFPD  3479
+  case    4:  8 states, k_bol 0.9423, peak 1.0228 at  17.5 MWd/kg, hump  +8352 pcm, swing peak->EOC  -3663 pcm, EFPD     0
+  case    5: 14 states, k_bol 1.2018, peak 1.1833 at   0.5 MWd/kg, hump  -1304 pcm, swing peak->EOC   9571 pcm, EFPD  4068
+  case    6: 10 states, k_bol 1.2176, peak 1.2013 at   0.5 MWd/kg, hump  -1121 pcm, swing peak->EOC  10947 pcm, EFPD  2950
+  case    7: 14 states, k_bol 1.3137, peak 1.3324 at   1.5 MWd/kg, hump  +1065 pcm, swing peak->EOC  20157 pcm, EFPD  4200
+  case    8: 10 states, k_bol 1.1442, peak 1.1386 at  13.5 MWd/kg, hump   -430 pcm, swing peak->EOC   6949 pcm, EFPD  2758
+  case    9: 14 states, k_bol 1.2999, peak 1.2801 at   0.5 MWd/kg, hump  -1192 pcm, swing peak->EOC  16494 pcm, EFPD  4207
+  case   10: 16 states, k_bol 1.3008, peak 1.2841 at   0.5 MWd/kg, hump  -1003 pcm, swing peak->EOC  17532 pcm, EFPD  4998
+  case   11: 14 states, k_bol 1.2506, peak 1.2735 at   7.5 MWd/kg, hump  +1436 pcm, swing peak->EOC  15827 pcm, EFPD  4167
+  case   12: 16 states, k_bol 1.2577, peak 1.2456 at   0.5 MWd/kg, hump   -768 pcm, swing peak->EOC  14369 pcm, EFPD  4868
+  case   13: 18 states, k_bol 1.2947, peak 1.2754 at   0.5 MWd/kg, hump  -1169 pcm, swing peak->EOC  16266 pcm, EFPD  5680
+  case   14: 10 states, k_bol 1.1821, peak 1.1740 at   7.5 MWd/kg, hump   -584 pcm, swing peak->EOC   9648 pcm, EFPD  2611
+  case   15: 10 states, k_bol 1.0454, peak 1.1009 at  17.5 MWd/kg, hump  +4821 pcm, swing peak->EOC   4231 pcm, EFPD  2506
+  case   16: 14 states, k_bol 1.1573, peak 1.2109 at  13.5 MWd/kg, hump  +3826 pcm, swing peak->EOC  12335 pcm, EFPD  4227
+  case   17: 14 states, k_bol 1.2662, peak 1.2528 at   7.5 MWd/kg, hump   -844 pcm, swing peak->EOC  15003 pcm, EFPD  4518
+  case   18: 14 states, k_bol 1.2061, peak 1.1887 at   0.5 MWd/kg, hump  -1216 pcm, swing peak->EOC  10449 pcm, EFPD  4110
+  case   19: 14 states, k_bol 1.2308, peak 1.2129 at   0.5 MWd/kg, hump  -1196 pcm, swing peak->EOC  11891 pcm, EFPD  4289
+  case   20: 12 states, k_bol 1.1731, peak 1.1584 at   0.5 MWd/kg, hump  -1085 pcm, swing peak->EOC   8983 pcm, EFPD  3253
+  case   21: 18 states, k_bol 1.3018, peak 1.3298 at   7.5 MWd/kg, hump  +1617 pcm, swing peak->EOC  19744 pcm, EFPD  5448
+  case   22: 10 states, k_bol 1.0604, peak 1.1082 at  17.5 MWd/kg, hump  +4069 pcm, swing peak->EOC   4914 pcm, EFPD  2621
+  case   23: 14 states, k_bol 1.1467, peak 1.1810 at  17.5 MWd/kg, hump  +2528 pcm, swing peak->EOC   9800 pcm, EFPD  3996  <-- k[0] 1.14675 != k_bol 1.06642
+  case   24: 14 states, k_bol 1.2418, peak 1.2292 at   0.5 MWd/kg, hump   -827 pcm, swing peak->EOC  13286 pcm, EFPD  4343
+  case   25: 10 states, k_bol 1.1643, peak 1.1473 at   0.5 MWd/kg, hump  -1277 pcm, swing peak->EOC   6986 pcm, EFPD  2905
+  case   26:  8 states, k_bol 1.0530, peak 1.1457 at   7.5 MWd/kg, hump  +7690 pcm, swing peak->EOC   7344 pcm, EFPD  1940
+  case   27: 12 states, k_bol 1.0376, peak 1.1302 at  17.5 MWd/kg, hump  +7901 pcm, swing peak->EOC   7312 pcm, EFPD  3083
+  case   28: 18 states, k_bol 1.2958, peak 1.2775 at   0.5 MWd/kg, hump  -1105 pcm, swing peak->EOC  16150 pcm, EFPD  5735
+  case   29: 12 states, k_bol 1.0774, peak 1.1623 at  17.5 MWd/kg, hump  +6781 pcm, swing peak->EOC   8892 pcm, EFPD  3707
+  case   30: 12 states, k_bol 1.2522, peak 1.2341 at   0.5 MWd/kg, hump  -1173 pcm, swing peak->EOC  13500 pcm, EFPD  3645
+  case   31: 16 states, k_bol 1.2570, peak 1.2427 at   0.5 MWd/kg, hump   -917 pcm, swing peak->EOC  15001 pcm, EFPD  5285
+  case   32: 10 states, k_bol 1.1433, peak 1.1235 at   0.5 MWd/kg, hump  -1545 pcm, swing peak->EOC   5228 pcm, EFPD  2748
+  case   33: 16 states, k_bol 1.1957, peak 1.1894 at   0.5 MWd/kg, hump   -444 pcm, swing peak->EOC  10125 pcm, EFPD  4719
+  case   34:  8 states, k_bol 0.8681, peak 0.9870 at  17.5 MWd/kg, hump +13874 pcm, swing peak->EOC  -7158 pcm, EFPD     0
+  case   35: 14 states, k_bol 1.2216, peak 1.2358 at   7.5 MWd/kg, hump   +946 pcm, swing peak->EOC  13346 pcm, EFPD  4389
+  case   36: 10 states, k_bol 1.1992, peak 1.1822 at   0.5 MWd/kg, hump  -1201 pcm, swing peak->EOC  10155 pcm, EFPD  2728
+  case   37: 20 states, k_bol 1.3243, peak 1.3077 at  17.5 MWd/kg, hump   -953 pcm, swing peak->EOC  19106 pcm, EFPD  6387
+  case   38: 10 states, k_bol 1.0279, peak 1.1182 at  13.5 MWd/kg, hump  +7864 pcm, swing peak->EOC   5918 pcm, EFPD  2245
+  case   39: 10 states, k_bol 1.1118, peak 1.1917 at   7.5 MWd/kg, hump  +6035 pcm, swing peak->EOC  11297 pcm, EFPD  2649
+  case   40: 12 states, k_bol 1.1850, peak 1.1634 at   0.5 MWd/kg, hump  -1565 pcm, swing peak->EOC   9367 pcm, EFPD  3555
+  case   41: 12 states, k_bol 1.2698, peak 1.2777 at   3.5 MWd/kg, hump   +489 pcm, swing peak->EOC  17006 pcm, EFPD  3727
+  case   42: 10 states, k_bol 1.2916, peak 1.2627 at   0.5 MWd/kg, hump  -1774 pcm, swing peak->EOC  16445 pcm, EFPD  2360
+  case   43:  8 states, k_bol 1.2622, peak 1.2381 at   0.5 MWd/kg, hump  -1543 pcm, swing peak->EOC  13293 pcm, EFPD  1824
+  case   44:  8 states, k_bol 1.2806, peak 1.2481 at   0.5 MWd/kg, hump  -2034 pcm, swing peak->EOC  14212 pcm, EFPD  2057
+  case   45: 10 states, k_bol 1.2962, peak 1.2639 at   0.5 MWd/kg, hump  -1968 pcm, swing peak->EOC  16328 pcm, EFPD  2378
+  case   46: 10 states, k_bol 1.2974, peak 1.2641 at   0.5 MWd/kg, hump  -2030 pcm, swing peak->EOC  16347 pcm, EFPD  2381
+  case   47:  8 states, k_bol 1.2851, peak 1.2543 at   0.5 MWd/kg, hump  -1913 pcm, swing peak->EOC  14821 pcm, EFPD  2110
+  case   48: 16 states, k_bol 1.2033, peak 1.2502 at  13.5 MWd/kg, hump  +3118 pcm, swing peak->EOC  14811 pcm, EFPD  4745
+  case   49: 16 states, k_bol 1.2064, peak 1.2572 at  13.5 MWd/kg, hump  +3351 pcm, swing peak->EOC  15508 pcm, EFPD  5087
+  case   50: 18 states, k_bol 1.2130, peak 1.2635 at  17.5 MWd/kg, hump  +3300 pcm, swing peak->EOC  16085 pcm, EFPD  5527
+  case   51: 18 states, k_bol 1.2158, peak 1.2534 at  17.5 MWd/kg, hump  +2469 pcm, swing peak->EOC  15260 pcm, EFPD  5614
+  case   52: 18 states, k_bol 1.2259, peak 1.2489 at  17.5 MWd/kg, hump  +1504 pcm, swing peak->EOC  14869 pcm, EFPD  5856
+  case   53: 16 states, k_bol 1.2065, peak 1.2507 at  13.5 MWd/kg, hump  +2934 pcm, swing peak->EOC  14939 pcm, EFPD  4899
+  case   54: 14 states, k_bol 1.2277, peak 1.2565 at   7.5 MWd/kg, hump  +1868 pcm, swing peak->EOC  14970 pcm, EFPD  4321
+  case   55: 14 states, k_bol 1.2302, peak 1.2585 at   7.5 MWd/kg, hump  +1826 pcm, swing peak->EOC  15346 pcm, EFPD  4502
+  case   56: 16 states, k_bol 1.2325, peak 1.2628 at   7.5 MWd/kg, hump  +1951 pcm, swing peak->EOC  15951 pcm, EFPD  4685
+  case   57: 14 states, k_bol 1.2280, peak 1.2476 at   7.5 MWd/kg, hump  +1283 pcm, swing peak->EOC  14158 pcm, EFPD  4045
+  case   58: 16 states, k_bol 1.2289, peak 1.2661 at  13.5 MWd/kg, hump  +2389 pcm, swing peak->EOC  16343 pcm, EFPD  4815
+  case   59: 14 states, k_bol 1.2255, peak 1.2448 at   7.5 MWd/kg, hump  +1269 pcm, swing peak->EOC  13720 pcm, EFPD  3886
+validated 58 of 60 cases; excluded: ['0', '23']
+hump over validated cases: min -2034, median -437, max +13874 pcm; above BOL by more than 400 pcm: 28 cases

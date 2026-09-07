@@ -1,0 +1,32 @@
+=== C8 hump sensitivity: control margins under two hump estimators ===
+screen: 1010.1 pcm, equivalent to k <= 0.99
+
+ idx   hump ss  hump arc |    ARI ss   ARI arc |   RE12 ss  RE12 arc | flips
+   1      -626     -1197 |     +2470     +2470 |     -3700     -3700 | -
+  13      -723      -959 |    +14388    +14388 |     +5946     +5946 | -
+  21     +1295     +1424 |     +2908     +2770 |     -3997     -4136 | -
+  23     -1356     -2047 |     +6443     +6443 |     -1718     -1718 | -
+  29     +2822     +3725 |       +81      -896 |     -7466     -8444 | -
+  31     +4580     +5664 |     +8444     +7272 |      +901      -271 | -
+  42     -1578     -1899 |     +9638     +9638 |     +1052     +1052 | -
+  44     +1812     +2003 |     +1034      +827 |     -5465     -5672 | ARI
+  47     -1591     -1791 |     +9891     +9891 |     +1330     +1330 | -
+  53      -676       -62 |    +17904    +17904 |     +8553     +8553 | -
+  59     +1150     +2125 |     +2747     +1694 |     -3721     -4774 | -
+
+ss = single-shot depletion (kt_burnup), arc = campaign archive (khist_c8).
+ARI = four regulating banks, RE12 = two regulating banks. All at 1000 ppm,
+three-dimensional, reduced by the positive part of the hump on the core.
+
+  below the screen, four banks single shot: [29]
+  below the screen, four banks archive    : [29, 44]
+  below the screen, two banks  single shot: [1, 21, 23, 29, 31, 44, 59]
+  below the screen, two banks  archive    : [1, 21, 23, 29, 31, 44, 59]
+
+designs whose verdict depends on the hump estimator: [44]
+These must be reported as marginal, not as qualified or rejected.
+
+cross-check on the peak, archive minus single shot:
+  n = 11, mean -47 pcm, standard error 84 pcm, scatter 279 pcm
+  a mean within one standard error of zero indicates no systematic
+  offset between the two depletion routes.

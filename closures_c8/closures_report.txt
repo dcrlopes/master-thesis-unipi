@@ -1,0 +1,21 @@
+CLOSURE 1, second tier (single-shot depletion, core solves at BOL and EOC)
+  designs: [1, 13, 21, 23, 29, 31, 42, 44, 47, 53, 59]
+  leakage-factor drift BOL to EOC: -152 to +149 pcm, sd 82 to 126 pcm; within 2 sigma: 11 of 11
+  EOC residual to the table: -297 to +90 pcm
+  implied cycle correction: -14 to +56 EFPD
+  single-shot minus archived cycle length: -73 to +50 EFPD (restart consistency)
+CLOSURE 2, L_ax_hw unrodded : 1.0286 to 1.0311  (campaign 1.0289, water-slab study [1.0282, 1.0298])
+CLOSURE 2, L_ax_hw two-bank : 1.0219 to 1.0252  (campaign 1.0289, water-slab study [1.0282, 1.0298])
+CLOSURE 2, L_ax_hw four-bank: 1.0126 to 1.0177  (campaign 1.0289, water-slab study [1.0282, 1.0298])
+  unrodded factor by enrichment: below 7 wt% 1.0288 to 1.0311, above 1.0286 to 1.0291; gap to campaign value -25 to +211 pcm
+  2D screen conservatism, two-bank: 2062 to 2671 pcm (3D margin minus 2D margin)
+  2D screen conservatism, four-bank: 1272 to 2047 pcm (3D margin minus 2D margin)
+  parked-rod share of the unrodded factor: {'47': -120.54113185641563} pcm (3D with parked rods minus without)
+CLOSURE 3a, reflector 0.956 vs 0.90 steel, unrodded 3D: {'47': 181.95671044159826, '21': 198.91015994289592} pcm (positive: the benchmark reflector is more reactive); L_ax with 0.956: {'47': 1.0302107306396289, '21': 1.028445819953427}
+CLOSURE 3b, absorber radius 0.4229 vs 0.4331, change of the 3D margin: four-bank {'47': -131.49486276528478, '21': -168.87868769285433}, two-bank {'47': -93.86232783324294, '21': -93.08839691897765} pcm (negative: the campaign radius overstates the worth)
+CLOSURE 3c, coolant density 0.72 vs 0.752 g/cm3: no flag in confirm3d.py, stated as a departure only
+CLOSURE 4, benchmark stack minus full-height B4C on the 3D core: four-bank {'47': 946.9264503128397, '21': 1003.2970375190416}, two-bank {'47': 439.2796020249625, '21': 463.3811123909777} pcm (positive: the benchmark rod is weaker)
+  rodded axial factor with the full-B4C stack (leakage only): four-bank {'47': 1.0251073920169307, '21': 1.0243865715443536}, two-bank {'47': 1.028922730516496, '21': 1.0277373507048562}
+ALSO, 0 ppm four-bank 3D margin: -1967 to 9486 pcm; designs passing the 1010 pcm screen at 0 ppm: ['47', '42', '53', '31', '13']
+ALSO, downcomer 3.7 cm (reflector cut to 3.969 cm), unrodded 3D: {'47': -33.029200998309534, '21': -16.063456269474045, '59': -17.510557996757598} pcm
+ALSO, hump carried to the core: -1723 to +4955 pcm; below the screen at the operating maximum in 3D: two-bank ['1', '21', '23', '29', '31', '44', '59'], four-bank ['29']

@@ -1,0 +1,27 @@
+\begin{table}[htbp]
+  \centering
+  \caption[Reactivity swing of the Campaign 8 candidates]{Gadolinium hump and burnup reactivity swing of the Campaign 8 candidates.}
+  \label{tab:c8-swing}
+  \begin{threeparttable}
+  \begin{tabular}{@{}r r r r r r r r r r@{}}
+    \toprule
+    ID & $e$ [wt\%] & $k_\mathrm{BOL}$ & $k_\mathrm{peak}$ & $B_\mathrm{peak}$ [MWd/kgHM] & hump [pcm] & $\Delta\rho_\mathrm{peak\to EOC}$ [pcm] & $\Delta\rho_\mathrm{Xe\to EOC}$ [pcm] & $c_\mathrm{BOL}$ [ppm] & $c_\mathrm{peak}$ [ppm] \\
+    \midrule
+    53 & 3.45 & 1.1138 & 1.1055 & 7.5 & -676 & 1922 & 1196 & 1312 & 1312 \\
+    47 & 4.39 & 1.1891 & 1.1670 & 0.5 & -1591 & 6673 & 6673 & 2348 & 2348 \\
+    42 & 4.44 & 1.1922 & 1.1701 & 0.5 & -1578 & 6875 & 6875 & 2377 & 2377 \\
+    23 & 4.94 & 1.2219 & 1.2019 & 0.5 & -1356 & 9184 & 9184 & 2979 & 2979 \\
+    13 & 5.14 & 1.1302 & 1.1210 & 17.5 & -723 & 3103 & 2106 & 1697 & 1697 \\
+    29 & 5.90 & 1.2504 & 1.2961 & 1.5 & +2822 & 15225 & 13102 & 3677 & 4277 \\
+    31 & 6.59 & 1.1236 & 1.1846 & 17.5 & +4580 & 7936 & 1971 & 1701 & 2760 \\
+    21 & 7.81 & 1.2114 & 1.2307 & 17.5 & +1295 & 11136 & 8914 & 3752 & 4095 \\
+    44 & 9.23 & 1.2147 & 1.2420 & 17.5 & +1812 & 11892 & 9340 & 4372 & 4940 \\
+    59 & 9.34 & 1.2043 & 1.2212 & 21.5 & +1150 & 10538 & 8319 & 4112 & 4473 \\
+    1 & 11.03 & 1.2127 & 1.2036 & 0.5 & -626 & 9257 & 9257 & 4674 & 4674 \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item Assembly $k_\infty$ at 1000\,ppm from the single-shot depletion of \texttt{validate\_ktarget\_burnup.py} at the campaign fidelity. The hump is $\rho_\mathrm{peak} - \rho_\mathrm{BOL}$, xenon-free BOL, and is marked n.r. when below the 400\,pcm resolution of the depletion noise. $\Delta\rho$ is measured to $\rho(k_\mathrm{target})$. The boron concentrations are linear extrapolations above 1000\,ppm with the 1000 to 1500\,ppm differential worth of the core and are lower bounds.
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}

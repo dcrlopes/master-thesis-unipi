@@ -274,9 +274,11 @@ rows.sort(key=lambda t: t[1])
 print(f"{'idx':>4} {'enr':>6} {'M16(0) 2D':>10} {'M16(0) 3D':>10} {'Lax':>7}  {'set':>9}  verdict")
 for i, e, m2, m3, lax, onf in rows:
     print(f"{i:>4} {e:6.2f} {m2:10.0f} {m3:10.0f} {lax:7.4f}  {'front' if onf else 'retained':>9}  "
-          f"{'subcritical' if m3 > 0 else 'SUPERCRITICAL under ALL-RE'}")
-print(f"\n  {sum(1 for r in rows if r[3] > 0)} of {len(rows)} subcritical under the four "
-      f"regulating banks with no soluble boron, 3D, BOL.")
+          f"{'holds with margin' if m3 >= 1000 else 'subcritical, margin below 1000 pcm' if m3 > 0 else 'SUPERCRITICAL under ALL-RE'}")
+print(f"\n  {sum(1 for r in rows if r[3] >= 1000)} of {len(rows)} hold with the 1000 pcm margin, "
+      f"{sum(1 for r in rows if 0 < r[3] < 1000)} subcritical below the margin, "
+      f"{sum(1 for r in rows if r[3] <= 0)} supercritical, under the four regulating banks "
+      f"with no soluble boron, 3D, BOL.")
 PYEOF
 echo
 echo "=============================================================="
@@ -301,8 +303,12 @@ if os.path.exists(p):
     for i, recs in sorted(by.items()):
         ks = [r["keff"] for r in recs]
         m = st.mean(ks); sdk = 1e5 * st.stdev(ks) if len(ks) > 1 else 0.0
+        g = 1e5 * (m - 0.99)      # g_ctrl in pcm, the screen is k_ALLRE <= 0.99
+        verdict = ("g_ctrl SATISFIED" if m <= 0.99
+                   else "subcritical but g_ctrl VIOLATED (0.99 < k < 1)" if m < 1.0
+                   else "supercritical, g_ctrl VIOLATED")
         print(f"  d{i} ALL-RE k = {m:.5f} +/- {sdk:.0f} pcm over {len(ks)} seeds, "
-              f"{'subcritical, g_ctrl SATISFIED' if m < 1 else 'supercritical, g_ctrl violated'}")
+              f"g_ctrl {g:+.0f} pcm ({abs(g)/max(sdk,1):.1f} sigma), {verdict}")
     print("  Both are dominated on the objectives either way (54 by 21 and 44, 11 by 44),")
     print("  so the front is unchanged whichever way the re-score falls.")
 PYEOF

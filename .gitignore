@@ -130,3 +130,7 @@ kt_burnup/design*/
 .c8_markers_post/
 *.bak_*
 *.bak2
+
+# --- Step 0 and Step 3 validation (run_valgrid.sh) ---
+.valgrid_markers/
+*.bak

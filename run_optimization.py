@@ -222,6 +222,25 @@ def main():
                          "search box in wt%% (design variable), to stop the "
                          "design of experiments sampling designs that fail "
                          "k_min. Unset keeps the 2.0 wt%% floor.")
+    ap.add_argument("--enr-box-high", type=float, default=None,
+                    help="ENR-BOX: optional upper bound of the enrichment "
+                         "search box in wt%% (design variable), applied "
+                         "AFTER the LEU cap, so it can only narrow the box. "
+                         "Leaves --enr-max and the g_enr limit untouched.")
+    ap.add_argument("--freeze", action="append", default=None,
+                    metavar="NAME=VALUE",
+                    help="SLICE: remove NAME from the search box and hold "
+                         "it at VALUE in every design (repeatable, e.g. "
+                         "--freeze refl_thick=4.2889 --freeze gd_pins=12). "
+                         "The enrichment cannot be frozen. See "
+                         "slice_space.py.")
+    ap.add_argument("--eval-list", default=None, metavar="PATH.json",
+                    help="ENUMERATION MODE: evaluate exactly the designs "
+                         "listed in PATH.json (keys = live design "
+                         "variables), one at a time, checkpoint after "
+                         "each, skipping designs already in the archive. "
+                         "Replaces the DOE and the infill loop. Combine "
+                         "with --resume to finish an interrupted list.")
     ap.add_argument("--nsga-pop", type=int, default=None,
                     help="NSGA-SET: NSGA-II population on the surrogate, "
                          "overriding the profile (full run: 60). The C6 "
@@ -289,6 +308,23 @@ def main():
             _v.high = _e_hi
             if args.enr_box_low is not None:
                 _v.low = max(_v.low, float(args.enr_box_low))
+            if args.enr_box_high is not None:
+                _v.high = min(_v.high, float(args.enr_box_high))
+            if not _v.low < _v.high:
+                raise SystemExit(
+                    f"enrichment search box is empty: low {_v.low:g} >= "
+                    f"high {_v.high:g} (--enr-max, --enr-box-low, "
+                    f"--enr-box-high)")
+    # SLICE: freeze design variables. The spec is rebuilt with a shorter
+    # vector; every design dict is still complete (slice_space.py).
+    if args.freeze:
+        from slice_space import freeze_variables, parse_freeze
+        _frozen = parse_freeze(args.freeze)
+        spec = freeze_variables(spec, _frozen)
+        print(f"SLICE: frozen {_frozen} | live variables "
+              f"{spec.design_space.names}")
+    else:
+        _frozen = {}
 
     if args.smoke:
         # 4 + 1*2 = 6 real evaluations, coarse transport, SHORT adaptive
@@ -482,6 +518,15 @@ def main():
                   "almost certainly written on the assembly basis at "
                   "k_max = 1.35. Resuming it under different limits mixes "
                   "two problems in one archive.")
+        # SLICE: an archive is one slice of one problem. Mixing slices in
+        # a resumed session is the same error as mixing constraint sets.
+        prev_frozen = prev_meta.get("frozen")
+        if prev_frozen is not None and \
+                {k: float(v) for k, v in dict(prev_frozen).items()} != _frozen:
+            raise SystemExit(
+                f"frozen variables differ from the checkpoint: "
+                f"{prev_frozen} vs {_frozen}. Pass the same --freeze "
+                f"flags, or start a fresh run.")
         prev_geom = prev_meta.get("geometry")
         if prev_geom is not None and prev_geom != "v2-envelope":
             print("!! WARNING: checkpoint was written on a DIFFERENT geometry "
@@ -607,8 +652,20 @@ def main():
                            "workdir": getattr(args, "workdir", "openmc_runs"),
                            "started_utc": datetime.now(timezone.utc)
                                .isoformat(timespec="seconds")}
+    # SLICE: the archive states its own slice and its own enumeration.
+    opt.checkpoint_meta["frozen"] = dict(_frozen)
+    opt.checkpoint_meta["eval_list"] = (str(args.eval_list)
+                                        if args.eval_list else None)
+    opt.checkpoint_meta["enr_box_high"] = args.enr_box_high
 
-    res = opt.run(verbose=True)
+    if args.eval_list:
+        # ENUMERATION MODE (slice_space.run_eval_list): listed designs,
+        # one at a time, checkpoint after each, resume-safe.
+        from slice_space import run_eval_list
+        res = run_eval_list(opt, args.eval_list, ckpt_out,
+                            opt.checkpoint_meta, verbose=True)
+    else:
+        res = opt.run(verbose=True)
 
     path = opt.save(str(Path(args.out) / "optimization_results.json"))
     print("saved ->", path)

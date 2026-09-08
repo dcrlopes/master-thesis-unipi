@@ -1,0 +1,28 @@
+% c8_cv_table.tex -- written by c8_surrogate_cv.py. Leave-one-out
+% cross-validation of the Gaussian Process surrogate on the Campaign 8
+% archive. Paste into results_c8_v2.tex. Requires booktabs, threeparttable.
+\begin{table}[htbp]
+  \centering
+  \begin{threeparttable}
+  \caption[Leave-one-out validation of the surrogate]{Leave-one-out cross-validation of the Gaussian Process surrogate on the Campaign 8 archive.}
+  \label{tab:c8-cv-loo}
+  \begin{tabular}{llrrrrrrr}
+    \toprule
+    Quantity & Subset & $n$ & RMSE & $R^2$ & $\rho_\mathrm{S}$ & Cov.\ $1\sigma$ & Cov.\ $2\sigma$ & $s_z$ \\
+    \midrule
+    Cycle length [EFPD] & all & 60 & 220 & 0.988 & 0.997 & 0.77 & 0.87 & 1.63 \\
+     & feasible & 19 & 145 & 0.990 & 0.988 & 0.74 & 0.89 & 1.81 \\
+    $F_{\Delta H}$ & all & 60 & 0.0287 & 0.690 & 0.830 & 0.65 & 0.93 & 1.26 \\
+     & feasible & 19 & 0.0227 & 0.829 & 0.900 & 0.63 & 0.89 & 1.26 \\
+    $k_\mathrm{core}$ & all & 60 & 0.0151 & 0.978 & 0.967 & 0.67 & 0.97 & 1.11 \\
+     & feasible & 19 & 0.0111 & 0.930 & 0.875 & 0.63 & 1.00 & 0.98 \\
+    $k_\mathrm{RE}$ & all & 60 & 0.0110 & 0.985 & 0.961 & 0.65 & 0.97 & 1.11 \\
+     & feasible & 19 & 0.0081 & 0.959 & 0.923 & 0.68 & 1.00 & 1.02 \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item RMSE is the root mean square error of the held-out prediction. $R^2$ is the coefficient of determination. $\rho_\mathrm{S}$ is the Spearman rank correlation between predicted and true values. Cov.\ $1\sigma$ and Cov.\ $2\sigma$ are the fractions of true values inside the one-sigma and two-sigma predictive intervals, with nominal values 0.683 and 0.954. $s_z$ is the standard deviation of the standardised residual, equal to 1 for a calibrated predictor.
+    \item Source: c8\_surrogate\_cv.py on the archive of 60 designs, of which 19 are feasible.
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}

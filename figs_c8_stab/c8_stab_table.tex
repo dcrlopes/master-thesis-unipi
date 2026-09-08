@@ -1,0 +1,25 @@
+% c8_stab_table.tex -- written by c8_front_stability.py.
+\begin{table}[htbp]
+  \centering
+  \begin{threeparttable}
+  \caption[Stability of the Campaign 8 front]{Entry, exclusive hypervolume contribution and noise robustness of the Campaign 8 front members.}
+  \label{tab:c8-front-stability}
+  \begin{tabular}{rrrrrr}
+    \toprule
+    Design & Cycle [EFPD] & $F_{\Delta H}$ & Entered at & Excl.\ HV [\%] & $P$(front) \\
+    \midrule
+    47 & 1941 & 1.5099 & 48 & 0.1 & 0.80 \\
+    42 & 1968 & 1.5221 & 43 & 0.0 & 0.73 \\
+    23 & 2346 & 1.5338 & 24 & 0.1 & 0.73 \\
+    29 & 3070 & 1.5417 & 30 & 1.8 & 1.00 \\
+    21 & 4221 & 1.5925 & 22 & 1.1 & 0.92 \\
+    44 & 5019 & 1.6123 & 45 & 0.8 & 0.94 \\
+    59 & 5104 & 1.6335 & 60 & 0.2 & 0.99 \\
+    1 & 5782 & 1.6772 & 2 & 14.0 & 1.00 \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item Entered at is the evaluation count at which the design first became a member of the feasible non-dominated set and it was never displaced afterwards. Excl.\ HV is the hypervolume lost when the design alone is removed, as a percentage of the front hypervolume at the campaign reference point. $P$(front) is the probability that the design remains non-dominated when the objectives of every feasible design are perturbed by Gaussian Monte Carlo noise, with $\sigma_k = 44$\,pcm propagated to the cycle length and $\sigma_F = 0.01$ on $F_{\Delta H}$, over 5000 replicates.
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}

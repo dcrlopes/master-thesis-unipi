@@ -1,0 +1,32 @@
+% valgrid_table.tex -- written by valgrid_compare.py.
+\begin{table}[htbp]
+  \centering
+  \begin{threeparttable}
+  \caption[Search against exhaustive enumeration]{Surrogate-assisted search against exhaustive enumeration on the two-variable slice.}
+  \label{tab:valgrid}
+  \begin{tabular}{lrr}
+    \toprule
+    Quantity & Enumeration & Search \\
+    \midrule
+    Truth evaluations & 35 & 20 \\
+    Feasible designs & 17 & 15 \\
+    Front members & 8 & 8 \\
+    Hypervolume, nadir reference & 193.1 & 209.7 \\
+    Hypervolume ratio & 1 & 1.086 \\
+    Union-front members & 3 & 8 \\
+    \midrule
+    IGD, normalised & \multicolumn{2}{r}{0.137} \\
+    GD, normalised & \multicolumn{2}{r}{0.104} \\
+    $I_{\varepsilon+}$(search, enumeration), normalised & \multicolumn{2}{r}{0.145} \\
+    $I_{\varepsilon+}$ in cycle length [EFPD] & \multicolumn{2}{r}{328} \\
+    $I_{\varepsilon+}$ in $F_{\Delta H}$ & \multicolumn{2}{r}{0.0199} \\
+    Enumerated-front coverage, strict / within 0.02 & \multicolumn{2}{r}{0.62 / 0.75} \\
+    Wall-clock [h] & 8.5 & 4.9 \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item Objectives are normalised by the range of the union of the two fronts before the distance indicators are computed. IGD is the inverted generational distance from the enumerated front to the recovered front. GD is the generational distance from the recovered front to the enumerated front. $I_{\varepsilon+}$ is the additive epsilon indicator, the smallest shift that makes the recovered front weakly dominate every enumerated-front point. The hypervolume reference point is the nadir of the union of the two fronts plus ten per cent of the range.
+    \item Slice: refl_thick = 4.28885, gd_pins = 12. Source: valgrid\_compare.py.
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}

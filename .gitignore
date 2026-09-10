@@ -134,3 +134,11 @@ kt_burnup/design*/
 # --- Step 0 and Step 3 validation (run_valgrid.sh) ---
 .valgrid_markers/
 *.bak
+
+# zoned-loading confirmation: keep the summaries, never the case directories
+zoned_confirm_*/ring_*/dep_*/
+zoned_confirm_*/core_bol_zoned/
+zoned_smoke/
+*.h5
+statepoint.*.h5
+summary.h5

@@ -1,0 +1,69 @@
+{
+  "idx": 58,
+  "design": {
+    "enrich_inner": 13.194868753128457,
+    "enrich_outer": 15.12925654475394,
+    "gd_wt": 1.7591610101242863,
+    "pitch": 1.1500209427178476,
+    "refl_thick": 19.47234618879819,
+    "gd_pins": 39.94970666080899
+  },
+  "multipliers": {
+    "C": 0.65,
+    "M": 0.7833333333333332,
+    "P": 1.25
+  },
+  "ring": {
+    "C": {
+      "efpd": 4884.365789542377,
+      "k_bol": 1.2320255328263339,
+      "k_target_used": 1.0632272362729793,
+      "censored": false,
+      "bu_eoc": 48.76235286265804,
+      "n_solves": 16,
+      "mult": 0.65
+    },
+    "M": {
+      "efpd": 5988.223452551503,
+      "k_bol": 1.2799246708830754,
+      "k_target_used": 1.0632272362729793,
+      "censored": false,
+      "bu_eoc": 59.782554705248366,
+      "n_solves": 18,
+      "mult": 0.7833333333333332
+    },
+    "P": {
+      "efpd": 9715.56672384796,
+      "k_bol": 1.3873881705948603,
+      "k_target_used": 1.0632272362729793,
+      "censored": false,
+      "bu_eoc": 96.99394215382043,
+      "n_solves": 28,
+      "mult": 1.25
+    }
+  },
+  "shares": {
+    "C": 0.13980028744881104,
+    "M": 0.4063814035704408,
+    "P": 0.4538183089807482
+  },
+  "rel_power": {
+    "C": 1.1184022995904883,
+    "M": 1.0836837428545087,
+    "P": 0.9076366179614964
+  },
+  "F_zoned_bol": 1.4728292051144498,
+  "k_zoned_bol": 1.232349084474096,
+  "F_zoned_sd": 0.01553281515206832,
+  "F_zoned_ci95_half": 0.012987821928747065,
+  "n_core_seeds": 8,
+  "verdict_peak": "PASS",
+  "k_target": 1.0632272362729793,
+  "B_eoc_mwd_kg": 47.83609620580128,
+  "efpd_zoned": 4791.585682318478,
+  "efpd_uniform": 7512.505297836232,
+  "dEFPD": -2720.919615517754,
+  "censored": true,
+  "note": "K(B) never reached k_target inside the depleted range: the zoned EFPD below is a LOWER BOUND (extend max_burnup or the ring histories).",
+  "assumptions": "BOL-frozen power shares, burnup-parameterised ring k histories, power-weighted k mix against the Route B target"
+}

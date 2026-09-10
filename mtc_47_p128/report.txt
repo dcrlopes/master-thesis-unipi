@@ -1,0 +1,33 @@
+==========================================================================
+MODERATOR TEMPERATURE COEFFICIENT, design 47, core2d
+==========================================================================
+  547 K -> 567 K at 12.8 MPa, rho 0.77109 -> 0.73403 g/cm3
+
+      ppm     k(lo)     k(hi)       MTC      sd  verdict
+     1000   1.13572   1.13062    -19.87    1.41  negative, acceptable
+     2000   1.05599   1.05522     -3.49    1.56  negative, acceptable
+     3000   0.98870   0.99131    +13.28    1.79  POSITIVE, not acceptable
+     4000   0.93133   0.93619    +27.86    1.98  POSITIVE, not acceptable
+     5000   0.88166   0.88824    +41.99    2.06  POSITIVE, not acceptable
+
+  MTC in pcm per K. A negative coefficient is the self-stabilising
+  direction. The crossing is the boron ceiling for this lattice.
+
+  CROSSING CONCENTRATION: 2208 ppm
+
+  design 47 needs 2348 ppm  -> ABOVE the ceiling
+  design 13 needs 1701 ppm  -> BELOW the ceiling
+  design  1 needs 4674 ppm  -> ABOVE the ceiling
+
+  Linear interpolation between the two bracketing points. Add points
+  near the crossing if the bracket is wide.
+
+==========================================================================
+FUEL TEMPERATURE (DOPPLER) COEFFICIENT
+==========================================================================
+  at 1000 ppm and 547 K moderator
+  600 -> 900 K : -2.04 +/- 0.09 pcm/K
+  900 -> 1200 K : -1.70 +/- 0.09 pcm/K
+
+  Must be negative everywhere. A null Doppler means the library
+  carries a single temperature and the interpolation is not working.

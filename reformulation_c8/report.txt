@@ -1,0 +1,97 @@
+=== Campaign 8 retrospective: what a different formulation would have produced ===
+No transport. Archives only.
+
+==========================================================================
+PART A. Control screen evaluated at the operating maximum
+==========================================================================
+  margin_peak = margin_bol - max(LF_bol * hump, 0)
+  screen 1010.1 pcm, equivalent to k <= 0.99
+
+CAMPAIGN 7, 58 designs with a validated history
+  pass at beginning of life      : 38 of 58
+  pass at the operating maximum  : 32 of 58
+  admitted by the BOL screen and NOT controllable over the cycle:
+    [11, 48, 49, 53, 54, 55]   (6 designs)
+
+   idx  Gd wt%  pins    hump    m_BOL   m_peak
+    11    0.85    32   +1436     1729      178
+    48    1.93    40   +3118     3146     -206
+    49    2.23    40   +3351     2095    -1503
+    53    2.05    40   +2934     2757     -402
+    54    1.47    32   +1868     2580      569
+    55    1.59    32   +1826     1590     -376
+
+  Every design in that list was accepted as feasible by the campaign
+  and is not controllable at its own mid-cycle maximum. This is the
+  cost of a beginning-of-life screen, measured rather than asserted.
+
+CAMPAIGN 8, eleven-design working set
+   idx  Gd wt%  pins  hump ss  hump arc  RE12 bol  RE12 pk
+     1    7.43    40     -626     -1197     -3700    -3700
+    13    5.25    24     -723      -959      5946     5946
+    21    3.11    32    +1295     +1424     -2598    -3997
+    23    2.80    12    -1356     -2047     -1718    -1718
+    29    0.18    40    +2822     +3725     -4412    -7466
+    31    3.38    40    +4580     +5664      5856      901
+    42    2.88    12    -1578     -1899      1052     1052
+    44    3.20    40    +1812     +2003     -3508    -5465
+    47    2.88    12    -1591     -1791      1330     1330
+    53    2.92    12     -676       -62      8553     8553
+    59    4.32    40    +1150     +2125     -2479    -3721
+  verdict changed by the hump: [31]
+
+==========================================================================
+PART B. Reformulated problem on the 60-design Campaign 8 archive
+==========================================================================
+  constraint  cycle length >= 2922 EFPD
+  constraint  F_dH <= 1.65
+  objective   minimise F_dH
+  objective   minimise c_BOL, the critical boron at beginning of life
+
+  boron worth law fitted on 11 measured designs:
+    w_B(e) = 23.292 * e ** (-0.8496)   pcm per ppm
+    relative rms residual 1.6 per cent
+    proxy against the measured c_BOL: max error 138 ppm over 11 designs
+
+  designs satisfying both constraints: 34 of 60
+  Pareto set of the reformulated problem: [19, 22, 29]
+
+   idx  e wt%  Gd wt%  pins   EFPD   F_dH   c_BOL  status
+    22   7.21    6.71    32   3684  1.648    2469  FRONT
+    19   7.39    3.17    32   3968  1.595    3315  FRONT
+    29   5.90    0.18    40   3070  1.542    3644  FRONT
+    36   5.96    8.00    12   3042  1.574    3663  dominated
+    21   7.81    3.11    32   4221  1.592    3763  dominated
+    56   8.02    3.28    32   4373  1.625    3905  dominated
+    43   6.25    0.29    32   3317  1.574    3956  dominated
+    51   6.36    0.33    32   3395  1.547    3989  dominated
+    59   9.34    4.32    40   5104  1.634    4068  dominated
+    48   7.66    1.55    32   4231  1.595    4176  dominated
+    15   6.23    0.40    24   3286  1.571    4200  dominated
+    54   7.38    3.12    24   3977  1.615    4210  dominated
+    44   9.23    3.20    40   5019  1.612    4299  dominated
+    39   7.80    8.00    20   4161  1.629    4379  dominated
+    58   8.61    3.57    32   4729  1.622    4405  dominated
+    11   8.82    4.20    32   4835  1.613    4442  dominated
+     3   6.76    4.87    12   3598  1.573    4629  dominated
+    50   8.65    2.83    32   4787  1.605    4641  dominated
+    52   9.68    3.04    40   5379  1.638    4788  dominated
+    38   8.88    8.00    24   4841  1.644    5014  dominated
+    49  10.79    5.62    40   5892  1.639    5032  dominated
+     6   9.45    1.44    40   5321  1.615    5359  dominated
+    33   8.26    2.22    20   4692  1.599    5575  dominated
+    18   9.18    4.48    24   5058  1.631    5684  dominated
+    14   8.73    2.42    20   4886  1.592    5961  dominated
+    28   8.14    1.92    12   4547  1.601    6238  dominated
+     8  10.27    6.46    24   5672  1.629    6446  dominated
+    32  10.56    5.07    16   6009  1.586    7738  dominated
+    24  11.99    2.53    32   6832  1.648    7894  dominated
+    26  12.52    3.65    32   7020  1.644    8011  dominated
+     0   9.96    0.51    16   5780  1.589    8165  dominated
+    35  11.67    1.08    24   6765  1.608    8962  dominated
+    20  12.81    7.59    20   7135  1.623    9007  dominated
+    10  11.22    0.79    16   6492  1.600    9165  dominated
+
+  Read the gadolinia columns down the c_BOL ordering. The designs at
+  the low-boron end are the ones carrying more gadolinia, which is the
+  reward the original two-objective formulation never offered.

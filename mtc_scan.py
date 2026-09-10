@@ -234,7 +234,7 @@ def parse_args():
                     help="refuse any state closer than this to saturation, K")
     ap.add_argument("--boron", default=",".join(f"{c:g}" for c in DEF_BORON),
                     help="comma-separated boron concentrations in ppm")
-    ap.add_argument("--level", choices=("core2d", "assembly"), default="core2d",
+    ap.add_argument("--level", choices=("core3d", "core2d", "assembly"), default="core2d",
                     help="core2d carries radial leakage feedback, assembly does "
                          "not and gives the lattice component only")
     ap.add_argument("--doppler", action="store_true",
@@ -319,7 +319,14 @@ def main():
             return done[key]
         op = rm.Operating(boron_ppm=ppm, mod_T=mod_t, fuel_T=fuel_t)
         _rho["v"] = dens
-        if a.level == "assembly":
+        if a.level == "core3d":
+            import hardware3d as hw
+            import zoning as zn
+            m, _info = hw.build_model_3d_hw(
+                design, op, geo,
+                design_map=zn.evaluator_design_map(design),
+                rodded_map=None, seed=seed, **tr)
+        elif a.level == "assembly":
             m, _fc, _lat = rm.make_assembly_model(design, op, geo,
                                                   bc="reflective", **tr)
         else:

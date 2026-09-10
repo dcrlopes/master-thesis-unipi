@@ -1,0 +1,37 @@
+======================================================================
+CRITICAL BORON FROM THE MEASURED k CURVE, design 47, zoned
+======================================================================
+The campaign c_BOL extrapolates linearly above 1000 ppm at the
+1000-1500 ppm worth of 6.63 pcm/ppm. Boron self-shields, so the worth
+falls with concentration and that extrapolation understates c_BOL.
+
+  cold-state points at 570 K:
+      1000 ppm   k = 1.10025   rho =    +9111 pcm
+      2000 ppm   k = 1.02385   rho =    +2330 pcm
+      2200 ppm   k = 1.01014   rho =    +1004 pcm
+      2400 ppm   k = 0.99675   rho =     -326 pcm
+      2600 ppm   k = 0.98402   rho =    -1624 pcm
+      2800 ppm   k = 0.97179   rho =    -2903 pcm
+      3000 ppm   k = 0.95984   rho =    -4184 pcm
+      4000 ppm   k = 0.90486   rho =   -10515 pcm
+      5000 ppm   k = 0.85736   rho =   -16637 pcm
+
+  differential worth from the curve:
+      1000 ppm    6.78 pcm/ppm
+      2000 ppm    6.65 pcm/ppm
+      2200 ppm    6.64 pcm/ppm
+      2400 ppm    6.57 pcm/ppm
+      2600 ppm    6.44 pcm/ppm
+      2800 ppm    6.40 pcm/ppm
+      3000 ppm    6.39 pcm/ppm
+      4000 ppm    6.23 pcm/ppm
+      5000 ppm    6.12 pcm/ppm
+  linear worth model: w(c) = 6.965 -1.782e-04 * c   pcm/ppm
+
+  campaign-state offset assumed 157 pcm (density 0.73291 -> 0.72)
+  CRITICAL BORON, design 47 = 2200 ppm
+  campaign linear estimate  = 2348 ppm
+  correction                = -148 ppm
+
+  Compare this against the crossing in mtc_z_p155_fine/summary.json.
+  Both now come from the same zoned model, so the comparison is valid.

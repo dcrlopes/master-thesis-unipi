@@ -330,8 +330,10 @@ def main():
             m, _fc, _lat = rm.make_assembly_model(design, op, geo,
                                                   bc="reflective", **tr)
         else:
+            import zoning as zn
             m, _fc = rm.make_core_model(design, op, geo,
                                         refl_thick=design["refl_thick"],
+                                        design_map=zn.evaluator_design_map(design),
                                         enforce_vessel=False, **tr)
         m.settings.seed = seed
         m.settings.temperature = {"method": "interpolation",

@@ -28,7 +28,7 @@
 set -u -o pipefail
 
 IDX=47
-THREADS=32
+THREADS=64
 MARK=.mtc_markers
 PA=15.5 ; TA_LO=570 ; TA_HI=590
 PB=12.8 ; TB_LO=547 ; TB_HI=567
@@ -79,7 +79,7 @@ mark()       { mkdir -p "$MARK"; touch "$MARK/$1"; }
 archive_unzoned() {
   stage_done archive && { echo "[archive] already done"; return 0; }
   echo "[archive] moving the unzoned results aside"
-  for d in mtc_47_p155 mtc_47_p128 mtc_47_p155_fine mtc_47_p128_fine mtc_47_zoned_check; do
+  for d in mtc_47_p155 mtc_47_p128 mtc_47_p155_fine mtc_47_p128_fine; do
     [ -d "$d" ] && [ ! -d "${d}_unzoned" ] && { mv "$d" "${d}_unzoned"; echo "  $d -> ${d}_unzoned"; }
   done
   mkdir -p mtc_unzoned

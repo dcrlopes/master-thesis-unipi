@@ -1,0 +1,24 @@
+{
+ "idx": 47,
+ "level": "core3d",
+ "pressure_mpa": 15.5,
+ "t_sat_k": 617.9415516035506,
+ "t_lo": 570.0,
+ "t_hi": 590.0,
+ "rho_lo": 0.7329119203400488,
+ "rho_hi": 0.6883003428789708,
+ "mtc_pcm_per_k": {
+  "0": -57.1718432618376,
+  "1000": -36.63932192557786,
+  "2000": -18.8895674049785,
+  "3000": 0.05030194054879757
+ },
+ "crossing_ppm": 2997.3441242053404,
+ "seeds": 2,
+ "transport": {
+  "particles": 100000,
+  "batches": 170,
+  "inactive": 60
+ },
+ "density_source": "IAPWS-IF97 R7-97(2012) region 1, python package iapws"
+}

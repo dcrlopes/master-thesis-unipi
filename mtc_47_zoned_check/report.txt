@@ -1,0 +1,14 @@
+==========================================================================
+MODERATOR TEMPERATURE COEFFICIENT, design 47, core2d
+==========================================================================
+  570 K -> 590 K at 15.5 MPa, rho 0.73291 -> 0.68830 g/cm3
+
+      ppm     k(lo)     k(hi)       MTC      sd  verdict
+     1000   1.09995   1.09396    -24.87    2.15  negative, acceptable
+
+  MTC in pcm per K. A negative coefficient is the self-stabilising
+  direction. The crossing is the boron ceiling for this lattice.
+
+  NO CROSSING inside 1000 to 1000 ppm.
+  The coefficient is negative throughout.
+  Extend the sweep with --boron before drawing any conclusion.

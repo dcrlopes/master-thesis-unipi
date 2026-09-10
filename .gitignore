@@ -142,3 +142,9 @@ zoned_smoke/
 *.h5
 statepoint.*.h5
 summary.h5
+
+# MTC scans: keep the reports, never the per-solve working directories
+mtc_z_*/*/
+mtc_unzoned/*/*/
+mtc_47_zoned_check/*/
+.mtc_markers/

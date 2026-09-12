@@ -1,9 +1,10 @@
 {
- "mission_efpd": 1826.0,
+ "mission_efpd": 2557.0,
  "f_limit": 1.65,
  "screen_pcm": 1010.1,
  "reformulated_front": [
-  13,
-  47
+  22,
+  40,
+  51
  ]
 }

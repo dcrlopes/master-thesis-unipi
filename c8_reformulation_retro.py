@@ -84,6 +84,7 @@ SCREEN_PCM = 1010.1        # k <= 0.99
 PPM_REF = 1000.0           # campaign reference boron concentration
 MISSION_EFPD = 1826.0      # five years at capacity factor 1.0
 F_LIMIT = 1.65             # AP1000-class design limit used on the front figure
+HUMP_NOISE_PCM = 400.0     # c8_hump2.py reports smaller humps as unresolved
 
 
 # ------------------------------------------------------------------ helpers --
@@ -255,7 +256,10 @@ def part_b(P, raw, swing, mission, f_limit):
     P(f"  constraint  cycle length >= {mission:.0f} EFPD")
     P(f"  constraint  F_dH <= {f_limit:.2f}")
     P("  objective   minimise F_dH")
-    P("  objective   minimise c_BOL, the critical boron at beginning of life")
+    P("  objective   minimise c_max, the peak critical boron over the cycle")
+    P(f"  screen      four-bank ARI margin >= {SCREEN_PCM:.1f} pcm at the operating maximum,")
+    P("              applied only to designs carrying a measured margin")
+    P("  recorded    two-bank RE12 margin, a label and not a constraint")
     P("")
 
     # fit the boron worth law on the designs that carry a measured worth
@@ -287,8 +291,21 @@ def part_b(P, raw, swing, mission, f_limit):
           f"{max(err):.0f} ppm over {len(err)} designs")
     P("")
 
+    # support of the refitted proxy, for the validity guard
+    rho_fit = [rho_pcm(raw[i]["keff_core_bol"]) for i in ids]
+    c_fit = [PPM_REF + rho_pcm(raw[i]["keff_core_bol"])
+             / (a * raw[i]["enrich"] ** b) for i in ids]
+    rho_lo, rho_hi = min(rho_fit), max(rho_fit)
+    c_lo, c_hi = min(c_fit), max(c_fit)
+    P(f"  proxy support: rho_BOL {rho_lo:.0f} to {rho_hi:.0f} pcm, "
+      f"c_BOL {c_lo:.0f} to {c_hi:.0f} ppm")
+    P("  values outside that range are flagged and must not be quoted")
+    P("")
+
     # build the candidate set
     cand = []
+    n_screened = 0
+    n_outside = 0
     for i, r in enumerate(raw):
         cyc, f, kc, e = (r.get("cycle_length"), r.get("peaking"),
                          r.get("keff_core_bol"), r.get("enrich"))
@@ -298,10 +315,56 @@ def part_b(P, raw, swing, mission, f_limit):
             continue
         if cyc < mission or f > f_limit:
             continue
-        c_bol = PPM_REF + rho_pcm(kc) / (a * e ** b)
-        cand.append((i, f, c_bol, cyc, e, r.get("gd_wt"), r.get("gd_pins_used")))
+        rho_i = rho_pcm(kc)
+        w_i = a * e ** b
+        c_bol = PPM_REF + rho_i / w_i
 
-    P(f"  designs satisfying both constraints: {len(cand)} of {len(raw)}")
+        # objective at the operating maximum, not at beginning of life
+        sr = (swing or {}).get(str(i)) or {}
+        lf, h = sr.get("lf_bol"), sr.get("hump_pcm")
+        resolved = (lf is not None and h is not None and h >= HUMP_NOISE_PCM)
+        if resolved:
+            c_obj = c_bol + (lf * h) / w_i
+            corr = "hump"
+        elif lf is not None and h is not None:
+            c_obj, corr = c_bol, "flat"
+        else:
+            c_obj, corr = c_bol, "n/a"
+
+        # control screen at the operating maximum, four banks, where measured
+        drop = max(lf * h, 0.0) if resolved else 0.0
+        m16 = sr.get("ARI_margin_bol_3d_pcm")
+        if m16 is None:
+            scr = "n/a"
+        else:
+            if m16 - drop < SCREEN_PCM:
+                n_screened += 1
+                continue
+            scr = "pass"
+
+        # two-bank reading, RECORDED and not constrained, per the
+        # methodology chapter: the front is split afterwards, not shrunk
+        m8 = sr.get("RE12_margin_bol_3d_pcm")
+        re12 = "n/a" if m8 is None else ("2bk" if m8 - drop >= SCREEN_PCM
+                                         else "4bk")
+
+        # validity guard: is the proxy being used inside its support?
+        flag = ""
+        if rho_i < rho_lo or rho_i > rho_hi:
+            flag = "!rho"
+            n_outside += 1
+        elif c_obj < c_lo or c_obj > c_hi:
+            flag = "!ppm"
+            n_outside += 1
+
+        cand.append((i, f, c_obj, cyc, e, r.get("gd_wt"),
+                     r.get("gd_pins_used"), c_bol, corr, scr, re12, flag))
+
+    P(f"  designs satisfying both constraints: "
+      f"{len(cand) + n_screened} of {len(raw)}")
+    P(f"  rejected by the control screen at the operating maximum: "
+      f"{n_screened}")
+    P(f"  flagged outside the proxy support: {n_outside}")
     if not cand:
         P("  the constraint pair is empty, relax the mission or the limit")
         return None
@@ -310,13 +373,21 @@ def part_b(P, raw, swing, mission, f_limit):
     P(f"  Pareto set of the reformulated problem: {sorted(front)}")
     P("")
     P(f"  {'idx':>4} {'e wt%':>6} {'Gd wt%':>7} {'pins':>5} {'EFPD':>6} "
-      f"{'F_dH':>6} {'c_BOL':>7}  status")
-    for i, f, c, cyc, e, gd, pins in sorted(cand, key=lambda t: t[2]):
+      f"{'F_dH':>6} {'c_BOL':>7} {'c_max':>7} {'corr':>5} {'ctrl':>5} "
+      f"{'RE12':>5} {'flag':>5}  status")
+    for (i, f, c, cyc, e, gd, pins, c_bol, corr, scr, re12, flag) in sorted(
+            cand, key=lambda t: t[2]):
         tag = "FRONT" if i in front else "dominated"
         gd_s = f"{gd:7.2f}" if gd is not None else "    n/a"
         pn_s = f"{pins:5.0f}" if pins is not None else "  n/a"
         P(f"  {i:>4} {e:>6.2f} {gd_s} {pn_s} {cyc:>6.0f} {f:>6.3f} "
-          f"{c:>7.0f}  {tag}")
+          f"{c_bol:>7.0f} {c:>7.0f} {corr:>5} {scr:>5} {re12:>5} "
+          f"{flag:>5}  {tag}")
+    P("")
+    P("  ctrl is the four-bank screen at the operating maximum, the")
+    P("  constraint. RE12 is the two-bank reading, recorded and not")
+    P("  constrained: 2bk means the design is controllable with RE1 and")
+    P("  RE2 alone, 4bk means it needs all four banks.")
     P("")
     P("  Read the gadolinia columns down the c_BOL ordering. The designs at")
     P("  the low-boron end are the ones carrying more gadolinia, which is the")

@@ -21,7 +21,7 @@
 #   rm .queue_markers/A                  # force one stage to rerun
 set -u -o pipefail
 
-THREADS=32
+THREADS=64
 MARK=.queue_markers
 PATCH=apply_c8_reformulation_partb.py
 RETRO=c8_reformulation_retro.py

@@ -25,6 +25,13 @@ THREADS=64
 MARK=.c9_markers
 OUT=out_c9
 OUT_SMOKE=out_c9_smoke
+# One scratch directory per campaign. The case directories are numbered
+# (case_0000, ...) and the depletion chunks are created with exist_ok, so
+# sharing the default openmc_runs with an earlier campaign makes a restart
+# read a depletion_results.h5 written under a different schedule and fail
+# with "Can't broadcast (n, m) -> (k, m)" inside h5py.
+WORK=openmc_runs_c9
+WORK_SMOKE=openmc_runs_c9_smoke
 KT=ktarget_table_c8.json
 
 # the problem, one place
@@ -108,8 +115,12 @@ stage_W() {
 stage_S() {
   done_ S && { echo "[S] already done"; return 0; }
   hr; echo " STAGE S. Smoke run (coarse transport, 4 + 2 evaluations)"; hr
+  # a half-written depletion from an interrupted attempt cannot be
+  # restarted, so the smoke scratch is always rebuilt from empty
+  rm -rf "$WORK_SMOKE" "$OUT_SMOKE"
   python -c "import numpy, openmc; print('env ok')" \
-    && python -u run_optimization.py --smoke --out "$OUT_SMOKE" "${COMMON[@]}" \
+    && python -u run_optimization.py --smoke --out "$OUT_SMOKE" \
+         --workdir "$WORK_SMOKE" "${COMMON[@]}" \
          --n-init 4 --n-infill 2 --iters 1 \
          --hump-noise "$HUMP_NOISE_SMOKE" 2>&1 | tee "$OUT_SMOKE.log" \
     || die "smoke run failed"
@@ -139,8 +150,9 @@ stage_F() {
   done_ F && { echo "[F] already done"; return 0; }
   hr; echo " STAGE F. Full campaign, 24 + 6 x 6 evaluations"; hr
   [ -d "$OUT" ] && die "$OUT exists. Resume with the line printed at the end of S, or move it away."
+  [ -d "$WORK" ] && die "$WORK exists. A campaign must own its scratch directory: move it away or remove it."
   python -c "import numpy, openmc; print('env ok')" \
-    && python -u run_optimization.py --out "$OUT" "${COMMON[@]}" \
+    && python -u run_optimization.py --out "$OUT" --workdir "$WORK" "${COMMON[@]}" \
          --n-init 24 --n-infill 6 --iters 6 \
          --nsga-pop 300 --nsga-gen 400 --infill-min-sep 0.14 --feas-kappa 1.5 \
          2>&1 | tee "$OUT.log" \

@@ -124,13 +124,20 @@ def main():
     assert all("c_max" in r and "c_bol" in r for r in raw)
     humped = [r for r in raw if r["hump_core_pcm"] > 0]
     flat = [r for r in raw if r["hump_core_pcm"] == 0]
-    assert all(r["c_max"] > r["c_bol"] for r in humped)
+    # BORON-CLIP: a humped design whose c_bol already sits at the clip has
+    # c_max clipped to the same value, so the inequality is not strict there
+    assert all(r["c_max"] >= r["c_bol"] for r in humped)
+    assert any(r["c_max"] > r["c_bol"] for r in humped)
+    assert all(0.0 <= r["c_max"] <= 6000.0 for r in raw)
     assert all(abs(r["c_max"] - r["c_bol"]) < 1e-9 for r in flat)
     # no floor on c_max_op: the xenon credit lowers it below c_bol when the
     # unfloored hump is negative, and it equals c_max once the hump is
     # above the noise floor
     assert all(r["c_max_op"] <= r["c_bol"] + 1e-9 for r in raw if r["hump_core_op_pcm"] <= 0)
     assert all(abs(r["c_max_op"] - r["c_max"]) < 1e-9 for r in humped)
+    clipped = [r for r in raw if r["c_max"] == 6000.0]
+    floored = [r for r in raw if r["c_max"] == 0.0]
+    print(f"clipped at 6000 ppm: {len(clipped)} | floored at 0 ppm: {len(floored)}")
     solves = np.array(ev.extra_solves)
     assert set(solves.tolist()) <= {1, 2}, solves
 

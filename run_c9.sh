@@ -140,7 +140,7 @@ print("    c_bol  ppm   :", [round(x["c_bol"]) for x in r])
 print("    c_max  ppm   :", [round(x["c_max"]) for x in r])
 print("    hump_core pcm:", [round(x["hump_core_pcm"]) for x in r])
 print("    feasible     :", len(feas), "of", len(r),
-      "(0 is EXPECTED here: max_burnup is 30 MWd/kg in smoke, so every\n     cycle length is censored far below the 1826 EFPD mission)")
+      "(0 is EXPECTED here: the core solves run at 8000 x 60 and the\n     peaking estimator is a max over mesh bins, which is biased HIGH\n     at low statistics, so g_peak fails on every design. g_efpd is\n     mostly SATISFIED, because the 30 MWd/kg smoke cap is 3005 EFPD,\n     above the 1826 EFPD mission.)")
 PY
   mark S
 }

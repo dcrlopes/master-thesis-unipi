@@ -63,6 +63,13 @@ PPM_STEP = 2000.0
 PPM_TOP = 3000.0
 PPM_LOW = 0.0
 HUMP_NOISE_PCM = 400.0
+PPM_FLOOR = 0.0          # a concentration cannot be negative
+PPM_CLIP = 6000.0        # BORON-CLIP, twice the top measured point: beyond
+                         # the measured support the linear extrapolation is
+                         # fiction, exactly as EFPD-CLIP treats cycle length
+                         # beyond the depletion ceiling. Ranking is preserved
+                         # because every clipped design is far above the
+                         # measured moderator-coefficient ceiling anyway.
 
 
 # ------------------------------------------------------------- reactivity --
@@ -173,14 +180,39 @@ def next_concentration(points: dict, targets, top=PPM_TOP, step=PPM_STEP,
 
 
 # ------------------------------------------------------------- objective --
-def boron_objective(points: dict, hump: dict) -> dict:
+def clamp_ppm(c: float, status: str, floor: float = PPM_FLOOR,
+              clip: float | None = PPM_CLIP) -> tuple[float, str]:
+    """Keep the objective inside the range where it means something.
+
+    Below the floor: the core cannot be made critical at any concentration,
+    so the extrapolated root is negative. Such a design is a dud and is
+    already infeasible on g_kmin, but the objective is MINIMISED, so an
+    unclamped negative value would be the best value in the archive and
+    would steer the surrogate into a region where nothing operates.
+
+    Above the clip: the root is extrapolated far beyond the measured
+    points. Self-shielding makes the true value higher still, so the
+    ranking survives, but the magnitude is fiction and it stretches the
+    surrogate's length scale. Same treatment as EFPD-CLIP.
+    """
+    if c < floor:
+        return floor, "below_floor"
+    if clip is not None and c > clip:
+        return clip, "above_clip"
+    return c, status
+
+
+def boron_objective(points: dict, hump: dict, clip: float | None = PPM_CLIP) -> dict:
     """c_BOL, c_max and c_max_op with their local worths and status flags."""
     out = {}
     c, w, s = root_ppm(points, 0.0)
+    c, s = clamp_ppm(c, s, clip=clip)
     out.update(c_bol_ppm=c, w_b_bol_pcm_per_ppm=w, c_bol_status=s)
     c, w, s = root_ppm(points, -hump["hump_core_pcm"])
+    c, s = clamp_ppm(c, s, clip=clip)
     out.update(c_max_ppm=c, w_b_max_pcm_per_ppm=w, c_max_status=s)
     c, w, s = root_ppm(points, -hump["hump_core_op_pcm"])
+    c, s = clamp_ppm(c, s, clip=clip)
     out.update(c_max_op_ppm=c, c_max_op_status=s)
     out["boron_points"] = {f"{k:g}": v for k, v in sorted(points.items())}
     return out
@@ -245,6 +277,18 @@ def selftest():
     # low branch never asks for the top even when unbracketed
     r2 = {1000.0: -800.0, 0.0: -200.0}
     assert next_concentration(r2, [0.0]) is None
+
+    # clamp: a dud reports the floor, not a negative best-in-archive value
+    cf, sf = clamp_ppm(-1044.0, "extrap_lo")
+    assert cf == 0.0 and sf == "below_floor"
+    cc, sc = clamp_ppm(12196.0, "extrap_hi")
+    assert cc == 6000.0 and sc == "above_clip"
+    assert clamp_ppm(2348.0, "interp") == (2348.0, "interp")
+    assert clamp_ppm(12196.0, "extrap_hi", clip=None) == (12196.0, "extrap_hi")
+    dud = boron_objective({1000.0: -800.0, 0.0: -200.0}, h)
+    assert dud["c_bol_ppm"] == 0.0 and dud["c_bol_status"] == "below_floor"
+    far = boron_objective({1000.0: 40000.0, 2000.0: 33000.0, 3000.0: 26500.0}, h)
+    assert far["c_bol_ppm"] == 6000.0 and far["c_bol_status"] == "above_clip"
 
     # objective assembly
     obj = boron_objective(pts, h)

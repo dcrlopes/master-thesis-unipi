@@ -38,6 +38,11 @@ BORON_STEP=2000
 BORON_TOP=3000
 BORON_CEILING=2763
 HUMP_NOISE=400
+# smoke only: the depletion runs at 800x30, so the hump carries about
+# 1000 pcm of statistical noise against 228 pcm at campaign fidelity.
+# A 400 pcm floor there would admit statistical humps as physical ones,
+# inflate c_max and fail g_ctrl_peak on designs that have no hump.
+HUMP_NOISE_SMOKE=2500
 BORON_OBJ=floor
 
 mkdir -p "$MARK"
@@ -105,7 +110,8 @@ stage_S() {
   hr; echo " STAGE S. Smoke run (coarse transport, 4 + 2 evaluations)"; hr
   python -c "import numpy, openmc; print('env ok')" \
     && python -u run_optimization.py --smoke --out "$OUT_SMOKE" "${COMMON[@]}" \
-         --n-init 4 --n-infill 2 --iters 1 2>&1 | tee "$OUT_SMOKE.log" \
+         --n-init 4 --n-infill 2 --iters 1 \
+         --hump-noise "$HUMP_NOISE_SMOKE" 2>&1 | tee "$OUT_SMOKE.log" \
     || die "smoke run failed"
   python - <<PY || die "smoke checkpoint is not a Campaign 9 archive"
 import json
@@ -115,9 +121,15 @@ assert "g_efpd" in d["constraint_names"] and "g_ctrl_peak" in d["constraint_name
 assert d["meta"]["objective_set"] == "c9"
 r = d["all_raw"]
 assert all("c_max" in x and "n_boron_solves" in x for x in r)
-print("  smoke archive OK:", len(r), "evaluations,",
-      "boron solves", [x["n_boron_solves"] for x in r],
-      "c_max", [round(x["c_max"]) for x in r])
+cn = d["constraint_names"]
+feas = [x for x in r if all(x[c] <= 0 for c in cn)]
+print("  smoke archive OK:", len(r), "evaluations")
+print("    boron solves :", [x["n_boron_solves"] for x in r])
+print("    c_bol  ppm   :", [round(x["c_bol"]) for x in r])
+print("    c_max  ppm   :", [round(x["c_max"]) for x in r])
+print("    hump_core pcm:", [round(x["hump_core_pcm"]) for x in r])
+print("    feasible     :", len(feas), "of", len(r),
+      "(0 is EXPECTED here: max_burnup is 30 MWd/kg in smoke, so every\n     cycle length is censored far below the 1826 EFPD mission)")
 PY
   mark S
 }

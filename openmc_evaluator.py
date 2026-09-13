@@ -365,13 +365,26 @@ class OpenMCEvaluator(Evaluator):
         for _tk in ("t_ctrl_s", "t_ctrl12_s"):
             if res.get(_tk):
                 res["t_eval_s"] += float(res[_tk])
+        # CAMPAIGN 9: adaptive boron measurement and the objective at
+        # the operating maximum. Runs only when run_optimization has
+        # configured the evaluator, so every earlier campaign is
+        # bit-for-bit unchanged. Needs the control solve above.
+        if getattr(self, "c9_efpd_req", None) is not None:
+            res.update(_c9_boron_block(self, design, res))
+            res["t_eval_s"] += float(res.get("t_boron_s", 0.0))
         if self.verbose:
             print(f"  [case {self.n_calls:04d}] "
                   f"e=({e_in:5.2f}/{e_out:5.2f}) Gd={design['gd_wt']:4.2f} "
                   f"p={design['pitch']:.3f} refl={design['refl_thick']:5.1f} "
                   f"k_target={k_target_used:.4f} "
                   f"-> EFPD={cycle_efpd:7.0f}{'(CEN)' if censored else '     '} "
-                  f"F_dh={peaking:.3f} k_bol={k_bol:.4f} "
+                  # F_dh is the CORE value, the objective and the g_peak
+                  # constraint. The assembly value follows in brackets as
+                  # a diagnostic: it is archived as "peaking_asm" and runs
+                  # about a factor 1.31 lower, since a reflective-boundary
+                  # assembly cannot see the radial tilt of the core.
+                  f"F_dh={core['fdh_core']:.3f} (asm {peaking:.3f}) "
+                  f"k_bol={k_bol:.4f} "
                   f"[{n_solves} solves, "
                   f"{res['t_eval_s'] / 60.0:.1f} min]")
         return res
@@ -627,6 +640,11 @@ class OpenMCEvaluator(Evaluator):
         else:
             efpd = bu_eoc * 1000.0 / self.spec_power
 
+        # CAMPAIGN 9: the operating maximum needs the whole history. Keep
+        # it on the instance so the return signature, which other
+        # scripts unpack, is untouched.
+        self._last_k_hist = [float(v) for v in k_hist]
+        self._last_bu_hist = [float(v) for v in bu_hist]
         return efpd, k_bol, k_target, censored, bu_eoc, len(k_hist)
 
 
@@ -663,3 +681,68 @@ def _ctrl_solve(ev, design, positions=None, salt="ctrl"):
         case=ev.workdir / f"{salt}_{tag:08x}",
         rodded_map=(set(pos),
                     getattr(ev, "ctrl_absorber", "B4C")))
+
+
+# --------------------------------------------------------------------------- #
+# CAMPAIGN 9 helpers (appended by apply_c9_reformulation.py)                   #
+# --------------------------------------------------------------------------- #
+def _boron_solve(ev, design, ppm):
+    """One unrodded zoned core solve at soluble boron `ppm`. Same fidelity,
+    zoning path and deterministic seeding as _ctrl_solve; the case
+    directory is keyed by the design hash AND the concentration, so each
+    concentration reuses its own cache."""
+    import dataclasses
+    op = dataclasses.replace(ev.op, boron_ppm=float(ppm))
+    salt = f"boron{float(ppm):g}"
+    tag = _design_seed(design, salt=salt) & 0xFFFFFFFF
+    return zn.core_bol_solve(
+        design, zn.evaluator_design_map(design), op, ev.geo,
+        particles=ev.core_particles, batches=ev.core_batches,
+        inactive=ev.core_inactive,
+        seed=_design_seed(design, salt=salt),
+        case=ev.workdir / f"{salt}_{tag:08x}",
+        rodded_map=None)
+
+
+def _c9_boron_block(ev, design, res):
+    """Adaptive measurement of the critical boron and the objective at the
+    operating maximum. See boron_objective.py for the arithmetic."""
+    import boron_objective as bo
+    t0 = time.perf_counter()
+    k_hist = getattr(ev, "_last_k_hist", None) or [float(res["k_bol"])]
+    hump = bo.hump_from_history(k_hist, float(res["keff_core_bol"]),
+                                noise_pcm=float(ev.c9_hump_noise_pcm))
+    points = {bo.PPM_REF: bo.rho_pcm(float(res["keff_core_bol"]))}
+    targets = [0.0, -hump["hump_core_pcm"], -hump["hump_core_op_pcm"]]
+    n_extra = 0
+    while True:
+        nxt = bo.next_concentration(points, targets,
+                                    top=float(ev.c9_ppm_top),
+                                    step=float(ev.c9_ppm_step))
+        if nxt is None:
+            break
+        sol = _boron_solve(ev, design, nxt)
+        points[float(nxt)] = bo.rho_pcm(float(sol["keff"]))
+        n_extra += 1
+    obj = bo.boron_objective(points, hump)
+    ctrl = bo.ctrl_margin_at_peak(float(res["k_allre"]), hump,
+                                  float(ev.ctrl_margin_dk))
+    out = {}
+    out.update(hump)
+    out.update(obj)
+    out.update(ctrl)
+    out["c_max"] = float(obj["c_max_ppm"] if ev.c9_boron_objective == "floor"
+                         else obj["c_max_op_ppm"])
+    out["c_bol"] = float(obj["c_bol_ppm"])
+    out["g_efpd"] = float(ev.c9_efpd_req) - float(res["cycle_length"])
+    # recorded, never constrained: the measured MTC ceiling drawn as a line
+    out["g_boron"] = out["c_max"] - float(ev.c9_boron_ceiling_ppm)
+    out["n_boron_solves"] = n_extra
+    out["t_boron_s"] = time.perf_counter() - t0
+    if getattr(ev, "verbose", False):
+        print(f"      c9: c_BOL={out['c_bol']:6.0f} ppm ({obj['c_bol_status']}) "
+              f"c_max={out['c_max']:6.0f} ppm ({obj['c_max_status']}) "
+              f"hump_core={hump['hump_core_pcm']:+6.0f} pcm "
+              f"g_efpd={out['g_efpd']:+7.0f} g_ctrl_peak={ctrl['g_ctrl_peak']:+.4f} "
+              f"[{n_extra} boron solves, {out['t_boron_s']:.0f} s]")
+    return out

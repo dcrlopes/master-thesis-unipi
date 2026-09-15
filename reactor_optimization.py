@@ -1082,6 +1082,40 @@ def example_reactor_problem() -> ProblemSpec:
                        constraint_scales=scales)
 
 
+def campaign9_problem(efpd_req: float, f_max: float = 1.65) -> ProblemSpec:
+    """CAMPAIGN 9: the reformulated problem.
+
+    Cycle length and peaking become constraints, the objectives become the
+    unrodded hot channel factor and the critical boron at the operating
+    maximum. Everything else (design space, analytic vessel-fit
+    constraint, normalisation) is inherited from example_reactor_problem,
+    so the search box is identical to Campaign 8.
+
+        minimise   peaking, c_max
+        subject to EFPD >= efpd_req            (g_efpd)
+                   F_dH <= f_max               (g_peak)
+                   k_min <= k_core <= k_max    (g_kmin, g_kmax)
+                   LEU cap, vessel fit         (g_enr, g_geom)
+                   four-bank margin at the operating maximum (g_ctrl_peak)
+
+    The two-bank reading and the boron ceiling are recorded on every
+    evaluation and never constrained, so the front can be split
+    afterwards without shrinking the feasible region in advance.
+    """
+    spec = example_reactor_problem()
+    spec.objectives = [
+        Objective("peaking", maximize=False, label="Power peaking factor"),
+        Objective("c_max", maximize=False,
+                  label="Critical boron at the operating maximum [ppm]"),
+    ]
+    spec.constraint_names = ["g_kmin", "g_kmax", "g_enr", "g_peak", "g_geom",
+                             "g_efpd", "g_ctrl_peak"]
+    spec.constraint_scales["g_efpd"] = float(efpd_req)
+    spec.constraint_scales["g_ctrl_peak"] = 1.0        # k-units, like g_ctrl
+    spec.constraint_scales["g_peak"] = float(f_max)
+    return spec
+
+
 # =============================================================================
 # 8.  DEMO  (runs with the analytic evaluator -- no OpenMC needed)
 # =============================================================================

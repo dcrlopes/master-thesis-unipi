@@ -1,0 +1,87 @@
+{
+ "40": {
+  "design": {
+   "enrich_inner": 4.231524851815442,
+   "enrich_outer": 4.231524851815442,
+   "gd_wt": 2.7126363833282703,
+   "pitch": 1.26,
+   "refl_thick": 5.659993490689052,
+   "gd_pins": 16.047250663582318
+  },
+  "spec": {
+   "h_active": 120.0,
+   "bottom_nozzle": 10.16,
+   "top_nozzle": 9.02,
+   "end_cap": 1.205,
+   "plenum": 13.49,
+   "upper_gap": 8.481,
+   "grid_height": 4.445,
+   "grid1_offset": 3.555,
+   "grid_span": 41.4,
+   "n_grids": 4,
+   "grid_box_in": 1.2242,
+   "nozzle_ss_bottom": 0.172,
+   "nozzle_ss_top": 0.177,
+   "spring_r": 0.0646,
+   "cr_empty_gt": 8.386,
+   "cr_end_plug": 4.859,
+   "cr_aic": 30.48,
+   "cr_upper_plenum": 23.176,
+   "cr_r_aic": 0.4267,
+   "cr_r_b4c": 0.4229,
+   "cr_clad_ir": 0.4369,
+   "cr_clad_or": 0.4839,
+   "n_cr_per_assembly": 24,
+   "barrel": 5.08,
+   "r_vessel_in": 90.0,
+   "vessel_wall": 10.0,
+   "include_vessel_wall": true,
+   "water_below": 15.0,
+   "water_above": 15.0,
+   "refl_steel_vol": null,
+   "cr_abs_radius": null,
+   "rod_stack": "benchmark",
+   "model_parked_rods": true
+  },
+  "ARO_2D": {
+   "k": 0.9996803428908085,
+   "F": 1.4554463457666202,
+   "n": 2
+  },
+  "ARO_3Dhw": {
+   "k": 0.9703136038535831,
+   "F": 1.450748910144192,
+   "n": 2
+  },
+  "ARO_Lax_hw": 1.0302652038687243,
+  "ARO_dk_pcm": 3027.4881449809805,
+  "ARI_2D": {
+   "k": 0.855175823926931,
+   "F": 2.2767722482990354,
+   "n": 2
+  },
+  "ARI_3Dhw": {
+   "k": 0.8401531772326507,
+   "F": 2.128939959871632,
+   "n": 2
+  },
+  "ARI_Lax_hw": 1.017880842567022,
+  "ARI_dk_pcm": 2090.896639817747,
+  "ARI_margin2D_pcm": 16935.01757428578,
+  "ARI_margin3D_pcm": 19025.914214103526,
+  "RE12_2D": {
+   "k": 0.9278590904944295,
+   "F": 1.933864485544476,
+   "n": 2
+  },
+  "RE12_3Dhw": {
+   "k": 0.9054471764009182,
+   "F": 1.8860103047050116,
+   "n": 2
+  },
+  "RE12_Lax_hw": 1.024752315405739,
+  "RE12_dk_pcm": 2667.680433302555,
+  "RE12_margin2D_pcm": 7774.985474047432,
+  "RE12_margin3D_pcm": 10442.665907349987
+ }
+}

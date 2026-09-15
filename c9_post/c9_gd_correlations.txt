@@ -1,0 +1,16 @@
+band 3.96 to 4.66 wt%, 16 feasible designs
+Spearman with average ranks (scipy), ties present in the hump only
+
+  Gd wt%    vs c_max : -0.932  p=1.45e-07
+  Gd inventory vs c_max : -0.953  p=1.21e-08   <- better variable
+  Gd wt%    vs hump  : -0.723  p=0.002   <- better variable
+  Gd inventory vs hump  : -0.684  p=0.003
+  Kendall tau-b, Gd vs c_max -0.817 | Gd vs hump -0.598
+
+  c_max 1406 to 3003 ppm over Gd 0.14 to 5.22 wt%
+  inventory 4.5 to 104.4 wt%-pins
+
+hump grouped test (9 designs tied at zero, so rank correlation is weak here)
+  resolved hump >400 pcm : n=7, mean Gd 1.67 wt%
+  no resolved hump       : n=9, mean Gd 3.52 wt%
+  Mann-Whitney U=10, one-sided p=0.0115

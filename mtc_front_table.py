@@ -77,11 +77,27 @@ def read_scan(d):
     return dict(dir=d.name, points=sorted(pts), meta=meta, quoted=quoted)
 
 
-def crossing(points):
-    """Weighted straight-line fit of MTC against boron, with the crossing."""
+def crossing(points, mode="local", inflate=True):
+    """Weighted straight-line fit of MTC against boron, with the crossing.
+
+    mode "local" keeps the three points nearest the sign change, because the
+    coefficient is mildly curved in boron and a line through the whole sweep
+    averages that curvature into the crossing. mode "global" keeps them all.
+    inflate scales the uncertainty by sqrt(chi2/dof) when that exceeds one,
+    which widens the error bar when the straight line does not describe the
+    points, instead of reporting a precision the fit has not earned.
+    """
     c = np.array([p[0] for p in points], float)
     y = np.array([p[1] for p in points], float)
     s = np.array([p[2] for p in points], float)
+    if mode == "local" and len(c) > 3:
+        neg = np.where(y < 0)[0]
+        pos = np.where(y >= 0)[0]
+        if len(neg) and len(pos):
+            lo, hi = neg[-1], pos[0]
+            order = np.argsort(np.abs(c - 0.5 * (c[lo] + c[hi])))[:3]
+            keep = np.sort(order)
+            c, y, s = c[keep], y[keep], s[keep]
     s = np.where(s > 0, s, np.nanmedian(s[s > 0]) if np.any(s > 0) else 1.0)
     if len(c) < 3:                      # two points, no degrees of freedom
         m = (y[1] - y[0]) / (c[1] - c[0])
@@ -98,7 +114,10 @@ def crossing(points):
     var = dm ** 2 * cov[0, 0] + db ** 2 * cov[1, 1] + 2 * dm * db * cov[0, 1]
     resid = y - (m * c + b)
     chi2 = float(np.sum((resid / s) ** 2) / (len(c) - 2))
-    return float(cstar), float(np.sqrt(max(var, 0.0))), float(m), float(b), chi2, len(c)
+    sig = float(np.sqrt(max(var, 0.0)))
+    if inflate and chi2 > 1.0:
+        sig *= float(np.sqrt(chi2))
+    return float(cstar), sig, float(m), float(b), chi2, len(c)
 
 
 def main():
@@ -110,6 +129,8 @@ def main():
     ap.add_argument("--out", default="c9_post")
     ap.add_argument("--figure", action="store_true")
     ap.add_argument("--k-sigma", type=float, default=2.0)
+    ap.add_argument("--fit", choices=["local", "global"], default="local")
+    ap.add_argument("--no-inflate", action="store_true")
     a = ap.parse_args()
 
     ck_path = pathlib.Path(a.checkpoint)
@@ -139,7 +160,7 @@ def main():
             print(f"  skipped {s['dir']}, no design index")
             continue
         r = arc[idx]
-        cstar, sig, m, b, chi2, n = crossing(s["points"])
+        cstar, sig, m, b, chi2, n = crossing(s["points"], a.fit, not a.no_inflate)
         need = r.get("c_max_ppm") or r.get("c_bol_ppm")   # absent in C8 archives
         margin = None if need is None else cstar - need
         feasible = bool(cons) and all(r.get(g) is not None and r[g] <= 0 for g in cons)

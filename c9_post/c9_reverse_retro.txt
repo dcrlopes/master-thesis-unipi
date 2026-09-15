@@ -1,0 +1,31 @@
+1. THE CAMPAIGN 9 ARCHIVE SCORED UNDER THE CAMPAIGN 8 OBJECTIVES
+   constraints applied: ['g_kmin', 'g_kmax', 'g_enr', 'g_peak', 'g_geom', 'g_ctrl']  (g_efpd and g_ctrl_peak dropped, as in C8)
+   feasible 35 of 60; non-dominated in (max EFPD, min F): [1, 10, 12, 16, 29, 35, 55]
+   of which on the Campaign 9 front: [35]
+   Campaign 9 front members the C8 formulation would discard: [34, 40, 44, 47] of 5
+
+    id     e    Gd   EFPD      F  c_max  C8-nondominated  C9-front
+    10  7.89  5.94   4163  1.608   4371              yes        no
+     1  5.51  2.76   2742  1.591   2615              yes        no
+    16  4.86  4.66   2283  1.552   2715              yes        no
+    29  4.48  4.21   1993  1.551   1452              yes        no
+    12  4.37  0.14   1971  1.493   3003              yes        no
+    47  4.46  4.42   1947  1.545   1406               no       yes
+    35  4.36  2.63   1938  1.490   1908              yes       yes
+    40  4.23  2.71   1870  1.495   1768               no       yes
+    44  4.24  3.15   1858  1.539   1496               no       yes
+    34  4.26  3.32   1841  1.496   1725               no       yes
+    55  4.20  0.09   1813  1.487   2923              yes        no
+
+2. NON-DOMINATION DEPTH OF THE CAMPAIGN 9 FRONT UNDER THE CAMPAIGN 8 OBJECTIVES
+   id  47: depth 3  (1 = would have been on the C8-style front, higher = discarded earlier)
+   id  44: depth 4  (1 = would have been on the C8-style front, higher = discarded earlier)
+   id  34: depth 3  (1 = would have been on the C8-style front, higher = discarded earlier)
+   id  40: depth 2  (1 = would have been on the C8-style front, higher = discarded earlier)
+   id  35: depth 1  (1 = would have been on the C8-style front, higher = discarded earlier)
+
+3. CROSS-CAMPAIGN OVERLAP, normalised design-space distance to the Campaign 9 front
+   C8 design 47 (4.39 wt%, Gd 2.88, pins 12, refl 4.29, F 1.510, EFPD 1941)
+      nearest C9 front member id 35 (4.36 wt%, Gd 2.63, pins 16, refl 5.65, F 1.490, EFPD 1938, c_max 1908), distance 0.401 (outside the 0.14 infill separation)
+   C8 design 13 (5.14 wt%, Gd 5.25, pins 24, refl 3.15, F 1.632, EFPD 2383)
+      nearest C9 front member id 47 (4.46 wt%, Gd 4.42, pins 20, refl 5.66, F 1.545, EFPD 1947, c_max 1406), distance 0.722 (outside the 0.14 infill separation)

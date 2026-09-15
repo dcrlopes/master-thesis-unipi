@@ -1,0 +1,20 @@
+2D versus 3D unrodded peaking, 5 designs (front)
+ id     e    Gd   F_2D   F_3D  ratio    diff
+ 35  4.36  2.63  1.481  1.487  1.004  +0.006
+ 34  4.26  3.32  1.482  1.487  1.003  +0.005
+ 40  4.23  2.71  1.496  1.456  0.973  -0.040
+ 44  4.24  3.15  1.514  1.513  0.999  -0.001
+ 47  4.46  4.42  1.527  1.501  0.983  -0.026
+
+ratio F_3D/F_2D : mean 0.9924  sd 0.0137  relative sd 1.38 %  range 0.973 to 1.004
+difference      : mean -0.0114  sd 0.0206  range -0.040 to +0.006
+Spearman rho 0.600, largest rank shift 2 of 5
+ranking by F_2D: [35, 34, 40, 44, 47]
+ranking by F_3D: [40, 35, 34, 47, 44]
+
+front over the 5 confirmed feasible designs, in (F, c_max):
+   with F_2D: [34, 35, 44, 47]
+   with F_3D: [34, 40, 47]
+   CHANGED: gained [40], lost [35, 44]
+
+DECISION: the 3D peaking reorders the confirmed designs and changes the front. That is the Campaign 10 result, already measured on these designs. Run Campaign 10 only if the reordering reaches the champion.

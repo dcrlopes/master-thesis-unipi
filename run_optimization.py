@@ -269,6 +269,36 @@ def main():
                          "(max_burnup converted to EFPD). The clip is ON by "
                          "default because the truth evaluator censors "
                          "there, so predictions beyond it are fiction.")
+    # ---- CAMPAIGN 9 ----------------------------------------------------
+    ap.add_argument("--objective-set", choices=["c8", "c9"], default="c8",
+                    help="c8: maximise cycle length, minimise peaking "
+                         "(Campaigns 1 to 8). c9: minimise peaking and the "
+                         "critical boron at the operating maximum, with the "
+                         "cycle length as a constraint (--efpd-req). c9 "
+                         "requires --ctrl-margin.")
+    ap.add_argument("--efpd-req", type=float, default=1826.0,
+                    help="c9: mission cycle length, EFPD (default 1826, five "
+                         "years at capacity factor 1.0). Constraint g_efpd.")
+    ap.add_argument("--boron-objective", choices=["floor", "op"],
+                    default="floor",
+                    help="c9: which critical boron is the objective. floor: "
+                         "hump floored at zero, xenon-free reference "
+                         "(conservative, the campaign default). op: no floor, "
+                         "the xenon credit reduces the requirement. Both are "
+                         "recorded on every evaluation.")
+    ap.add_argument("--boron-step", type=float, default=2000.0,
+                    help="c9: second concentration measured when the core is "
+                         "supercritical at the 1000 ppm reference, ppm")
+    ap.add_argument("--boron-top", type=float, default=3000.0,
+                    help="c9: third and last concentration, measured only when "
+                         "a root is not yet bracketed, ppm")
+    ap.add_argument("--boron-ceiling", type=float, default=2763.0,
+                    help="c9: measured MTC ceiling, ppm (design 47, hardware "
+                         "3D, 12.8 MPa). Recorded as g_boron, never "
+                         "constrained.")
+    ap.add_argument("--hump-noise", type=float, default=400.0,
+                    help="c9: gadolinium humps below this are treated as "
+                         "unresolved and set to zero, pcm")
     args = ap.parse_args()
 
     # FROZEN TARGET (float) vs ROUTE B (per-design table) -- computed once, used by
@@ -289,13 +319,17 @@ def main():
     from sklearn.exceptions import ConvergenceWarning
     warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
-    from reactor_optimization import (example_reactor_problem, OptimizerConfig,
+    from reactor_optimization import (example_reactor_problem, campaign9_problem,
+                                      OptimizerConfig,
                                       ActiveLearningMOO)
     from openmc_evaluator import OpenMCEvaluator
 
     import leu_policy as _leu
     import zoning as _zn     # ZONED-EVALUATOR: record the map in metadata
-    spec = example_reactor_problem()
+    if args.objective_set == "c9":
+        spec = campaign9_problem(args.efpd_req, f_max=args.f_max)
+    else:
+        spec = example_reactor_problem()
     # ENR-BOX (Campaign 7): --enr-max only defined the constraint g_enr; the
     # search box stayed at leu_policy.E_SEARCH_MAX, so every sample above the
     # cap paid full depletion before being rejected. Apply the same
@@ -423,6 +457,27 @@ def main():
         ev.ctrl_absorber = args.ctrl_absorber
         spec.constraint_names.append("g_ctrl")
         spec.constraint_scales["g_ctrl"] = 1.0     # k-units: limit is 1.0
+    # CAMPAIGN 9: configure the evaluator. The control solve is required
+    # because the operating-maximum screen starts from k_allre. The EFPD
+    # clip is disabled because it acts on objective 0, which is now the
+    # peaking factor, and cycle length is a constraint surrogate.
+    if args.objective_set == "c9":
+        if args.ctrl_margin is None:
+            raise SystemExit("--objective-set c9 requires --ctrl-margin "
+                             "(the operating-maximum screen starts from "
+                             "the four-bank solve)")
+        ev.c9_efpd_req = float(args.efpd_req)
+        ev.c9_boron_objective = args.boron_objective
+        ev.c9_ppm_step = float(args.boron_step)
+        ev.c9_ppm_top = float(args.boron_top)
+        ev.c9_boron_ceiling_ppm = float(args.boron_ceiling)
+        ev.c9_hump_noise_pcm = float(args.hump_noise)
+        args.no_efpd_clip = True
+        print(f"CAMPAIGN 9: objectives peaking + c_max ({args.boron_objective}) | "
+              f"EFPD >= {args.efpd_req:g} | boron points 1000, "
+              f"{args.boron_step:g}, {args.boron_top:g} ppm | ceiling "
+              f"{args.boron_ceiling:g} ppm recorded | hump noise "
+              f"{args.hump_noise:g} pcm")
     # EFPD-CLIP: cap the surrogate's predicted cycle length at the depletion
     # ceiling, converted with the same specific power the banner prints
     # (cap [MWd/kgHM] * 1000 / spec_power [W/gHM] = cap [EFPD]; 100 MWd/kgHM
@@ -581,6 +636,20 @@ def main():
                                "leu_policy), evaluator-zoned from Campaign 6",
                            "schedule": dict(schedule),
                            "geometry": "v2-envelope",
+                           "objective_set": args.objective_set,
+                           "campaign9": ({
+                               "efpd_req": args.efpd_req,
+                               "boron_objective": args.boron_objective,
+                               "boron_points_ppm": [1000.0, args.boron_step,
+                                                    args.boron_top],
+                               "boron_ceiling_ppm": args.boron_ceiling,
+                               "hump_noise_pcm": args.hump_noise,
+                               "hump_reference": "xenon-free k_hist[0], "
+                                                 "core solve is xenon-free",
+                               "worth": "local slope of the measured "
+                                        "rho(c) at the root",
+                               "g_boron_note": "recorded, not constrained"}
+                               if args.objective_set == "c9" else None),
                            # the five numbers that define the constrained
                            # problem, so the archive can state its own
                            # constraint set without reading the source
@@ -681,24 +750,35 @@ def main():
           f"--max-burnup {schedule['max_burnup']:g} "
           f"--dep-step {schedule['dep_step']:g}"
           + (" --smoke" if args.smoke else ""))
-    _plot(res, args.out)
+    _plot(res, args.out, opt.spec.objectives)
 
 
-def _plot(res, outdir):
+def _plot(res, outdir, objectives=None):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
     allF = res["all_F"]
     pf = res["pareto_F"]
+    # objectives are stored minimised; undo the sign for maximised ones.
+    # With no objective list the Campaign 1 to 8 layout is reproduced.
+    if objectives is None:
+        sx, sy = -1.0, 1.0
+        lx, ly = "Cycle length [EFPD]  (maximise)", "Power peaking factor  (minimise)"
+    else:
+        ox, oy = objectives[0], objectives[1]
+        sx = -1.0 if ox.maximize else 1.0
+        sy = -1.0 if oy.maximize else 1.0
+        lx = f"{ox.label}  ({'maximise' if ox.maximize else 'minimise'})"
+        ly = f"{oy.label}  ({'maximise' if oy.maximize else 'minimise'})"
     fig, ax = plt.subplots(1, 2, figsize=(11, 4.2))
-    ax[0].scatter(-allF[:, 0], allF[:, 1], s=18, c="lightgray",
+    ax[0].scatter(sx * allF[:, 0], sy * allF[:, 1], s=18, c="lightgray",
                   label="all evaluations")
     if len(pf):
-        ax[0].scatter(-pf[:, 0], pf[:, 1], s=42, c="crimson", zorder=3,
+        ax[0].scatter(sx * pf[:, 0], sy * pf[:, 1], s=42, c="crimson", zorder=3,
                       label="Pareto front")
-    ax[0].set_xlabel("Cycle length [EFPD]  (maximise \u2192)")
-    ax[0].set_ylabel("Power peaking factor  (\u2190 minimise)")
+    ax[0].set_xlabel(lx)
+    ax[0].set_ylabel(ly)
     ax[0].set_title("Objective space (OpenMC)")
     ax[0].legend(); ax[0].grid(alpha=0.3)
     ax[1].plot(range(len(res["hv_history"])), res["hv_history"], "o-", c="navy")

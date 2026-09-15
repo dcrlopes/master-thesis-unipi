@@ -1,0 +1,87 @@
+{
+ "44": {
+  "design": {
+   "enrich_inner": 4.243389360560846,
+   "enrich_outer": 4.243389360560846,
+   "gd_wt": 3.1459378226973413,
+   "pitch": 1.26,
+   "refl_thick": 5.659245092313537,
+   "gd_pins": 18.85163804687018
+  },
+  "spec": {
+   "h_active": 120.0,
+   "bottom_nozzle": 10.16,
+   "top_nozzle": 9.02,
+   "end_cap": 1.205,
+   "plenum": 13.49,
+   "upper_gap": 8.481,
+   "grid_height": 4.445,
+   "grid1_offset": 3.555,
+   "grid_span": 41.4,
+   "n_grids": 4,
+   "grid_box_in": 1.2242,
+   "nozzle_ss_bottom": 0.172,
+   "nozzle_ss_top": 0.177,
+   "spring_r": 0.0646,
+   "cr_empty_gt": 8.386,
+   "cr_end_plug": 4.859,
+   "cr_aic": 30.48,
+   "cr_upper_plenum": 23.176,
+   "cr_r_aic": 0.4267,
+   "cr_r_b4c": 0.4229,
+   "cr_clad_ir": 0.4369,
+   "cr_clad_or": 0.4839,
+   "n_cr_per_assembly": 24,
+   "barrel": 5.08,
+   "r_vessel_in": 90.0,
+   "vessel_wall": 10.0,
+   "include_vessel_wall": true,
+   "water_below": 15.0,
+   "water_above": 15.0,
+   "refl_steel_vol": null,
+   "cr_abs_radius": null,
+   "rod_stack": "benchmark",
+   "model_parked_rods": true
+  },
+  "ARO_2D": {
+   "k": 0.9996676381012954,
+   "F": 1.5061442849680124,
+   "n": 2
+  },
+  "ARO_3Dhw": {
+   "k": 0.9703126393101729,
+   "F": 1.497800449944584,
+   "n": 2
+  },
+  "ARO_Lax_hw": 1.0302531345072368,
+  "ARO_dk_pcm": 3026.319283946976,
+  "ARI_2D": {
+   "k": 0.8529557541119681,
+   "F": 2.275220077304809,
+   "n": 2
+  },
+  "ARI_3Dhw": {
+   "k": 0.8381850964997293,
+   "F": 2.144421736695305,
+   "n": 2
+  },
+  "ARI_Lax_hw": 1.0176221906997884,
+  "ARI_dk_pcm": 2066.0146337995393,
+  "ARI_margin2D_pcm": 17239.37556891483,
+  "ARI_margin3D_pcm": 19305.39020271437,
+  "RE12_2D": {
+   "k": 0.9272616134161437,
+   "F": 2.014139727844717,
+   "n": 2
+  },
+  "RE12_3Dhw": {
+   "k": 0.9045329195655376,
+   "F": 1.9604246680160085,
+   "n": 2
+  },
+  "RE12_Lax_hw": 1.025127547443517,
+  "RE12_dk_pcm": 2709.866027015197,
+  "RE12_margin2D_pcm": 7844.429827724599,
+  "RE12_margin3D_pcm": 10554.295854739796
+ }
+}

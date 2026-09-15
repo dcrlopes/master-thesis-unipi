@@ -1,0 +1,17 @@
+A. leave-one-out GP cross-validation, 60 designs
+   peaking    all: R2 +0.862 rmse 0.02608 cov2 0.92 | feasible: R2 +0.276 rmse 0.03874 cov2 0.82
+   c_max      all: R2 +0.964 rmse 342 cov2 0.87 | feasible: R2 +0.387 rmse 529.7 cov2 0.86
+
+B. front stability, 2000 perturbations, sigma [0.01, 10.0] in objective units
+   nominal front [34, 35, 40, 44, 47]  hypervolume ratio perturbed/nominal 1.028 +/- 0.024
+    id  freq  on nominal front
+    47  1.00  yes
+    34  1.00  yes
+    44  0.59  yes
+    40  0.54  yes
+    35  0.45  yes
+    29  0.31  no
+    30  0.24  no
+    12  0.21  no
+    54  0.10  no
+   nominal members retained in >=50% of resamples: 4 of 5

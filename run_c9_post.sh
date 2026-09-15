@@ -10,7 +10,6 @@
 #   B  figures       c9_figures.py       pareto with ceiling, Gd trade-off, hump
 #   C  step 0        c9_step0.py         LOO surrogate CV, front stability
 #   D  reverse retro c9_reverse_retro.py C9 archive under the C8 objectives
-#   E  analysis figs  c9_analysis_figures.py two formulations, stability, mechanism
 #   1  3D peaking, FRONT      confirm3d --states ARO       ~50 min  <- run first
 #   2  3D confirmation, front + two-bank, ARO/ARI/RE12 at 1000 ppm    ~5 h
 #   3  3D confirmation at each front design's own c_BOL, ARO/ARI/RE12  ~5 h
@@ -60,7 +59,6 @@ preflight() {
   python -c "import numpy, openmc; print('  openmc', openmc.__version__)" || die "openmc import failed"
   [ "$(git branch --show-current)" = "main" ] || die "not on main"
   for f in "$CKPT" "$CKPT8" "$KT" c9_front.py c9_figures.py c9_step0.py c9_reverse_retro.py \
-           c9_analysis_figures.py \
            c9_peaking_2d3d.py confirm3d.py hardware3d.py validate_ktarget_burnup.py \
            mtc_scan.py boron_worth.py boron_objective.py; do need "$f"; done
   python -c "
@@ -88,11 +86,6 @@ stage_D() { done_ D && { echo "[D] done"; return; }; hr; echo " D. reverse retro
   python c9_reverse_retro.py --c9 "$CKPT" --c8 "$CKPT8" --manifest "$POST/c9_front.json" \
     --out "$POST" || die "c9_reverse_retro"
   mark D; }
-stage_E() { done_ E && { echo "[E] done"; return; }; hr; echo " E. analysis figures"; hr
-  # needs A, C and D: reads the manifest, c9_step0.json and c9_reverse_retro.json
-  python c9_analysis_figures.py --checkpoint "$CKPT" --post "$POST" --out "$FIGS" \
-    --ceiling "$CEILING" || die "c9_analysis_figures"
-  mark E; }
 
 # ---------------------------------------------------------- OpenMC stages --
 c3d() {   # confirm3d with the campaign-consistent hardware settings
@@ -142,13 +135,20 @@ stage_4() { done_ 4 && { echo "[4] done"; return; }; hr; echo " 4. k-target burn
   mark 4; }
 
 stage_5() { done_ 5 && { echo "[5] done"; return; }; hr; echo " 5. MTC ceiling on the Campaign 9 champion"; hr
-  local CH; CH=$(ids champion); echo "  champion id: $CH"
+  # champion is a scalar in the manifest, so ids() cannot be used here
+  local CH; CH=$(python -c "import json;print(json.load(open('$POST/c9_front.json'))['champion'])")
+  [ -n "$CH" ] || die "no champion id in $POST/c9_front.json"
+  echo "  champion id: $CH"
   for P in 12.8 15.5; do
+    # the window in which the Campaign 8 ceiling was measured, so the two
+    # numbers are comparable. 590 K at 12.8 MPa is only 12.8 K subcooled.
+    if [ "$P" = "12.8" ]; then TLO=547; THI=567; else TLO=570; THI=590; fi
     for LV in core2d core3d; do
       tag="mtc_c9_p${P/./}_${LV}"
       [ -f "$tag/report.txt" ] && { echo "  $tag done"; continue; }
       python -c "import numpy, openmc; print('env ok')" \
       && python -u mtc_scan.py --checkpoint "$CKPT" --idx "$CH" --pressure "$P" --level "$LV" \
+           --t-lo "$TLO" --t-hi "$THI" \
            --boron 0,1000,2000,3000 --seeds 2 --threads "$THREADS" --out "$tag" \
            2>&1 | tee "$tag.log" || die "stage 5 $tag"
     done
@@ -193,13 +193,12 @@ banner() {
 }
 case "${1:-}" in
   --check)   preflight; echo; grep -E '^#   [A-D0-9] ' "$0"; exit 0 ;;
-  --quick)   preflight; run A; run B; run C; run D; run E
-             echo; echo "failed: ${FAILED[*]:-none}"; exit 0 ;;
+  --quick)   preflight; stage_A; stage_B; stage_C; stage_D; exit 0 ;;
   --front3d) preflight; stage_A; stage_1; stage_8; exit 0 ;;
   --only)    preflight; stage_A; "stage_$2"; exit 0 ;;
   "")        preflight
              banner "PART 1 of 3: archive analysis, no OpenMC, about one minute"
-             run A; run B; run C; run D; run E
+             run A; run B; run C; run D
              banner "PART 2 of 3: 3D peaking on the front, about 50 minutes"
              run 1; run 8
              banner "FRONT RESULTS ARE READY. Read them now, the run continues on its own:

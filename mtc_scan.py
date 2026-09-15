@@ -5,7 +5,8 @@ mtc_scan.py -- moderator temperature coefficient versus soluble boron.
 THE QUESTION
 ------------
 Campaign 8 evaluated every design at a fixed 1000 ppm reference, but no
-design is critical there. Design 47 needs about 2348 ppm, and the long-cycle
+design is critical there. The requirement of each design is read from the archive passed in
+with --checkpoint and printed with its margin. The long-cycle
 front members need 4000 to 4700 ppm. Whether those concentrations are
 operable is decided by the moderator temperature coefficient, because
 dissolved boron is expelled with the moderator when it expands and therefore
@@ -390,9 +391,26 @@ def main():
     else:
         P(f"  CROSSING CONCENTRATION: {c:.0f} ppm")
         P("")
-        P(f"  design 47 needs 2348 ppm  -> {'BELOW' if 2348 < c else 'ABOVE'} the ceiling")
-        P(f"  design 13 needs 1701 ppm  -> {'BELOW' if 1701 < c else 'ABOVE'} the ceiling")
-        P(f"  design  1 needs 4674 ppm  -> {'BELOW' if 4674 < c else 'ABOVE'} the ceiling")
+        # Read the requirement from the archive that was passed in. The
+        # Campaign 8 values were hard-coded here and were reported for
+        # Campaign 9 designs that happen to share an index.
+        need = r.get("c_max_ppm") or r.get("c_bol_ppm")
+        if need is None:
+            P(f"  design {a.idx}: no measured boron requirement in this archive")
+        else:
+            src = "c_max" if r.get("c_max_ppm") else "c_BOL"
+            P(f"  design {a.idx} needs {need:.0f} ppm ({src})"
+              f"  -> {'BELOW' if need < c else 'ABOVE'} the ceiling"
+              f"  margin {c - need:+.0f} ppm")
+        cons = ck.get("constraint_names", [])
+        feas = [x for x in ck["all_raw"]
+                if cons and all(x.get(g) is not None and x[g] <= 0 for g in cons)]
+        vals = [x["c_max_ppm"] for x in feas if x.get("c_max_ppm") is not None]
+        if vals:
+            P(f"  for reference only, {sum(1 for v in vals if v < c)} of the "
+              f"{len(vals)} feasible designs demand less than {c:.0f} ppm.")
+            P("  That is not an operability count. The ceiling is a property of")
+            P(f"  the design {a.idx} lattice and each design has its own.")
         P("")
         P("  Linear interpolation between the two bracketing points. Add points")
         P("  near the crossing if the bracket is wide.")

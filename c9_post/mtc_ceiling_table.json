@@ -16,7 +16,9 @@
   "margin": -911.6977261648894,
   "k_sigma": -13.20490557875805,
   "resolved": true,
-  "feasible": true
+  "feasible": true,
+  "n_scans": 1,
+  "merge_chi2": null
  },
  {
   "idx": 57,
@@ -35,7 +37,9 @@
   "margin": -192.59173531012857,
   "k_sigma": -1.115780624872598,
   "resolved": false,
-  "feasible": true
+  "feasible": true,
+  "n_scans": 1,
+  "merge_chi2": null
  },
  {
   "idx": 58,
@@ -44,17 +48,19 @@
   "pins": 16.0,
   "inventory": 21.036718154757157,
   "enrich": 4.276413842971935,
-  "ceiling": 2535.2104264821496,
-  "sigma": 77.62334137798571,
+  "ceiling": 2482.987938878463,
+  "sigma": 53.40522500902725,
   "quoted": 2540.0,
   "slope": 0.01741498899892615,
   "chi2": 0.09623672592769286,
   "n_points": 3,
   "demand": 2362.5204369804387,
-  "margin": 172.6899895017109,
-  "k_sigma": 2.224717287816812,
+  "margin": 120.46750189802424,
+  "k_sigma": 2.2557250133795197,
   "resolved": true,
-  "feasible": true
+  "feasible": true,
+  "n_scans": 2,
+  "merge_chi2": 0.8594265378770958
  },
  {
   "idx": 35,
@@ -73,7 +79,9 @@
   "margin": 709.6358715237343,
   "k_sigma": 10.245200741710365,
   "resolved": true,
-  "feasible": true
+  "feasible": true,
+  "n_scans": 1,
+  "merge_chi2": null
  },
  {
   "idx": 40,
@@ -92,7 +100,9 @@
   "margin": 883.2420279832547,
   "k_sigma": 3.681927374102827,
   "resolved": true,
-  "feasible": true
+  "feasible": true,
+  "n_scans": 1,
+  "merge_chi2": null
  },
  {
   "idx": 34,
@@ -111,7 +121,9 @@
   "margin": 1027.4031723941653,
   "k_sigma": 10.567554679327428,
   "resolved": true,
-  "feasible": true
+  "feasible": true,
+  "n_scans": 1,
+  "merge_chi2": null
  },
  {
   "idx": 44,
@@ -130,7 +142,9 @@
   "margin": 1362.194250588944,
   "k_sigma": 12.538639576139419,
   "resolved": true,
-  "feasible": true
+  "feasible": true,
+  "n_scans": 1,
+  "merge_chi2": null
  },
  {
   "idx": 47,
@@ -149,6 +163,8 @@
   "margin": 1490.8033671368082,
   "k_sigma": 15.003188686690557,
   "resolved": true,
-  "feasible": true
+  "feasible": true,
+  "n_scans": 1,
+  "merge_chi2": null
  }
 ]

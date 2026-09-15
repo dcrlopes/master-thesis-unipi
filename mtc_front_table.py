@@ -175,6 +175,32 @@ def main():
                      if (margin is not None and sig > 0) else None,
             feasible=feasible))
 
+    # Several scans of one lattice are independent measurements of the same
+    # quantity. Combine them by weighted mean so the fit statistics below see
+    # one row per design, and report the consistency of the merge.
+    merged, seen = [], {}
+    for x in sorted(rows, key=lambda r: r["idx"]):
+        if x["idx"] in seen:
+            y = seen[x["idx"]]
+            w1, w2 = 1.0 / y["sigma"] ** 2, 1.0 / x["sigma"] ** 2
+            c = (y["ceiling"] * w1 + x["ceiling"] * w2) / (w1 + w2)
+            sg = (w1 + w2) ** -0.5
+            chi = ((y["ceiling"] - c) / y["sigma"]) ** 2 + \
+                  ((x["ceiling"] - c) / x["sigma"]) ** 2
+            print(f"  merged {y['n_scans'] + 1} scans of design {x['idx']}: "
+                  f"{c:.0f} +/- {sg:.0f} ppm, chi2 {chi:.2f} on "
+                  f"{y['n_scans']} dof")
+            y.update(ceiling=c, sigma=sg, n_scans=y["n_scans"] + 1,
+                     merge_chi2=float(chi))
+            if y["demand"] is not None:
+                y["margin"] = c - y["demand"]
+                y["k_sigma"] = y["margin"] / sg
+                y["resolved"] = abs(y["margin"]) > a.k_sigma * sg
+        else:
+            x["n_scans"], x["merge_chi2"] = 1, None
+            seen[x["idx"]] = x
+            merged.append(x)
+    rows = merged
     rows.sort(key=lambda x: x["inventory"])
 
     L = []
@@ -182,9 +208,13 @@ def main():
     P("=" * 96)
     P(f"MTC ceiling of each lattice against its own boron demand, {a.pressure} MPa")
     P("=" * 96)
-    P("ceiling refitted by weighted least squares over every point of the scan,")
-    P("uncertainty propagated from the fit covariance. 'quoted' is the two-point")
-    P("interpolation printed by mtc_scan.py, kept for comparison.")
+    where = ("the three points nearest the sign change" if a.fit == "local"
+             else "every point of the scan")
+    P(f"ceiling refitted by weighted least squares over {where}, uncertainty")
+    P("propagated from the fit covariance" + (", inflated by sqrt(chi2/dof)"
+      " where that exceeds one" if not a.no_inflate else "") + ".")
+    P("'quoted' is the two-point interpolation printed by mtc_scan.py, kept")
+    P("for comparison.")
     P("")
     P("  id  Gd wt%  pins  invent  ceiling +/- sd  quoted  demand   margin   k_sig  verdict")
     P("  " + "-" * 92)
@@ -242,9 +272,11 @@ def main():
          "  \\caption[Boron ceiling of each candidate lattice]{Moderator "
          f"temperature coefficient ceiling of each candidate lattice at "
          f"\\SI{{{a.pressure}}}{{MPa}} in three dimensions, against the boron "
-         "demand of the same design. The ceiling is refitted by weighted least "
-         "squares over every point of the scan and its uncertainty is "
-         "propagated from the fit covariance.}",
+         "demand of the same design. The ceiling is the zero crossing of a "
+         "weighted straight-line fit over " + where + ", with the uncertainty "
+         "propagated from the fit covariance" + (" and inflated by "
+         "$\\sqrt{\\chi^2/\\nu}$ where that exceeds unity"
+         if not a.no_inflate else "") + ".}",
          "  \\label{tab:c9-ceilings}",
          "  \\begin{tabular}{rrrrrrr}", "    \\toprule",
          "    id & Gd (wt\\%) & pins & inventory & ceiling (ppm) & "

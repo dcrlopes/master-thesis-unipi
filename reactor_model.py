@@ -85,6 +85,12 @@ GUIDE_TUBE_POSITIONS = [
     (14, 5), (14, 8), (14, 11),
 ]
 
+# The central instrument tube never holds a control rod: a 17x17 rod cluster
+# has 24 rodlets, and the NuScale-like benchmark scripts (Zenodo 15231335,
+# assemblies.py) keep "GT empty stack" at [8, 8] in rodded assemblies too.
+INSTRUMENT_TUBE_POSITION = (8, 8)
+assert INSTRUMENT_TUBE_POSITION in GUIDE_TUBE_POSITIONS
+
 # ---------------------------------------------------------------------------
 # CAMPAIGN 5: gadolinia-bearing ROD COUNT is a design variable ("gd_pins").
 #
@@ -392,8 +398,8 @@ def build_assembly_universe(design, mats, geo: Geometry17x17, pitch: float,
     'fuel_out'; Gd pins (if any) replace selected positions. Returns the
     lattice-filled universe and the list of distinct fuel cells (for tallies)."""
     N = geo.lattice
-    gt = (_cr_gt_universe(mats, geo, rodded) if rodded
-          else _guide_tube_universe(mats, geo))
+    gt_empty = _guide_tube_universe(mats, geo)
+    gt = _cr_gt_universe(mats, geo, rodded) if rodded else gt_empty
     _gd_set = set(gd_pattern(design.get("gd_pins", 12)))   # CAMPAIGN 5
 
     # which lattice positions count as "inner" (a centered block) vs "outer"
@@ -403,6 +409,9 @@ def build_assembly_universe(design, mats, geo: Geometry17x17, pitch: float,
     universes = np.empty((N, N), dtype=openmc.Universe)
     for i in range(N):
         for j in range(N):
+            if (i, j) == INSTRUMENT_TUBE_POSITION:
+                universes[i, j] = gt_empty      # 24 rodlets, centre stays empty
+                continue
             if (i, j) in GUIDE_TUBE_POSITIONS:
                 universes[i, j] = gt
                 continue

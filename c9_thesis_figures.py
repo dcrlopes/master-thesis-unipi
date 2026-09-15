@@ -36,8 +36,12 @@ from matplotlib.lines import Line2D
 # ---------------------------------------------------------------- constants --
 # All read from meta.campaign9 and meta.limits of the archive, repeated here
 # only as defaults for the annotation lines.
-CEILING_PPM = 2763.0        # MTC ceiling at 12.8 MPa, design 47 lattice of C8
-CEILING_HI_PPM = 2997.0     # MTC ceiling at 15.5 MPa
+# MTC ceiling of the Campaign 9 champion lattice, measured in the C9
+# post-analysis. 12.8 MPa is the weighted refit near the sign change,
+# 2897 +/- 99 ppm. 15.5 MPa is the three-point scan, 3244 ppm.
+# The C8 champion values were 2763 and 2997 ppm on a different lattice.
+CEILING_PPM = 2897.0
+CEILING_HI_PPM = 3244.0
 CLIP_PPM = 6000.0           # boron objective clip guard
 EFPD_REQ = 1826.0           # five years at capacity factor 1.0
 F_MAX = 1.65
@@ -692,12 +696,20 @@ def main():
     ap.add_argument("--out", default="figs_c9")
     ap.add_argument("--png", action="store_true")
     ap.add_argument("--numbers", action="store_true")
+    ap.add_argument("--ceiling", type=float, default=None,
+                    help="MTC ceiling drawn at the lower pressure, ppm")
+    ap.add_argument("--ceiling-hi", type=float, default=None,
+                    help="MTC ceiling drawn at the higher pressure, ppm")
     a = ap.parse_args()
 
     path = pathlib.Path(a.checkpoint)
     if not path.exists():
         print(f"ABORT: {path} not found. Run from the repository root.")
         return 1
+    if a.ceiling is not None:
+        globals()["CEILING_PPM"] = a.ceiling
+    if a.ceiling_hi is not None:
+        globals()["CEILING_HI_PPM"] = a.ceiling_hi
     d, R, cons = load(path)
     print(f"host archive : {d['meta'].get('host')}  started {d['meta'].get('started_utc')}")
     print(f"designs      : {len(R)}, constraints {cons}")

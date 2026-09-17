@@ -133,8 +133,12 @@ def main():
     ax.set_xlabel("Active neutron histories $N$")
     ax.set_ylabel(r"Seed-to-seed s.d. of $F_{\Delta H}$")
     ax.set_title(r"(a) Statistical error against $1/\sqrt{N}$", fontsize=9)
+    # explicit limits: some matplotlib versions autoscale a log axis down to
+    # 10^1 when an errorbar collection is present
+    ax.set_xlim(8.0e4, 6.0e7)
+    ax.set_ylim(1.5e-3, 4.0e-2)
     ax.grid(alpha=0.25, which="both", lw=0.5)
-    ax.legend(fontsize=7.8, loc="upper right")
+    ax.legend(fontsize=7.8, loc="lower left")
 
     colors = {"4000 x 60": "#c0616b", "256000 x 120": "#5f9a7f"}
     edges = np.linspace(1.0, max(float(d.max()) for d in dist.values()) + 0.005, 160)

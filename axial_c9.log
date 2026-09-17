@@ -1,0 +1,49 @@
+python : 3.13.13   cwd: /home/diogo/master-thesis-unipi   host: wks720
+openmc : 0.15.3   XS: /home/diogo/openmc_data/endfb-vii.1-hdf5/cross_sections.xml
+axial  : 24 bins, 3 grid bands resolved, boron 1000 ppm, 2 seeds, states ['ARO', 'RE12']
+
+=== design C9-47: e 4.460 wt%, Gd 4.42 wt%, pins 21, refl 5.66 cm
+  C9-47 ARO  seed 1: k = 0.99718 +/- 0.00022  F_dH 1.529  F_z 1.437  AO -0.020  entropy_conv 9 (244.7 s)
+  C9-47 ARO  seed 2: k = 0.99677 +/- 0.00021  F_dH 1.513  F_z 1.439  AO -0.020  entropy_conv 10 (246.7 s)
+  C9-47 RE12 seed 1: k = 0.92903 +/- 0.00021  F_dH 1.970  F_z 1.394  AO -0.086  entropy_conv 6 (256.7 s)
+  C9-47 RE12 seed 2: k = 0.92913 +/- 0.00023  F_dH 1.979  F_z 1.391  AO -0.086  entropy_conv 6 (257.0 s)
+
+=== design C9-44: e 4.243 wt%, Gd 3.15 wt%, pins 19, refl 5.66 cm
+  C9-44 ARO  seed 1: k = 0.99241 +/- 0.00020  F_dH 1.511  F_z 1.436  AO -0.023  entropy_conv 8 (246.0 s)
+  C9-44 ARO  seed 2: k = 0.99299 +/- 0.00020  F_dH 1.494  F_z 1.442  AO -0.020  entropy_conv 10 (249.3 s)
+  C9-44 RE12 seed 1: k = 0.92489 +/- 0.00021  F_dH 1.964  F_z 1.394  AO -0.085  entropy_conv 6 (258.3 s)
+  C9-44 RE12 seed 2: k = 0.92501 +/- 0.00024  F_dH 1.940  F_z 1.397  AO -0.084  entropy_conv 5 (256.9 s)
+
+=== design C9-34: e 4.260 wt%, Gd 3.32 wt%, pins 18, refl 5.66 cm
+  C9-34 ARO  seed 1: k = 1.02010 +/- 0.00020  F_dH 1.469  F_z 1.443  AO -0.022  entropy_conv 11 (246.3 s)
+  C9-34 ARO  seed 2: k = 1.01992 +/- 0.00022  F_dH 1.456  F_z 1.445  AO -0.021  entropy_conv 10 (246.5 s)
+  C9-34 RE12 seed 1: k = 0.94897 +/- 0.00024  F_dH 1.905  F_z 1.394  AO -0.084  entropy_conv 5 (262.5 s)
+  C9-34 RE12 seed 2: k = 0.94907 +/- 0.00021  F_dH 1.948  F_z 1.399  AO -0.082  entropy_conv 6 (256.7 s)
+
+=== design C9-40: e 4.232 wt%, Gd 2.71 wt%, pins 16, refl 5.66 cm
+  C9-40 ARO  seed 1: k = 1.02362 +/- 0.00021  F_dH 1.482  F_z 1.444  AO -0.021  entropy_conv 67 (246.5 s)
+  C9-40 ARO  seed 2: k = 1.02348 +/- 0.00020  F_dH 1.482  F_z 1.440  AO -0.018  entropy_conv 8 (252.6 s)
+  C9-40 RE12 seed 1: k = 0.95164 +/- 0.00022  F_dH 1.908  F_z 1.395  AO -0.090  entropy_conv 7 (258.1 s)
+  C9-40 RE12 seed 2: k = 0.95168 +/- 0.00020  F_dH 1.889  F_z 1.390  AO -0.087  entropy_conv 6 (259.1 s)
+
+=== design C9-35: e 4.358 wt%, Gd 2.63 wt%, pins 15, refl 5.65 cm
+  C9-35 ARO  seed 1: k = 1.03336 +/- 0.00023  F_dH 1.478  F_z 1.444  AO -0.017  entropy_conv 9 (252.3 s)
+  C9-35 ARO  seed 2: k = 1.03305 +/- 0.00020  F_dH 1.475  F_z 1.448  AO -0.022  entropy_conv 7 (251.0 s)
+  C9-35 RE12 seed 1: k = 0.96069 +/- 0.00020  F_dH 1.919  F_z 1.395  AO -0.086  entropy_conv 5 (257.3 s)
+  C9-35 RE12 seed 2: k = 0.96075 +/- 0.00023  F_dH 1.877  F_z 1.388  AO -0.094  entropy_conv 7 (255.0 s)
+
+=== design C9-58: e 4.276 wt%, Gd 1.31 wt%, pins 17, refl 5.66 cm
+  C9-58 ARO  seed 1: k = 1.04600 +/- 0.00021  F_dH 1.484  F_z 1.440  AO -0.025  entropy_conv 10 (246.5 s)
+  C9-58 ARO  seed 2: k = 1.04632 +/- 0.00023  F_dH 1.464  F_z 1.443  AO -0.017  entropy_conv 10 (255.0 s)
+  C9-58 RE12 seed 1: k = 0.97224 +/- 0.00019  F_dH 1.866  F_z 1.396  AO -0.092  entropy_conv 6 (262.7 s)
+  C9-58 RE12 seed 2: k = 0.97138 +/- 0.00022  F_dH 1.892  F_z 1.390  AO -0.082  entropy_conv 6 (258.1 s)
+
+=== design C9-12: e 4.372 wt%, Gd 0.14 wt%, pins 30, refl 5.59 cm
+  C9-12 ARO  seed 1: k = 1.07329 +/- 0.00021  F_dH 1.454  F_z 1.442  AO -0.020  entropy_conv 8 (250.4 s)
+  C9-12 ARO  seed 2: k = 1.07294 +/- 0.00022  F_dH 1.447  F_z 1.442  AO -0.026  entropy_conv 8 (251.4 s)
+  C9-12 RE12 seed 1: k = 0.99636 +/- 0.00021  F_dH 1.878  F_z 1.395  AO -0.091  entropy_conv 6 (261.1 s)
+  C9-12 RE12 seed 2: k = 0.99632 +/- 0.00022  F_dH 1.854  F_z 1.391  AO -0.087  entropy_conv 6 (260.0 s)
+
+wrote axial_c9/summary.json and axial_c9/summary_table.tex
+total 8111 s
+figures: python axial_figures_c9.py --out axial_c9

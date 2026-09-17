@@ -1,0 +1,186 @@
+
+=================== step 1, environment, update, fixes  2026-09-17 13:27:48
+env ok 0.15.3
+host   : wks720
+branch : main
+Already up to date.
+commit : a1e38dd C9 post-run analysis and reanalysis
+  24 bins, fuel -60.000 to 60.000 cm
+  old heuristic : 1 band(s) [(np.float64(-60.0), np.float64(-56.445))]
+  new function  : 3 band(s) [(-56.445, -52.0), (-15.045, -10.6), (26.355, 30.8)]
+  WARNING: stored edges differ from the default HardwareSpec, no grid bands drawn
+  snap_gd_pins agrees with the counts in mtc_ceiling_table
+selftest OK
+(the 'stored edges differ' warning above is the deliberate shifted-edges test)
+  axial_figures_c9.py: ready
+  axial_shape_c9.py: ready
+  axial_figures_c9.py: ready
+  axial_shape_c9.py: ready
+  patched axial_figures_c9.py  (copy in axial_figures_c9.py.pre-axfix)
+  patched axial_shape_c9.py  (copy in axial_shape_c9.py.pre-axfix)
+
+=================== step 2, axial figures with the real grid bands  2026-09-17 13:27:52
+designs [12, 34, 35, 40, 44, 47, 58], states per design {12: ['ARO', 'RE12'], 34: ['ARO', 'RE12'], 35: ['ARO', 'RE12'], 40: ['ARO', 'RE12'], 44: ['ARO', 'RE12'], 47: ['ARO', 'RE12'], 58: ['ARO', 'RE12']}
+24 axial bins, 3 grid bands, champion C9-47
+  wrote ARO_assembly.pdf
+grid bands OK, 31 PDFs in axial_c9/figs
+
+=================== step 3, design headers with the as-built pin count, no transport  2026-09-17 13:28:08
+=== design C9-47: e 4.460 wt%, Gd 4.42 wt%, pins 20 as built (optimiser value 20.98), refl 5.66 cm
+=== design C9-44: e 4.243 wt%, Gd 3.15 wt%, pins 20 as built (optimiser value 18.85), refl 5.66 cm
+=== design C9-34: e 4.260 wt%, Gd 3.32 wt%, pins 16 as built (optimiser value 17.84), refl 5.66 cm
+=== design C9-40: e 4.232 wt%, Gd 2.71 wt%, pins 16 as built (optimiser value 16.05), refl 5.66 cm
+=== design C9-35: e 4.358 wt%, Gd 2.63 wt%, pins 16 as built (optimiser value 15.09), refl 5.65 cm
+=== design C9-58: e 4.276 wt%, Gd 1.31 wt%, pins 16 as built (optimiser value 17.35), refl 5.66 cm
+=== design C9-12: e 4.372 wt%, Gd 0.14 wt%, pins 32 as built (optimiser value 30.41), refl 5.59 cm
+
+=================== step 4, seed agreement, peaking estimators, entropy, boron  2026-09-17 13:28:09
+==============================================================================
+CHECK D, identical conditions
+  axial      fidelity ['150000x200x80']  boron [1000.0] ppm
+  confirm3d  fidelity ['150000x200x80']  boron [1000.0] ppm
+  same conditions, the solves can be pooled
+==============================================================================
+CHECK A, seed agreement of k, z = dk / sqrt(sd1^2 + sd2^2)
+  source     design state   k1        k2        dk(pcm)  z
+  axial      C9-12  ARO   1.07329  1.07294     +34  +1.13
+  axial      C9-12  RE12  0.99636  0.99632      +4  +0.14
+  axial      C9-34  ARO   1.02010  1.01992     +18  +0.60
+  axial      C9-34  RE12  0.94897  0.94907     -10  -0.32
+  axial      C9-35  ARO   1.03336  1.03305     +31  +1.02
+  axial      C9-35  RE12  0.96069  0.96075      -6  -0.20
+  axial      C9-40  ARO   1.02362  1.02348     +14  +0.48
+  axial      C9-40  RE12  0.95164  0.95168      -3  -0.11
+  axial      C9-44  ARO   0.99241  0.99299     -57  -2.04
+  axial      C9-44  RE12  0.92489  0.92501     -12  -0.38
+  axial      C9-47  ARO   0.99718  0.99677     +41  +1.36
+  axial      C9-47  RE12  0.92903  0.92913      -9  -0.30
+  axial      C9-58  ARO   1.04600  1.04632     -32  -1.02
+  axial      C9-58  RE12  0.97224  0.97138     +85  +2.95
+  confirm3d  C9-12  ARO   1.07323  1.07316      +7  +0.22
+  confirm3d  C9-34  ARO   1.01994  1.02003      -9  -0.29
+  confirm3d  C9-35  ARO   1.03288  1.03293      -5  -0.16
+  confirm3d  C9-40  ARO   1.02375  1.02328     +47  +1.46
+  confirm3d  C9-44  ARO   0.99259  0.99261      -2  -0.07
+  confirm3d  C9-47  ARO   0.99694  0.99685      +9  +0.31
+  confirm3d  C9-58  ARO   1.04572  1.04593     -22  -0.65
+
+  axial      pairs  14  mean z^2  1.36 +/- 0.38  sd scale sqrt(mean z^2) 1.17  |z|>3: 0  (expected 0.04)
+  confirm3d  pairs  60  mean z^2  1.16 +/- 0.18  sd scale sqrt(mean z^2) 1.08  |z|>3: 0  (expected 0.16)
+  both       pairs  74  mean z^2  1.20 +/- 0.16  sd scale sqrt(mean z^2) 1.09  |z|>3: 0  (expected 0.20)
+==============================================================================
+CHECK B, ARO F_dH on the hardware model, four independent solves per design
+  design  confirm3d s0 s1   axial s1 s2    per-seed mean  sd     sem    pooled(axial)
+  C9-12   1.454 1.457    1.454 1.447    1.453          0.004  0.002  1.437
+  C9-34   1.486 1.488    1.469 1.456    1.475          0.015  0.007  1.453
+  C9-35   1.490 1.483    1.478 1.475    1.482          0.006  0.003  1.466
+  C9-40   1.450 1.463    1.482 1.482    1.469          0.016  0.008  1.467
+  C9-44   1.515 1.510    1.511 1.494    1.507          0.009  0.005  1.490
+  C9-47   1.503 1.499    1.529 1.513    1.511          0.014  0.007  1.500
+  C9-58   1.471 1.454    1.484 1.464    1.468          0.013  0.006  1.474
+  per-seed is the estimator of confirm3d.py and of the Campaign 9 3D front.
+==============================================================================
+CHECK C, source entropy convergence batch (inactive = 80)
+  C9-40  ARO   seed 1: converged at batch 67  CLOSE TO THE INACTIVE LIMIT
+  C9-34  ARO   seed 1: converged at batch 11
+  C9-58  ARO   seed 2: converged at batch 10
+  C9-58  ARO   seed 1: converged at batch 10
+  C9-47  ARO   seed 2: converged at batch 10
+
+wrote c9_post/c9_axial_checks.txt and .json
+
+=================== step 5, MTC ceiling tables and figures at both pressures  2026-09-17 13:28:09
+  id  Gd wt%  pins  invent  ceiling +/- sd  quoted  demand   margin   k_sig  verdict
+  --------------------------------------------------------------------------------------------
+  12    0.14    32     4.5     2091 +/-  69    2037    3003     -912   -13.2  fails
+  57    0.78    20    15.6     2278 +/- 173    2366    2470     -193    -1.1  UNRESOLVED
+  58    1.31    16    21.0     2483 +/-  53    2540    2363     +120    +2.3  clears
+  35    2.63    16    42.0     2617 +/-  69    2616    1908     +710   +10.2  clears
+  40    2.71    16    43.4     2651 +/- 240    2640    1768     +883    +3.7  clears
+  34    3.32    16    53.2     2752 +/-  97    2752    1725    +1027   +10.6  clears
+  44    3.15    20    62.9     2858 +/- 109    2867    1496    +1362   +12.5  clears
+  47    4.42    20    88.4     2897 +/-  99    2874    1406    +1491   +15.0  clears
+
+  Spearman ceiling against inventory +1.000, against Gd wt% +0.976, against pins -0.071
+  log fit  ceiling = 287 ln(inventory) + 1595, rms 55 ppm, max 106 ppm
+  linear in inventory rms 87 ppm, linear in Gd wt% rms 68 ppm
+
+  designs whose verdict is inside 2 sigma: [57]
+  designs that fail their own ceiling: [12, 57]
+  id  Gd wt%  pins  invent  ceiling +/- sd  quoted  demand   margin   k_sig  verdict
+  --------------------------------------------------------------------------------------------
+  12    0.14    32     4.5     2522 +/-  46    2566    3003     -481   -10.4  fails
+  58    1.31    16    21.0     2739 +/-  89    2757    2363     +376    +4.2  clears
+  34    3.32    16    53.2     3092 +/- 106    3148    1725    +1367   +12.9  clears
+  44    3.15    20    62.9     2931 +/-  80    2929    1496    +1435   +17.9  clears
+  47    4.42    20    88.4     3266 +/-  75    3244    1406    +1860   +24.7  clears
+
+  Spearman ceiling against inventory +0.900, against Gd wt% +1.000, against pins -0.100
+  log fit  ceiling = 226 ln(inventory) + 2134, rms 96 ppm, max 140 ppm
+  linear in inventory rms 81 ppm, linear in Gd wt% rms 48 ppm
+
+  designs whose verdict is inside 2 sigma: none
+  designs that fail their own ceiling: [12]
+rows: 8 at 12.8 MPa (expected 8), 5 at 15.5 MPa (expected 5)
+  C9-12  shift  +431 +/-  83 ppm
+  C9-58  shift  +256 +/- 104 ppm
+  C9-34  shift  +340 +/- 144 ppm
+  C9-44  shift   +73 +/- 135 ppm
+  C9-47  shift  +369 +/- 125 ppm
+  weighted mean 322 +/- 50 ppm, chi2 5.67 on 4 dof
+wrote c9_post/c9_ceiling_two_pressures.pdf and .png
+
+=================== all steps done  2026-09-17 13:28:14
+--- outputs
+-rw-rw-r-- 1 diogo diogo   693 set 17 13:28 c9_post/axial_design_headers.txt
+-rw-rw-r-- 1 diogo diogo  3237 set 17 13:28 c9_post/c9_axial_checks.txt
+-rw-rw-r-- 1 diogo diogo 16901 set 17 13:28 c9_post/c9_ceiling_inventory.pdf
+-rw-rw-r-- 1 diogo diogo 27009 set 17 13:28 c9_post/c9_ceiling_two_pressures.pdf
+-rw-rw-r-- 1 diogo diogo  1171 set 17 13:28 c9_post/mtc_ceiling_table.tex
+-rw-rw-r-- 1 diogo diogo 15264 set 17 13:28 c9_post/p155/c9_ceiling_inventory.pdf
+-rw-rw-r-- 1 diogo diogo   991 set 17 13:28 c9_post/p155/mtc_ceiling_table_p155.tex
+--- seed agreement
+  axial      pairs  14  mean z^2  1.36 +/- 0.38  sd scale sqrt(mean z^2) 1.17  |z|>3: 0  (expected 0.04)
+  confirm3d  pairs  60  mean z^2  1.16 +/- 0.18  sd scale sqrt(mean z^2) 1.08  |z|>3: 0  (expected 0.16)
+  both       pairs  74  mean z^2  1.20 +/- 0.16  sd scale sqrt(mean z^2) 1.09  |z|>3: 0  (expected 0.20)
+--- files changed or new, review before step 6 (commit)
+ M axial_figures_c9.py
+ M axial_shape_c9.py
+ M c9_post/c9_ceiling_inventory.pdf
+?? .c9_markers/
+?? .c9post_markers/
+?? .queue_markers/
+?? audit_c4_statepoints.csv
+?? audit_c4_summary.json
+?? axial_c9/
+?? axial_c9_smoke/
+?? axial_designs/
+?? axial_figures_c9.py.pre-axfix
+?? axial_merged_B4C.json
+?? axial_shape_c9.py.pre-axfix
+?? boron_c8_marginal/boron_table.tex
+?? c5_confirm/
+?? c5_full.csv
+?? c9_analysis_figures.py.local
+?? c9_post/axial_design_headers.txt
+?? c9_post/c9_axial_checks.json
+?? c9_post/c9_axial_checks.txt
+?? c9_post/c9_ceiling_two_pressures.pdf
+?? c9_post/mtc_front_table_p128.out
+?? c9_post/mtc_front_table_p155.out
+?? c9_post/p155/
+?? c9_queue2.sh
+?? check13.py
+?? cost_c3_joined.csv
+?? cost_c3_summary.json
+?? cost_c4_joined.csv
+?? cost_c4_summary.json
+?? dead_design_cost.txt
+?? dead_step_cost.txt
+?? doomed_designs.txt
+?? kbasis_overlap.txt
+?? kmin_violators.txt
+?? kt_refl_ref/
+?? kt_smoke/
+?? mtc_c9_d12_p155_core3d/
+?? mtc_c9_d34_p155_core3d/

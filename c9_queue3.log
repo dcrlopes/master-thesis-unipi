@@ -1,0 +1,264 @@
+=== preflight 2026-09-15 23:01
+env ok 0.15.3
+wks720
+main
+selftest: 24 axial bins over -60.0 to 60.0 cm, 3 grid bands resolved, bin length 3.55 to 5.28 cm
+selftest: F_z 1.414, AO +0.0035, power sums to 48.0 MW
+selftest OK
+
+=== stage 1, MTC ceiling at 15.5 MPa  2026-09-15 23:01
+--- mtc_c9_d58_p155_core3d, grid 2200,2600,2900,3200  23:01
+==========================================================================
+Moderator temperature coefficient versus soluble boron
+==========================================================================
+design            : 58
+level             : core3d
+pressure          : 15.5 MPa, saturation 617.9 K
+  T = 570.0 K -> rho = 0.73291 g/cm3 (subcooling 47.9 K)
+  T = 590.0 K -> rho = 0.68830 g/cm3 (subcooling 27.9 K)
+density change    : -6.09 per cent over 20 K
+boron points      : [2200.0, 2600.0, 2900.0, 3200.0] ppm
+seeds             : 2
+16 solves in total
+==========================================================================
+==========================================================================
+ PREFLIGHT
+==========================================================================
+  host        : wks720
+  cwd         : /home/diogo/master-thesis-unipi
+  conda env   : openmc-env
+  openmc      : 0.15.3
+  iapws       : available
+  branch      : main
+  XS          : /home/diogo/openmc_data/endfb-vii.1-hdf5/cross_sections.xml
+  threads     : 64 of 64
+  no simulation currently running
+preflight OK
+
+design 58: enrich 4.276 wt%, gd_wt 1.315 wt%, pins 16, refl 5.660 cm
+
+==========================================================================
+MODERATOR TEMPERATURE COEFFICIENT, design 58, core3d
+==========================================================================
+  570 K -> 590 K at 15.5 MPa, rho 0.73291 -> 0.68830 g/cm3
+
+      ppm     k(lo)     k(hi)       MTC      sd  verdict
+     2200   0.96405   0.96222     -9.85    1.89  negative, acceptable
+     2600   0.93959   0.93930     -1.65    1.96  not resolved from zero
+     2900   0.92272   0.92298     +1.49    1.99  not resolved from zero
+     3200   0.90617   0.90741     +7.53    2.06  POSITIVE, not acceptable
+
+  MTC in pcm per K. A negative coefficient is the self-stabilising
+  direction. The crossing is the boron ceiling for this lattice.
+
+  CROSSING CONCENTRATION: 2757 ppm
+
+  design 58 needs 2363 ppm (c_max)  -> BELOW the ceiling  margin +395 ppm
+  for reference only, 20 of the 22 feasible designs demand less than 2757 ppm.
+  That is not an operability count. The ceiling is a property of
+  the design 58 lattice and each design has its own.
+
+  Linear interpolation between the two bracketing points. Add points
+  near the crossing if the bracket is wide.
+
+wrote mtc_c9_d58_p155_core3d/report.txt and mtc_c9_d58_p155_core3d/summary.json
+--- mtc_c9_d12_p155_core3d, grid 1800,2200,2500,2800  23:29
+==========================================================================
+Moderator temperature coefficient versus soluble boron
+==========================================================================
+design            : 12
+level             : core3d
+pressure          : 15.5 MPa, saturation 617.9 K
+  T = 570.0 K -> rho = 0.73291 g/cm3 (subcooling 47.9 K)
+  T = 590.0 K -> rho = 0.68830 g/cm3 (subcooling 27.9 K)
+density change    : -6.09 per cent over 20 K
+boron points      : [1800.0, 2200.0, 2500.0, 2800.0] ppm
+seeds             : 2
+16 solves in total
+==========================================================================
+==========================================================================
+ PREFLIGHT
+==========================================================================
+  host        : wks720
+  cwd         : /home/diogo/master-thesis-unipi
+  conda env   : openmc-env
+  openmc      : 0.15.3
+  iapws       : available
+  branch      : main
+  XS          : /home/diogo/openmc_data/endfb-vii.1-hdf5/cross_sections.xml
+  threads     : 64 of 64
+  no simulation currently running
+preflight OK
+
+design 12: enrich 4.372 wt%, gd_wt 0.141 wt%, pins 32, refl 5.592 cm
+
+==========================================================================
+MODERATOR TEMPERATURE COEFFICIENT, design 12, core3d
+==========================================================================
+  570 K -> 590 K at 15.5 MPa, rho 0.73291 -> 0.68830 g/cm3
+
+      ppm     k(lo)     k(hi)       MTC      sd  verdict
+     1800   1.01543   1.01280    -12.80    1.74  negative, acceptable
+     2200   0.98885   0.98738     -7.51    1.79  negative, acceptable
+     2500   0.96968   0.96925     -2.27    1.82  not resolved from zero
+     2800   0.95134   0.95279     +8.04    1.82  POSITIVE, not acceptable
+
+  MTC in pcm per K. A negative coefficient is the self-stabilising
+  direction. The crossing is the boron ceiling for this lattice.
+
+  CROSSING CONCENTRATION: 2566 ppm
+
+  design 12 needs 3003 ppm (c_max)  -> ABOVE the ceiling  margin -437 ppm
+  for reference only, 17 of the 22 feasible designs demand less than 2566 ppm.
+  That is not an operability count. The ceiling is a property of
+  the design 12 lattice and each design has its own.
+
+  Linear interpolation between the two bracketing points. Add points
+  near the crossing if the bracket is wide.
+
+wrote mtc_c9_d12_p155_core3d/report.txt and mtc_c9_d12_p155_core3d/summary.json
+
+--- every 15.5 MPa crossing so far
+mtc_c9_d12_p155_core3d/report.txt:  CROSSING CONCENTRATION: 2566 ppm
+mtc_c9_d34_p155_core3d/report.txt:  CROSSING CONCENTRATION: 3148 ppm
+mtc_c9_d44_p155_core3d/report.txt:  CROSSING CONCENTRATION: 2929 ppm
+mtc_c9_d58_p155_core3d/report.txt:  CROSSING CONCENTRATION: 2757 ppm
+mtc_c9_p155_core3d/report.txt:  CROSSING CONCENTRATION: 3244 ppm
+
+=== stage 2, axial shape  2026-09-15 23:57
+--- smoke, one design, one state, one seed, about a minute
+  smoke OK
+--- full run, 7 designs, ARO and RE12, 2 seeds  23:58
+python : 3.13.13   cwd: /home/diogo/master-thesis-unipi   host: wks720
+openmc : 0.15.3   XS: /home/diogo/openmc_data/endfb-vii.1-hdf5/cross_sections.xml
+axial  : 24 bins, 3 grid bands resolved, boron 1000 ppm, 2 seeds, states ['ARO', 'RE12']
+
+=== design C9-47: e 4.460 wt%, Gd 4.42 wt%, pins 21, refl 5.66 cm
+  C9-47 ARO  seed 1: k = 0.99718 +/- 0.00022  F_dH 1.529  F_z 1.437  AO -0.020  entropy_conv 9 (244.7 s)
+  C9-47 ARO  seed 2: k = 0.99677 +/- 0.00021  F_dH 1.513  F_z 1.439  AO -0.020  entropy_conv 10 (246.7 s)
+  C9-47 RE12 seed 1: k = 0.92903 +/- 0.00021  F_dH 1.970  F_z 1.394  AO -0.086  entropy_conv 6 (256.7 s)
+  C9-47 RE12 seed 2: k = 0.92913 +/- 0.00023  F_dH 1.979  F_z 1.391  AO -0.086  entropy_conv 6 (257.0 s)
+
+=== design C9-44: e 4.243 wt%, Gd 3.15 wt%, pins 19, refl 5.66 cm
+  C9-44 ARO  seed 1: k = 0.99241 +/- 0.00020  F_dH 1.511  F_z 1.436  AO -0.023  entropy_conv 8 (246.0 s)
+  C9-44 ARO  seed 2: k = 0.99299 +/- 0.00020  F_dH 1.494  F_z 1.442  AO -0.020  entropy_conv 10 (249.3 s)
+  C9-44 RE12 seed 1: k = 0.92489 +/- 0.00021  F_dH 1.964  F_z 1.394  AO -0.085  entropy_conv 6 (258.3 s)
+  C9-44 RE12 seed 2: k = 0.92501 +/- 0.00024  F_dH 1.940  F_z 1.397  AO -0.084  entropy_conv 5 (256.9 s)
+
+=== design C9-34: e 4.260 wt%, Gd 3.32 wt%, pins 18, refl 5.66 cm
+  C9-34 ARO  seed 1: k = 1.02010 +/- 0.00020  F_dH 1.469  F_z 1.443  AO -0.022  entropy_conv 11 (246.3 s)
+  C9-34 ARO  seed 2: k = 1.01992 +/- 0.00022  F_dH 1.456  F_z 1.445  AO -0.021  entropy_conv 10 (246.5 s)
+  C9-34 RE12 seed 1: k = 0.94897 +/- 0.00024  F_dH 1.905  F_z 1.394  AO -0.084  entropy_conv 5 (262.5 s)
+  C9-34 RE12 seed 2: k = 0.94907 +/- 0.00021  F_dH 1.948  F_z 1.399  AO -0.082  entropy_conv 6 (256.7 s)
+
+=== design C9-40: e 4.232 wt%, Gd 2.71 wt%, pins 16, refl 5.66 cm
+  C9-40 ARO  seed 1: k = 1.02362 +/- 0.00021  F_dH 1.482  F_z 1.444  AO -0.021  entropy_conv 67 (246.5 s)
+  C9-40 ARO  seed 2: k = 1.02348 +/- 0.00020  F_dH 1.482  F_z 1.440  AO -0.018  entropy_conv 8 (252.6 s)
+  C9-40 RE12 seed 1: k = 0.95164 +/- 0.00022  F_dH 1.908  F_z 1.395  AO -0.090  entropy_conv 7 (258.1 s)
+  C9-40 RE12 seed 2: k = 0.95168 +/- 0.00020  F_dH 1.889  F_z 1.390  AO -0.087  entropy_conv 6 (259.1 s)
+
+=== design C9-35: e 4.358 wt%, Gd 2.63 wt%, pins 15, refl 5.65 cm
+  C9-35 ARO  seed 1: k = 1.03336 +/- 0.00023  F_dH 1.478  F_z 1.444  AO -0.017  entropy_conv 9 (252.3 s)
+  C9-35 ARO  seed 2: k = 1.03305 +/- 0.00020  F_dH 1.475  F_z 1.448  AO -0.022  entropy_conv 7 (251.0 s)
+  C9-35 RE12 seed 1: k = 0.96069 +/- 0.00020  F_dH 1.919  F_z 1.395  AO -0.086  entropy_conv 5 (257.3 s)
+  C9-35 RE12 seed 2: k = 0.96075 +/- 0.00023  F_dH 1.877  F_z 1.388  AO -0.094  entropy_conv 7 (255.0 s)
+
+=== design C9-58: e 4.276 wt%, Gd 1.31 wt%, pins 17, refl 5.66 cm
+  C9-58 ARO  seed 1: k = 1.04600 +/- 0.00021  F_dH 1.484  F_z 1.440  AO -0.025  entropy_conv 10 (246.5 s)
+  C9-58 ARO  seed 2: k = 1.04632 +/- 0.00023  F_dH 1.464  F_z 1.443  AO -0.017  entropy_conv 10 (255.0 s)
+  C9-58 RE12 seed 1: k = 0.97224 +/- 0.00019  F_dH 1.866  F_z 1.396  AO -0.092  entropy_conv 6 (262.7 s)
+  C9-58 RE12 seed 2: k = 0.97138 +/- 0.00022  F_dH 1.892  F_z 1.390  AO -0.082  entropy_conv 6 (258.1 s)
+
+=== design C9-12: e 4.372 wt%, Gd 0.14 wt%, pins 30, refl 5.59 cm
+  C9-12 ARO  seed 1: k = 1.07329 +/- 0.00021  F_dH 1.454  F_z 1.442  AO -0.020  entropy_conv 8 (250.4 s)
+  C9-12 ARO  seed 2: k = 1.07294 +/- 0.00022  F_dH 1.447  F_z 1.442  AO -0.026  entropy_conv 8 (251.4 s)
+  C9-12 RE12 seed 1: k = 0.99636 +/- 0.00021  F_dH 1.878  F_z 1.395  AO -0.091  entropy_conv 6 (261.1 s)
+  C9-12 RE12 seed 2: k = 0.99632 +/- 0.00022  F_dH 1.854  F_z 1.391  AO -0.087  entropy_conv 6 (260.0 s)
+
+wrote axial_c9/summary.json and axial_c9/summary_table.tex
+total 8111 s
+figures: python axial_figures_c9.py --out axial_c9
+
+=== stage 3, figures  2026-09-16 02:13
+designs [12, 34, 35, 40, 44, 47, 58], states per design {12: ['ARO', 'RE12'], 34: ['ARO', 'RE12'], 35: ['ARO', 'RE12'], 40: ['ARO', 'RE12'], 44: ['ARO', 'RE12'], 47: ['ARO', 'RE12'], 58: ['ARO', 'RE12']}
+24 axial bins, 1 grid bands, champion C9-47
+  wrote ARO_assembly.pdf
+  wrote ARO_pins.pdf
+  wrote ARO_axial.pdf
+  wrote ARO_shape.pdf
+  wrote ARO_rpd_vs_champion.pdf
+  wrote RE12_assembly.pdf
+  wrote RE12_pins.pdf
+  wrote RE12_axial.pdf
+  wrote RE12_shape.pdf
+  wrote RE12_rpd_vs_champion.pdf
+  wrote d12_assembly.pdf
+  wrote d12_pins.pdf
+  wrote d12_axial.pdf
+  wrote d34_assembly.pdf
+  wrote d34_pins.pdf
+  wrote d34_axial.pdf
+  wrote d35_assembly.pdf
+  wrote d35_pins.pdf
+  wrote d35_axial.pdf
+  wrote d40_assembly.pdf
+  wrote d40_pins.pdf
+  wrote d40_axial.pdf
+  wrote d44_assembly.pdf
+  wrote d44_pins.pdf
+  wrote d44_axial.pdf
+  wrote d47_assembly.pdf
+  wrote d47_pins.pdf
+  wrote d47_axial.pdf
+  wrote d58_assembly.pdf
+  wrote d58_pins.pdf
+  wrote d58_axial.pdf
+
+  design state    k        F_dH   F_z    AO      rho vs ARO
+  C9-12  ARO   1.07311  1.437  1.442  -0.023       +0 pcm  (2 seeds)
+  C9-12  RE12  0.99634  1.839  1.393  -0.089    -7181 pcm  (2 seeds)
+  C9-34  ARO   1.02001  1.453  1.444  -0.021       +0 pcm  (2 seeds)
+  C9-34  RE12  0.94902  1.886  1.397  -0.083    -7334 pcm  (2 seeds)
+  C9-35  ARO   1.03320  1.466  1.446  -0.019       +0 pcm  (2 seeds)
+  C9-35  RE12  0.96072  1.883  1.391  -0.090    -7302 pcm  (2 seeds)
+  C9-40  ARO   1.02355  1.467  1.442  -0.020       +0 pcm  (2 seeds)
+  C9-40  RE12  0.95166  1.862  1.393  -0.088    -7381 pcm  (2 seeds)
+  C9-44  ARO   0.99270  1.490  1.439  -0.021       +0 pcm  (2 seeds)
+  C9-44  RE12  0.92495  1.950  1.395  -0.085    -7378 pcm  (2 seeds)
+  C9-47  ARO   0.99698  1.500  1.438  -0.020       +0 pcm  (2 seeds)
+  C9-47  RE12  0.92908  1.931  1.392  -0.086    -7330 pcm  (2 seeds)
+  C9-58  ARO   1.04616  1.474  1.441  -0.021       +0 pcm  (2 seeds)
+  C9-58  RE12  0.97181  1.846  1.393  -0.087    -7313 pcm  (2 seeds)
+
+=== queue end 2026-09-16 02:13
+--- 15.5 MPa ceilings
+mtc_c9_d12_p155_core3d/report.txt:  CROSSING CONCENTRATION: 2566 ppm
+mtc_c9_d34_p155_core3d/report.txt:  CROSSING CONCENTRATION: 3148 ppm
+mtc_c9_d44_p155_core3d/report.txt:  CROSSING CONCENTRATION: 2929 ppm
+mtc_c9_d58_p155_core3d/report.txt:  CROSSING CONCENTRATION: 2757 ppm
+mtc_c9_p155_core3d/report.txt:  CROSSING CONCENTRATION: 3244 ppm
+--- refit both pressures
+'quoted' is the two-point interpolation printed by mtc_scan.py, kept
+for comparison.
+
+  id  Gd wt%  pins  invent  ceiling +/- sd  quoted  demand   margin   k_sig  verdict
+  --------------------------------------------------------------------------------------------
+  12    0.14    32     4.5     2522 +/-  46    2566    3003     -481   -10.4  fails
+  58    1.31    16    21.0     2739 +/-  89    2757    2363     +376    +4.2  clears
+  34    3.32    16    53.2     3092 +/- 106    3148    1725    +1367   +12.9  clears
+  44    3.15    20    62.9     2931 +/-  80    2929    1496    +1435   +17.9  clears
+  47    4.42    20    88.4     3266 +/-  75    3244    1406    +1860   +24.7  clears
+
+propagated from the fit covariance, inflated by sqrt(chi2/dof) where that exceeds one.
+'quoted' is the two-point interpolation printed by mtc_scan.py, kept
+for comparison.
+
+  id  Gd wt%  pins  invent  ceiling +/- sd  quoted  demand   margin   k_sig  verdict
+  --------------------------------------------------------------------------------------------
+  12    0.14    32     4.5     2091 +/-  69    2037    3003     -912   -13.2  fails
+  57    0.78    20    15.6     2278 +/- 173    2366    2470     -193    -1.1  UNRESOLVED
+  58    1.31    16    21.0     2483 +/-  53    2540    2363     +120    +2.3  clears
+  35    2.63    16    42.0     2617 +/-  69    2616    1908     +710   +10.2  clears
+  40    2.71    16    43.4     2651 +/- 240    2640    1768     +883    +3.7  clears
+  34    3.32    16    53.2     2752 +/-  97    2752    1725    +1027   +10.6  clears
+  44    3.15    20    62.9     2858 +/- 109    2867    1496    +1362   +12.5  clears

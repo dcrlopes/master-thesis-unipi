@@ -1,0 +1,7 @@
+=== design C9-47: e 4.460 wt%, Gd 4.42 wt%, pins 20 as built (optimiser value 20.98), refl 5.66 cm
+=== design C9-44: e 4.243 wt%, Gd 3.15 wt%, pins 20 as built (optimiser value 18.85), refl 5.66 cm
+=== design C9-34: e 4.260 wt%, Gd 3.32 wt%, pins 16 as built (optimiser value 17.84), refl 5.66 cm
+=== design C9-40: e 4.232 wt%, Gd 2.71 wt%, pins 16 as built (optimiser value 16.05), refl 5.66 cm
+=== design C9-35: e 4.358 wt%, Gd 2.63 wt%, pins 16 as built (optimiser value 15.09), refl 5.65 cm
+=== design C9-58: e 4.276 wt%, Gd 1.31 wt%, pins 16 as built (optimiser value 17.35), refl 5.66 cm
+=== design C9-12: e 4.372 wt%, Gd 0.14 wt%, pins 32 as built (optimiser value 30.41), refl 5.59 cm

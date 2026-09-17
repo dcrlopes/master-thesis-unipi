@@ -29,23 +29,25 @@ gd, gt = d["gd"], d["gt"]
 assert np.all(asm[gt] == 0.0) and np.all(asm[~gt] > 0.0), "assembly orientation check failed"
 
 plt.rcParams.update({"font.size": 9, "font.family": "DejaVu Sans"})
-CMAP = plt.get_cmap("viridis").copy()
+CMAP = plt.get_cmap("jet").copy()      # blue (low) to red (high)
 CMAP.set_bad("#bdbdbd")
 
 # ---- assembly --------------------------------------------------------------
 fig, ax = plt.subplots(figsize=(5.6, 4.8))
 im = ax.imshow(np.ma.masked_equal(asm, 0.0), cmap=CMAP, origin="upper")
+vmin, vmax = float(asm[asm > 0].min()), float(asm.max())
 for r in range(N):
     for c in range(N):
         if gt[r, c]:
             continue
         v = asm[r, c]
         ax.text(c, r, f"{v:.2f}", ha="center", va="center", fontsize=4.6,
-                color="white" if v < 0.9 else "black")
+                # white on the dark ends of the jet scale, black in between
+                color="white" if not (0.2 <= (v - vmin) / (vmax - vmin) <= 0.8) else "black")
         if gd[r, c]:
-            ax.add_patch(Circle((c, r), 0.47, fill=False, ec="#d7263d", lw=1.4))
+            ax.add_patch(Circle((c, r), 0.47, fill=False, ec="white", lw=1.4))
 rmax, cmax = np.unravel_index(np.argmax(asm), asm.shape)
-ax.add_patch(Rectangle((cmax - 0.5, rmax - 0.5), 1, 1, fill=False, ec="#ff7f0e", lw=1.8))
+ax.add_patch(Rectangle((cmax - 0.5, rmax - 0.5), 1, 1, fill=False, ec="black", lw=2.0))
 ax.set_xticks([]); ax.set_yticks([])
 cb = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.03)
 cb.set_label("Relative pin power")
@@ -64,11 +66,11 @@ for i in range(na + 1):
     ax.axhline(i * N - 0.5, color="white", lw=0.5)
     ax.axvline(i * N - 0.5, color="white", lw=0.5)
 rmax, cmax = np.unravel_index(np.argmax(core), core.shape)
-ax.add_patch(Circle((cmax, rmax), 2.2, fill=False, ec="#d7263d", lw=1.6))
+ax.add_patch(Circle((cmax, rmax), 2.2, fill=False, ec="black", lw=1.8))
 ax.annotate(f"Hottest pin, {core[rmax, cmax]:.3f}", xy=(cmax + 1.6, rmax - 1.6),
-            xytext=(nx - 1, 8), ha="right", va="center", color="#d7263d", fontsize=8.5,
-            bbox=dict(boxstyle="round,pad=0.25", fc="white", ec="#d7263d", lw=0.8),
-            arrowprops=dict(arrowstyle="->", color="#d7263d", lw=1.1))
+            xytext=(nx - 1, 8), ha="right", va="center", color="black", fontsize=8.5,
+            bbox=dict(boxstyle="round,pad=0.25", fc="white", ec="black", lw=0.8),
+            arrowprops=dict(arrowstyle="->", color="black", lw=1.1))
 ax.set_xticks([]); ax.set_yticks([])
 cb = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.03)
 cb.set_label("Relative pin power")

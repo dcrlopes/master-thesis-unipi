@@ -1,0 +1,29 @@
+  merged 2 scans of design 58: 2483 +/- 53 ppm, chi2 0.86 on 1 dof
+================================================================================================
+MTC ceiling of each lattice against its own boron demand, 12.8 MPa
+================================================================================================
+ceiling refitted by weighted least squares over the three points nearest the sign change, uncertainty
+propagated from the fit covariance, inflated by sqrt(chi2/dof) where that exceeds one.
+'quoted' is the two-point interpolation printed by mtc_scan.py, kept
+for comparison.
+
+  id  Gd wt%  pins  invent  ceiling +/- sd  quoted  demand   margin   k_sig  verdict
+  --------------------------------------------------------------------------------------------
+  12    0.14    32     4.5     2091 +/-  69    2037    3003     -912   -13.2  fails
+  57    0.78    20    15.6     2278 +/- 173    2366    2470     -193    -1.1  UNRESOLVED
+  58    1.31    16    21.0     2483 +/-  53    2540    2363     +120    +2.3  clears
+  35    2.63    16    42.0     2617 +/-  69    2616    1908     +710   +10.2  clears
+  40    2.71    16    43.4     2651 +/- 240    2640    1768     +883    +3.7  clears
+  34    3.32    16    53.2     2752 +/-  97    2752    1725    +1027   +10.6  clears
+  44    3.15    20    62.9     2858 +/- 109    2867    1496    +1362   +12.5  clears
+  47    4.42    20    88.4     2897 +/-  99    2874    1406    +1491   +15.0  clears
+
+  Spearman ceiling against inventory +1.000, against Gd wt% +0.976, against pins -0.071
+  log fit  ceiling = 287 ln(inventory) + 1595, rms 55 ppm, max 106 ppm
+  linear in inventory rms 87 ppm, linear in Gd wt% rms 68 ppm
+
+  designs whose verdict is inside 2 sigma: [57]
+  designs that fail their own ceiling: [12, 57]
+
+wrote c9_post/mtc_ceiling_table.txt, .json and .tex
+wrote c9_post/c9_ceiling_inventory.pdf

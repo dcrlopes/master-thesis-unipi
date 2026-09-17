@@ -1,0 +1,51 @@
+==============================================================================
+CHECK D, identical conditions
+  axial      fidelity ['150000x200x80']  boron [1000.0] ppm
+  confirm3d  fidelity ['150000x200x80']  boron [1000.0] ppm
+  same conditions, the solves can be pooled
+==============================================================================
+CHECK A, seed agreement of k, z = dk / sqrt(sd1^2 + sd2^2)
+  source     design state   k1        k2        dk(pcm)  z
+  axial      C9-12  ARO   1.07329  1.07294     +34  +1.13
+  axial      C9-12  RE12  0.99636  0.99632      +4  +0.14
+  axial      C9-34  ARO   1.02010  1.01992     +18  +0.60
+  axial      C9-34  RE12  0.94897  0.94907     -10  -0.32
+  axial      C9-35  ARO   1.03336  1.03305     +31  +1.02
+  axial      C9-35  RE12  0.96069  0.96075      -6  -0.20
+  axial      C9-40  ARO   1.02362  1.02348     +14  +0.48
+  axial      C9-40  RE12  0.95164  0.95168      -3  -0.11
+  axial      C9-44  ARO   0.99241  0.99299     -57  -2.04
+  axial      C9-44  RE12  0.92489  0.92501     -12  -0.38
+  axial      C9-47  ARO   0.99718  0.99677     +41  +1.36
+  axial      C9-47  RE12  0.92903  0.92913      -9  -0.30
+  axial      C9-58  ARO   1.04600  1.04632     -32  -1.02
+  axial      C9-58  RE12  0.97224  0.97138     +85  +2.95
+  confirm3d  C9-12  ARO   1.07323  1.07316      +7  +0.22
+  confirm3d  C9-34  ARO   1.01994  1.02003      -9  -0.29
+  confirm3d  C9-35  ARO   1.03288  1.03293      -5  -0.16
+  confirm3d  C9-40  ARO   1.02375  1.02328     +47  +1.46
+  confirm3d  C9-44  ARO   0.99259  0.99261      -2  -0.07
+  confirm3d  C9-47  ARO   0.99694  0.99685      +9  +0.31
+  confirm3d  C9-58  ARO   1.04572  1.04593     -22  -0.65
+
+  axial      pairs  14  mean z^2  1.36 +/- 0.38  sd scale sqrt(mean z^2) 1.17  |z|>3: 0  (expected 0.04)
+  confirm3d  pairs  60  mean z^2  1.16 +/- 0.18  sd scale sqrt(mean z^2) 1.08  |z|>3: 0  (expected 0.16)
+  both       pairs  74  mean z^2  1.20 +/- 0.16  sd scale sqrt(mean z^2) 1.09  |z|>3: 0  (expected 0.20)
+==============================================================================
+CHECK B, ARO F_dH on the hardware model, four independent solves per design
+  design  confirm3d s0 s1   axial s1 s2    per-seed mean  sd     sem    pooled(axial)
+  C9-12   1.454 1.457    1.454 1.447    1.453          0.004  0.002  1.437
+  C9-34   1.486 1.488    1.469 1.456    1.475          0.015  0.007  1.453
+  C9-35   1.490 1.483    1.478 1.475    1.482          0.006  0.003  1.466
+  C9-40   1.450 1.463    1.482 1.482    1.469          0.016  0.008  1.467
+  C9-44   1.515 1.510    1.511 1.494    1.507          0.009  0.005  1.490
+  C9-47   1.503 1.499    1.529 1.513    1.511          0.014  0.007  1.500
+  C9-58   1.471 1.454    1.484 1.464    1.468          0.013  0.006  1.474
+  per-seed is the estimator of confirm3d.py and of the Campaign 9 3D front.
+==============================================================================
+CHECK C, source entropy convergence batch (inactive = 80)
+  C9-40  ARO   seed 1: converged at batch 67  CLOSE TO THE INACTIVE LIMIT
+  C9-34  ARO   seed 1: converged at batch 11
+  C9-58  ARO   seed 2: converged at batch 10
+  C9-58  ARO   seed 1: converged at batch 10
+  C9-47  ARO   seed 2: converged at batch 10

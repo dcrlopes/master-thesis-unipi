@@ -242,7 +242,8 @@ def main():
     for idx in a.designs:
         d = design_from(ckpt, idx)
         print(f"\n=== design C9-{idx}: e {d['enrich_outer']:.3f} wt%, Gd {d['gd_wt']:.2f} wt%, "
-              f"pins {d['gd_pins']:.0f}, refl {d['refl_thick']:.2f} cm")
+              f"pins {rm.snap_gd_pins(d['gd_pins'])} as built "
+              f"(optimiser value {d['gd_pins']:.2f}), refl {d['refl_thick']:.2f} cm")
         if a.dry_run:
             continue
         zdes = zn.zone_designs(d, a.m_center, m_m, a.m_periphery)

@@ -114,9 +114,23 @@ def load(out, power_mw, states=None):
 
 
 def grid_bands(edges):
-    """The grid bands are the short bins. Recover them from the edge spacing."""
-    dz = np.diff(edges); short = dz < 0.8 * np.median(dz)
-    return [(edges[i], edges[i + 1]) for i in np.where(short)[0]]
+    """Spacer-grid bands inside the active fuel, from the same function the
+    transport used (axial_shape_c9.axial_edges on the default HardwareSpec).
+    Drawn only if that function reproduces the stored edges, since a band
+    guessed from bin lengths can mark a bin that is not a grid."""
+    try:
+        import hardware3d as hw
+        from axial_shape_c9 import axial_edges
+        e_ref, bands, _ = axial_edges(hw.HardwareSpec(), hw)
+    except Exception as exc:                      # noqa: BLE001
+        print(f"  WARNING: grid bands not recovered ({exc}), none drawn")
+        return []
+    e_ref = np.asarray(e_ref, dtype=float); edges = np.asarray(edges, dtype=float)
+    if e_ref.shape != edges.shape or not np.allclose(e_ref, edges, atol=1e-6):
+        print("  WARNING: stored edges differ from the default HardwareSpec, "
+              "no grid bands drawn")
+        return []
+    return [(float(g0), float(g1)) for g0, g1 in bands]
 
 
 def save(fig, path, png):

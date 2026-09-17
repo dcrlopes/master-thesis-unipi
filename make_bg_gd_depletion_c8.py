@@ -10,7 +10,7 @@ Designs:
   C8-47  12 poisoned pins at 2.88 wt% Gd2O3, falls from beginning of life
   C8-31  40 poisoned pins at 3.38 wt% Gd2O3, strong burnout rise
   C9-4   32 poisoned pins at 4.05 wt% Gd2O3, 12.92 wt% enrichment, the
-         longest cycle below the ATF discharge limit of 75 MWd/kgHM
+         longest cycle in Campaigns 8 and 9 below the discharge limit
 The end-of-cycle burnup and target of each design are the archive values.
 The top axis converts burnup to effective full-power days with the specific
 power of the archive (EFPD = 1000 B / P_spec).
@@ -28,7 +28,7 @@ import matplotlib.pyplot as plt
 ROOT = Path(sys.argv[1])
 OUT_PDF = Path(sys.argv[2])
 OUT_PNG = Path(sys.argv[3])
-B_ATF = 75.0
+B_UO2 = 62.0        # UO2 in Zr cladding, rod average (Song and Sanchez 2026)
 
 c8 = json.loads((ROOT / "khist_c8" / "khist.json").read_text())
 c9 = json.loads((ROOT / "kh_c9" / "k_histories.json").read_text())
@@ -86,8 +86,8 @@ ax.annotate(f"Gadolinia burnout peak\nat {d31['bu'][i_pk]:.1f} MWd/kgHM",
             arrowprops=dict(arrowstyle="->", lw=0.9, color="#B5651D"),
             fontsize=8.0, color="#B5651D")
 
-ax.axvline(B_ATF, color="#B23A48", lw=1.5)
-ax.text(B_ATF - 0.8, 1.345, "ATF discharge limit, 75 MWd/kgHM", color="#B23A48",
+ax.axvline(B_UO2, color="#B23A48", lw=1.5)
+ax.text(B_UO2 - 0.8, 1.345, "UO$_2$ in Zr cladding, 62 MWd/kgHM", color="#B23A48",
         fontsize=7.8, va="top", ha="right", rotation=90)
 
 ax.set_xlabel("Burnup $B$ [MWd/kgHM]")

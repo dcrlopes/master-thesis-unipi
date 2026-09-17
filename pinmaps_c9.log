@@ -1,0 +1,9 @@
+nohup: ignoring input
+/home/diogo/miniforge3/envs/openmc-env/lib/python3.13/site-packages/openmc/tallies.py:1859: RuntimeWarning: invalid value encountered in divide
+  data = self.std_dev[indices] / self.mean[indices]
+/home/diogo/miniforge3/envs/openmc-env/lib/python3.13/site-packages/openmc/tallies.py:1859: RuntimeWarning: invalid value encountered in divide
+  data = self.std_dev[indices] / self.mean[indices]
+C9-47 design: {'enrich_inner': 4.459575553018539, 'enrich_outer': 4.459575553018539, 'gd_wt': 4.417817724748994, 'pitch': 1.26, 'refl_thick': 5.659998480222688, 'gd_pins': 20.98298521459188}
+assembly k_inf 1.11446 +- 0.00015  F_dh 1.1462
+core k_eff 1.02741 +- 0.00010  F_dh 1.5152
+written /home/diogo/master-thesis-unipi/pinmaps_c9

@@ -113,7 +113,7 @@ P("")
 P("=== Zero-boron ALL-RE (M16) margin: 2D measured, 3D by adding the 1000 ppm axial gain ===")
 P(f"{'idx':>4} {'enr':>5} {'kcore':>7} {'EFPD':>6} | {'M16(0) 2D':>10} {'gain':>6} {'src':>12} {'M16(0) 3D':>10} | {'M16(1000) 2D':>12}")
 for idx in ORDER:
-    b = bor[idx]; m0 = b["margin_ARI_pcm"]["0.0"]; g, src = gain3d[idx]
+    b = bor[idx]; m0 = b.get("margin_RE16_pcm", d.get("margin_ARI_pcm", {}))["0.0"]; g, src = gain3d[idx]
     P(f"{idx:>4} {dv[int(idx)]['enr']:5.2f} {b['archive']['keff_core_bol']:7.4f} {b['archive']['cycle_length']:6.0f} | "
       f"{m0:10.0f} {g:6.0f} {src:>12} {m0+g:10.0f} | {b['margin_ARI_pcm']['1000.0']:12.0f}")
 P("  caveat: the gain is measured at 1000 ppm and applied at 0 ppm. The rodded L_ax also carries")
@@ -173,15 +173,15 @@ fig.tight_layout(); fig.savefig(OUT / "fig1_boron_worth_vs_enrichment.png"); plt
 # Fig 2: ALL-RE margin vs boron, and zero-boron 2D vs 3D ------------------
 fig, ax = plt.subplots(1, 2, figsize=(11, 4.4))
 for idx in ORDER:
-    m = [bor[idx]["margin_ARI_pcm"][f"{c}"] for c in PPM]
+    m = [bor[idx].get("margin_RE16_pcm", d.get("margin_ARI_pcm", {}))[f"{c}"] for c in PPM]
     ax[0].plot(PPM, m, "-o", color=col(idx), label=f"d{idx} ({dv[int(idx)]['enr']:.1f}%)", lw=1.6, ms=4)
 ax[0].axhline(0, color="k", lw=1); ax[0].axhspan(-3000, 0, color="red", alpha=0.07)
 ax[0].axvline(1000, color="gray", ls="--", lw=0.8)
 ax[0].set_xlabel("Soluble boron  [ppm]"); ax[0].set_ylabel("$M_{16}$: subcriticality under ALL-RE (RE1 to RE4)  [pcm]")
 ax[0].set_title("Four designs are supercritical under ALL-RE at 0 ppm (2D, BOL)")
 ax[0].legend(fontsize=7, ncol=2)
-m2 = [bor[i]["margin_ARI_pcm"]["0.0"] for i in ORDER]
-m3 = [bor[i]["margin_ARI_pcm"]["0.0"] + gain3d[i][0] for i in ORDER]
+m2 = [bor[i].get("margin_RE16_pcm", d.get("margin_ARI_pcm", {}))["0.0"] for i in ORDER]
+m3 = [bor[i].get("margin_RE16_pcm", d.get("margin_ARI_pcm", {}))["0.0"] + gain3d[i][0] for i in ORDER]
 hatch = ["" if gain3d[i][1] == "measured" else "//" for i in ORDER]
 ax[1].bar(x - 0.2, m2, 0.4, label="2D measured", color="#4c72b0")
 bars = ax[1].bar(x + 0.2, m3, 0.4, label="3D: 2D + ALL-RE axial gain", color="#dd8452")

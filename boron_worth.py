@@ -16,15 +16,16 @@ same core at several concentrations, unrodded and rodded.
 WHAT IT MEASURES, per design
 -----------------------------
   k_ARO(c)      unrodded core eigenvalue at boron concentration c
-  k_ARI(c)      the same with the four regulating banks inserted
+  k_RE16(c)     the same with the four regulating banks inserted,
+                that is the sixteen central assemblies
   k_RE12(c)     the same with the first two banks inserted
 for c in --ppm (default 0, 500, 1000, 1500).
 
 From them, in reactivity rho = (k - 1)/k:
   boron worth        W_B(c1 -> c2) = rho(k_ARO, c1) - rho(k_ARO, c2)      [pcm]
   differential worth W_B / (c2 - c1)                                       [pcm/ppm]
-  bank worth         W_bank(c) = rho(k_ARO, c) - rho(k_ARI, c)             [pcm]
-  rods-only margin   M(c) = -rho(k_ARI, c)  (positive = subcritical)       [pcm]
+  bank worth         W_bank(c) = rho(k_ARO, c) - rho(k_RE16, c)             [pcm]
+  rods-only margin   M(c) = -rho(k_RE16, c)  (positive = subcritical)       [pcm]
   boron share        W_B(0 -> 1000) / [W_B(0 -> 1000) + W_bank(1000)]      [-]
 
 The margins at c = 0 answer the question "does the regulating system alone
@@ -66,7 +67,7 @@ def rho_pcm(k: float) -> float:
 def analyse(sol: dict, ppm: list, ref: float = 1000.0) -> dict:
     """sol[(state, c)] -> {'keff': .., 'sd': ..}. Returns the derived table."""
     out = {"ppm": ppm, "states": {}}
-    for st in ("ARO", "ARI", "RE12"):
+    for st in ("ARO", "RE16", "RE12"):
         out["states"][st] = {str(c): sol[(st, c)]["keff"] for c in ppm if (st, c) in sol}
     r = {c: rho_pcm(sol[("ARO", c)]["keff"]) for c in ppm if ("ARO", c) in sol}
     out["rho_ARO_pcm"] = {str(c): round(v, 1) for c, v in r.items()}
@@ -77,14 +78,21 @@ def analyse(sol: dict, ppm: list, ref: float = 1000.0) -> dict:
     cs = sorted(r)
     out["differential_by_interval_pcm_per_ppm"] = {
         f"{a}-{b}": round((r[a] - r[b]) / (b - a), 3) for a, b in zip(cs[:-1], cs[1:])}
-    for st in ("ARI", "RE12"):
+    for st in ("RE16", "RE12"):
         out[f"margin_{st}_pcm"] = {str(c): round(-rho_pcm(sol[(st, c)]["keff"]), 1)
                                   for c in ppm if (st, c) in sol}
         out[f"worth_{st}_pcm"] = {str(c): round(r[c] - rho_pcm(sol[(st, c)]["keff"]), 1)
                                  for c in ppm if (st, c) in sol and c in r}
-    if 0 in r and ref in r and ("ARI", ref) in sol:
+    # legacy key names: the summaries written before the rename call the
+    # sixteen-bank state ARI, so both spellings are emitted
+    for k in [k for k in list(out) if "_RE16_" in k]:
+        out[k.replace("_RE16_", "_ARI_")] = out[k]
+    if "RE16" in out["states"]:
+        out["states"]["ARI"] = out["states"]["RE16"]
+
+    if 0 in r and ref in r and ("RE16", ref) in sol:
         wb = r[0] - r[ref]
-        wbank = r[ref] - rho_pcm(sol[("ARI", ref)]["keff"])
+        wbank = r[ref] - rho_pcm(sol[("RE16", ref)]["keff"])
         out["boron_share_of_holddown"] = round(wb / (wb + wbank), 3)
     return out
 
@@ -98,13 +106,13 @@ def selftest() -> int:
     for c in (0, 500, 1000, 1500):
         r_aro = 12000.0 + 8.0 * (1000 - c)          # 12000 pcm excess at 1000 ppm
         sol[("ARO", c)] = {"keff": k_of_rho(r_aro), "sd": 0.0}
-        sol[("ARI", c)] = {"keff": k_of_rho(r_aro - 16000.0), "sd": 0.0}
+        sol[("RE16", c)] = {"keff": k_of_rho(r_aro - 16000.0), "sd": 0.0}
         sol[("RE12", c)] = {"keff": k_of_rho(r_aro - 8000.0), "sd": 0.0}
     a = analyse(sol, [0, 500, 1000, 1500])
     assert abs(a["differential_worth_pcm_per_ppm"] - 8.0) < 1e-6, a   # magnitude, boron removal ADDS reactivity
-    assert abs(a["worth_ARI_pcm"]["1000"] - 16000.0) < 1e-6, a
-    assert abs(a["margin_ARI_pcm"]["1000"] - 4000.0) < 1e-6, a
-    assert abs(a["margin_ARI_pcm"]["0"] + 4000.0) < 1e-6, a   # supercritical without boron
+    assert abs(a["worth_RE16_pcm"]["1000"] - 16000.0) < 1e-6, a
+    assert abs(a["margin_RE16_pcm"]["1000"] - 4000.0) < 1e-6, a
+    assert abs(a["margin_RE16_pcm"]["0"] + 4000.0) < 1e-6, a   # supercritical without boron
     assert abs(a["boron_share_of_holddown"] - round(8000.0 / 24000.0, 3)) < 1e-6, a
     print("  reactivity algebra ok: 8 pcm/ppm magnitude, bank 16000 pcm, margin +4000 at 1000 ppm, -4000 at 0 ppm")
     print("selftest OK")
@@ -134,7 +142,7 @@ def run_design(idx: int, design: dict, ppm: list, states: list, fid: dict,
     op0 = rm.Operating()
     dmap = zn.evaluator_design_map(design)
     rodded = {"ARO": None,
-              "ARI": (set(zn.RE_BANK_POSITIONS), "B4C"),
+              "RE16": (set(zn.RE_BANK_POSITIONS), "B4C"),
               "RE12": (set(zn.RE12_POSITIONS), "B4C")}
     sol = {}
     for st in states:
@@ -173,7 +181,7 @@ def main() -> int:
     ap.add_argument("--checkpoint")
     ap.add_argument("--designs", type=int, nargs="*", default=[])
     ap.add_argument("--ppm", type=float, nargs="*", default=[0, 500, 1000, 1500])
-    ap.add_argument("--states", nargs="*", default=["ARO", "ARI", "RE12"])
+    ap.add_argument("--states", nargs="*", default=["ARO", "RE16", "RE12"])
     ap.add_argument("--particles", type=int, default=100000)
     ap.add_argument("--batches", type=int, default=170)
     ap.add_argument("--inactive", type=int, default=60)
@@ -217,7 +225,7 @@ def main() -> int:
     for idx in a.designs:
         d = design_from_ckpt(ckpt, idx); r = ckpt["all_raw"][idx]
         print(f"  design {idx}: e={d['enrich_inner']:.2f} gd={d['gd_wt']:.2f} refl={d['refl_thick']:.2f} "
-              f"pins={r.get('gd_pins_used')}  archive k_core={r['keff_core_bol']:.4f} k_ARI={r['k_allre']:.4f}")
+              f"pins={r.get('gd_pins_used')}  archive k_core={r['keff_core_bol']:.4f} k_RE16={r['k_allre']:.4f}")
     if a.dry_run:
         return 0
 
@@ -230,7 +238,7 @@ def main() -> int:
                           ("keff_core_bol", "k_allre", "k_re12", "cycle_length", "peaking")}
         summary[str(idx)] = res
         (out / "summary.json").write_text(json.dumps(summary, indent=1))
-        m = res["margin_ARI_pcm"]
+        m = res["margin_RE16_pcm"]
         print(f"design {idx}: boron {res.get('differential_worth_pcm_per_ppm')} pcm/ppm, "
               f"four-bank margin at 1000 ppm {m.get('1000.0', m.get('1000'))} pcm, "
               f"at 0 ppm {m.get('0.0', m.get('0'))} pcm, boron share "
@@ -239,7 +247,7 @@ def main() -> int:
     # LaTeX table
     rows = []
     for idx, res in summary.items():
-        m16, m8 = res["margin_ARI_pcm"], res["margin_RE12_pcm"]
+        m16, m8 = res["margin_RE16_pcm"], res["margin_RE12_pcm"]
         g = lambda dct, c: dct.get(str(float(c)), dct.get(str(c), float("nan")))
         rows.append(f"    {idx} & {res.get('differential_worth_pcm_per_ppm', float('nan')):.2f} "
                     f"& {res.get('boron_worth_0_to_ref_pcm', float('nan')):.0f} "

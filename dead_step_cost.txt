@@ -1,0 +1,5 @@
+depletion transport total :    97.34 h
+depletion solves          :     1186
+mean seconds per solve    :    295.5 s
+dead steps (1 per restart):      413  (34.8% of solves)
+cost of the dead steps    :    33.90 h (31.3% of campaign wall time)

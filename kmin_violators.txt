@@ -1,0 +1,5 @@
+C5 designs with core k_eff below 1.02: [1, 14, 22, 33]
+  idx  1  k_inf 1.04371  k_core 0.98710  gd_wt 6.175  gd_pins 24
+  idx 14  k_inf 0.96333  k_core 0.91175  gd_wt 5.860  gd_pins 40
+  idx 22  k_inf 0.79428  k_core 0.75129  gd_wt 4.051  gd_pins 40
+  idx 33  k_inf 1.05985  k_core 1.01080  gd_wt 6.167  gd_pins 32

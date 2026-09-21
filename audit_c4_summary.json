@@ -1,0 +1,29 @@
+{
+  "campaign": "C4-audit",
+  "workdir": "/home/diogo/master-thesis-unipi/openmc_runs",
+  "host_reported": "UNKNOWN (pass --host)",
+  "omp_threads": "UNKNOWN",
+  "n_statepoints": 1719,
+  "by_fidelity": {
+    "16000x120(i30)": {
+      "n": 1665,
+      "sim_s": 486131.80849145947,
+      "init_s": 3387.005442359,
+      "transport_s": 485303.70510134083
+    },
+    "100000x170(i60)": {
+      "n": 54,
+      "sim_s": 5197.678747290001,
+      "init_s": 418.768305424,
+      "transport_s": 5061.241485797
+    }
+  },
+  "total_in_solve_s": 495135.260986533,
+  "total_active_wall_s": 385684.34624399996,
+  "calendar_span_s": 661821.989476,
+  "idle_s": 276137.643232,
+  "n_idle_gaps": 1,
+  "first_start": "2026-08-12 23:56:04.010524",
+  "last_end": "2026-08-20 15:46:26",
+  "statepoints_without_runtime": 0
+}

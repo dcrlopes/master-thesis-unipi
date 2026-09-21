@@ -1,0 +1,29 @@
+{
+  "campaign": "core_rescore",
+  "workdir": "/home/diogo/master-thesis-unipi/core_rescore",
+  "host_reported": "UNKNOWN (pass --host)",
+  "omp_threads": "UNKNOWN",
+  "n_statepoints": 156,
+  "by_fidelity": {
+    "100000x170(i60)": {
+      "n": 108,
+      "sim_s": 9669.377091156999,
+      "init_s": 845.859370451,
+      "transport_s": 9391.354593776994
+    },
+    "100000x230(i120)": {
+      "n": 48,
+      "sim_s": 5996.34209242,
+      "init_s": 374.11595291399993,
+      "transport_s": 5832.341731886
+    }
+  },
+  "total_in_solve_s": 16885.694506942,
+  "total_active_wall_s": 17426.940179,
+  "calendar_span_s": 17426.940179,
+  "idle_s": 0,
+  "n_idle_gaps": 0,
+  "first_start": "2026-08-12 17:28:52.059821",
+  "last_end": "2026-08-12 22:19:19",
+  "statepoints_without_runtime": 0
+}

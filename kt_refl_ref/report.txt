@@ -1,0 +1,13 @@
+==========================================================================
+RESULT
+==========================================================================
+  this run    : -20.4 +/- 9.7 pcm/cm, chi2/dof 1.05
+  table       : -47.6 pcm/cm   (2.8 sigma from this run)
+  sweep mean  : -25.1 +/- 4.0 pcm/cm   (0.5 sigma from this run)
+  range 2.00 to 5.66 cm : -75 pcm
+
+  VERDICT: SWEEP: the two routines disagree, this is a defect
+
+  A chi2/dof far above one means the leakage factor is not linear in
+  reflector thickness at this composition, in which case no single
+  slope should be quoted and the table's linear fit is the wrong form.

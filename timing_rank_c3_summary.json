@@ -1,0 +1,29 @@
+{
+  "campaign": "rank_c3",
+  "workdir": "/home/diogo/master-thesis-unipi/rank_c3",
+  "host_reported": "UNKNOWN (pass --host)",
+  "omp_threads": "UNKNOWN",
+  "n_statepoints": 90,
+  "by_fidelity": {
+    "64000x120(i30)": {
+      "n": 50,
+      "sim_s": 2011.136069422,
+      "init_s": 308.60634321400005,
+      "transport_s": 1951.6370910860003
+    },
+    "256000x120(i30)": {
+      "n": 40,
+      "sim_s": 6538.125506385,
+      "init_s": 246.27469014799996,
+      "transport_s": 6155.641225524
+    }
+  },
+  "total_in_solve_s": 9104.142609169,
+  "total_active_wall_s": 9405.051222999999,
+  "calendar_span_s": 19027.565688,
+  "idle_s": 9622.514465,
+  "n_idle_gaps": 1,
+  "first_start": "2026-08-11 20:45:38.434312",
+  "last_end": "2026-08-12 02:02:46",
+  "statepoints_without_runtime": 0
+}

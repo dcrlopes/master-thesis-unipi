@@ -1,0 +1,2 @@
+DOE   (0-41)  n=42  mean solves   19.4  censored 27 (64.3%)
+infill(42-59)  n=18  mean solves   20.7  censored 12 (66.7%)

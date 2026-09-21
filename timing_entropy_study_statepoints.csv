@@ -1,0 +1,7 @@
+file,end,n_particles,n_batches,n_inactive,init_s,sim_s,transport_s
+entropy_study/p4000_b60_i20/thin_reflector/statepoint.60.h5,2026-08-05 12:04:59,4000,60,20,5.9,1.3,1.3
+entropy_study/p4000_b60_i20/thick_reflector/statepoint.60.h5,2026-08-05 12:05:10,4000,60,20,5.9,1.5,1.4
+entropy_study/p4000_b60_i20/high_gadolinium/statepoint.60.h5,2026-08-05 12:05:20,4000,60,20,5.9,1.4,1.3
+entropy_study/p16000_b120_i30/thin_reflector/statepoint.120.h5,2026-08-05 12:05:39,16000,120,30,5.8,9.6,9.3
+entropy_study/p16000_b120_i30/thick_reflector/statepoint.120.h5,2026-08-05 12:05:57,16000,120,30,5.8,9.7,9.4
+entropy_study/p16000_b120_i30/high_gadolinium/statepoint.120.h5,2026-08-05 12:06:16,16000,120,30,5.8,9.1,8.8

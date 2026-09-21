@@ -1,0 +1,27 @@
+file,end,n_particles,n_batches,n_inactive,init_s,sim_s,transport_s
+openmc_runs_c3/case_0000/bol/statepoint.30.h5,2026-08-12 23:24:15,2000,30,10,5.9,0.7,0.6
+openmc_runs_c3/case_0000/core_bol/statepoint.40.h5,2026-08-12 23:24:27,5000,40,15,7.4,1.4,1.4
+openmc_runs_c3/case_0000/dep_00/openmc_simulation_n0.h5,2026-08-12 23:25:21,2000,30,10,5.9,9.5,9.5
+openmc_runs_c3/case_0000/dep_00/openmc_simulation_n1.h5,2026-08-12 23:25:39,2000,30,10,0.0,11.9,11.8
+openmc_runs_c3/case_0000/dep_00/openmc_simulation_n2.h5,2026-08-12 23:25:57,2000,30,10,0.0,12.1,11.6
+openmc_runs_c3/case_0000/dep_00/openmc_simulation_n3.h5,2026-08-12 23:26:14,2000,30,10,0.0,11.6,11.5
+openmc_runs_c3/case_0000/dep_00/openmc_simulation_n4.h5,2026-08-12 23:26:31,2000,30,10,0.0,11.5,11.5
+openmc_runs_c3/case_0000/dep_00/openmc_simulation_n5.h5,2026-08-12 23:26:49,2000,30,10,0.0,11.7,11.6
+openmc_runs_c3/case_0000/dep_00/statepoint.30.h5,2026-08-12 23:26:49,2000,30,10,0.0,11.7,11.6
+openmc_runs_c3/case_0000/dep_01/openmc_simulation_n6.h5,2026-08-12 23:27:51,2000,30,10,5.9,12.2,12.2
+openmc_runs_c3/case_0000/dep_01/openmc_simulation_n7.h5,2026-08-12 23:28:08,2000,30,10,0.0,11.4,11.4
+openmc_runs_c3/case_0000/dep_01/statepoint.30.h5,2026-08-12 23:28:08,2000,30,10,0.0,11.4,11.4
+openmc_runs_c3/case_0001/bol/statepoint.30.h5,2026-08-12 23:28:19,2000,30,10,5.8,0.6,0.5
+openmc_runs_c3/case_0001/core_bol/statepoint.40.h5,2026-08-12 23:28:32,5000,40,15,7.5,1.4,1.4
+openmc_runs_c3/case_0001/dep_00/openmc_simulation_n0.h5,2026-08-12 23:29:27,2000,30,10,6.4,9.1,9.1
+openmc_runs_c3/case_0001/dep_00/openmc_simulation_n1.h5,2026-08-12 23:29:46,2000,30,10,0.0,12.0,12.0
+openmc_runs_c3/case_0001/dep_00/openmc_simulation_n2.h5,2026-08-12 23:30:03,2000,30,10,0.0,11.5,11.5
+openmc_runs_c3/case_0001/dep_00/openmc_simulation_n3.h5,2026-08-12 23:30:21,2000,30,10,0.0,11.4,11.3
+openmc_runs_c3/case_0001/dep_00/openmc_simulation_n4.h5,2026-08-12 23:30:38,2000,30,10,0.0,11.4,11.4
+openmc_runs_c3/case_0001/dep_00/openmc_simulation_n5.h5,2026-08-12 23:30:55,2000,30,10,0.0,11.4,11.4
+openmc_runs_c3/case_0001/dep_00/statepoint.30.h5,2026-08-12 23:30:55,2000,30,10,0.0,11.4,11.4
+openmc_runs_c3/case_0001/dep_01/openmc_simulation_n6.h5,2026-08-12 23:31:58,2000,30,10,5.9,11.9,11.9
+openmc_runs_c3/case_0001/dep_01/openmc_simulation_n7.h5,2026-08-12 23:32:16,2000,30,10,0.0,11.6,11.5
+openmc_runs_c3/case_0001/dep_01/statepoint.30.h5,2026-08-12 23:32:16,2000,30,10,0.0,11.6,11.5
+openmc_runs_c3/case_0000/bol/statepoint.120.h5,2026-08-12 23:50:12,16000,120,30,5.9,11.3,10.9
+openmc_runs_c3/case_0000/core_bol/statepoint.170.h5,2026-08-12 23:51:54,100000,170,60,7.4,91.1,88.8

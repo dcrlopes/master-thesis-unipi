@@ -1,0 +1,16 @@
+file,end,n_particles,n_batches,n_inactive,init_s,sim_s,transport_s
+noise_test/design0/seed1/statepoint.60.h5,2026-08-04 23:35:27,4000,60,20,14.0,1.7,1.6
+noise_test/design0/seed2/statepoint.60.h5,2026-08-04 23:35:39,4000,60,20,6.0,1.9,1.8
+noise_test/design0/seed3/statepoint.60.h5,2026-08-04 23:35:49,4000,60,20,5.9,1.5,1.4
+noise_test/design0/seed4/statepoint.60.h5,2026-08-04 23:36:00,4000,60,20,5.8,1.6,1.5
+noise_test/design0/seed5/statepoint.60.h5,2026-08-04 23:36:11,4000,60,20,5.8,1.6,1.5
+noise_test/design1/seed1/statepoint.60.h5,2026-08-04 23:36:21,4000,60,20,5.9,1.6,1.5
+noise_test/design1/seed2/statepoint.60.h5,2026-08-04 23:36:32,4000,60,20,5.9,1.6,1.5
+noise_test/design1/seed3/statepoint.60.h5,2026-08-04 23:36:43,4000,60,20,5.8,1.8,1.7
+noise_test/design1/seed4/statepoint.60.h5,2026-08-04 23:36:53,4000,60,20,5.8,1.6,1.5
+noise_test/design1/seed5/statepoint.60.h5,2026-08-04 23:37:04,4000,60,20,5.8,1.6,1.5
+noise_test/design2/seed1/statepoint.60.h5,2026-08-04 23:37:14,4000,60,20,5.8,1.6,1.6
+noise_test/design2/seed2/statepoint.60.h5,2026-08-04 23:37:25,4000,60,20,5.8,1.6,1.5
+noise_test/design2/seed3/statepoint.60.h5,2026-08-04 23:37:36,4000,60,20,5.9,1.6,1.5
+noise_test/design2/seed4/statepoint.60.h5,2026-08-04 23:37:46,4000,60,20,5.8,1.6,1.5
+noise_test/design2/seed5/statepoint.60.h5,2026-08-04 23:37:57,4000,60,20,5.8,1.5,1.5

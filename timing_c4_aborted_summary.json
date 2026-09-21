@@ -1,0 +1,44 @@
+{
+  "campaign": "C4-aborted",
+  "workdir": "/home/diogo/master-thesis-unipi/openmc_runs_c3",
+  "window_after": "2026-08-12",
+  "window_before": null,
+  "n_statepoints_in_tree": 2112,
+  "host_reported": "UNKNOWN (pass --host)",
+  "omp_threads": "UNKNOWN",
+  "n_statepoints": 26,
+  "by_fidelity": {
+    "2000x30(i10)": {
+      "n": 22,
+      "sim_s": 229.58682421000003,
+      "init_s": 35.782107436,
+      "transport_s": 228.33819382600007
+    },
+    "5000x40(i15)": {
+      "n": 2,
+      "sim_s": 2.8753911490000004,
+      "init_s": 14.906424227,
+      "transport_s": 2.7634545520000002
+    },
+    "16000x120(i30)": {
+      "n": 1,
+      "sim_s": 11.299847758999999,
+      "init_s": 5.922765024,
+      "transport_s": 10.919790244000005
+    },
+    "100000x170(i60)": {
+      "n": 1,
+      "sim_s": 91.091159282,
+      "init_s": 7.384206845,
+      "transport_s": 88.76059007300005
+    }
+  },
+  "total_in_solve_s": 398.848725932,
+  "total_active_wall_s": 1665.562098,
+  "calendar_span_s": 1665.562098,
+  "idle_s": 0,
+  "n_idle_gaps": 0,
+  "first_start": "2026-08-12 23:24:08.437902",
+  "last_end": "2026-08-12 23:51:54",
+  "statepoints_without_runtime": 0
+}

@@ -1,0 +1,6 @@
+total depletion solves        :     1186
+total depletion chunks        :      473
+stale solves counted          :        0  (  0.00 h)
+restarted chunks (chunks - 60):      413
+  one dead step per restart   :      413 expected dead solves
+mixed-fidelity cases          : 0

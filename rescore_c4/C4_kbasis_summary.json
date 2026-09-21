@@ -1,0 +1,62 @@
+{
+  "label": "C4",
+  "checkpoint": "out_c4/optimization_checkpoint.json",
+  "n_evaluations": 54,
+  "gap_pcm": {
+    "min": 5014.791743947766,
+    "mean": 6752.582061962001,
+    "max": 7533.05932039563,
+    "sd": 532.8078011023164
+  },
+  "sweep": [
+    {
+      "k_max": 1.2,
+      "n_feasible_assembly": 0,
+      "n_feasible_core": 0,
+      "n_total": 54
+    },
+    {
+      "k_max": 1.25,
+      "n_feasible_assembly": 0,
+      "n_feasible_core": 0,
+      "n_total": 54
+    },
+    {
+      "k_max": 1.3,
+      "n_feasible_assembly": 0,
+      "n_feasible_core": 6,
+      "n_total": 54
+    },
+    {
+      "k_max": 1.35,
+      "n_feasible_assembly": 0,
+      "n_feasible_core": 7,
+      "n_total": 54
+    },
+    {
+      "k_max": 1.4,
+      "n_feasible_assembly": 7,
+      "n_feasible_core": 7,
+      "n_total": 54
+    },
+    {
+      "k_max": 1.45,
+      "n_feasible_assembly": 7,
+      "n_feasible_core": 7,
+      "n_total": 54
+    }
+  ],
+  "binding_at_135_core": {
+    "g_kmin": 0,
+    "g_kmax": 8,
+    "g_enr": 0,
+    "g_peak": 47,
+    "g_geom": 0
+  },
+  "limits_used": {
+    "k_min": 1.02,
+    "f_max": 2.0,
+    "enr_max": 19.75
+  },
+  "note": "cycle_length is copied as recorded and is NOT corrected for the OpenMC 0.15.3 write_rates depletion restart defect. Use the salvage output for any statement about cycle length. The reactivity and peaking quantities used here are beginning-of-life and are unaffected by that defect."
+}

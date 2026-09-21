@@ -1,0 +1,10 @@
+ idx  timing  archive  chunks  delta
+   0      22       22       9     +0
+   1       8        8       2     +0
+  20      22       22       9     +0
+  41      22       22       9     +0
+  42      22       22       9     +0
+  59      22       22       9     +0
+
+cases where the two counts disagree: 0 of 60
+total absolute discrepancy         : 0 solves

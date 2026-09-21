@@ -1,0 +1,6 @@
+idx  1  k_inf 1.04371  k_target 1.05646  margin -0.01275  censored False  EFPD_recorded 0
+idx 14  k_inf 0.96333  k_target 1.05813  margin -0.09480  censored False  EFPD_recorded 0
+idx 22  k_inf 0.79428  k_target 1.05567  margin -0.26139  censored False  EFPD_recorded 0
+idx 33  k_inf 1.05985  k_target 1.05035  margin +0.00951  censored False  EFPD_recorded 5169
+
+designs with k_inf(BOL) already below their own EOC target: [1, 14, 22]

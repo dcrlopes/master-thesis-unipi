@@ -1,0 +1,20 @@
+{
+  "n": 60,
+  "multipliers": {
+    "C": 0.85,
+    "M": 0.9500000000000002,
+    "P": 1.075
+  },
+  "spearman_all": 0.8033898305084746,
+  "spearman_top": -0.025,
+  "top_size": 15,
+  "dF_mean": -0.3056076734883127,
+  "dF_sd": 0.13778046058825147,
+  "dk_pcm_mean": -1178.041670922655,
+  "rankshift_vs_refl_thick": -0.21671972899267702,
+  "rankshift_vs_pitch": -0.145555227318699,
+  "n_under_2p0_uniform": 3,
+  "n_under_2p0_zoned": 35,
+  "n_leu_screen_violations": 10,
+  "noise_note": "per-design sigma_F is about 0.018 at these transport settings (Campaign 3 measurement): treat rank swaps of designs closer than about 0.04 in F as ties."
+}

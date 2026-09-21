@@ -1,0 +1,10 @@
+never-critical designs   : [1, 14, 22]
+  idx  wall_min   dep_min  asm_min  core_min  solves
+    1      45.2      40.9      0.3       1.8       8
+   14      57.2      51.4      0.3       1.8      10
+   22      46.6      41.7      0.3       1.8       8
+
+campaign total           :  108.22 h
+spent on these designs   :    2.48 h (2.3%)
+recoverable by the screen:    2.23 h
+mean solves, all designs : 19.8

@@ -1,0 +1,17 @@
+file,end,n_particles,n_batches,n_inactive,init_s,sim_s,transport_s
+gd_pin_test/pins12/asm_s1/statepoint.140.h5,2026-08-20 19:49:33,64000,140,40,5.9,40.8,39.7
+gd_pin_test/pins12/core_s1/statepoint.170.h5,2026-08-20 19:51:15,100000,170,60,7.4,91.8,89.5
+gd_pin_test/pins12/asm_s2/statepoint.140.h5,2026-08-20 19:52:07,64000,140,40,6.1,42.2,40.9
+gd_pin_test/pins12/core_s2/statepoint.170.h5,2026-08-20 19:53:52,100000,170,60,7.5,94.5,92.2
+gd_pin_test/pins14/asm_s1/statepoint.140.h5,2026-08-20 19:54:45,64000,140,40,6.1,43.3,42.0
+gd_pin_test/pins14/core_s1/statepoint.170.h5,2026-08-20 19:56:33,100000,170,60,7.4,97.5,94.8
+gd_pin_test/pins14/asm_s2/statepoint.140.h5,2026-08-20 19:57:26,64000,140,40,6.0,43.2,41.9
+gd_pin_test/pins14/core_s2/statepoint.170.h5,2026-08-20 19:59:14,100000,170,60,7.5,97.1,94.8
+gd_pin_test/pins16/asm_s1/statepoint.140.h5,2026-08-20 20:00:07,64000,140,40,6.0,43.4,42.0
+gd_pin_test/pins16/core_s1/statepoint.170.h5,2026-08-20 20:01:54,100000,170,60,7.7,96.7,94.4
+gd_pin_test/pins16/asm_s2/statepoint.140.h5,2026-08-20 20:02:47,64000,140,40,6.1,43.5,42.2
+gd_pin_test/pins16/core_s2/statepoint.170.h5,2026-08-20 20:04:38,100000,170,60,7.8,98.8,96.0
+gd_pin_test/pins20/asm_s1/statepoint.140.h5,2026-08-20 20:05:31,64000,140,40,6.1,44.0,42.6
+gd_pin_test/pins20/core_s1/statepoint.170.h5,2026-08-20 20:07:20,100000,170,60,7.5,97.8,95.4
+gd_pin_test/pins20/asm_s2/statepoint.140.h5,2026-08-20 20:08:14,64000,140,40,6.0,45.3,43.8
+gd_pin_test/pins20/core_s2/statepoint.170.h5,2026-08-20 20:10:04,100000,170,60,7.6,98.6,95.9

@@ -301,7 +301,9 @@ def build_materials(design: dict, op: Operating):
         # Gd2O3 -- the documented low-concentration-gadolinia practice
         # (Westinghouse/ENUSA, INIS FR0200561; same rule in the INL LWRS
         # uprate assessment), motivated by the degraded thermal conductivity
-        # of the urania-gadolinia mixture. Floored at natural uranium.
+        # of the urania-gadolinia mixture. Floored at 0.2 wt% U-235, below
+        # natural uranium (0.711 wt%), so a heavily poisoned rod never reaches
+        # a zero or negative enrichment.
         red = max(0.0, 1.0 - 0.05 * gd)
         mats["fuel_gd_in"] = make_uo2_gd(max(0.2, e_in * red), gd, op.fuel_T)
         mats["fuel_gd_out"] = make_uo2_gd(max(0.2, e_out * red), gd,

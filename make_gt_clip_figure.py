@@ -51,7 +51,7 @@ for ax, p in zip(axes, PITCHES):
     ax.add_patch(Rectangle((-h, -h), p, p, fill=False, edgecolor="black",
                            linestyle="--", linewidth=1.4, zorder=3))
     f = lost_fraction(p)
-    ax.set_title(f"Pitch {p:.3f} cm, half-pitch {h:.4f} cm\n"
+    ax.set_title(f"Pitch {p:.3f} cm, half-pitch {h:.3f} cm\n"
                  f"Wall lost outside the cell: {100 * f:.1f} %", fontsize=11)
     lim = 0.70
     ax.set_xlim(-lim, lim)

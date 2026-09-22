@@ -40,21 +40,29 @@ for _, lo, hi in PHASES:
 plt.rcParams.update({"font.size": 9, "font.family": "DejaVu Sans"})
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10.0, 3.5))
 
-it = np.arange(hv.size)
+n_doe = PHASES[0][2]
+batch = 6
+it = n_doe + batch * np.arange(hv.size)       # evaluations completed at each record
 lo, hi = hv.min(), hv.max()
 span = hi - lo
 ax1.set_ylim(lo - 0.12 * span, hi + 0.23 * span)       # headroom for the labels
 ax1.plot(it, hv, "o-", color="#3f6d8c", lw=1.4, ms=5, zorder=3)
-for xc in (0.5, 3.5):
+edges = [PHASES[0][2], PHASES[1][2]]                 # 36 and 54 evaluations
+for xc in edges:
     ax1.axvline(xc, color="#9aa7b1", ls=":", lw=0.9, zorder=1)
-for xc, lab in ((0.0, "Design of\nexperiments"), (2.0, "Block 1"), (5.0, "Block 2")):
-    ax1.text(xc, 0.98, lab, transform=ax1.get_xaxis_transform(),
-             ha="center", va="top", fontsize=8, color="#404b54")
+ax1.set_xlim(n_doe - 0.55 * n_doe, it[-1] + 3)
+for k, (lab, lo_e, hi_e) in enumerate(PHASES):
+    # the design of experiments holds no recorded point, so its label is set
+    # against the right edge of its own range instead of at its centre
+    xpos, align = (hi_e - 1.0, "right") if k == 0 else (0.5 * (lo_e + hi_e), "center")
+    ax1.text(xpos, 0.98, lab.replace(" of ", " of\n"),
+             transform=ax1.get_xaxis_transform(),
+             ha=align, va="top", fontsize=8, color="#404b54")
 for i in range(1, hv.size):
     gain = 100.0 * (hv[i] - hv[i - 1]) / hv[i - 1]
     ax1.annotate(f"{gain:+.1f}%" if gain else "0%", (it[i], hv[i]),
                  textcoords="offset points", xytext=(0, 9), ha="center", fontsize=7.5)
-ax1.set_xlabel("Active-learning iteration")
+ax1.set_xlabel("Evaluations completed")
 ax1.set_ylabel("Hypervolume")
 ax1.set_title("(a) Convergence of the hypervolume", fontsize=9)
 ax1.set_xticks(it)

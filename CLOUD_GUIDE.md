@@ -1,11 +1,11 @@
-# LABGENE-MOO Cloud Guide — from WSL laptop to a 64-core machine, once, reproducibly
+# LABGENE-MOO Cloud Guide — from WSL laptop to a 32-core machine, once, reproducibly
 
-**Goal.** Move the optimization pipeline to a rented 64-core Linux machine, accessed from your PC's terminal over SSH (Secure Shell), transferring code through GitHub, packaging everything in a Docker container so the exact same setup can later be redeployed on the UNIPI (University of Pisa) machine — with essentially zero performance penalty from the container.
+**Goal.** Move the optimization pipeline to a rented 32-core Linux machine, accessed from your PC's terminal over SSH (Secure Shell), transferring code through GitHub, packaging everything in a Docker container so the exact same setup can later be redeployed on the UNIPI (University of Pisa) machine — with essentially zero performance penalty from the container.
 
 **Architecture you are building:**
 
 ```
- Your PC (WSL)                GitHub                    AWS EC2 c7a.16xlarge (64 cores)
+ Your PC (WSL)                GitHub                    AWS EC2 c7a.8xlarge (32 cores)
  ┌────────────────┐   git push   ┌──────────┐  git clone  ┌───────────────────────────────┐
  │ code + guide   │ ───────────► │ private  │ ──────────► │  ~/labgene-moo   (code, repo) │
  │                │              │ repo     │             │  ~/openmc_data   (6 GB, once) │
@@ -19,25 +19,25 @@ Everything on the server is created by **three scripted steps** (`git clone`, `b
 
 ## 1. The two decisions, and why
 
-### 1.1 Provider: AWS EC2 `c7a.16xlarge` (Amazon Web Services, Elastic Compute Cloud)
+### 1.1 Provider: AWS EC2 `c7a.8xlarge` (Amazon Web Services, Elastic Compute Cloud)
 
 | Option | Cores you actually get | ~Price | Verdict |
 |---|---|---|---|
-| **AWS c7a.16xlarge** | **64 physical** AMD EPYC "Genoa" cores (SMT — Simultaneous Multi-Threading — is disabled on c7a, so every vCPU is a full core) | ~$3.28/h US, ~$3.6–3.9/h Frankfurt | **Chosen** |
+| **AWS c7a.8xlarge** | **32 physical** AMD EPYC "Genoa" cores (SMT — Simultaneous Multi-Threading — is disabled on c7a, so every vCPU is a full core) | ~$1.64/h US, ~$1.8–1.95/h Frankfurt | **Chosen** |
 | Google Cloud c3d-highcpu-60 | 60 vCPUs = only **30 physical** cores (SMT on) | ~$2.2–2.7/h | Fewer real cores per dollar for Monte Carlo; the $300 new-account trial credit is its one strong card (see 1.3) |
 | Hetzner CCX (dedicated vCPU) | vCPU = thread | Raised **+113–169 %** in April + June 2026; price advantage gone. Also bills stopped servers until you *delete* them | Dropped |
 | Azure F/HB series | comparable | comparable | No advantage; student subscriptions are vCPU-capped |
 
-Why c7a.16xlarge specifically wins for **this** workload:
+Why c7a.8xlarge specifically wins for **this** workload:
 
-1. **OpenMC (Open source Monte Carlo particle transport code) is CPU-bound and memory-bandwidth-hungry; physical cores are what count.** SMT sibling threads add only ~10–25 % to Monte Carlo throughput. c7a is the rare instance family where 64 vCPUs = 64 real cores.
+1. **OpenMC (Open source Monte Carlo particle transport code) is CPU-bound and memory-bandwidth-hungry; physical cores are what count.** SMT sibling threads add only ~10–25 % to Monte Carlo throughput. c7a is the rare instance family where every vCPU is a real core (32 vCPUs = 32 cores).
 2. **"Configure once, keep the machine, pay ~nothing between sessions"** — exactly what you asked for — is native on AWS: a **stopped** instance costs only its disk (~$8–10/month for 100 GB), and Linux instances bill **per second** while running. You stop it after each session and start it again next week, fully configured.
-3. 128 GiB RAM is far more than the depletion runs need — no memory risk.
+3. 64 GiB RAM is far more than the depletion runs need — no memory risk.
 4. The skills (SSH keys, security groups, per-second billing) are the industry standard you will meet everywhere later.
 
 **Cost expectation** (verify with your own cloud smoke test, step 6): a 72-evaluation campaign at the raised fidelity should land around **4–12 hours ≈ $15–45**, plus a few dollars for calibration runs and ~$8–10/month of disk while the machine sleeps between sessions. Terminate the instance when the thesis compute is finished and even that stops.
 
-**One mandatory early step:** new AWS accounts start with a small vCPU (virtual Central Processing Unit) quota — often 5–8 — for the "Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances" family. You must request an increase to **64** *before* you can launch this instance (step 3.2). Do it on day one; approval takes minutes to ~2 days.
+**One mandatory early step:** new AWS accounts start with a small vCPU (virtual Central Processing Unit) quota — often 5–8 — for the "Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances" family. You must request an increase to **32** *before* you can launch this instance (step 3.2). Do it on day one; approval takes minutes to ~2 days.
 
 ### 1.2 Package: yes, Docker — the performance penalty is negligible
 
@@ -54,7 +54,7 @@ For UNIPI, where you may not get root/Docker rights: the image converts to **App
 
 ### 1.3 Budget alternative (optional)
 
-If you want to try to make the compute nearly free: Google Cloud's new-account **$300 / 90-day trial credit** can cover the whole campaign on a `c3d-highcpu-60`. The friction: trial accounts must be upgraded to full (credits are kept) and a vCPU quota increase requested, and you get 30 physical cores instead of 64, so runs take ~2× longer. Everything in this guide except step 3 transfers unchanged — Docker doesn't care whose machine it is. This guide proceeds with AWS.
+If you want to try to make the compute nearly free: Google Cloud's new-account **$300 / 90-day trial credit** can cover the whole campaign on a `c3d-highcpu-60`. The friction: trial accounts must be upgraded to full (credits are kept) and a vCPU quota increase requested, and you get 30 physical cores instead of 32, so runs take about as long. Everything in this guide except step 3 transfers unchanged — Docker doesn't care whose machine it is. This guide proceeds with AWS.
 
 ---
 
@@ -124,15 +124,15 @@ Set a billing guard immediately: Console → *Billing* → *Budgets* → create 
 
 ### 3.2 Request the vCPU quota (do this first — it can take up to ~2 days)
 
-Console → search **Service Quotas** → *AWS services* → **Amazon EC2** → find **"Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances"** → *Request increase at account level* → new value **64**. In the use-case box, one honest sentence works: *"MSc thesis nuclear-engineering Monte Carlo simulations (OpenMC); single c7a.16xlarge instance, intermittent use."* Quotas are **per region** — request it in the same region you will launch in.
+Console → search **Service Quotas** → *AWS services* → **Amazon EC2** → find **"Running On-Demand Standard (A, C, D, H, I, M, R, T, Z) instances"** → *Request increase at account level* → new value **32**. In the use-case box, one honest sentence works: *"MSc thesis nuclear-engineering Monte Carlo simulations (OpenMC); single c7a.8xlarge instance, intermittent use."* Quotas are **per region** — request it in the same region you will launch in.
 
 ### 3.3 Import your SSH key and launch
 
 - EC2 → *Key pairs* → **Import key pair** → paste the content of `~/.ssh/id_ed25519.pub` → name it `diogo-wsl`.
 - EC2 → **Launch instance**:
-  - **Name:** `labgene-64core`
+  - **Name:** `labgene-32core`
   - **AMI (Amazon Machine Image):** Ubuntu Server 24.04 LTS, 64-bit (x86). x86 matters — your `environment.yml` was solved for `linux-64`, not ARM.
-  - **Instance type:** `c7a.16xlarge`
+  - **Instance type:** `c7a.8xlarge`
   - **Key pair:** `diogo-wsl`
   - **Network settings:** create a security group allowing **SSH** with source **My IP** (a firewall rule: port 22 only, only from your current address).
   - **Storage:** **100 GiB gp3** (data 6 GB + Docker image ~5 GB + conda + run scratch, with headroom).
@@ -147,7 +147,7 @@ ssh ubuntu@<PUBLIC_IP>
 # host-fingerprint question.
 ```
 
-You are now in a terminal on the 64-core machine. `nproc` (print the number of processing units) should answer `64`.
+You are now in a terminal on the 32-core machine. `nproc` (print the number of processing units) should answer `32`.
 
 ---
 
@@ -161,7 +161,7 @@ sudo apt-get update && sudo apt-get upgrade -y
 sudo apt-get install -y git tmux htop rsync docker.io
 #   git       clone your repository
 #   tmux      terminal multiplexer: keeps your run alive if SSH disconnects
-#   htop      live per-core CPU monitor (the satisfying 64-green-bars view)
+#   htop      live per-core CPU monitor (the satisfying 32-green-bars view)
 #   rsync     efficient file synchronisation, for pulling results back
 #   docker.io Docker engine from Ubuntu's own repository
 
@@ -217,7 +217,7 @@ This recreates `openmc-env` from your `environment.yml` inside the image. If the
 
 ```bash
 docker run --rm -it \
-  -e OMP_NUM_THREADS=64 \
+  -e OMP_NUM_THREADS=32 \
   -v "$HOME/labgene-moo:/work" \
   -v "$HOME/openmc_data:/data:ro" \
   labgene-openmc  <command>
@@ -231,13 +231,13 @@ docker run --rm -it \
 
 ```bash
 docker run --rm -it \
-  -e OMP_NUM_THREADS=64 \
+  -e OMP_NUM_THREADS=32 \
   -v "$HOME/labgene-moo:/work" -v "$HOME/openmc_data:/data:ro" \
   labgene-openmc \
   python run_optimization.py --smoke --out out_smoke
 ```
 
-Expect the same qualitative behaviour as your WSL smoke test (flat hypervolume, single Pareto point — that is correct for 6 evaluations), just much faster. **Write down the wall-clock time**: it is your calibration for estimating the full-run cost on this machine. Watch `htop` in a second SSH session — all 64 bars should saturate during transport.
+Expect the same qualitative behaviour as your WSL smoke test (flat hypervolume, single Pareto point — that is correct for 6 evaluations), just much faster. **Write down the wall-clock time**: it is your calibration for estimating the full-run cost on this machine. Watch `htop` in a second SSH session — all 32 bars should saturate during transport.
 
 ---
 
@@ -251,14 +251,14 @@ Two things stand between you and the overnight run, and both are **yours**, not 
 
 ```bash
 docker run --rm -it \
-  -e OMP_NUM_THREADS=64 \
+  -e OMP_NUM_THREADS=32 \
   -v "$HOME/labgene-moo:/work" -v "$HOME/openmc_data:/data:ro" \
   labgene-openmc \
   python measure_leakage_target.py | tee ktarget_$(date +%d%b).log
 #   tee  print to screen AND save to a file at the same time
 ```
 
-On 64 cores this is fast enough that you can *raise* the statistics constants at the top of the script (e.g. 5× the particles) for a tighter k_target — its uncertainty propagates directly into the EOC (End Of Cycle) crossing and hence every EFPD (Effective Full Power Days) value on the Pareto front. Paste the printed `K_TARGET` into `run_optimization.py` (or pass `--ktarget` every time — the flag always wins).
+On 32 cores this is fast enough that you can *raise* the statistics constants at the top of the script (e.g. 5× the particles) for a tighter k_target — its uncertainty propagates directly into the EOC (End Of Cycle) crossing and hence every EFPD (Effective Full Power Days) value on the Pareto front. Paste the printed `K_TARGET` into `run_optimization.py` (or pass `--ktarget` every time — the flag always wins).
 
 *(Note: measure_leakage_target.py's docstring still says "~21 assemblies" — a stale comment only; the code calls the current 32-assembly `make_core_model`.)*
 
@@ -278,7 +278,7 @@ Inside tmux — session 1 (fresh: 24 DOE + 2×6 infill = 36 evaluations):
 
 ```bash
 docker run --rm \
-  -e OMP_NUM_THREADS=64 \
+  -e OMP_NUM_THREADS=32 \
   -v "$HOME/labgene-moo:/work" -v "$HOME/openmc_data:/data:ro" \
   labgene-openmc \
   python run_optimization.py --ktarget <YOUR_MEASURED_VALUE> \
@@ -291,7 +291,7 @@ Detach with **Ctrl-b then d** (tmux keeps it running). Re-attach anytime with `t
 
 ```bash
 docker run --rm \
-  -e OMP_NUM_THREADS=64 \
+  -e OMP_NUM_THREADS=32 \
   -v "$HOME/labgene-moo:/work" -v "$HOME/openmc_data:/data:ro" \
   labgene-openmc \
   python run_optimization.py --ktarget <SAME_VALUE> \
@@ -375,7 +375,7 @@ Whichever path: **run `--smoke` first on every new machine.** Always.
 
 | Item | Cost |
 |---|---|
-| c7a.16xlarge running (Frankfurt, on-demand, per-second billing) | ~$3.6–3.9 / hour |
+| c7a.8xlarge running (Frankfurt, on-demand, per-second billing) | ~$1.8–1.95 / hour |
 | Cloud smoke test + K_TARGET measurement | ~$1–3 |
 | Full 72-eval campaign at 20 000 × 80 fidelity | ~4–12 h → **~$15–45** (calibrate with your smoke timing) |
 | Disk while stopped (100 GB gp3) | ~$8–10 / month |

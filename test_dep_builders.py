@@ -5,7 +5,9 @@ reactor_model / zoning / hardware3d code, with openmc replaced by
 fake_openmc (geometry only, no transport). Verifies, for C9-47:
 
   2D  twelve depletable ring materials, 8448 pin instances, each tagged to
-      its ring, volumes adding up to the core heavy metal
+      its ring, volumes adding up to the core heavy metal, and the unplaced
+      base assembly switched off (the 22 Sep bug: "Volume not specified for
+      depletable material UGd_3.5_4.4")
   3D  --layers x 12 depletable materials, every layer holding 8448 pin
       instances over its own height, the plain and grid segments of a
       layer sharing one material set, the four tallies attached
@@ -34,15 +36,20 @@ def main():
     op, geo = rm.Operating(), rm.Geometry17x17()
     area = math.pi * geo.fuel_or ** 2
 
-    model, rows, shape = C2.build(design, dict(particles=10, batches=5, inactive=2), 7, geo, op)
+    model, rows, shape, off = C2.build(design, dict(particles=10, batches=5, inactive=2), 7, geo, op)
     assert len(rows) == 12 and sum(r["pins"] for r in rows) == N_FUEL
     assert sorted({r["zone"] for r in rows}) == ["C", "M", "P"] and "?" not in {r["zone"] for r in rows}
     per_ring = {z: sum(r["pins"] for r in rows if r["zone"] == z) for z in "CMP"}
     assert per_ring == {"C": 4 * 264, "M": 12 * 264, "P": 16 * 264}, per_ring
     assert abs(sum(r["volume_cm3"] for r in rows) - N_FUEL * area * geo.active_height) < 1e-6
+    # the unplaced base assembly (core-average enrichment) must be switched off
     assert sum(getattr(m, "depletable", False) for m in model.materials) == 12
+    assert {m.id for m in model.materials if getattr(m, "depletable", False)} == {r["id"] for r in rows}
+    assert sorted(r["name"] for r in off) == ["UGd_3.5_4.4", "UGd_3.5_4.4", "UO2_4.46", "UO2_4.46"], off
+    assert all(m.volume is None for m in model.materials if not getattr(m, "depletable", False))
     assert [t.name for t in model.tallies] == ["core_pin_fission"]
-    print(f"2D: {len(rows)} depletable materials, rings {per_ring}, volume OK")
+    print(f"2D: {len(rows)} depletable materials, rings {per_ring}, volume OK, "
+          f"{len(off)} unplaced base materials switched off")
 
     for n_layers in (4, 8):
         spec = hw.HardwareSpec()
@@ -56,6 +63,7 @@ def main():
             assert len(rs) == 12 and sum(r["pins"] for r in rs) == N_FUEL
             assert abs(sum(r["volume_cm3"] for r in rs) - N_FUEL * area * h) < 1e-6
         assert sum(getattr(m, "depletable", False) for m in model.materials) == 12 * n_layers
+        assert {m.id for m in model.materials if getattr(m, "depletable", False)} == {r["id"] for r in rows}
         assert [t.name for t in model.tallies] == ["asm_fission", "pin_fission", "axial_fission", "layer_fission"]
         assert len(edges) == n_layers + 1 and info["n_fuel_segments"] >= n_layers
         print(f"3D: {n_layers} layers, {info['n_fuel_segments']} fuel segments, {len(rows)} depletable materials, "

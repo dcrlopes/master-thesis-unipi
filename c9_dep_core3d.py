@@ -237,6 +237,8 @@ def build_layered(design, op, geo, spec, n_layers, tr, seed, design_map):
         r["layer"], r["role"] = byid.get(r["id"], (None, "?"))
     if any(r["layer"] is None for r in rows):
         raise RuntimeError("a depletable material has no layer")
+    # same guard as the 2D core: nothing outside the placed layers may deplete
+    off = dc.unmark_unused(model, rows)
 
     # tallies: the three of axial_shape_c9 plus one on the layer edges
     fine, bands, _ = ax.axial_edges(spec, hw)
@@ -250,6 +252,7 @@ def build_layered(design, op, geo, spec, n_layers, tr, seed, design_map):
     info = dict(r_fuel=r_fuel, r_refl=r_refl, r_barrel=r_barrel, n_segments=len(segs),
                 n_fuel_segments=len(fsegs), n_layers=n_layers, n_depletable=len(rows),
                 layer_edges=np.asarray(edges).tolist(), fine_edges=np.asarray(fine).tolist())
+    info["materials_off"] = off
     return model, info, rows, np.asarray(edges), fine, shape
 
 

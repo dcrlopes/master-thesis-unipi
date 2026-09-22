@@ -11,6 +11,8 @@ arithmetic and the selftest run on any machine.
                                  the lattice multiplicity
   mark_depletable(model, ...)    volumes and the depletable flag on every fuel
                                  material, from those counts
+  unmark_unused(model, rows)     switches the flag OFF on every other material,
+                                 including the unplaced base assembly
   run_adaptive(...)              the adaptive chunked depletion of
                                  OpenMCEvaluator._cycle_length, ported so it
                                  accepts ANY model (core, 3D) and any target.
@@ -108,16 +110,26 @@ def mark_depletable(model, segments, geo) -> list[dict]:
     return rows
 
 
-def unmark_unused(model, used) -> int:
-    """Materials in model.materials that are not in `used` must not be
-    depletable, or the operator would count their heavy metal. Returns the
-    number of materials switched off."""
-    n = 0
+def unmark_unused(model, rows) -> list[dict]:
+    """Switch OFF the depletable flag of every material of model.materials
+    that is not one of `rows` (the output of mark_depletable).
+
+    This is not housekeeping. reactor_model.make_core_model always builds a
+    base assembly at the core-average enrichment, and when a zoning map
+    overrides all 32 positions that assembly is never placed, yet its
+    materials stay in model.materials and arrive flagged depletable. The
+    operator would then refuse the model ("Volume not specified for
+    depletable material") or, worse, count heavy metal that is not in the
+    core. Returns one row per material switched off.
+    """
+    keep = {int(r["id"]) for r in rows}
+    off = []
     for m in model.materials:
-        if getattr(m, "depletable", False) and m not in used:
+        if getattr(m, "depletable", False) and int(m.id) not in keep:
             m.depletable = False
-            n += 1
-    return n
+            m.volume = None
+            off.append(dict(id=int(m.id), name=str(m.name)))
+    return off
 
 
 # ---------------------------------------------------- adaptive depletion ----
@@ -371,6 +383,17 @@ def selftest():
     assert A.depletable and abs(A.volume - va) < 1e-9 and len(rows) == 2
     rows = mark_depletable(None, [(core, 120.0), (core, 60.0)], Geo())
     assert abs(A.volume - 1.5 * va) < 1e-9, "shared material sums its segment volumes"
+
+    # a fuel material that is in model.materials but in no lattice position
+    # (the unplaced base assembly) must lose its depletable flag
+    stray = M("stray", [("U235", 1.0)], 99); stray.depletable = True; stray.volume = 1.0
+    class Mod:
+        materials = [A, B, W, stray]
+    off = unmark_unused(Mod(), rows)
+    assert [r["name"] for r in off] == ["stray"], off
+    assert stray.depletable is False and stray.volume is None
+    assert A.depletable and B.depletable, "placed materials keep their flag"
+    assert unmark_unused(Mod(), rows) == [], "idempotent"
     pc = project_cost([dict(wall_s=10.0), dict(wall_s=50.0), dict(wall_s=54.0)], 8, 130.0)
     assert abs(pc["overhead_s"] - 16.0 / 3) < 1e-9 and abs(pc["projected_s"] - (10 + 16 / 3 + 7 * (52 + 16 / 3))) < 1e-9
     assert not project_cost([], 8, 0.0)["ok"]

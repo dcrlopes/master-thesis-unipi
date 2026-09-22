@@ -1,0 +1,5618 @@
+{
+ "summary": [
+  {
+   "path": "openmc_runs/case_0000/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.2935525122679081
+  },
+  {
+   "path": "openmc_runs/case_0000/bol/statepoint.30.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 30,
+   "n_inactive": 10,
+   "conv": 1,
+   "keff": 0.7669096252431546
+  },
+  {
+   "path": "openmc_runs/case_0000/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 13,
+   "keff": 1.2319182312235095
+  },
+  {
+   "path": "openmc_runs/case_0000/core_bol/statepoint.60.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 2,
+   "keff": 0.7015377001873873
+  },
+  {
+   "path": "openmc_runs/case_0001/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3814877487511281
+  },
+  {
+   "path": "openmc_runs/case_0001/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 111,
+   "keff": 1.3211323570720692
+  },
+  {
+   "path": "openmc_runs/case_0002/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 2,
+   "keff": 1.430270987845138
+  },
+  {
+   "path": "openmc_runs/case_0002/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 93,
+   "keff": 1.3720941841841785
+  },
+  {
+   "path": "openmc_runs/case_0003/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3325915290729566
+  },
+  {
+   "path": "openmc_runs/case_0003/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 13,
+   "keff": 1.2625043832336533
+  },
+  {
+   "path": "openmc_runs/case_0004/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.390484223522926
+  },
+  {
+   "path": "openmc_runs/case_0004/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 59,
+   "keff": 1.3193644504012823
+  },
+  {
+   "path": "openmc_runs/case_0005/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.4792483228033717
+  },
+  {
+   "path": "openmc_runs/case_0005/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 104,
+   "keff": 1.417429305639845
+  },
+  {
+   "path": "openmc_runs/case_0006/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3933143897275955
+  },
+  {
+   "path": "openmc_runs/case_0006/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 12,
+   "keff": 1.3229459760644866
+  },
+  {
+   "path": "openmc_runs/case_0007/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3200516918433862
+  },
+  {
+   "path": "openmc_runs/case_0007/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 14,
+   "keff": 1.2481336412174775
+  },
+  {
+   "path": "openmc_runs/case_0008/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3500702146360475
+  },
+  {
+   "path": "openmc_runs/case_0008/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 14,
+   "keff": 1.2873397778580473
+  },
+  {
+   "path": "openmc_runs/case_0009/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.2535636462597264
+  },
+  {
+   "path": "openmc_runs/case_0009/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 15,
+   "keff": 1.186067448704917
+  },
+  {
+   "path": "openmc_runs/case_0010/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3454803011699477
+  },
+  {
+   "path": "openmc_runs/case_0010/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 14,
+   "keff": 1.280793136241957
+  },
+  {
+   "path": "openmc_runs/case_0011/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.4510306231561128
+  },
+  {
+   "path": "openmc_runs/case_0011/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 19,
+   "keff": 1.3910207823550957
+  },
+  {
+   "path": "openmc_runs/case_0012/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.4359581370951613
+  },
+  {
+   "path": "openmc_runs/case_0012/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 67,
+   "keff": 1.3670262068568952
+  },
+  {
+   "path": "openmc_runs/case_0013/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.4369181942331386
+  },
+  {
+   "path": "openmc_runs/case_0013/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 17,
+   "keff": 1.3718467943759038
+  },
+  {
+   "path": "openmc_runs/case_0014/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3334309623446907
+  },
+  {
+   "path": "openmc_runs/case_0014/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 87,
+   "keff": 1.267375975796958
+  },
+  {
+   "path": "openmc_runs/case_0015/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.4037742539569855
+  },
+  {
+   "path": "openmc_runs/case_0015/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 61,
+   "keff": 1.346152573844725
+  },
+  {
+   "path": "openmc_runs/case_0016/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.4144152087349013
+  },
+  {
+   "path": "openmc_runs/case_0016/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 15,
+   "keff": 1.3438608686885036
+  },
+  {
+   "path": "openmc_runs/case_0017/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3896410488688389
+  },
+  {
+   "path": "openmc_runs/case_0017/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 87,
+   "keff": 1.3219773150647174
+  },
+  {
+   "path": "openmc_runs/case_0018/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3093702220288395
+  },
+  {
+   "path": "openmc_runs/case_0018/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 16,
+   "keff": 1.2388977952990063
+  },
+  {
+   "path": "openmc_runs/case_0019/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.350379556049951
+  },
+  {
+   "path": "openmc_runs/case_0019/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 39,
+   "keff": 1.2808772671521995
+  },
+  {
+   "path": "openmc_runs/case_0020/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3885327235673446
+  },
+  {
+   "path": "openmc_runs/case_0020/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 15,
+   "keff": 1.3198115539021436
+  },
+  {
+   "path": "openmc_runs/case_0021/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3868384503923592
+  },
+  {
+   "path": "openmc_runs/case_0021/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 65,
+   "keff": 1.3175758509845752
+  },
+  {
+   "path": "openmc_runs/case_0022/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.418044801839208
+  },
+  {
+   "path": "openmc_runs/case_0022/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 12,
+   "keff": 1.3484745670988318
+  },
+  {
+   "path": "openmc_runs/case_0023/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3584634100857744
+  },
+  {
+   "path": "openmc_runs/case_0023/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 60,
+   "keff": 1.3008362867107475
+  },
+  {
+   "path": "openmc_runs/case_0024/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.2778510113922468
+  },
+  {
+   "path": "openmc_runs/case_0024/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 97,
+   "keff": 1.2179643178747663
+  },
+  {
+   "path": "openmc_runs/case_0025/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3882794648716252
+  },
+  {
+   "path": "openmc_runs/case_0025/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 12,
+   "keff": 1.3225160455841174
+  },
+  {
+   "path": "openmc_runs/case_0026/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.4436142056593901
+  },
+  {
+   "path": "openmc_runs/case_0026/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 15,
+   "keff": 1.3784903353178906
+  },
+  {
+   "path": "openmc_runs/case_0027/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.2024953302061248
+  },
+  {
+   "path": "openmc_runs/case_0027/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 16,
+   "keff": 1.1519815890413487
+  },
+  {
+   "path": "openmc_runs/case_0028/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.5155302994739863
+  },
+  {
+   "path": "openmc_runs/case_0028/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 14,
+   "keff": 1.4533335366672837
+  },
+  {
+   "path": "openmc_runs/case_0029/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.370053583049593
+  },
+  {
+   "path": "openmc_runs/case_0029/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 14,
+   "keff": 1.3075130326330668
+  },
+  {
+   "path": "openmc_runs/case_0030/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.25313070683246
+  },
+  {
+   "path": "openmc_runs/case_0030/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 12,
+   "keff": 1.183541294191636
+  },
+  {
+   "path": "openmc_runs/case_0031/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.4063759568090028
+  },
+  {
+   "path": "openmc_runs/case_0031/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 15,
+   "keff": 1.3442872083102262
+  },
+  {
+   "path": "openmc_runs/case_0032/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.4452677759934676
+  },
+  {
+   "path": "openmc_runs/case_0032/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 33,
+   "keff": 1.3704980066710697
+  },
+  {
+   "path": "openmc_runs/case_0033/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.1441591031891547
+  },
+  {
+   "path": "openmc_runs/case_0033/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 12,
+   "keff": 1.0773548867525211
+  },
+  {
+   "path": "openmc_runs/case_0034/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.2019533503708169
+  },
+  {
+   "path": "openmc_runs/case_0034/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 13,
+   "keff": 1.139669605972391
+  },
+  {
+   "path": "openmc_runs/case_0035/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.383096089843991
+  },
+  {
+   "path": "openmc_runs/case_0035/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 16,
+   "keff": 1.3176566583029394
+  },
+  {
+   "path": "openmc_runs/case_0036/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.366595980803183
+  },
+  {
+   "path": "openmc_runs/case_0036/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 99,
+   "keff": 1.2944009886512313
+  },
+  {
+   "path": "openmc_runs/case_0037/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3667604481065916
+  },
+  {
+   "path": "openmc_runs/case_0037/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 13,
+   "keff": 1.2946499926759043
+  },
+  {
+   "path": "openmc_runs/case_0038/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3669731383843444
+  },
+  {
+   "path": "openmc_runs/case_0038/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 12,
+   "keff": 1.2947163469210283
+  },
+  {
+   "path": "openmc_runs/case_0039/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3675311010692928
+  },
+  {
+   "path": "openmc_runs/case_0039/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 27,
+   "keff": 1.294754144440251
+  },
+  {
+   "path": "openmc_runs/case_0040/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3685274492831148
+  },
+  {
+   "path": "openmc_runs/case_0040/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 13,
+   "keff": 1.2942474071961378
+  },
+  {
+   "path": "openmc_runs/case_0041/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3662096115712357
+  },
+  {
+   "path": "openmc_runs/case_0041/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 11,
+   "keff": 1.2949042443838064
+  },
+  {
+   "path": "openmc_runs/case_0042/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3569691533940118
+  },
+  {
+   "path": "openmc_runs/case_0042/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 15,
+   "keff": 1.2836078406622848
+  },
+  {
+   "path": "openmc_runs/case_0043/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.356830367782293
+  },
+  {
+   "path": "openmc_runs/case_0043/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 13,
+   "keff": 1.2841207653899553
+  },
+  {
+   "path": "openmc_runs/case_0044/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3552687493508813
+  },
+  {
+   "path": "openmc_runs/case_0044/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 94,
+   "keff": 1.284320066102863
+  },
+  {
+   "path": "openmc_runs/case_0045/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3566406179659154
+  },
+  {
+   "path": "openmc_runs/case_0045/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 14,
+   "keff": 1.2838666623697337
+  },
+  {
+   "path": "openmc_runs/case_0046/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.356765549845862
+  },
+  {
+   "path": "openmc_runs/case_0046/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 11,
+   "keff": 1.2852120036389514
+  },
+  {
+   "path": "openmc_runs/case_0047/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3560307312459192
+  },
+  {
+   "path": "openmc_runs/case_0047/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 14,
+   "keff": 1.283873659003984
+  },
+  {
+   "path": "openmc_runs/case_0048/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.350226586934952
+  },
+  {
+   "path": "openmc_runs/case_0048/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 14,
+   "keff": 1.2787068458150246
+  },
+  {
+   "path": "openmc_runs/case_0049/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3485365583657747
+  },
+  {
+   "path": "openmc_runs/case_0049/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 75,
+   "keff": 1.2785741592684081
+  },
+  {
+   "path": "openmc_runs/case_0050/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.350001700785953
+  },
+  {
+   "path": "openmc_runs/case_0050/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 96,
+   "keff": 1.2791258601051845
+  },
+  {
+   "path": "openmc_runs/case_0051/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3513477511565704
+  },
+  {
+   "path": "openmc_runs/case_0051/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 11,
+   "keff": 1.2791533264427768
+  },
+  {
+   "path": "openmc_runs/case_0052/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3492986259829023
+  },
+  {
+   "path": "openmc_runs/case_0052/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 14,
+   "keff": 1.2786303569934612
+  },
+  {
+   "path": "openmc_runs/case_0053/bol/statepoint.120.h5",
+   "campaign": "openmc_runs",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3511198871689412
+  },
+  {
+   "path": "openmc_runs/case_0053/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 13,
+   "keff": 1.2781717434336883
+  },
+  {
+   "path": "openmc_runs_c3/case_0000/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3196397453446136
+  },
+  {
+   "path": "openmc_runs_c3/case_0000/bol/statepoint.30.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 30,
+   "n_inactive": 10,
+   "conv": 1,
+   "keff": 1.1949658561411405
+  },
+  {
+   "path": "openmc_runs_c3/case_0000/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 34,
+   "keff": 1.2489551207705187
+  },
+  {
+   "path": "openmc_runs_c3/case_0000/core_bol/statepoint.40.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "core",
+   "n_batches": 40,
+   "n_inactive": 15,
+   "conv": 7,
+   "keff": 1.1234403862575884
+  },
+  {
+   "path": "openmc_runs_c3/case_0001/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.440610906154729
+  },
+  {
+   "path": "openmc_runs_c3/case_0001/bol/statepoint.30.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 30,
+   "n_inactive": 10,
+   "conv": 1,
+   "keff": 1.2002423355296343
+  },
+  {
+   "path": "openmc_runs_c3/case_0001/core_bol/statepoint.40.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "core",
+   "n_batches": 40,
+   "n_inactive": 15,
+   "conv": 7,
+   "keff": 1.1230691386822453
+  },
+  {
+   "path": "openmc_runs_c3/case_0002/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.446874069804984
+  },
+  {
+   "path": "openmc_runs_c3/case_0003/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.4095057395462083
+  },
+  {
+   "path": "openmc_runs_c3/case_0004/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3942452467476716
+  },
+  {
+   "path": "openmc_runs_c3/case_0005/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.1618146608884166
+  },
+  {
+   "path": "openmc_runs_c3/case_0006/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.313306525569884
+  },
+  {
+   "path": "openmc_runs_c3/case_0007/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 121,
+   "keff": 1.4339964994683738
+  },
+  {
+   "path": "openmc_runs_c3/case_0008/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.2967488778155412
+  },
+  {
+   "path": "openmc_runs_c3/case_0009/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.2218155386578178
+  },
+  {
+   "path": "openmc_runs_c3/case_0010/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3799613056670068
+  },
+  {
+   "path": "openmc_runs_c3/case_0011/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3430787345358588
+  },
+  {
+   "path": "openmc_runs_c3/case_0012/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.380628429247419
+  },
+  {
+   "path": "openmc_runs_c3/case_0013/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.291233658768165
+  },
+  {
+   "path": "openmc_runs_c3/case_0014/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.4395458036003637
+  },
+  {
+   "path": "openmc_runs_c3/case_0015/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3802819205625092
+  },
+  {
+   "path": "openmc_runs_c3/case_0016/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3453559378928115
+  },
+  {
+   "path": "openmc_runs_c3/case_0017/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3655676829171388
+  },
+  {
+   "path": "openmc_runs_c3/case_0018/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.155817446277261
+  },
+  {
+   "path": "openmc_runs_c3/case_0019/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.4432529303075443
+  },
+  {
+   "path": "openmc_runs_c3/case_0020/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.4145554884077989
+  },
+  {
+   "path": "openmc_runs_c3/case_0021/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.4934017818979426
+  },
+  {
+   "path": "openmc_runs_c3/case_0022/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.399268703443524
+  },
+  {
+   "path": "openmc_runs_c3/case_0023/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.2843790473353065
+  },
+  {
+   "path": "openmc_runs_c3/case_0024/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3810368349716087
+  },
+  {
+   "path": "openmc_runs_c3/case_0025/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.4792889847098778
+  },
+  {
+   "path": "openmc_runs_c3/case_0026/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3927274365429594
+  },
+  {
+   "path": "openmc_runs_c3/case_0027/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.314403275683046
+  },
+  {
+   "path": "openmc_runs_c3/case_0028/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.374004715527235
+  },
+  {
+   "path": "openmc_runs_c3/case_0029/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.2814140551956823
+  },
+  {
+   "path": "openmc_runs_c3/case_0030/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3294683192575079
+  },
+  {
+   "path": "openmc_runs_c3/case_0031/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3988315384486578
+  },
+  {
+   "path": "openmc_runs_c3/case_0032/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 0.9943045089075345
+  },
+  {
+   "path": "openmc_runs_c3/case_0033/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.4439451729129675
+  },
+  {
+   "path": "openmc_runs_c3/case_0034/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3760688546105266
+  },
+  {
+   "path": "openmc_runs_c3/case_0035/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.2587789201872392
+  },
+  {
+   "path": "openmc_runs_c3/case_0036/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.1936780291372635
+  },
+  {
+   "path": "openmc_runs_c3/case_0037/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 2,
+   "keff": 1.205179545912475
+  },
+  {
+   "path": "openmc_runs_c3/case_0038/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.2401529805885845
+  },
+  {
+   "path": "openmc_runs_c3/case_0039/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.178489970414582
+  },
+  {
+   "path": "openmc_runs_c3/case_0040/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.1772344126555232
+  },
+  {
+   "path": "openmc_runs_c3/case_0041/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.1769329000117037
+  },
+  {
+   "path": "openmc_runs_c3/case_0042/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.340737738418954
+  },
+  {
+   "path": "openmc_runs_c3/case_0043/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3429252086744659
+  },
+  {
+   "path": "openmc_runs_c3/case_0044/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3410754702876175
+  },
+  {
+   "path": "openmc_runs_c3/case_0045/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3404759121482948
+  },
+  {
+   "path": "openmc_runs_c3/case_0046/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3435100094913195
+  },
+  {
+   "path": "openmc_runs_c3/case_0047/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3391781766624
+  },
+  {
+   "path": "openmc_runs_c3/case_0048/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.24593847573368
+  },
+  {
+   "path": "openmc_runs_c3/case_0049/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.254859666952562
+  },
+  {
+   "path": "openmc_runs_c3/case_0050/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.2584174297616864
+  },
+  {
+   "path": "openmc_runs_c3/case_0051/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.2496440995553917
+  },
+  {
+   "path": "openmc_runs_c3/case_0052/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.2629481041743345
+  },
+  {
+   "path": "openmc_runs_c3/case_0053/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.2629728181160045
+  },
+  {
+   "path": "openmc_runs_c3/case_0054/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3480288950457948
+  },
+  {
+   "path": "openmc_runs_c3/case_0055/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3463716606284817
+  },
+  {
+   "path": "openmc_runs_c3/case_0056/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3487396944144583
+  },
+  {
+   "path": "openmc_runs_c3/case_0057/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3481415414658022
+  },
+  {
+   "path": "openmc_runs_c3/case_0058/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3453319796947192
+  },
+  {
+   "path": "openmc_runs_c3/case_0059/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3448442733531085
+  },
+  {
+   "path": "openmc_runs_c3/case_0060/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3528252017159494
+  },
+  {
+   "path": "openmc_runs_c3/case_0061/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3545503045193463
+  },
+  {
+   "path": "openmc_runs_c3/case_0062/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3525309762777173
+  },
+  {
+   "path": "openmc_runs_c3/case_0063/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3523153148367482
+  },
+  {
+   "path": "openmc_runs_c3/case_0064/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3517103681610796
+  },
+  {
+   "path": "openmc_runs_c3/case_0065/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.351830770101277
+  },
+  {
+   "path": "openmc_runs_c3/case_0066/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3484723707270567
+  },
+  {
+   "path": "openmc_runs_c3/case_0067/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3573092226856722
+  },
+  {
+   "path": "openmc_runs_c3/case_0068/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3561306889274012
+  },
+  {
+   "path": "openmc_runs_c3/case_0069/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3500392497135176
+  },
+  {
+   "path": "openmc_runs_c3/case_0070/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.358221054582647
+  },
+  {
+   "path": "openmc_runs_c3/case_0071/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c3",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3614343038387393
+  },
+  {
+   "path": "openmc_runs_c5/case_0000/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.211521036883892
+  },
+  {
+   "path": "openmc_runs_c5/case_0000/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 11,
+   "keff": 1.1477523525905358
+  },
+  {
+   "path": "openmc_runs_c5/case_0001/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.041773119790193
+  },
+  {
+   "path": "openmc_runs_c5/case_0001/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 93,
+   "keff": 0.9871001246178827
+  },
+  {
+   "path": "openmc_runs_c5/case_0002/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.1768362267704424
+  },
+  {
+   "path": "openmc_runs_c5/case_0002/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 13,
+   "keff": 1.1101891476415655
+  },
+  {
+   "path": "openmc_runs_c5/case_0003/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.0907172016631084
+  },
+  {
+   "path": "openmc_runs_c5/case_0003/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 13,
+   "keff": 1.0302827274148392
+  },
+  {
+   "path": "openmc_runs_c5/case_0004/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.387881404161685
+  },
+  {
+   "path": "openmc_runs_c5/case_0004/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 17,
+   "keff": 1.3270831893657087
+  },
+  {
+   "path": "openmc_runs_c5/case_0005/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.4421043258540065
+  },
+  {
+   "path": "openmc_runs_c5/case_0005/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 15,
+   "keff": 1.3761954535676406
+  },
+  {
+   "path": "openmc_runs_c5/case_0006/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3064011191097284
+  },
+  {
+   "path": "openmc_runs_c5/case_0006/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 18,
+   "keff": 1.2490088375623263
+  },
+  {
+   "path": "openmc_runs_c5/case_0007/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.267216331944044
+  },
+  {
+   "path": "openmc_runs_c5/case_0007/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 21,
+   "keff": 1.2054469121302729
+  },
+  {
+   "path": "openmc_runs_c5/case_0008/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3248387675727438
+  },
+  {
+   "path": "openmc_runs_c5/case_0008/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 14,
+   "keff": 1.258995888202746
+  },
+  {
+   "path": "openmc_runs_c5/case_0009/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3517326519201867
+  },
+  {
+   "path": "openmc_runs_c5/case_0009/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 16,
+   "keff": 1.291257820087997
+  },
+  {
+   "path": "openmc_runs_c5/case_0010/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.353910822749771
+  },
+  {
+   "path": "openmc_runs_c5/case_0010/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 45,
+   "keff": 1.2906575394370574
+  },
+  {
+   "path": "openmc_runs_c5/case_0011/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3641331006512687
+  },
+  {
+   "path": "openmc_runs_c5/case_0011/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 100,
+   "keff": 1.3048641070403015
+  },
+  {
+   "path": "openmc_runs_c5/case_0012/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.2587450285261779
+  },
+  {
+   "path": "openmc_runs_c5/case_0012/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 15,
+   "keff": 1.191349343061574
+  },
+  {
+   "path": "openmc_runs_c5/case_0013/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.2476300899215826
+  },
+  {
+   "path": "openmc_runs_c5/case_0013/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 14,
+   "keff": 1.1923612548390026
+  },
+  {
+   "path": "openmc_runs_c5/case_0014/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 0.9643734288307103
+  },
+  {
+   "path": "openmc_runs_c5/case_0014/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 15,
+   "keff": 0.9117507026833999
+  },
+  {
+   "path": "openmc_runs_c5/case_0015/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.2114502909872211
+  },
+  {
+   "path": "openmc_runs_c5/case_0015/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 23,
+   "keff": 1.1540544997728792
+  },
+  {
+   "path": "openmc_runs_c5/case_0016/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.465460688519219
+  },
+  {
+   "path": "openmc_runs_c5/case_0016/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 44,
+   "keff": 1.3922514760817788
+  },
+  {
+   "path": "openmc_runs_c5/case_0017/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3763886279712172
+  },
+  {
+   "path": "openmc_runs_c5/case_0017/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 13,
+   "keff": 1.306007014782624
+  },
+  {
+   "path": "openmc_runs_c5/case_0018/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.204846743990932
+  },
+  {
+   "path": "openmc_runs_c5/case_0018/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 15,
+   "keff": 1.15294274184702
+  },
+  {
+   "path": "openmc_runs_c5/case_0019/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.4413645257130332
+  },
+  {
+   "path": "openmc_runs_c5/case_0019/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 55,
+   "keff": 1.3766155522150192
+  },
+  {
+   "path": "openmc_runs_c5/case_0020/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.2786688965318465
+  },
+  {
+   "path": "openmc_runs_c5/case_0020/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 16,
+   "keff": 1.2135427917912402
+  },
+  {
+   "path": "openmc_runs_c5/case_0021/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3570904679974967
+  },
+  {
+   "path": "openmc_runs_c5/case_0021/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 14,
+   "keff": 1.287433153035296
+  },
+  {
+   "path": "openmc_runs_c5/case_0022/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 0.7930791498222763
+  },
+  {
+   "path": "openmc_runs_c5/case_0022/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 12,
+   "keff": 0.7512917002163371
+  },
+  {
+   "path": "openmc_runs_c5/case_0023/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3849970218128496
+  },
+  {
+   "path": "openmc_runs_c5/case_0023/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 78,
+   "keff": 1.3164606168618231
+  },
+  {
+   "path": "openmc_runs_c5/case_0024/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.1853350534812641
+  },
+  {
+   "path": "openmc_runs_c5/case_0024/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 18,
+   "keff": 1.1335068407470175
+  },
+  {
+   "path": "openmc_runs_c5/case_0025/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3702073986056291
+  },
+  {
+   "path": "openmc_runs_c5/case_0025/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 14,
+   "keff": 1.3064363387561233
+  },
+  {
+   "path": "openmc_runs_c5/case_0026/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3523853696932437
+  },
+  {
+   "path": "openmc_runs_c5/case_0026/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 12,
+   "keff": 1.2858662937459828
+  },
+  {
+   "path": "openmc_runs_c5/case_0027/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.4107142001133788
+  },
+  {
+   "path": "openmc_runs_c5/case_0027/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 18,
+   "keff": 1.3388843167407647
+  },
+  {
+   "path": "openmc_runs_c5/case_0028/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3547899685170317
+  },
+  {
+   "path": "openmc_runs_c5/case_0028/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 15,
+   "keff": 1.2935080200373115
+  },
+  {
+   "path": "openmc_runs_c5/case_0029/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3667353302169665
+  },
+  {
+   "path": "openmc_runs_c5/case_0029/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 97,
+   "keff": 1.3048186979964995
+  },
+  {
+   "path": "openmc_runs_c5/case_0030/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3698943667590209
+  },
+  {
+   "path": "openmc_runs_c5/case_0030/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 86,
+   "keff": 1.3102362692035536
+  },
+  {
+   "path": "openmc_runs_c5/case_0031/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.4784822412901075
+  },
+  {
+   "path": "openmc_runs_c5/case_0031/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 16,
+   "keff": 1.40746642333253
+  },
+  {
+   "path": "openmc_runs_c5/case_0032/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.452704156293153
+  },
+  {
+   "path": "openmc_runs_c5/case_0032/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 16,
+   "keff": 1.3880685207082526
+  },
+  {
+   "path": "openmc_runs_c5/case_0033/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.0582455930650743
+  },
+  {
+   "path": "openmc_runs_c5/case_0033/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 15,
+   "keff": 1.0107957317658283
+  },
+  {
+   "path": "openmc_runs_c5/case_0034/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.0874593391847387
+  },
+  {
+   "path": "openmc_runs_c5/case_0034/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 16,
+   "keff": 1.0305910780688339
+  },
+  {
+   "path": "openmc_runs_c5/case_0035/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.1295334104707628
+  },
+  {
+   "path": "openmc_runs_c5/case_0035/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 13,
+   "keff": 1.065788616677116
+  },
+  {
+   "path": "openmc_runs_c5/case_0036/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.1541594311241081
+  },
+  {
+   "path": "openmc_runs_c5/case_0036/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 16,
+   "keff": 1.102949288130667
+  },
+  {
+   "path": "openmc_runs_c5/case_0037/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.1598034230585021
+  },
+  {
+   "path": "openmc_runs_c5/case_0037/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 12,
+   "keff": 1.0942130887797388
+  },
+  {
+   "path": "openmc_runs_c5/case_0038/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3638994484781144
+  },
+  {
+   "path": "openmc_runs_c5/case_0038/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 22,
+   "keff": 1.292849299597747
+  },
+  {
+   "path": "openmc_runs_c5/case_0039/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3043039138084076
+  },
+  {
+   "path": "openmc_runs_c5/case_0039/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 12,
+   "keff": 1.2383260262795388
+  },
+  {
+   "path": "openmc_runs_c5/case_0040/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.2240052693130492
+  },
+  {
+   "path": "openmc_runs_c5/case_0040/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 106,
+   "keff": 1.1663917808461912
+  },
+  {
+   "path": "openmc_runs_c5/case_0041/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.335837608701641
+  },
+  {
+   "path": "openmc_runs_c5/case_0041/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 14,
+   "keff": 1.2688015401896953
+  },
+  {
+   "path": "openmc_runs_c5/case_0042/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3646626482780924
+  },
+  {
+   "path": "openmc_runs_c5/case_0042/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 15,
+   "keff": 1.2905212386040585
+  },
+  {
+   "path": "openmc_runs_c5/case_0043/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3626544657223432
+  },
+  {
+   "path": "openmc_runs_c5/case_0043/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 15,
+   "keff": 1.2888306101625495
+  },
+  {
+   "path": "openmc_runs_c5/case_0044/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3617980303021646
+  },
+  {
+   "path": "openmc_runs_c5/case_0044/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 13,
+   "keff": 1.2872896358957948
+  },
+  {
+   "path": "openmc_runs_c5/case_0045/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.362602016976029
+  },
+  {
+   "path": "openmc_runs_c5/case_0045/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 13,
+   "keff": 1.2902676130683097
+  },
+  {
+   "path": "openmc_runs_c5/case_0046/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3668368947269554
+  },
+  {
+   "path": "openmc_runs_c5/case_0046/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 13,
+   "keff": 1.2942936887653078
+  },
+  {
+   "path": "openmc_runs_c5/case_0047/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3557802574242064
+  },
+  {
+   "path": "openmc_runs_c5/case_0047/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 53,
+   "keff": 1.2844256827372622
+  },
+  {
+   "path": "openmc_runs_c5/case_0048/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3567380461656733
+  },
+  {
+   "path": "openmc_runs_c5/case_0048/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 14,
+   "keff": 1.2781971029963006
+  },
+  {
+   "path": "openmc_runs_c5/case_0049/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3581393182988877
+  },
+  {
+   "path": "openmc_runs_c5/case_0049/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 84,
+   "keff": 1.2777101950609686
+  },
+  {
+   "path": "openmc_runs_c5/case_0050/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3562818611774607
+  },
+  {
+   "path": "openmc_runs_c5/case_0050/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 12,
+   "keff": 1.2758849598582969
+  },
+  {
+   "path": "openmc_runs_c5/case_0051/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3594505113814683
+  },
+  {
+   "path": "openmc_runs_c5/case_0051/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 13,
+   "keff": 1.278912087663531
+  },
+  {
+   "path": "openmc_runs_c5/case_0052/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3601590457281445
+  },
+  {
+   "path": "openmc_runs_c5/case_0052/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 11,
+   "keff": 1.279642082346172
+  },
+  {
+   "path": "openmc_runs_c5/case_0053/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3600557750021027
+  },
+  {
+   "path": "openmc_runs_c5/case_0053/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 18,
+   "keff": 1.280945862375457
+  },
+  {
+   "path": "openmc_runs_c5/case_0054/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.34381214688726
+  },
+  {
+   "path": "openmc_runs_c5/case_0054/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 13,
+   "keff": 1.273863796519332
+  },
+  {
+   "path": "openmc_runs_c5/case_0055/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3327895461160375
+  },
+  {
+   "path": "openmc_runs_c5/case_0055/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 12,
+   "keff": 1.2638515840744462
+  },
+  {
+   "path": "openmc_runs_c5/case_0056/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3385871367491864
+  },
+  {
+   "path": "openmc_runs_c5/case_0056/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 13,
+   "keff": 1.2690061227239968
+  },
+  {
+   "path": "openmc_runs_c5/case_0057/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3384152850696285
+  },
+  {
+   "path": "openmc_runs_c5/case_0057/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 14,
+   "keff": 1.2690286260995005
+  },
+  {
+   "path": "openmc_runs_c5/case_0058/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.337038399293303
+  },
+  {
+   "path": "openmc_runs_c5/case_0058/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 13,
+   "keff": 1.2682720608729612
+  },
+  {
+   "path": "openmc_runs_c5/case_0059/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3370031091958121
+  },
+  {
+   "path": "openmc_runs_c5/case_0059/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 15,
+   "keff": 1.2683630235494678
+  },
+  {
+   "path": "openmc_runs_c8/case_0000/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.3961571510811925
+  },
+  {
+   "path": "openmc_runs_c8/case_0000/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 12,
+   "keff": 1.3100284913345521
+  },
+  {
+   "path": "openmc_runs_c8/case_0001/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2113354683422235
+  },
+  {
+   "path": "openmc_runs_c8/case_0001/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 12,
+   "keff": 1.130628975333437
+  },
+  {
+   "path": "openmc_runs_c8/case_0002/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.313206612044502
+  },
+  {
+   "path": "openmc_runs_c8/case_0002/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.2287381850755783
+  },
+  {
+   "path": "openmc_runs_c8/case_0003/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2866312864078948
+  },
+  {
+   "path": "openmc_runs_c8/case_0003/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 11,
+   "keff": 1.1999807715452098
+  },
+  {
+   "path": "openmc_runs_c8/case_0004/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.3880591409732654
+  },
+  {
+   "path": "openmc_runs_c8/case_0004/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 14,
+   "keff": 1.3020841217649253
+  },
+  {
+   "path": "openmc_runs_c8/case_0005/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.3895260419353759
+  },
+  {
+   "path": "openmc_runs_c8/case_0005/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 12,
+   "keff": 1.3078768082491825
+  },
+  {
+   "path": "openmc_runs_c8/case_0006/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2639347470388966
+  },
+  {
+   "path": "openmc_runs_c8/case_0006/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 43,
+   "keff": 1.1773561333586846
+  },
+  {
+   "path": "openmc_runs_c8/case_0007/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2643269283547731
+  },
+  {
+   "path": "openmc_runs_c8/case_0007/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.1757059941158394
+  },
+  {
+   "path": "openmc_runs_c8/case_0008/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.3018281103545704
+  },
+  {
+   "path": "openmc_runs_c8/case_0008/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 9,
+   "keff": 1.212611915727764
+  },
+  {
+   "path": "openmc_runs_c8/case_0009/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.0812750532903512
+  },
+  {
+   "path": "openmc_runs_c8/case_0009/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 9,
+   "keff": 0.9977782934131567
+  },
+  {
+   "path": "openmc_runs_c8/case_0010/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.4095919240838406
+  },
+  {
+   "path": "openmc_runs_c8/case_0010/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.3225870591048454
+  },
+  {
+   "path": "openmc_runs_c8/case_0011/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2323014535546566
+  },
+  {
+   "path": "openmc_runs_c8/case_0011/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.1443705179320276
+  },
+  {
+   "path": "openmc_runs_c8/case_0012/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1193987673397687
+  },
+  {
+   "path": "openmc_runs_c8/case_0012/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 7,
+   "keff": 1.0331287629727637
+  },
+  {
+   "path": "openmc_runs_c8/case_0013/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1291859699612077
+  },
+  {
+   "path": "openmc_runs_c8/case_0013/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.0424039855408234
+  },
+  {
+   "path": "openmc_runs_c8/case_0014/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.3146447031649287
+  },
+  {
+   "path": "openmc_runs_c8/case_0014/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 11,
+   "keff": 1.224452018185998
+  },
+  {
+   "path": "openmc_runs_c8/case_0015/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2781667437874995
+  },
+  {
+   "path": "openmc_runs_c8/case_0015/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 61,
+   "keff": 1.1869566278363022
+  },
+  {
+   "path": "openmc_runs_c8/case_0016/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.02135969957698
+  },
+  {
+   "path": "openmc_runs_c8/case_0016/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 6,
+   "keff": 0.9367996671453531
+  },
+  {
+   "path": "openmc_runs_c8/case_0017/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 0.9132589949153096
+  },
+  {
+   "path": "openmc_runs_c8/case_0017/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 5,
+   "keff": 0.8342030494498934
+  },
+  {
+   "path": "openmc_runs_c8/case_0018/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2831794164578345
+  },
+  {
+   "path": "openmc_runs_c8/case_0018/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 9,
+   "keff": 1.1989567024258538
+  },
+  {
+   "path": "openmc_runs_c8/case_0019/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.197152421571174
+  },
+  {
+   "path": "openmc_runs_c8/case_0019/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 9,
+   "keff": 1.1093655383309007
+  },
+  {
+   "path": "openmc_runs_c8/case_0020/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.3574270666016475
+  },
+  {
+   "path": "openmc_runs_c8/case_0020/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 14,
+   "keff": 1.2717993771488536
+  },
+  {
+   "path": "openmc_runs_c8/case_0021/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2113045698927518
+  },
+  {
+   "path": "openmc_runs_c8/case_0021/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 9,
+   "keff": 1.1263766188492184
+  },
+  {
+   "path": "openmc_runs_c8/case_0022/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1521626718414768
+  },
+  {
+   "path": "openmc_runs_c8/case_0022/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 12,
+   "keff": 1.0682832693443907
+  },
+  {
+   "path": "openmc_runs_c8/case_0023/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.226089762228981
+  },
+  {
+   "path": "openmc_runs_c8/case_0023/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 8,
+   "keff": 1.1315574338345262
+  },
+  {
+   "path": "openmc_runs_c8/case_0024/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.3312211005933359
+  },
+  {
+   "path": "openmc_runs_c8/case_0024/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 91,
+   "keff": 1.2415360199028034
+  },
+  {
+   "path": "openmc_runs_c8/case_0025/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.3882939997062176
+  },
+  {
+   "path": "openmc_runs_c8/case_0025/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 43,
+   "keff": 1.300109182871928
+  },
+  {
+   "path": "openmc_runs_c8/case_0026/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.3239998251862113
+  },
+  {
+   "path": "openmc_runs_c8/case_0026/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 63,
+   "keff": 1.235705647089383
+  },
+  {
+   "path": "openmc_runs_c8/case_0027/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.0411073369160695
+  },
+  {
+   "path": "openmc_runs_c8/case_0027/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 14,
+   "keff": 0.9577406482910367
+  },
+  {
+   "path": "openmc_runs_c8/case_0028/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.3494091893255997
+  },
+  {
+   "path": "openmc_runs_c8/case_0028/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 94,
+   "keff": 1.2587215101372478
+  },
+  {
+   "path": "openmc_runs_c8/case_0029/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2466778410952601
+  },
+  {
+   "path": "openmc_runs_c8/case_0029/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 11,
+   "keff": 1.1577730707914529
+  },
+  {
+   "path": "openmc_runs_c8/case_0030/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 0.9560064267640872
+  },
+  {
+   "path": "openmc_runs_c8/case_0030/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 6,
+   "keff": 0.875380158647698
+  },
+  {
+   "path": "openmc_runs_c8/case_0031/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1183564113319913
+  },
+  {
+   "path": "openmc_runs_c8/case_0031/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 8,
+   "keff": 1.0339353734946535
+  },
+  {
+   "path": "openmc_runs_c8/case_0032/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.3535621941515643
+  },
+  {
+   "path": "openmc_runs_c8/case_0032/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 12,
+   "keff": 1.2687964194261316
+  },
+  {
+   "path": "openmc_runs_c8/case_0033/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.3015178679854473
+  },
+  {
+   "path": "openmc_runs_c8/case_0033/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 12,
+   "keff": 1.21543372720685
+  },
+  {
+   "path": "openmc_runs_c8/case_0034/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.0695177514306433
+  },
+  {
+   "path": "openmc_runs_c8/case_0034/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 9,
+   "keff": 0.98702141324846
+  },
+  {
+   "path": "openmc_runs_c8/case_0035/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.3811045230250967
+  },
+  {
+   "path": "openmc_runs_c8/case_0035/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 11,
+   "keff": 1.2985475593172267
+  },
+  {
+   "path": "openmc_runs_c8/case_0036/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.245114063580756
+  },
+  {
+   "path": "openmc_runs_c8/case_0036/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.1576952158000413
+  },
+  {
+   "path": "openmc_runs_c8/case_0037/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2071808836589628
+  },
+  {
+   "path": "openmc_runs_c8/case_0037/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 9,
+   "keff": 1.120829655304588
+  },
+  {
+   "path": "openmc_runs_c8/case_0038/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2562936671213394
+  },
+  {
+   "path": "openmc_runs_c8/case_0038/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 15,
+   "keff": 1.1713786660218597
+  },
+  {
+   "path": "openmc_runs_c8/case_0039/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2474088422874285
+  },
+  {
+   "path": "openmc_runs_c8/case_0039/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.1594059049479768
+  },
+  {
+   "path": "openmc_runs_c8/case_0040/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2229992718872589
+  },
+  {
+   "path": "openmc_runs_c8/case_0040/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.136645227096491
+  },
+  {
+   "path": "openmc_runs_c8/case_0041/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2244082566793337
+  },
+  {
+   "path": "openmc_runs_c8/case_0041/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 13,
+   "keff": 1.1411567442292212
+  },
+  {
+   "path": "openmc_runs_c8/case_0042/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.190608945488636
+  },
+  {
+   "path": "openmc_runs_c8/case_0042/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 18,
+   "keff": 1.100769112642412
+  },
+  {
+   "path": "openmc_runs_c8/case_0043/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2654770228739618
+  },
+  {
+   "path": "openmc_runs_c8/case_0043/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.1698236387965224
+  },
+  {
+   "path": "openmc_runs_c8/case_0044/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.217834028608952
+  },
+  {
+   "path": "openmc_runs_c8/case_0044/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 13,
+   "keff": 1.1316142234314757
+  },
+  {
+   "path": "openmc_runs_c8/case_0045/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.231436083327208
+  },
+  {
+   "path": "openmc_runs_c8/case_0045/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 9,
+   "keff": 1.144467927528184
+  },
+  {
+   "path": "openmc_runs_c8/case_0046/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2273167027733478
+  },
+  {
+   "path": "openmc_runs_c8/case_0046/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 8,
+   "keff": 1.1415190921224867
+  },
+  {
+   "path": "openmc_runs_c8/case_0047/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1874953734692526
+  },
+  {
+   "path": "openmc_runs_c8/case_0047/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.0980542519245435
+  },
+  {
+   "path": "openmc_runs_c8/case_0048/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2350050070467704
+  },
+  {
+   "path": "openmc_runs_c8/case_0048/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 89,
+   "keff": 1.1510389765592557
+  },
+  {
+   "path": "openmc_runs_c8/case_0049/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2239765995154128
+  },
+  {
+   "path": "openmc_runs_c8/case_0049/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 8,
+   "keff": 1.1422247314533187
+  },
+  {
+   "path": "openmc_runs_c8/case_0050/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2439561984210394
+  },
+  {
+   "path": "openmc_runs_c8/case_0050/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 12,
+   "keff": 1.1568383549500452
+  },
+  {
+   "path": "openmc_runs_c8/case_0051/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2573246869672425
+  },
+  {
+   "path": "openmc_runs_c8/case_0051/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 15,
+   "keff": 1.168992308507233
+  },
+  {
+   "path": "openmc_runs_c8/case_0052/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2339562520876444
+  },
+  {
+   "path": "openmc_runs_c8/case_0052/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.147144005745264
+  },
+  {
+   "path": "openmc_runs_c8/case_0053/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1174520756839896
+  },
+  {
+   "path": "openmc_runs_c8/case_0053/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 11,
+   "keff": 1.0263131736012219
+  },
+  {
+   "path": "openmc_runs_c8/case_0054/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2490389250704186
+  },
+  {
+   "path": "openmc_runs_c8/case_0054/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 11,
+   "keff": 1.1584330610635154
+  },
+  {
+   "path": "openmc_runs_c8/case_0055/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2231528325014431
+  },
+  {
+   "path": "openmc_runs_c8/case_0055/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 12,
+   "keff": 1.140031391265131
+  },
+  {
+   "path": "openmc_runs_c8/case_0056/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.21823175086103
+  },
+  {
+   "path": "openmc_runs_c8/case_0056/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 9,
+   "keff": 1.1304466004977172
+  },
+  {
+   "path": "openmc_runs_c8/case_0057/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2264867094039418
+  },
+  {
+   "path": "openmc_runs_c8/case_0057/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.1393565261450733
+  },
+  {
+   "path": "openmc_runs_c8/case_0058/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.233023968670913
+  },
+  {
+   "path": "openmc_runs_c8/case_0058/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.145851042875263
+  },
+  {
+   "path": "openmc_runs_c8/case_0059/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2073920181451063
+  },
+  {
+   "path": "openmc_runs_c8/case_0059/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c8",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.119835621650411
+  },
+  {
+   "path": "openmc_runs_c9/case_0000/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.3765397439459224
+  },
+  {
+   "path": "openmc_runs_c9/case_0000/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 66,
+   "keff": 1.2891116997639052
+  },
+  {
+   "path": "openmc_runs_c9/case_0001/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1793986532536023
+  },
+  {
+   "path": "openmc_runs_c9/case_0001/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 9,
+   "keff": 1.084433467639739
+  },
+  {
+   "path": "openmc_runs_c9/case_0002/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.3550746615661282
+  },
+  {
+   "path": "openmc_runs_c9/case_0002/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.2757820501721897
+  },
+  {
+   "path": "openmc_runs_c9/case_0003/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.3391765270031273
+  },
+  {
+   "path": "openmc_runs_c9/case_0003/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 12,
+   "keff": 1.2526643468611136
+  },
+  {
+   "path": "openmc_runs_c9/case_0004/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.323586709658209
+  },
+  {
+   "path": "openmc_runs_c9/case_0004/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 11,
+   "keff": 1.2377699969918787
+  },
+  {
+   "path": "openmc_runs_c9/case_0005/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 0.8480085516865874
+  },
+  {
+   "path": "openmc_runs_c9/case_0005/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 7,
+   "keff": 0.7740344578502093
+  },
+  {
+   "path": "openmc_runs_c9/case_0006/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2542346750944642
+  },
+  {
+   "path": "openmc_runs_c9/case_0006/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.1661281906643395
+  },
+  {
+   "path": "openmc_runs_c9/case_0007/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.0479810402995597
+  },
+  {
+   "path": "openmc_runs_c9/case_0007/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 9,
+   "keff": 0.9658052928252627
+  },
+  {
+   "path": "openmc_runs_c9/case_0008/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.3823213966334782
+  },
+  {
+   "path": "openmc_runs_c9/case_0008/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 14,
+   "keff": 1.298301300538379
+  },
+  {
+   "path": "openmc_runs_c9/case_0009/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.3511662164905627
+  },
+  {
+   "path": "openmc_runs_c9/case_0009/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 12,
+   "keff": 1.2657160137154735
+  },
+  {
+   "path": "openmc_runs_c9/case_0010/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2391251482278982
+  },
+  {
+   "path": "openmc_runs_c9/case_0010/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 11,
+   "keff": 1.1536681740998413
+  },
+  {
+   "path": "openmc_runs_c9/case_0011/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1446419096681915
+  },
+  {
+   "path": "openmc_runs_c9/case_0011/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 11,
+   "keff": 1.0597296392219842
+  },
+  {
+   "path": "openmc_runs_c9/case_0012/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2004735088511012
+  },
+  {
+   "path": "openmc_runs_c9/case_0012/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 15,
+   "keff": 1.1057739886957791
+  },
+  {
+   "path": "openmc_runs_c9/case_0013/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2741733685883927
+  },
+  {
+   "path": "openmc_runs_c9/case_0013/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 13,
+   "keff": 1.1926224532913292
+  },
+  {
+   "path": "openmc_runs_c9/case_0014/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.258488986680852
+  },
+  {
+   "path": "openmc_runs_c9/case_0014/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 12,
+   "keff": 1.1714889205640018
+  },
+  {
+   "path": "openmc_runs_c9/case_0015/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.3123268977278948
+  },
+  {
+   "path": "openmc_runs_c9/case_0015/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.224036154084564
+  },
+  {
+   "path": "openmc_runs_c9/case_0016/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2023158850281168
+  },
+  {
+   "path": "openmc_runs_c9/case_0016/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 8,
+   "keff": 1.1165088265299503
+  },
+  {
+   "path": "openmc_runs_c9/case_0017/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.0209331880586003
+  },
+  {
+   "path": "openmc_runs_c9/case_0017/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 7,
+   "keff": 0.9376845789057364
+  },
+  {
+   "path": "openmc_runs_c9/case_0018/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.3904018242866802
+  },
+  {
+   "path": "openmc_runs_c9/case_0018/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.3033515456551583
+  },
+  {
+   "path": "openmc_runs_c9/case_0019/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.3479343902695817
+  },
+  {
+   "path": "openmc_runs_c9/case_0019/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 14,
+   "keff": 1.2597422276737809
+  },
+  {
+   "path": "openmc_runs_c9/case_0020/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 0.9548389162054838
+  },
+  {
+   "path": "openmc_runs_c9/case_0020/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 7,
+   "keff": 0.8722514222297758
+  },
+  {
+   "path": "openmc_runs_c9/case_0021/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 0.888129220540286
+  },
+  {
+   "path": "openmc_runs_c9/case_0021/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 7,
+   "keff": 0.8050929986876578
+  },
+  {
+   "path": "openmc_runs_c9/case_0022/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.270788179654771
+  },
+  {
+   "path": "openmc_runs_c9/case_0022/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 9,
+   "keff": 1.184642134723583
+  },
+  {
+   "path": "openmc_runs_c9/case_0023/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.223992426768632
+  },
+  {
+   "path": "openmc_runs_c9/case_0023/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 11,
+   "keff": 1.1394838976956838
+  },
+  {
+   "path": "openmc_runs_c9/case_0024/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1371597498932888
+  },
+  {
+   "path": "openmc_runs_c9/case_0024/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 8,
+   "keff": 1.050036502947999
+  },
+  {
+   "path": "openmc_runs_c9/case_0025/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1200350923273619
+  },
+  {
+   "path": "openmc_runs_c9/case_0025/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 9,
+   "keff": 1.0338984180155972
+  },
+  {
+   "path": "openmc_runs_c9/case_0026/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1454204492821014
+  },
+  {
+   "path": "openmc_runs_c9/case_0026/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 9,
+   "keff": 1.0564005253094875
+  },
+  {
+   "path": "openmc_runs_c9/case_0027/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1274346698546285
+  },
+  {
+   "path": "openmc_runs_c9/case_0027/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.0389709633136117
+  },
+  {
+   "path": "openmc_runs_c9/case_0028/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1380197344022538
+  },
+  {
+   "path": "openmc_runs_c9/case_0028/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 9,
+   "keff": 1.053054355003291
+  },
+  {
+   "path": "openmc_runs_c9/case_0029/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1171033819411336
+  },
+  {
+   "path": "openmc_runs_c9/case_0029/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 9,
+   "keff": 1.030463956085049
+  },
+  {
+   "path": "openmc_runs_c9/case_0030/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1505826606126648
+  },
+  {
+   "path": "openmc_runs_c9/case_0030/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 8,
+   "keff": 1.0579602261301855
+  },
+  {
+   "path": "openmc_runs_c9/case_0031/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.160980129718794
+  },
+  {
+   "path": "openmc_runs_c9/case_0031/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 8,
+   "keff": 1.0687464028391747
+  },
+  {
+   "path": "openmc_runs_c9/case_0032/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1624290439483773
+  },
+  {
+   "path": "openmc_runs_c9/case_0032/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.0782388148311628
+  },
+  {
+   "path": "openmc_runs_c9/case_0033/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1062572379689215
+  },
+  {
+   "path": "openmc_runs_c9/case_0033/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 8,
+   "keff": 1.0174047419866972
+  },
+  {
+   "path": "openmc_runs_c9/case_0034/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1402804242021372
+  },
+  {
+   "path": "openmc_runs_c9/case_0034/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 11,
+   "keff": 1.0518491455499273
+  },
+  {
+   "path": "openmc_runs_c9/case_0035/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1564100901099064
+  },
+  {
+   "path": "openmc_runs_c9/case_0035/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.0644531759914426
+  },
+  {
+   "path": "openmc_runs_c9/case_0036/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.08954896014779
+  },
+  {
+   "path": "openmc_runs_c9/case_0036/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 8,
+   "keff": 1.0038783923492087
+  },
+  {
+   "path": "openmc_runs_c9/case_0037/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.100699053238485
+  },
+  {
+   "path": "openmc_runs_c9/case_0037/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 7,
+   "keff": 1.0172157006135665
+  },
+  {
+   "path": "openmc_runs_c9/case_0038/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.0961613806450117
+  },
+  {
+   "path": "openmc_runs_c9/case_0038/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 11,
+   "keff": 1.0116039162340753
+  },
+  {
+   "path": "openmc_runs_c9/case_0039/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1405987857786404
+  },
+  {
+   "path": "openmc_runs_c9/case_0039/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 9,
+   "keff": 1.0522649477210633
+  },
+  {
+   "path": "openmc_runs_c9/case_0040/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.143536192113518
+  },
+  {
+   "path": "openmc_runs_c9/case_0040/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.0550379553405704
+  },
+  {
+   "path": "openmc_runs_c9/case_0041/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1083796315885786
+  },
+  {
+   "path": "openmc_runs_c9/case_0041/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 9,
+   "keff": 1.0199641179260512
+  },
+  {
+   "path": "openmc_runs_c9/case_0042/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1132431294858087
+  },
+  {
+   "path": "openmc_runs_c9/case_0042/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 8,
+   "keff": 1.025164970608683
+  },
+  {
+   "path": "openmc_runs_c9/case_0043/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2504986093749626
+  },
+  {
+   "path": "openmc_runs_c9/case_0043/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.161139808390631
+  },
+  {
+   "path": "openmc_runs_c9/case_0044/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1106513716357433
+  },
+  {
+   "path": "openmc_runs_c9/case_0044/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 8,
+   "keff": 1.0232004327504167
+  },
+  {
+   "path": "openmc_runs_c9/case_0045/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1081456501895548
+  },
+  {
+   "path": "openmc_runs_c9/case_0045/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 7,
+   "keff": 1.023310387608321
+  },
+  {
+   "path": "openmc_runs_c9/case_0046/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1089585278766168
+  },
+  {
+   "path": "openmc_runs_c9/case_0046/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 8,
+   "keff": 1.0235420851516763
+  },
+  {
+   "path": "openmc_runs_c9/case_0047/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1145123371716903
+  },
+  {
+   "path": "openmc_runs_c9/case_0047/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 8,
+   "keff": 1.0272765662069563
+  },
+  {
+   "path": "openmc_runs_c9/case_0048/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.118132512393667
+  },
+  {
+   "path": "openmc_runs_c9/case_0048/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 8,
+   "keff": 1.0316982730288748
+  },
+  {
+   "path": "openmc_runs_c9/case_0049/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1809612353096803
+  },
+  {
+   "path": "openmc_runs_c9/case_0049/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 11,
+   "keff": 1.0862927820816786
+  },
+  {
+   "path": "openmc_runs_c9/case_0050/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1199680606924916
+  },
+  {
+   "path": "openmc_runs_c9/case_0050/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 7,
+   "keff": 1.0344150669986438
+  },
+  {
+   "path": "openmc_runs_c9/case_0051/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 26,
+   "keff": 1.178280866201834
+  },
+  {
+   "path": "openmc_runs_c9/case_0051/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 7,
+   "keff": 1.086182443168835
+  },
+  {
+   "path": "openmc_runs_c9/case_0052/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.135061656797465
+  },
+  {
+   "path": "openmc_runs_c9/case_0052/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.048013195358225
+  },
+  {
+   "path": "openmc_runs_c9/case_0053/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.177560297863721
+  },
+  {
+   "path": "openmc_runs_c9/case_0053/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 8,
+   "keff": 1.0867124058592088
+  },
+  {
+   "path": "openmc_runs_c9/case_0054/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.187950737325234
+  },
+  {
+   "path": "openmc_runs_c9/case_0054/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 114,
+   "keff": 1.098112730826448
+  },
+  {
+   "path": "openmc_runs_c9/case_0055/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2329607352248941
+  },
+  {
+   "path": "openmc_runs_c9/case_0055/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.135765016762601
+  },
+  {
+   "path": "openmc_runs_c9/case_0056/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.2815126379291357
+  },
+  {
+   "path": "openmc_runs_c9/case_0056/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.1871223942977183
+  },
+  {
+   "path": "openmc_runs_c9/case_0057/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.157783044851422
+  },
+  {
+   "path": "openmc_runs_c9/case_0057/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 8,
+   "keff": 1.0685520514663278
+  },
+  {
+   "path": "openmc_runs_c9/case_0058/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1678754685202373
+  },
+  {
+   "path": "openmc_runs_c9/case_0058/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 8,
+   "keff": 1.0785304142100878
+  },
+  {
+   "path": "openmc_runs_c9/case_0059/bol/statepoint.60.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "assembly",
+   "n_batches": 60,
+   "n_inactive": 20,
+   "conv": 1,
+   "keff": 1.1218568607831856
+  },
+  {
+   "path": "openmc_runs_c9/case_0059/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 10,
+   "keff": 1.036522620534122
+  }
+ ],
+ "stats": {
+  "openmc_runs/assembly": {
+   "n": 55,
+   "n_inactive": [
+    10,
+    30
+   ],
+   "conv_median": 1,
+   "conv_max": 2,
+   "n_after_inactive": 0,
+   "after_inactive": []
+  },
+  "openmc_runs/core": {
+   "n": 55,
+   "n_inactive": [
+    20,
+    60
+   ],
+   "conv_median": 15,
+   "conv_max": 111,
+   "n_after_inactive": 13,
+   "after_inactive": [
+    "openmc_runs/case_0001/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0002/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0005/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0012/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0014/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0015/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0017/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0021/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0024/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0036/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0044/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0049/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0050/core_bol/statepoint.170.h5"
+   ]
+  },
+  "openmc_runs_c3/assembly": {
+   "n": 74,
+   "n_inactive": [
+    10,
+    30
+   ],
+   "conv_median": 1.0,
+   "conv_max": 121,
+   "n_after_inactive": 1,
+   "after_inactive": [
+    "openmc_runs_c3/case_0007/bol/statepoint.120.h5"
+   ]
+  },
+  "openmc_runs_c3/core": {
+   "n": 3,
+   "n_inactive": [
+    15,
+    60
+   ],
+   "conv_median": 7,
+   "conv_max": 34,
+   "n_after_inactive": 0,
+   "after_inactive": []
+  },
+  "openmc_runs_c5/assembly": {
+   "n": 60,
+   "n_inactive": [
+    30
+   ],
+   "conv_median": 1.0,
+   "conv_max": 1,
+   "n_after_inactive": 0,
+   "after_inactive": []
+  },
+  "openmc_runs_c5/core": {
+   "n": 60,
+   "n_inactive": [
+    60
+   ],
+   "conv_median": 15.0,
+   "conv_max": 106,
+   "n_after_inactive": 7,
+   "after_inactive": [
+    "openmc_runs_c5/case_0001/core_bol/statepoint.170.h5",
+    "openmc_runs_c5/case_0011/core_bol/statepoint.170.h5",
+    "openmc_runs_c5/case_0023/core_bol/statepoint.170.h5",
+    "openmc_runs_c5/case_0029/core_bol/statepoint.170.h5",
+    "openmc_runs_c5/case_0030/core_bol/statepoint.170.h5",
+    "openmc_runs_c5/case_0040/core_bol/statepoint.170.h5",
+    "openmc_runs_c5/case_0049/core_bol/statepoint.170.h5"
+   ]
+  },
+  "openmc_runs_c8/assembly": {
+   "n": 60,
+   "n_inactive": [
+    20
+   ],
+   "conv_median": 1.0,
+   "conv_max": 1,
+   "n_after_inactive": 0,
+   "after_inactive": []
+  },
+  "openmc_runs_c8/core": {
+   "n": 60,
+   "n_inactive": [
+    60
+   ],
+   "conv_median": 10.0,
+   "conv_max": 94,
+   "n_after_inactive": 5,
+   "after_inactive": [
+    "openmc_runs_c8/case_0015/core_bol/statepoint.170.h5",
+    "openmc_runs_c8/case_0024/core_bol/statepoint.170.h5",
+    "openmc_runs_c8/case_0026/core_bol/statepoint.170.h5",
+    "openmc_runs_c8/case_0028/core_bol/statepoint.170.h5",
+    "openmc_runs_c8/case_0048/core_bol/statepoint.170.h5"
+   ]
+  },
+  "openmc_runs_c9/assembly": {
+   "n": 60,
+   "n_inactive": [
+    20
+   ],
+   "conv_median": 1.0,
+   "conv_max": 26,
+   "n_after_inactive": 1,
+   "after_inactive": [
+    "openmc_runs_c9/case_0051/bol/statepoint.60.h5"
+   ]
+  },
+  "openmc_runs_c9/core": {
+   "n": 60,
+   "n_inactive": [
+    60
+   ],
+   "conv_median": 9.0,
+   "conv_max": 114,
+   "n_after_inactive": 2,
+   "after_inactive": [
+    "openmc_runs_c9/case_0000/core_bol/statepoint.170.h5",
+    "openmc_runs_c9/case_0054/core_bol/statepoint.170.h5"
+   ]
+  },
+  "ALL/assembly": {
+   "n": 309,
+   "n_inactive": [
+    10,
+    20,
+    30
+   ],
+   "conv_median": 1,
+   "conv_max": 121,
+   "n_after_inactive": 2,
+   "after_inactive": [
+    "openmc_runs_c9/case_0051/bol/statepoint.60.h5",
+    "openmc_runs_c3/case_0007/bol/statepoint.120.h5"
+   ]
+  },
+  "ALL/core": {
+   "n": 238,
+   "n_inactive": [
+    15,
+    20,
+    60
+   ],
+   "conv_median": 12.5,
+   "conv_max": 114,
+   "n_after_inactive": 27,
+   "after_inactive": [
+    "openmc_runs/case_0015/core_bol/statepoint.170.h5",
+    "openmc_runs_c8/case_0015/core_bol/statepoint.170.h5",
+    "openmc_runs_c8/case_0026/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0021/core_bol/statepoint.170.h5",
+    "openmc_runs_c9/case_0000/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0012/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0049/core_bol/statepoint.170.h5",
+    "openmc_runs_c5/case_0023/core_bol/statepoint.170.h5",
+    "openmc_runs_c5/case_0049/core_bol/statepoint.170.h5",
+    "openmc_runs_c5/case_0030/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0014/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0017/core_bol/statepoint.170.h5",
+    "openmc_runs_c8/case_0048/core_bol/statepoint.170.h5",
+    "openmc_runs_c8/case_0024/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0002/core_bol/statepoint.170.h5",
+    "openmc_runs_c5/case_0001/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0044/core_bol/statepoint.170.h5",
+    "openmc_runs_c8/case_0028/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0050/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0024/core_bol/statepoint.170.h5",
+    "openmc_runs_c5/case_0029/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0036/core_bol/statepoint.170.h5",
+    "openmc_runs_c5/case_0011/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0005/core_bol/statepoint.170.h5",
+    "openmc_runs_c5/case_0040/core_bol/statepoint.170.h5",
+    "openmc_runs/case_0001/core_bol/statepoint.170.h5",
+    "openmc_runs_c9/case_0054/core_bol/statepoint.170.h5"
+   ]
+  }
+ },
+ "chosen": {
+  "assembly": {
+   "path": "openmc_runs_c5/case_0028/bol/statepoint.120.h5",
+   "campaign": "openmc_runs_c5",
+   "kind": "assembly",
+   "n_batches": 120,
+   "n_inactive": 30,
+   "conv": 1,
+   "keff": 1.3547899685170317,
+   "entropy": [
+    5.988356140075296,
+    5.9868795589076,
+    5.98517971445215,
+    5.985836901822976,
+    5.985082331757442,
+    5.988916697072497,
+    5.988123464995444,
+    5.988856714209714,
+    5.988239777607123,
+    5.986226001822405,
+    5.98808131707098,
+    5.988002381221477,
+    5.987196736842899,
+    5.987608067151031,
+    5.984867794781683,
+    5.984056485529999,
+    5.98729044158449,
+    5.988316669437343,
+    5.985291218713475,
+    5.986329150354368,
+    5.984568044976487,
+    5.985388448119805,
+    5.987029548727167,
+    5.983912118286725,
+    5.9859376192970855,
+    5.9871855937448295,
+    5.988094596908862,
+    5.9879196212858075,
+    5.985209407914688,
+    5.986527422864119,
+    5.988529060826832,
+    5.985800143846576,
+    5.986970587587868,
+    5.988237675108936,
+    5.986650259651135,
+    5.986677828619259,
+    5.985596693158397,
+    5.990206623619055,
+    5.987282164927298,
+    5.988252595827221,
+    5.986086273585955,
+    5.986769273096049,
+    5.9853813283566994,
+    5.985399223350421,
+    5.988013925661689,
+    5.98548556548767,
+    5.986884729179669,
+    5.987586942410929,
+    5.9875503918148665,
+    5.9907645741618625,
+    5.986433637175776,
+    5.986495286252657,
+    5.985264072931034,
+    5.985596595217452,
+    5.983636996888432,
+    5.985811267560564,
+    5.98950133085289,
+    5.98855387694113,
+    5.987058994296455,
+    5.987096493852933,
+    5.98793224472285,
+    5.9845220118384415,
+    5.987350006997432,
+    5.9867841260669445,
+    5.986713804605787,
+    5.988714902285684,
+    5.987723085173653,
+    5.98822545811243,
+    5.990716367538912,
+    5.987490700181579,
+    5.982679914393308,
+    5.987085411493532,
+    5.985893599729997,
+    5.984603768090011,
+    5.986406873871666,
+    5.9864689702423295,
+    5.984316169607729,
+    5.985332217499267,
+    5.98347020267805,
+    5.986421625416495,
+    5.987054878813851,
+    5.98865079773401,
+    5.981583385530802,
+    5.986196057588257,
+    5.988086289207966,
+    5.987563892816477,
+    5.988854144866628,
+    5.986667848419106,
+    5.987821819973762,
+    5.987614839731599,
+    5.987351546952839,
+    5.985416833797808,
+    5.986904083769706,
+    5.986846949214203,
+    5.989634485872559,
+    5.982262303895946,
+    5.986675379749733,
+    5.986512801845044,
+    5.988148302030297,
+    5.9837541182464715,
+    5.985765439011543,
+    5.988853522187291,
+    5.989187155988551,
+    5.989615006615107,
+    5.987970837917634,
+    5.985883381804918,
+    5.986115851769178,
+    5.990107670416889,
+    5.985754909966271,
+    5.98807023300318,
+    5.9839157230471125,
+    5.985993232645068,
+    5.98542637860853,
+    5.986825454955054,
+    5.987277491392011,
+    5.988083570628997,
+    5.984872873030133,
+    5.987297993112346,
+    5.985899140750547,
+    5.987698424632688
+   ]
+  },
+  "core_typical": {
+   "path": "openmc_runs/case_0000/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 13,
+   "keff": 1.2319182312235095,
+   "entropy": [
+    5.496645099409115,
+    5.455269554195621,
+    5.420548073494013,
+    5.396945170374182,
+    5.373748635125162,
+    5.359859781319382,
+    5.344237402174798,
+    5.340911293103752,
+    5.327813361936318,
+    5.3213162343494504,
+    5.317869015059657,
+    5.302977937468807,
+    5.297002679811224,
+    5.299880916412994,
+    5.3004839770153955,
+    5.290277891478371,
+    5.285380522151373,
+    5.287254661794481,
+    5.289079306419298,
+    5.285290511119346,
+    5.281972351954288,
+    5.287013093987297,
+    5.291345894526926,
+    5.2880632570199175,
+    5.289710453017342,
+    5.292451618454965,
+    5.2949964038042046,
+    5.2917980747693685,
+    5.286863408040547,
+    5.286060846606299,
+    5.288235331730358,
+    5.290551703165079,
+    5.294271496966386,
+    5.293296752262532,
+    5.291622392188599,
+    5.290368759617549,
+    5.288064499503666,
+    5.282309586098555,
+    5.274276779897209,
+    5.276442049555153,
+    5.2834879143893945,
+    5.285238938563532,
+    5.277111496596055,
+    5.278995630684075,
+    5.286882081473027,
+    5.283155763330338,
+    5.2828762952690616,
+    5.280276632814313,
+    5.284305405161801,
+    5.282360604571426,
+    5.28298029465822,
+    5.279460658424775,
+    5.286795432538061,
+    5.279629759834264,
+    5.28457337553217,
+    5.285647766729385,
+    5.287137383481064,
+    5.284802292778299,
+    5.281928026231956,
+    5.278586467844505,
+    5.2824403869820165,
+    5.282959438017918,
+    5.288769769313811,
+    5.283419244495695,
+    5.28732281467118,
+    5.2914317606819665,
+    5.285556775241683,
+    5.290427373004001,
+    5.289808564146484,
+    5.283633210476261,
+    5.272734878788239,
+    5.283796233969978,
+    5.281067261647853,
+    5.2821778518719595,
+    5.276257969219555,
+    5.27540988460216,
+    5.283110570698349,
+    5.285482002843653,
+    5.287335398729949,
+    5.289749760121237,
+    5.285771964871461,
+    5.289675676634635,
+    5.285554133609468,
+    5.286631250904896,
+    5.288400268886856,
+    5.283568232852365,
+    5.284785125183935,
+    5.283159674050867,
+    5.278880208495906,
+    5.281672363181825,
+    5.27506903165286,
+    5.284426427776969,
+    5.2843833224856525,
+    5.281971601201325,
+    5.286528298033974,
+    5.281790724897341,
+    5.282781867400854,
+    5.287340815293215,
+    5.281065276547797,
+    5.28008296792682,
+    5.275240229967205,
+    5.279903862593104,
+    5.273365252396441,
+    5.27964516488653,
+    5.285700943894389,
+    5.291416130649856,
+    5.292574502403042,
+    5.290226903490151,
+    5.289484068996827,
+    5.294386180292866,
+    5.28910116163628,
+    5.280810417756687,
+    5.281353203309573,
+    5.287944194061761,
+    5.292215127520448,
+    5.283824213422384,
+    5.290685184645267,
+    5.288380308564937,
+    5.29128517597357,
+    5.294121002273391,
+    5.290828171868492,
+    5.288026845571334,
+    5.289226593235142,
+    5.291384209755803,
+    5.287751627967315,
+    5.289469234064451,
+    5.2841166737509715,
+    5.2790774776130895,
+    5.282684282820316,
+    5.2802156975298695,
+    5.275082626040218,
+    5.2761413459503865,
+    5.28045797805283,
+    5.278006451564463,
+    5.273341317743497,
+    5.278703687699206,
+    5.28088489327027,
+    5.279954191009575,
+    5.280338213608765,
+    5.283641359272277,
+    5.287318407652508,
+    5.284242945549096,
+    5.286876967109592,
+    5.284136663055526,
+    5.275140697949676,
+    5.278581365302222,
+    5.281707099176519,
+    5.285188868441112,
+    5.2861003780980855,
+    5.295257240587298,
+    5.296844494721819,
+    5.293757200996493,
+    5.291044139424274,
+    5.292723920527101,
+    5.292233387169399,
+    5.295659773803786,
+    5.295311382184157,
+    5.297081479543418,
+    5.288375559988665,
+    5.286884898562124,
+    5.283814470138885,
+    5.2829339315451165,
+    5.286461632489361,
+    5.2784834958639415,
+    5.27704598676114,
+    5.282315284080388,
+    5.278409547361136,
+    5.275566022386281,
+    5.278518179271071,
+    5.280451869836313
+   ]
+  },
+  "core_slowest": {
+   "path": "openmc_runs_c9/case_0054/core_bol/statepoint.170.h5",
+   "campaign": "openmc_runs_c9",
+   "kind": "core",
+   "n_batches": 170,
+   "n_inactive": 60,
+   "conv": 114,
+   "keff": 1.098112730826448,
+   "entropy": [
+    5.5495989380945,
+    5.5072459141196095,
+    5.484419825883429,
+    5.471861577222063,
+    5.454177230020593,
+    5.45396529855981,
+    5.452493077386171,
+    5.442149830962336,
+    5.445463855982516,
+    5.442399266477621,
+    5.440014987106282,
+    5.43443971451117,
+    5.444015147734448,
+    5.43656717653531,
+    5.43912111452327,
+    5.43326569533884,
+    5.440067522918304,
+    5.43391154099825,
+    5.43363819679196,
+    5.428020186378631,
+    5.435327007924278,
+    5.430383898037548,
+    5.431968404989554,
+    5.431982098212044,
+    5.430427718119952,
+    5.430304580040839,
+    5.4262291665046005,
+    5.426750634055591,
+    5.428657590936705,
+    5.426379322213701,
+    5.426151421550659,
+    5.4275998320583625,
+    5.429303214735598,
+    5.428743456941378,
+    5.430440129239672,
+    5.4267779366149185,
+    5.425817336189316,
+    5.4302999218793655,
+    5.433358856289885,
+    5.431008491589094,
+    5.42553632037845,
+    5.435377602594103,
+    5.431190496798748,
+    5.427651076202074,
+    5.432442643187978,
+    5.438196415531045,
+    5.428588331440622,
+    5.434267310101252,
+    5.434875636763199,
+    5.43326551653054,
+    5.4336414687594194,
+    5.429599785837045,
+    5.43306977898579,
+    5.429957495948258,
+    5.424914225157836,
+    5.434079481088677,
+    5.428088039196381,
+    5.437004502261617,
+    5.436377748185146,
+    5.437185166009964,
+    5.433581466994543,
+    5.435717325737069,
+    5.437806468881226,
+    5.432963043044283,
+    5.43622864567377,
+    5.4330962125657,
+    5.42981542372727,
+    5.430060270912684,
+    5.434367325880482,
+    5.434998308374469,
+    5.439438777041094,
+    5.436471754283093,
+    5.429336685827521,
+    5.426858214542788,
+    5.430251892258145,
+    5.423163625898014,
+    5.421305996821277,
+    5.4248502415441955,
+    5.427083988812017,
+    5.421390542842734,
+    5.424152475139605,
+    5.429812268001297,
+    5.426456017309521,
+    5.428900492776585,
+    5.428144540888251,
+    5.434530853704576,
+    5.437813230793056,
+    5.435392180482122,
+    5.434572017656149,
+    5.436478029648647,
+    5.432407795977791,
+    5.421396636848483,
+    5.421779702231671,
+    5.4269485773187345,
+    5.42600426884595,
+    5.4313590385035235,
+    5.431081433073027,
+    5.426392741876705,
+    5.43051095468617,
+    5.430365698257483,
+    5.433166415174845,
+    5.43123046569363,
+    5.436199603230219,
+    5.43166666274961,
+    5.435917012779781,
+    5.426493515880594,
+    5.426230547029667,
+    5.428408320185117,
+    5.430214936199217,
+    5.43450781737126,
+    5.440484554544114,
+    5.441367882890865,
+    5.443957219408827,
+    5.441054641807959,
+    5.437779318018648,
+    5.429420824573088,
+    5.4305093459184555,
+    5.439159102229087,
+    5.437898362597012,
+    5.435449145776223,
+    5.433031310390776,
+    5.434261414209907,
+    5.428074518715462,
+    5.431696869704781,
+    5.430591858083793,
+    5.429514929036079,
+    5.432214398564189,
+    5.435468226154719,
+    5.436124604464525,
+    5.4277086801955186,
+    5.4280982337574715,
+    5.429530919410168,
+    5.433647091729014,
+    5.428250252775478,
+    5.433829382544485,
+    5.431920510911751,
+    5.430520124994633,
+    5.4305623737117505,
+    5.430990374948294,
+    5.436788923359076,
+    5.438875737802794,
+    5.432472040097376,
+    5.436499752513506,
+    5.434196161542197,
+    5.4294587505332235,
+    5.431411895659878,
+    5.434609230531851,
+    5.4364476893091505,
+    5.43433525028056,
+    5.435679152384926,
+    5.4346119164945454,
+    5.437750723701452,
+    5.4333309535981495,
+    5.4345610234350445,
+    5.434660681378052,
+    5.43290324088092,
+    5.431578228520207,
+    5.428705604677958,
+    5.4310764812611065,
+    5.428425796324122,
+    5.433703921636034,
+    5.433710551140508,
+    5.4327626212981235,
+    5.435870735888258,
+    5.431927344070986,
+    5.434507812008441,
+    5.432737574724195,
+    5.430139925077149,
+    5.432440673251933,
+    5.425743314370131
+   ]
+  }
+ }
+}

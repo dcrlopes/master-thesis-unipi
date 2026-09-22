@@ -492,7 +492,7 @@ def make_pincell_model(design: dict, op: Operating = Operating(),
 def make_assembly_model(design: dict, op: Operating = Operating(),
                         geo: Geometry17x17 = Geometry17x17(),
                         bc: str = "reflective", reflector: bool = False,
-                        particles=20000, batches=150, inactive=40,
+                        particles=4000, batches=60, inactive=20,
                         pin_tally: bool = False,
                         rodded=None):
     """One 17x17 assembly, infinite in z (2D). Returns (model, fuel_cells, lattice).
@@ -562,7 +562,7 @@ def make_core_model(design: dict, op: Operating = Operating(),
                     core_map=None, refl_thick=None, r_fuel=None,
                     design_map=None, rodded_map=None,
                     enforce_vessel=True,
-                    particles=40000, batches=200, inactive=50,
+                    particles=100000, batches=170, inactive=60,
                     h_active=None, axial_refl_cm=0.0):
     """A small 2D multi-assembly core with a HEAVY (steel) reflector and vacuum BC.
 

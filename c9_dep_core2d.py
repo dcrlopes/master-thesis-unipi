@@ -110,8 +110,10 @@ def build(design, tr, seed, geo, op):
     lat = next(c.fill for c in model.geometry.root_universe.cells.values()
                if hasattr(c.fill, "universes"))
     rows = dc.mark_depletable(model, [(lat, geo.active_height)], geo)
-    used = {m for m in model.materials if getattr(m, "depletable", False)}
-    dc.unmark_unused(model, used)
+    # the base assembly of make_core_model is never placed when the zoning map
+    # covers all 32 positions, but its fuel materials are still in
+    # model.materials and arrive depletable: switch them off
+    off = dc.unmark_unused(model, rows)
     # label each depletable material by ring from its name: UO2_<e> carries
     # the ring enrichment (two decimals), UGd_<e>_<gd> the derated one (one
     # decimal), so the two are matched against different values
@@ -125,7 +127,7 @@ def build(design, tr, seed, geo, op):
         cand = {z: (max(0.2, ez * red) if r["gd"] else ez) for z, ez in zones.items()}
         z, ez = min(cand.items(), key=lambda t: abs(t[1] - e))
         r["zone"] = z if abs(ez - e) < (0.06 if r["gd"] else 0.006) else "?"
-    return model, rows, (ny, nx, NL, rmap)
+    return model, rows, (ny, nx, NL, rmap), off
 
 
 def read_states(case, shape, inactive):
@@ -163,7 +165,7 @@ def run_design(idx, ckpt, raw, meta, tr, lax, out, threads, estimate=False):
     op, geo = rm.Operating(), rm.Geometry17x17()
     design = design_of(ckpt, idx)
     seed = _design_seed(design, salt="core2d")
-    model, rows, shape = build(design, tr, seed, geo, op)
+    model, rows, shape, off = build(design, tr, seed, geo, op)
     spec_power = rm.core_specific_power_w_per_g(op, geo)
     sch = meta["schedule"]
     case = out / ("estimate" if estimate else "work") / f"d{idx}"
@@ -178,6 +180,8 @@ def run_design(idx, ckpt, raw, meta, tr, lax, out, threads, estimate=False):
           f"transport {tr}, k_EOC = L_ax = {lax:.4f}", flush=True)
     for r in sorted(rows, key=lambda r: (r["zone"], r["gd"], -r["pins"])):
         print(f"      {r['name']:16s} ring {r['zone']}  pins {r['pins']:5d}  {r['volume_cm3']:10.1f} cm3")
+    for r in off:
+        print(f"      not placed, depletion switched off: {r['name']} (id {r['id']})")
     if any(r["zone"] == "?" for r in rows):
         raise RuntimeError("a depletable material could not be assigned to a ring")
     t0 = time.time()
@@ -209,7 +213,7 @@ def run_design(idx, ckpt, raw, meta, tr, lax, out, threads, estimate=False):
     aligned = len(states) == len(res["k_hist"])
     return dict(
         idx=idx, seed=int(seed), transport=tr, k_eoc=lax, spec_power=spec_power,
-        materials=rows, efpd=res["efpd"], bu_eoc=res["bu_eoc"], censored=res["censored"],
+        materials=rows, materials_off=off, efpd=res["efpd"], bu_eoc=res["bu_eoc"], censored=res["censored"],
         k_hist=res["k_hist"], k_sd=ksd, bu_hist=res["bu_hist"], n_solves=res["n_solves"],
         sigma_efpd=sig, bracket=ib, slope_pcm_per_mwdkg=slope,
         hump_core_pcm=obj["hump_core_pcm"], hump_core_op_pcm=obj["hump_core_op_pcm"],

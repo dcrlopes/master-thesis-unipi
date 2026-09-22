@@ -33,6 +33,10 @@ class Material:
 
     def add_nuclide(self, n, f, pt="ao"):
         self.nuclides.append((n, float(f), pt))
+        # real OpenMC hands these materials to the builder already flagged;
+        # reproduce it so the tests exercise the unmark_unused guard
+        if str(n).startswith(("U2", "U3", "Pu")):
+            self.depletable = True
 
     def add_element(self, e, f, pt="ao", **kw):
         # crude expansion: uranium keeps its isotopes named, others as-is
@@ -57,6 +61,7 @@ class Material:
             for n, v, p in mat.nuclides:
                 m.nuclides.append((n, v * f, p))
         m.density = mats[0].density
+        m.depletable = any(getattr(x, "depletable", False) for x in mats)
         return m
 
 

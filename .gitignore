@@ -148,3 +148,10 @@ mtc_z_*/*/
 mtc_unzoned/*/*/
 mtc_47_zoned_check/*/
 .mtc_markers/
+
+# --- stage markers, backups and smoke tests (local only) ---
+.*_markers/
+*.bak.*
+*.local
+*_smoke/
+*.dryrun.txt

@@ -1,0 +1,134 @@
+2026-09-22 11:02:40 preflight
+env ok 0.15.3
+2026-09-22 11:02:41 no PID given, will wait for 15 idle minutes (load below 8)
+2026-09-22 11:17:41 machine idle for 15 minutes
+2026-09-22 11:17:41 START 15 seed-2 solves, expected end about 12:20
+env ok
+python : 3.13.13   cwd: /home/diogo/master-thesis-unipi   host: wks720
+openmc : 0.15.3   XS: /home/diogo/openmc_data/endfb-vii.1-hdf5/cross_sections.xml
+axial  : 24 bins, 3 grid bands resolved, boron 1000 ppm, 2 seeds, states ['ARO']
+
+=== design C9-1: e 5.513 wt%, Gd 2.76 wt%, pins 24 as built (optimiser value 25.10), refl 3.35 cm
+  C9-1 ARO  seed 1: k = 1.05392 +/- 0.00021  F_dH 1.542  F_z 1.437  AO -0.020  entropy_conv 10 (240.6 s)
+  C9-1 ARO  seed 2: k = 1.05393 +/- 0.00025  F_dH 1.543  F_z 1.439  AO -0.018  entropy_conv 9 (239.7 s)
+
+=== design C9-10: e 7.889 wt%, Gd 5.94 wt%, pins 24 as built (optimiser value 26.96), refl 4.56 cm
+  C9-10 ARO  seed 1: k = 1.12024 +/- 0.00024  F_dH 1.571  F_z 1.428  AO -0.026  entropy_conv 10 (239.1 s)
+  C9-10 ARO  seed 2: k = 1.12046 +/- 0.00023  F_dH 1.592  F_z 1.439  AO -0.028  entropy_conv 138 (231.7 s)
+
+=== design C9-11: e 5.261 wt%, Gd 6.91 wt%, pins 20 as built (optimiser value 18.35), refl 3.18 cm
+  C9-11 ARO  seed 1: k = 1.02952 +/- 0.00022  F_dH 1.537  F_z 1.442  AO -0.024  entropy_conv 11 (257.8 s)
+  C9-11 ARO  seed 2: k = 1.02883 +/- 0.00024  F_dH 1.572  F_z 1.432  AO -0.020  entropy_conv 9 (240.9 s)
+
+=== design C9-16: e 4.861 wt%, Gd 4.66 wt%, pins 12 as built (optimiser value 12.88), refl 4.12 cm
+  C9-16 ARO  seed 1: k = 1.08250 +/- 0.00021  F_dH 1.511  F_z 1.438  AO -0.020  entropy_conv 37 (265.7 s)
+  C9-16 ARO  seed 2: k = 1.08317 +/- 0.00024  F_dH 1.516  F_z 1.445  AO -0.022  entropy_conv 12 (248.8 s)
+
+=== design C9-24: e 5.424 wt%, Gd 6.68 wt%, pins 24 as built (optimiser value 26.40), refl 5.66 cm
+  C9-24 ARO  seed 1: k = 1.01887 +/- 0.00022  F_dH 1.558  F_z 1.434  AO -0.020  entropy_conv 11 (257.8 s)
+  C9-24 ARO  seed 2: k = 1.01912 +/- 0.00023  F_dH 1.592  F_z 1.435  AO -0.022  entropy_conv 11 (246.0 s)
+
+=== design C9-25: e 4.638 wt%, Gd 5.22 wt%, pins 20 as built (optimiser value 20.70), refl 5.66 cm
+  C9-25 ARO  seed 1: k = 1.00267 +/- 0.00023  F_dH 1.506  F_z 1.445  AO -0.017  entropy_conv 8 (247.9 s)
+  C9-25 ARO  seed 2: k = 1.00344 +/- 0.00020  F_dH 1.528  F_z 1.441  AO -0.020  entropy_conv 8 (249.0 s)
+
+=== design C9-26: e 4.377 wt%, Gd 3.73 wt%, pins 16 as built (optimiser value 14.82), refl 5.66 cm
+  C9-26 ARO  seed 1: k = 1.02462 +/- 0.00023  F_dH 1.492  F_z 1.439  AO -0.014  entropy_conv 14 (248.4 s)
+  C9-26 ARO  seed 2: k = 1.02477 +/- 0.00022  F_dH 1.486  F_z 1.440  AO -0.018  entropy_conv 11 (250.2 s)
+
+=== design C9-27: e 5.106 wt%, Gd 5.70 wt%, pins 24 as built (optimiser value 24.38), refl 5.66 cm
+  C9-27 ARO  seed 1: k = 1.00836 +/- 0.00021  F_dH 1.566  F_z 1.435  AO -0.019  entropy_conv 10 (250.8 s)
+  C9-27 ARO  seed 2: k = 1.00779 +/- 0.00022  F_dH 1.546  F_z 1.438  AO -0.017  entropy_conv 10 (245.3 s)
+
+=== design C9-29: e 4.476 wt%, Gd 4.21 wt%, pins 20 as built (optimiser value 18.55), refl 5.66 cm
+  C9-29 ARO  seed 1: k = 0.99962 +/- 0.00023  F_dH 1.505  F_z 1.441  AO -0.023  entropy_conv 9 (261.0 s)
+  C9-29 ARO  seed 2: k = 0.99983 +/- 0.00023  F_dH 1.510  F_z 1.435  AO -0.017  entropy_conv 8 (245.3 s)
+
+=== design C9-30: e 4.289 wt%, Gd 2.79 wt%, pins 16 as built (optimiser value 17.10), refl 5.66 cm
+  C9-30 ARO  seed 1: k = 1.02632 +/- 0.00021  F_dH 1.465  F_z 1.440  AO -0.022  entropy_conv 8 (254.8 s)
+  C9-30 ARO  seed 2: k = 1.02691 +/- 0.00021  F_dH 1.459  F_z 1.443  AO -0.019  entropy_conv 10 (252.9 s)
+
+=== design C9-32: e 4.420 wt%, Gd 1.88 wt%, pins 16 as built (optimiser value 14.56), refl 5.66 cm
+  C9-32 ARO  seed 1: k = 1.04597 +/- 0.00020  F_dH 1.480  F_z 1.444  AO -0.021  entropy_conv 8 (265.1 s)
+  C9-32 ARO  seed 2: k = 1.04600 +/- 0.00022  F_dH 1.454  F_z 1.447  AO -0.023  entropy_conv 10 (251.2 s)
+
+=== design C9-42: e 4.396 wt%, Gd 4.10 wt%, pins 20 as built (optimiser value 20.69), refl 5.66 cm
+  C9-42 ARO  seed 1: k = 0.99472 +/- 0.00019  F_dH 1.509  F_z 1.436  AO -0.019  entropy_conv 7 (243.5 s)
+  C9-42 ARO  seed 2: k = 0.99483 +/- 0.00021  F_dH 1.498  F_z 1.438  AO -0.020  entropy_conv 8 (246.6 s)
+
+=== design C9-51: e 4.180 wt%, Gd 2.68 wt%, pins 12 as built (optimiser value 13.95), refl 5.66 cm
+  C9-51 ARO  seed 1: k = 1.05318 +/- 0.00022  F_dH 1.495  F_z 1.442  AO -0.020  entropy_conv 11 (246.7 s)
+  C9-51 ARO  seed 2: k = 1.05335 +/- 0.00021  F_dH 1.482  F_z 1.442  AO -0.021  entropy_conv 10 (250.1 s)
+
+=== design C9-54: e 4.214 wt%, Gd 0.33 wt%, pins 20 as built (optimiser value 20.01), refl 5.66 cm
+  C9-54 ARO  seed 1: k = 1.06508 +/- 0.00022  F_dH 1.467  F_z 1.441  AO -0.019  entropy_conv 9 (248.8 s)
+  C9-54 ARO  seed 2: k = 1.06452 +/- 0.00023  F_dH 1.449  F_z 1.438  AO -0.017  entropy_conv 10 (247.7 s)
+
+=== design C9-57: e 4.236 wt%, Gd 0.78 wt%, pins 20 as built (optimiser value 18.42), refl 5.66 cm
+  C9-57 ARO  seed 1: k = 1.03652 +/- 0.00022  F_dH 1.476  F_z 1.439  AO -0.020  entropy_conv 9 (246.7 s)
+  C9-57 ARO  seed 2: k = 1.03630 +/- 0.00020  F_dH 1.482  F_z 1.439  AO -0.016  entropy_conv 107 (246.9 s)
+
+wrote axial_c9_all/summary.json and axial_c9_all/summary_table.tex
+total 4105 s
+figures: python axial_figures_c9.py --out axial_c9_all
+2026-09-22 12:26:08 designs with seed 2: 22 (expected 22)
+=== C10 gate after the second seed, 2026-09-22 12:26:08
+
+=== 1. gate over all 60 designs
+designs with an axial solve : 60  (22 feasible in the archive)
+F_z, first seed             : 1.4263 to 1.4504, mean 1.4383, span 1.67 %
+3D F_dH on the same solves  : span 23.2 %
+seed s.d. of one solve      : 0.0032  (22 degrees of freedom)
+observed s.d. across designs: 0.0050
+implied true s.d.           : 0.0038
+signal-to-noise, one solve  : 1.19   (threshold 2.0)
+
+Spearman rank correlation with F_z
+  enrich         rho -0.709   p 0.000
+  gd_wt          rho -0.247   p 0.057
+  refl_thick     rho +0.360   p 0.005
+  gd_pins        rho -0.263   p 0.043
+  peaking        rho -0.585   p 0.000
+  c_max          rho -0.383   p 0.002
+  keff_core_bol  rho -0.361   p 0.005
+
+leave-one-out R2, F_z       : +0.513   rmse 0.0035   (threshold 0.5)
+leave-one-out R2, 3D F_dH   : +0.824   rmse 0.0263   (yardstick)
+
+F_dH x F_z against F_dH     : Spearman 0.996, largest rank shift 6 places
+
+VERDICT: F_z is NOT a usable objective under the two thresholds above.
+
+
+=== 2. feasible region only
+feasible designs : 22   seed s.d. 0.0032 (22 degrees of freedom)
+enrichment       : 4.18 to 7.89 wt%
+F_z, one seed    : span 1.20 %   true s.d. 0.0024   SNR 0.76
+F_z, two seeds   : span 0.89 %   true s.d. 0.0024   SNR 1.05
+Spearman F_z vs enrichment: -0.53
+two seeds, without C9-10 (7.89 wt%): span 0.79 %   SNR 0.87
+
+ design  enrich   F_z s1   F_z s2
+  C9-51     4.18   1.4422   1.4423
+  C9-54     4.21   1.4407   1.4378
+  C9-40     4.23   1.4435   1.4398
+  C9-57     4.24   1.4386   1.4385
+  C9-44     4.24   1.4361   1.4417
+  C9-34     4.26   1.4427   1.4453
+  C9-58     4.28   1.4395   1.4433
+  C9-30     4.29   1.4398   1.4430
+  C9-35     4.36   1.4437   1.4484
+  C9-12     4.37   1.4423   1.4418
+  C9-26     4.38   1.4386   1.4400
+  C9-42     4.40   1.4363   1.4382
+  C9-32     4.42   1.4440   1.4466
+  C9-47     4.46   1.4369   1.4395
+  C9-29     4.48   1.4410   1.4350
+  C9-25     4.64   1.4452   1.4408
+  C9-16     4.86   1.4382   1.4454
+  C9-27     5.11   1.4348   1.4380
+  C9-11     5.26   1.4417   1.4319
+  C9-24     5.42   1.4342   1.4350
+  C9-1      5.51   1.4365   1.4392
+  C9-10     7.89   1.4279   1.4385
+2026-09-22 12:26:42 DONE. Report: c10_seed2_report.txt

@@ -1,0 +1,23 @@
+designs with an axial solve : 60  (22 feasible in the archive)
+F_z, first seed             : 1.4263 to 1.4504, mean 1.4383, span 1.67 %
+3D F_dH on the same solves  : span 23.2 %
+seed s.d. of one solve      : 0.0032  (22 degrees of freedom)
+observed s.d. across designs: 0.0050
+implied true s.d.           : 0.0038
+signal-to-noise, one solve  : 1.19   (threshold 2.0)
+
+Spearman rank correlation with F_z
+  enrich         rho -0.709   p 0.000
+  gd_wt          rho -0.247   p 0.057
+  refl_thick     rho +0.360   p 0.005
+  gd_pins        rho -0.263   p 0.043
+  peaking        rho -0.585   p 0.000
+  c_max          rho -0.383   p 0.002
+  keff_core_bol  rho -0.361   p 0.005
+
+leave-one-out R2, F_z       : +0.513   rmse 0.0035   (threshold 0.5)
+leave-one-out R2, 3D F_dH   : +0.824   rmse 0.0263   (yardstick)
+
+F_dH x F_z against F_dH     : Spearman 0.996, largest rank shift 6 places
+
+VERDICT: F_z is NOT a usable objective under the two thresholds above.

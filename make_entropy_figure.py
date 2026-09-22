@@ -1,7 +1,11 @@
 """Source-convergence figure: Shannon entropy per batch for a reflective assembly,
 a typical core solve and the slowest core solve. Plot only, runs locally.
 
-usage: python make_entropy_figure.py entropy_traces.json OUT.pdf OUT.png
+usage: python make_entropy_figure.py entropy_traces.json OUT.pdf OUT.png [HIST.pdf HIST.png]
+
+With the two optional paths it also writes a second figure: the convergence
+batch of every core solve in the archive, divided by its inactive-batch count
+(a value at or below 1 means the source was stationary before tallying began).
 """
 import json
 import sys
@@ -12,7 +16,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 SRC, OUT_PDF, OUT_PNG = sys.argv[1], sys.argv[2], sys.argv[3]
-chosen = json.load(open(SRC))["chosen"]
+data = json.load(open(SRC))
+chosen = data["chosen"]
 PANELS = [("assembly", "Reflective assembly"),
           ("core_typical", "Core, typical case"),
           ("core_slowest", "Core, slowest case")]
@@ -36,3 +41,19 @@ fig.tight_layout()
 fig.savefig(OUT_PDF, bbox_inches="tight")
 fig.savefig(OUT_PNG, dpi=170, bbox_inches="tight")
 print({k: chosen[k]["conv"] for k, _ in PANELS})
+
+if len(sys.argv) == 6:
+    core = [r for r in data["summary"] if r["kind"] == "core"]
+    ratio = np.array([r["conv"] / r["n_inactive"] for r in core])
+    fig, ax = plt.subplots(figsize=(5.5, 3.6))
+    ax.hist(ratio, bins=np.linspace(0, max(1.2, ratio.max() * 1.05), 25),
+            color="#3f6d8c", edgecolor="white")
+    ax.axvline(1.0, color="black", ls="--", lw=1.0, label="End of inactive batches")
+    ax.set_xlabel("Convergence batch / number of inactive batches")
+    ax.set_ylabel("Core solves")
+    ax.legend(fontsize=7.5, loc="upper right")
+    fig.tight_layout()
+    fig.savefig(sys.argv[4], bbox_inches="tight")
+    fig.savefig(sys.argv[5], dpi=170, bbox_inches="tight")
+    print(f"core solves {ratio.size}, ratio median {np.median(ratio):.2f}, "
+          f"max {ratio.max():.2f}, above 1: {(ratio > 1).sum()}")

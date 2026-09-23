@@ -1,0 +1,41 @@
+=== Depletion checks of the Campaign 9 front, 2026-09-23 12:51:20, 2e484bb Core depletion checks: relative end-of-cycle criterion
+=== budget 24 h for checks 2 and 3, threads 64
+
+=== Check 1: replicas and fidelity of the assembly depletion
+ design EFPD arch rep1 err EFPD mean     sd sig prop EFPD prod  shift | c_max arch   mean    sd   prod  shift
+  C9-47     1946.7  -15.829    1965.4   27.8     21.3    1969.7   +4.3 |       1406   1406     0   1406     +0
+  C9-44     1858.4  -45.224    1815.1   37.5     24.6    1804.6  -10.5 |       1496   1506    34   1520    +14
+  C9-34     1840.6   +4.841    1858.2    8.5     21.5    1841.4  -16.8 |       1725   1725     0   1725     +0
+  C9-40     1870.3  -76.261    1813.4   21.1     21.9    1822.0   +8.6 |       1768   1786    34   1768    -18
+  C9-35     1937.7  -51.453    1927.5   36.4     20.2    1930.9   +3.4 |       1908   1908     0   1908     +0
+
+pooled seed s.d. at campaign fidelity : EFPD 29.1 d, c_max 27 ppm  (23 degrees of freedom)
+fidelity shift, production - campaign : -2.2 d, s.e. 4.9 d, t -0.45 over 5 designs
+expected s.d. ratio production/campaign: 0.35 (histories)
+
+(F_dH, c_max) front, c_max from archive       : [34, 35, 40, 44, 47]
+(F_dH, c_max) front, c_max from campaign_mean : [34, 35, 40, 44, 47]
+(F_dH, c_max) front, c_max from production    : [34, 35, 40, 44, 47]
+EFPD order, archive       : [47, 35, 40, 44, 34]   margins over 1826 d: C9-47 +121, C9-35 +112, C9-40 +44, C9-44 +32, C9-34 +15
+EFPD order, campaign_mean : [47, 35, 34, 44, 40]   margins over 1826 d: C9-47 +139, C9-35 +101, C9-34 +32, C9-44 -11, C9-40 -13
+EFPD order, production    : [47, 35, 34, 40, 44]   margins over 1826 d: C9-47 +144, C9-35 +105, C9-34 +15, C9-40 -4, C9-44 -21
+
+=== Check 2: zoned 2D core depletion against the assembly proxy
+C9-47
+  cycle length   core  1910.1 d (sigma 8.0)   archive  1946.7 d   difference -36.7 d   margins over 1826: core +84, archive +121
+  k_eff BOL      this run 1.02717 vs archive 1.02728: -11 pcm (run s.d. 67 pcm)
+  hump (core)    measured +0 pcm (no floor +113)   archive L_ax x H_asm +0 (no floor +9)
+  c_max          core 1406 ppm   archive 1406 ppm   difference +0 ppm
+  F_dH           BOL 1.656 (archive 1.545)   max over cycle 1.670   EOC 1.662   entropy conv. batch max 6
+  ring shares    BOL [0.14369939257589423, 0.4404969591741616, 0.415803648249944]   EOC [0.12356664393040405, 0.4061027935336457, 0.47033056253595024]
+  solves 8, wall 0.96 h
+
+=== Check 3: three-dimensional depletion, one material set per axial layer
+C9-47  (8 layers)
+  cycle length   3D  1573.3 d (sigma 8.8)   archive  1946.7 d   difference -373.5 d   margins over 1826: 3D -253, archive +121
+  k_eff BOL      3D 0.99750 (s.d. 67 pcm)   2D archive 1.02728   L_ax at BOL 1.0298   (table 1.0289)
+  hump (3D)      +0 pcm (no floor -25)   archive +0
+  c_max          3D 1406 ppm   archive 1406   difference +0 ppm
+  F_dH           BOL 1.680  max 1.686  EOC 1.578   F_z BOL 1.446  max 1.446  EOC 1.168   AO BOL -0.012  EOC -0.011   entropy conv. max 9
+  layer burnup at EOC [MWd/kgHM], bottom to top: 12.0 20.8 26.3 28.5 28.9 25.5 19.7 10.2   (max/mean 1.344)
+  solves 8, wall 0.98 h

@@ -1,0 +1,19 @@
+{
+ "ok": true,
+ "fresh_s": 472.722814794,
+ "depleted_s": 450.4001346665,
+ "overhead_s": 25.43838637302618,
+ "per_solve_s": 475.83852103952614,
+ "n_solves": 8,
+ "projected_s": 3829.030848443709,
+ "projected_h": 1.0636196801232525,
+ "idx": 47,
+ "transport": {
+  "particles": 20000,
+  "batches": 160,
+  "inactive": 60
+ },
+ "layers": 8,
+ "wall_estimate_s": 1449.8382432460785,
+ "k_bol": 0.9975036033729265
+}

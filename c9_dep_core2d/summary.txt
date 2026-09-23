@@ -1,0 +1,9 @@
+=== Check 2: zoned 2D core depletion against the assembly proxy
+C9-47
+  cycle length   core  1910.1 d (sigma 8.0)   archive  1946.7 d   difference -36.7 d   margins over 1826: core +84, archive +121
+  k_eff BOL      this run 1.02717 vs archive 1.02728: -11 pcm (run s.d. 67 pcm)
+  hump (core)    measured +0 pcm (no floor +113)   archive L_ax x H_asm +0 (no floor +9)
+  c_max          core 1406 ppm   archive 1406 ppm   difference +0 ppm
+  F_dH           BOL 1.656 (archive 1.545)   max over cycle 1.670   EOC 1.662   entropy conv. batch max 6
+  ring shares    BOL [0.14369939257589423, 0.4404969591741616, 0.415803648249944]   EOC [0.12356664393040405, 0.4061027935336457, 0.47033056253595024]
+  solves 8, wall 0.96 h

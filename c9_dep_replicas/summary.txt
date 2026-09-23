@@ -1,0 +1,18 @@
+=== Check 1: replicas and fidelity of the assembly depletion
+ design EFPD arch rep1 err EFPD mean     sd sig prop EFPD prod  shift | c_max arch   mean    sd   prod  shift
+  C9-47     1946.7  -15.829    1965.4   27.8     21.3    1969.7   +4.3 |       1406   1406     0   1406     +0
+  C9-44     1858.4  -45.224    1815.1   37.5     24.6    1804.6  -10.5 |       1496   1506    34   1520    +14
+  C9-34     1840.6   +4.841    1858.2    8.5     21.5    1841.4  -16.8 |       1725   1725     0   1725     +0
+  C9-40     1870.3  -76.261    1813.4   21.1     21.9    1822.0   +8.6 |       1768   1786    34   1768    -18
+  C9-35     1937.7  -51.453    1927.5   36.4     20.2    1930.9   +3.4 |       1908   1908     0   1908     +0
+
+pooled seed s.d. at campaign fidelity : EFPD 29.1 d, c_max 27 ppm  (23 degrees of freedom)
+fidelity shift, production - campaign : -2.2 d, s.e. 4.9 d, t -0.45 over 5 designs
+expected s.d. ratio production/campaign: 0.35 (histories)
+
+(F_dH, c_max) front, c_max from archive       : [34, 35, 40, 44, 47]
+(F_dH, c_max) front, c_max from campaign_mean : [34, 35, 40, 44, 47]
+(F_dH, c_max) front, c_max from production    : [34, 35, 40, 44, 47]
+EFPD order, archive       : [47, 35, 40, 44, 34]   margins over 1826 d: C9-47 +121, C9-35 +112, C9-40 +44, C9-44 +32, C9-34 +15
+EFPD order, campaign_mean : [47, 35, 34, 44, 40]   margins over 1826 d: C9-47 +139, C9-35 +101, C9-34 +32, C9-44 -11, C9-40 -13
+EFPD order, production    : [47, 35, 34, 40, 44]   margins over 1826 d: C9-47 +144, C9-35 +105, C9-34 +15, C9-40 -4, C9-44 -21

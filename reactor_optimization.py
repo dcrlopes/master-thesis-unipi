@@ -573,14 +573,20 @@ class OptimizerConfig:
     hv_ref: tuple | None = None # reference point for hypervolume (in MIN space)
     efpd_cap: float | None = None  # EFPD-CLIP: ceiling on the SURROGATE's
                                    # predicted cycle length [EFPD]; None = off
-    infill_min_sep: float = 0.05   # BATCH-DIVERSITY: minimum separation of
+    infill_min_sep: float = 0.14   # BATCH-DIVERSITY: minimum separation of
                                    # the infill picks (and of each pick from
                                    # the archive) in the unit design box,
-                                   # as ||dx/span|| / sqrt(n_var)
-    feas_kappa: float = 1.0        # FEAS-MARGIN: candidates must satisfy
+                                   # as ||dx/span|| / sqrt(n_var).
+                                   # 0.14 is the value C8 and C9 passed
+                                   # explicitly; it was 0.05 through C7, and
+                                   # a C7 launch that omitted the flag ran
+                                   # two collapsed blocks at that default.
+    feas_kappa: float = 1.5        # FEAS-MARGIN: candidates must satisfy
                                    # g_mean + kappa*g_std <= 0 on the GP
                                    # constraints to rank first; 0 restores
-                                   # the pure-uncertainty ordering
+                                   # the pure-uncertainty ordering.
+                                   # 1.5 is the C8/C9 value; it was 1.0
+                                   # through C7.
 
 
 class ActiveLearningMOO:
@@ -769,7 +775,7 @@ class ActiveLearningMOO:
             g_mean, g_std = con_sur.predict(cand)
             g_mean = np.atleast_2d(np.asarray(g_mean, dtype=float))
             g_std = np.atleast_2d(np.asarray(g_std, dtype=float))
-            kappa = float(getattr(self.cfg, "feas_kappa", 1.0))
+            kappa = float(getattr(self.cfg, "feas_kappa", 1.5))
             _exact_idx = {self.spec.constraint_names.index(n)
                           for n in self.spec.exact_constraints}
             _gp_cols = [j for j in range(g_mean.shape[1])
@@ -800,7 +806,7 @@ class ActiveLearningMOO:
                 return float(np.linalg.norm(d, axis=1).min()) / rootn
 
             chosen = []
-            min_sep = float(getattr(self.cfg, "infill_min_sep", 0.05))
+            min_sep = float(getattr(self.cfg, "infill_min_sep", 0.14))
             while len(chosen) < self.cfg.n_infill and min_sep > 1e-4:
                 for idx in order:
                     if len(chosen) >= self.cfg.n_infill:

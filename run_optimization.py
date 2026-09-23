@@ -250,14 +250,15 @@ def main():
     ap.add_argument("--nsga-gen", type=int, default=None,
                     help="NSGA-SET: NSGA-II generations on the surrogate, "
                          "overriding the profile (full run: 80).")
-    ap.add_argument("--infill-min-sep", type=float, default=0.05,
+    ap.add_argument("--infill-min-sep", type=float, default=0.14,
                     help="BATCH-DIVERSITY: minimum separation of the infill "
                          "picks (and of each pick from the archive) in the "
-                         "unit design box, ||dx/span||/sqrt(n_var). 0.05 "
-                         "means a mean per-variable spacing of 5%% of range. "
+                         "unit design box, ||dx/span||/sqrt(n_var). 0.14 "
+                         "means a mean per-variable spacing of 14%% of range, "
+                         "the value C8 and C9 used; it was 0.05 through C7. "
                          "Halved automatically when the surrogate front is "
                          "too small to supply n_infill picks at this value.")
-    ap.add_argument("--feas-kappa", type=float, default=1.0,
+    ap.add_argument("--feas-kappa", type=float, default=1.5,
                     help="FEAS-MARGIN: infill candidates must satisfy "
                          "g_mean + kappa*g_std <= 0 on the surrogate "
                          "constraints to rank first in the acquisition. "

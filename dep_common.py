@@ -15,7 +15,8 @@ arithmetic and the selftest run on any machine.
                                  including the unplaced base assembly
   run_adaptive(...)              the adaptive chunked depletion of
                                  OpenMCEvaluator._cycle_length, ported so it
-                                 accepts ANY model (core, 3D) and any target.
+                                 accepts ANY model (core, 3D), with an absolute
+                                 or a relative end-of-cycle target.
                                  test_dep_common.py proves it identical to
                                  the evaluator's own routine
   k_sd_from_case(case)           Monte Carlo s.d. of every k in the chunk files
@@ -133,14 +134,28 @@ def unmark_unused(model, rows) -> list[dict]:
 
 
 # ---------------------------------------------------- adaptive depletion ----
-def run_adaptive(model, k_target: float, spec_power: float, *, bol_steps,
+def run_adaptive(model, k_target, spec_power: float, *, bol_steps,
                  dep_step: float, chunk_steps: int, max_burnup: float,
-                 case, verbose=True) -> dict:
+                 case, k_target_ratio=None, verbose=True) -> dict:
     """The adaptive chunked depletion of OpenMCEvaluator._cycle_length,
     for a model whose depletable materials are already set. `spec_power` in
     W/gHM converts burnup steps to days and normalises the power, exactly
-    as in the evaluator. Returns dict(efpd, bu_eoc, censored, k_hist,
-    bu_hist, n_solves, wall_s, chunks)."""
+    as in the evaluator.
+
+    END OF CYCLE. With `k_target` a number, the cycle ends when k falls to
+    it (absolute criterion). With `k_target_ratio` instead, the target is
+    set AFTER the first solve to ratio x k(BOL), so the model ends its
+    cycle when it has lost the same reactivity the campaign's assembly
+    loses, ratio = k_target / k_inf(BOL) of the archive. The relative form
+    is the one that compares with the assembly proxy, because the campaign's
+    k_target is not the criticality point of the core: for C9-47 the 2D core
+    at 1000 ppm starts at 1.0273, already below the axial leakage factor
+    1.0289, so an absolute target ends the cycle at burnup zero.
+
+    Returns dict(efpd, bu_eoc, censored, k_hist, bu_hist, n_solves, wall_s,
+    chunks, k_target)."""
+    if (k_target is None) == (k_target_ratio is None):
+        raise ValueError("pass k_target or k_target_ratio, not both")
     import openmc.deplete
 
     case = Path(case)
@@ -151,7 +166,7 @@ def run_adaptive(model, k_target: float, spec_power: float, *, bol_steps,
     cwd = Path.cwd()
     t0 = time.time()
 
-    def run_chunk(steps):
+    def run_chunk(steps, announce=True):
         op_dep = openmc.deplete.CoupledOperator(
             model, prev_results=state["prev"], diff_burnable_mats=False)
         if state["power_w"] is None:
@@ -190,12 +205,21 @@ def run_adaptive(model, k_target: float, spec_power: float, *, bol_steps,
             bu_hist.append(bu_hist[-1] + s)
         if len(k_hist) != len(bu_hist):
             raise RuntimeError("burnup/k bookkeeping out of sync")
-        if verbose:
+        if verbose and announce:
             print(f"      chunk {state['chunk'] - 1}: B {bu_hist[-1]:6.2f} MWd/kgHM "
                   f"k {k_hist[-1]:.5f} (target {k_target:.5f}) "
                   f"[{(time.time() - t0) / 60:.1f} min]", flush=True)
 
-    run_chunk([float(s) for s in bol_steps])
+    run_chunk([float(s) for s in bol_steps], announce=False)
+    if k_target is None:                     # relative criterion, see above
+        k_target = float(k_target_ratio) * k_hist[0]
+        if verbose:
+            print(f"      k(BOL) {k_hist[0]:.5f} x ratio {k_target_ratio:.5f} "
+                  f"-> end of cycle at k = {k_target:.5f}", flush=True)
+    if verbose:
+        for i, (b, kv) in enumerate(zip(bu_hist, k_hist)):
+            print(f"      state {i}: B {b:6.2f} MWd/kgHM  k {kv:.5f}"
+                  + ("  (target)" if i == 0 else ""), flush=True)
     censored = False
     while True:
         k_op = k_hist[1:] if len(k_hist) > 1 else k_hist
@@ -225,7 +249,8 @@ def run_adaptive(model, k_target: float, spec_power: float, *, bol_steps,
         efpd = bu_eoc * 1000.0 / spec_power
     return dict(efpd=float(efpd), bu_eoc=float(bu_eoc), censored=bool(censored),
                 k_hist=[float(v) for v in k_hist], bu_hist=[float(v) for v in bu_hist],
-                n_solves=len(k_hist), wall_s=time.time() - t0, chunks=state["chunk"])
+                n_solves=len(k_hist), wall_s=time.time() - t0, chunks=state["chunk"],
+                k_target=float(k_target))
 
 
 # ----------------------------------------------------------- statistics ----

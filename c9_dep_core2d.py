@@ -157,7 +157,7 @@ def read_states(case, shape, inactive):
 
 
 # ----------------------------------------------------------------- run ----
-def run_design(idx, ckpt, raw, meta, tr, lax, out, threads, estimate=False):
+def run_design(idx, ckpt, raw, meta, tr, lax, out, threads, estimate=False, mode="relative"):
     import reactor_model as rm
     import dep_common as dc
     from openmc_evaluator import _design_seed
@@ -176,8 +176,14 @@ def run_design(idx, ckpt, raw, meta, tr, lax, out, threads, estimate=False):
     else:
         sched = dict(bol_steps=sch["bol_steps"], dep_step=sch["dep_step"],
                      chunk_steps=sch["chunk_steps"], max_burnup=sch["max_burnup"])
+    rec = raw[idx]
+    ratio = float(rec["k_target"]) / float(rec["k_bol"])
+    eoc = dict(k_target_ratio=ratio) if mode == "relative" else dict(k_target=lax)
     print(f"[d{idx}] zoned 2D core, {len(rows)} depletable materials, seed {seed}, "
-          f"transport {tr}, k_EOC = L_ax = {lax:.4f}", flush=True)
+          f"transport {tr}, end of cycle "
+          + (f"relative, ratio {ratio:.5f} (assembly loses "
+             f"{1e5 * (1 / rec['k_target'] - 1 / rec['k_bol']):.0f} pcm)"
+             if mode == "relative" else f"absolute at k = {lax:.4f}"), flush=True)
     for r in sorted(rows, key=lambda r: (r["zone"], r["gd"], -r["pins"])):
         print(f"      {r['name']:16s} ring {r['zone']}  pins {r['pins']:5d}  {r['volume_cm3']:10.1f} cm3")
     for r in off:
@@ -185,7 +191,8 @@ def run_design(idx, ckpt, raw, meta, tr, lax, out, threads, estimate=False):
     if any(r["zone"] == "?" for r in rows):
         raise RuntimeError("a depletable material could not be assigned to a ring")
     t0 = time.time()
-    res = dc.run_adaptive(model, lax, spec_power, case=case, verbose=True, **sched)
+    res = dc.run_adaptive(model, eoc.get("k_target"), spec_power, case=case, verbose=True,
+                          k_target_ratio=eoc.get("k_target_ratio"), **sched)
     wall = time.time() - t0
     errors = {}
 
@@ -205,14 +212,16 @@ def run_design(idx, ckpt, raw, meta, tr, lax, out, threads, estimate=False):
         return pc
     sdmap = guarded("k_sd_from_case", lambda: dc.k_sd_from_case(case), {})
     ksd = [sdmap.get(v) for v in res["k_hist"]]
-    sig, ib, slope = dc.bracket_sigma_efpd(res["bu_hist"], res["k_hist"], ksd, lax, spec_power)
+    k_eoc = res["k_target"]
+    sig, ib, slope = dc.bracket_sigma_efpd(res["bu_hist"], res["k_hist"], ksd, k_eoc, spec_power)
     c9 = meta["campaign9"]
     obj = dc.hump_and_cmax(res["k_hist"], res["k_hist"][0], raw[idx]["boron_points"],
                            float(c9["hump_noise_pcm"]))
     states = guarded("read_states", lambda: read_states(case, shape, tr["inactive"]), [])
     aligned = len(states) == len(res["k_hist"])
     return dict(
-        idx=idx, seed=int(seed), transport=tr, k_eoc=lax, spec_power=spec_power,
+        idx=idx, seed=int(seed), transport=tr, k_eoc=k_eoc, eoc_mode=mode,
+        k_target_ratio=ratio, spec_power=spec_power,
         materials=rows, materials_off=off, efpd=res["efpd"], bu_eoc=res["bu_eoc"], censored=res["censored"],
         k_hist=res["k_hist"], k_sd=ksd, bu_hist=res["bu_hist"], n_solves=res["n_solves"],
         sigma_efpd=sig, bracket=ib, slope_pcm_per_mwdkg=slope,
@@ -298,6 +307,10 @@ def main(argv=None):
     ap.add_argument("--batches", type=int, default=DEFAULT_TR["batches"])
     ap.add_argument("--inactive", type=int, default=DEFAULT_TR["inactive"])
     ap.add_argument("--lax", type=float, default=None, help="k_eff at end of cycle; default the table's axial factor")
+    ap.add_argument("--eoc-mode", choices=["relative", "absolute"], default="relative",
+                    help="relative (default): end of cycle when the core has lost the same "
+                         "reactivity as the campaign assembly, k = k(BOL) x k_target/k_inf(BOL). "
+                         "absolute: end of cycle at the fixed k below")
     ap.add_argument("--threads", type=int, default=None)
     ap.add_argument("--out", default="c9_dep_core2d")
     ap.add_argument("--estimate", action="store_true", help="two short steps, then project the cost")
@@ -318,7 +331,8 @@ def main(argv=None):
         (out / "summary.json").write_text(json.dumps(R, indent=1))
         txt = report(R); (out / "summary.txt").write_text(txt + "\n"); print(txt)
         return 0
-    print(f"check 2: designs {a.designs}, transport {tr}, k_EOC {lax:.4f} ({src}), "
+    print(f"check 2: designs {a.designs}, transport {tr}, end of cycle {a.eoc_mode} "
+          f"(absolute value would be {lax:.4f} from {src}), "
           f"schedule {meta.get('schedule')}, cached {sorted(done)}")
     for idx in a.designs:
         r = raw[idx]
@@ -336,7 +350,7 @@ def main(argv=None):
     print(f"  openmc {openmc.__version__}, chain {chain}")
     if a.estimate:
         for idx in a.designs:
-            pc = run_design(idx, ckpt, raw, meta, tr, lax, out, a.threads, estimate=True)
+            pc = run_design(idx, ckpt, raw, meta, tr, lax, out, a.threads, estimate=True, mode=a.eoc_mode)
             (out / f"estimate_d{idx}.json").write_text(json.dumps(pc, indent=1))
             if pc.get("ok"):
                 print(f"[d{idx}] ESTIMATE fresh solve {pc['fresh_s']:.0f} s, depleted solve {pc['depleted_s']:.0f} s, "
@@ -350,7 +364,7 @@ def main(argv=None):
     for idx in a.designs:
         if f"d{idx}" in done:
             print(f"[d{idx}] cached"); continue
-        res = run_design(idx, ckpt, raw, meta, tr, lax, out, a.threads)
+        res = run_design(idx, ckpt, raw, meta, tr, lax, out, a.threads, mode=a.eoc_mode)
         done[f"d{idx}"] = res
         store.write_text(json.dumps(done, indent=1))
         print(f"[d{idx}] EFPD {res['efpd']:.1f} d (archive {raw[idx]['cycle_length']:.1f}), "

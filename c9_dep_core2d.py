@@ -251,6 +251,7 @@ def analyse(done, raw):
         if d.get("states") and d.get("states_aligned"):
             st = d["states"]
             fdh = [s["fdh"] for s in st]
+            row["bu_last"] = d["bu_hist"][-1]
             row["fdh_bol"], row["fdh_max"], row["fdh_eoc"] = fdh[0], max(fdh), fdh[-1]
             row["fdh_archive"] = rec["peaking"]
             row["fdh_trajectory"] = [(b, f) for b, f in zip(d["bu_hist"], fdh)]
@@ -275,9 +276,10 @@ def report(R):
                  f"archive L_ax x H_asm {r['hump_core_archive']:+.0f} (no floor {r['hump_core_op_archive']:+.0f})")
         L.append(f"  c_max          core {r['c_max_core']:.0f} ppm   archive {r['c_max_archive']:.0f} ppm   difference {r['d_c_max']:+.0f} ppm")
         if "fdh_bol" in r:
-            L.append(f"  F_dH           BOL {r['fdh_bol']:.3f} (archive {r['fdh_archive']:.3f})   max over cycle {r['fdh_max']:.3f}   EOC {r['fdh_eoc']:.3f}   "
+            L.append(f"  (the values marked 'last' are at the last computed state, B = {r['bu_last']:.1f} MWd/kgHM)")
+            L.append(f"  F_dH           BOL {r['fdh_bol']:.3f} (archive {r['fdh_archive']:.3f})   max over run {r['fdh_max']:.3f}   last {r['fdh_eoc']:.3f}   "
                      f"entropy conv. batch max {r['entropy_conv_max']}")
-            L.append(f"  ring shares    BOL {r['ring_shares_bol']}   EOC {r['ring_shares_eoc']}")
+            L.append(f"  ring shares    BOL {r['ring_shares_bol']}   last {r['ring_shares_eoc']}")
         L.append(f"  solves {r['n_solves']}, wall {r['wall_h']:.2f} h")
     return "\n".join(L)
 

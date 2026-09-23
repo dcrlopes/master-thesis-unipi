@@ -381,6 +381,7 @@ def analyse(done, raw, axial_json=None):
             st = d["states"]
             row["fdh"] = [s["fdh"] for s in st]; row["fz"] = [s["fz"] for s in st]; row["ao"] = [s["ao"] for s in st]
             row["bu"] = d["bu_hist"]
+            row["bu_last"] = d["bu_hist"][-1]
             row["fdh_bol"], row["fdh_eoc"], row["fdh_max"] = row["fdh"][0], row["fdh"][-1], max(row["fdh"])
             row["fz_bol"], row["fz_eoc"], row["fz_max"] = row["fz"][0], row["fz"][-1], max(row["fz"])
             row["ao_bol"], row["ao_eoc"] = row["ao"][0], row["ao"][-1]
@@ -406,11 +407,13 @@ def report(R):
         L.append(f"  hump (3D)      {r['hump_3d']:+.0f} pcm (no floor {r['hump_3d_op']:+.0f})   archive {r['hump_archive']:+.0f}")
         L.append(f"  c_max          3D {r['c_max_3d']:.0f} ppm   archive {r['c_max_archive']:.0f}   difference {r['d_c_max']:+.0f} ppm")
         if "fdh_bol" in r:
-            L.append(f"  F_dH           BOL {r['fdh_bol']:.3f}  max {r['fdh_max']:.3f}  EOC {r['fdh_eoc']:.3f}   "
-                     f"F_z BOL {r['fz_bol']:.3f}  max {r['fz_max']:.3f}  EOC {r['fz_eoc']:.3f}   "
-                     f"AO BOL {r['ao_bol']:+.3f}  EOC {r['ao_eoc']:+.3f}   entropy conv. max {r['entropy_conv_max']}")
+            L.append(f"  (the values marked 'last' are at the last computed state, B = {r['bu_last']:.1f} MWd/kgHM, "
+                     f"past the end of cycle at B = {r['efpd_3d'] * 9.9834 / 1000:.1f})")
+            L.append(f"  F_dH           BOL {r['fdh_bol']:.3f}  max {r['fdh_max']:.3f}  last {r['fdh_eoc']:.3f}   "
+                     f"F_z BOL {r['fz_bol']:.3f}  max {r['fz_max']:.3f}  last {r['fz_eoc']:.3f}   "
+                     f"AO BOL {r['ao_bol']:+.3f}  last {r['ao_eoc']:+.3f}   entropy conv. max {r['entropy_conv_max']}")
             lb = r["layer_burnup_eoc"]
-            L.append("  layer burnup at EOC [MWd/kgHM], bottom to top: "
+            L.append("  layer burnup at the last state [MWd/kgHM], bottom to top: "
                      + " ".join(f"{b:.1f}" for b in lb)
                      + f"   (max/mean {r['layer_burnup_peaking_eoc']:.3f})")
         L.append(f"  solves {r['n_solves']}, wall {r['wall_h']:.2f} h")

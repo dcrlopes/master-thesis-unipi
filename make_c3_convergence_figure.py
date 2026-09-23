@@ -50,14 +50,11 @@ ax1.plot(it, hv, "o-", color="#3f6d8c", lw=1.4, ms=5, zorder=3)
 edges = [PHASES[0][2], PHASES[1][2]]                 # 36 and 54 evaluations
 for xc in edges:
     ax1.axvline(xc, color="#9aa7b1", ls=":", lw=0.9, zorder=1)
-ax1.set_xlim(n_doe - 0.55 * n_doe, it[-1] + 3)
-for k, (lab, lo_e, hi_e) in enumerate(PHASES):
-    # the design of experiments holds no recorded point, so its label is set
-    # against the right edge of its own range instead of at its centre
-    xpos, align = (hi_e - 1.0, "right") if k == 0 else (0.5 * (lo_e + hi_e), "center")
-    ax1.text(xpos, 0.98, lab.replace(" of ", " of\n"),
+ax1.set_xlim(0, it[-1] + 3)
+for lab, lo_e, hi_e in PHASES:
+    ax1.text(0.5 * (lo_e + hi_e), 0.98, lab.replace(" of ", " of\n"),
              transform=ax1.get_xaxis_transform(),
-             ha=align, va="top", fontsize=8, color="#404b54")
+             ha="center", va="top", fontsize=8, color="#404b54")
 for i in range(1, hv.size):
     gain = 100.0 * (hv[i] - hv[i - 1]) / hv[i - 1]
     ax1.annotate(f"{gain:+.1f}%" if gain else "0%", (it[i], hv[i]),
@@ -65,7 +62,7 @@ for i in range(1, hv.size):
 ax1.set_xlabel("Evaluations completed")
 ax1.set_ylabel("Hypervolume")
 ax1.set_title("(a) Convergence of the hypervolume", fontsize=9)
-ax1.set_xticks(it)
+ax1.set_xticks(np.concatenate(([0], it)))   # 0 anchors the design-of-experiments range
 
 x = np.arange(len(PHASES))
 w = 0.38

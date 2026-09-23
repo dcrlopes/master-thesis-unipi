@@ -35,7 +35,10 @@ for ax, (key, title) in zip(axes, PANELS):
                label=f"Stationary source from batch {r['conv']}")
     ax.set_title(title)
     ax.set_xlabel("Batch")
-    ax.legend(fontsize=7.5, loc="lower right")
+    # headroom above the trace, so the legend sits clear of the converged tail
+    lo, hi = H.min(), H.max()
+    ax.set_ylim(lo - 0.05 * (hi - lo), hi + 0.42 * (hi - lo))
+    ax.legend(fontsize=7.5, loc="upper right", framealpha=0.95)
 axes[0].set_ylabel("Shannon entropy (bits)")
 fig.tight_layout()
 fig.savefig(OUT_PDF, bbox_inches="tight")

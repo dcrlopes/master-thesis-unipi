@@ -1,16 +1,25 @@
 # ============================================================================
-# environment.cloud.yml -- FALLBACK ONLY
+# environment.cloud.yml -- FALLBACK ONLY, NOT USED FOR ANY PUBLISHED RESULT
 # ----------------------------------------------------------------------------
-# Prefer the environment.yml exported from your validated WSL (Windows
-# Subsystem for Linux) machine: it pins the exact versions your baseline
-# results were produced with, which is what makes cloud results directly
-# comparable to laptop results.
+# Every campaign in the dissertation ran on environment.yml, the pinned export
+# from the validated WSL (Windows Subsystem for Linux) machine. The Dockerfile
+# copies environment.yml, so the AWS host and wks720 ran the same environment.
+# Nothing in this file produced a number that appears in the thesis.
 #
-# Use THIS file only if that export fails to solve on the new machine
-# (e.g. a pinned build hash no longer exists on conda-forge). It installs
-# current versions of the same stack, unpinned. If you fall back to it,
-# re-run the smoke test and re-check the reference case (pin-cell /
-# assembly k_inf) against your validated baseline before trusting a full run.
+# Use THIS file only if that pinned export fails to solve on a new machine,
+# which is expected in time: conda-forge removes old build hashes. It installs
+# current versions of the same stack, unpinned, so it will solve when the
+# pinned file no longer does.
+#
+# The Python pin below is deliberately the same series as environment.yml.
+# Do not lower it: a different interpreter series changes the compiled wheels
+# under OpenMC and scikit-learn, and the results stop being comparable.
+#
+# Reference versions of the published runs, to check against after a fallback
+# build: Python 3.13.13, OpenMC 0.15.3, pymoo 0.6.2, scikit-learn 1.9.0.
+# After falling back, re-run the smoke test and re-check the reference case
+# (pin-cell and assembly k_inf) against the validated baseline before trusting
+# a full run.
 #
 #   mamba env create -n openmc-env -f environment.cloud.yml
 # ============================================================================
@@ -18,7 +27,7 @@ name: openmc-env
 channels:
   - conda-forge
 dependencies:
-  - python=3.11
+  - python=3.13
   - openmc                # Open source Monte Carlo particle transport code
   - numpy
   - scipy

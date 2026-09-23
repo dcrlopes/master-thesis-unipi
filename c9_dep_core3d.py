@@ -287,7 +287,7 @@ def layer_burnup(states, bu_hist, edges):
 
 
 # ----------------------------------------------------------------- run ----
-def run_design(idx, ckpt, raw, meta, tr, n_layers, k_eoc, out, estimate=False):
+def run_design(idx, ckpt, raw, meta, tr, n_layers, k_eoc, out, estimate=False, mode="relative"):
     import reactor_model as rm
     import zoning as zn
     import hardware3d as hw
@@ -309,10 +309,14 @@ def run_design(idx, ckpt, raw, meta, tr, n_layers, k_eoc, out, estimate=False):
     else:
         sched = dict(bol_steps=sch["bol_steps"], dep_step=sch["dep_step"],
                      chunk_steps=sch["chunk_steps"], max_burnup=sch["max_burnup"])
+    rec = raw[idx]
+    ratio = float(rec["k_target"]) / float(rec["k_bol"])
     print(f"[d{idx}] 3D hardware core, {n_layers} layers, {info['n_fuel_segments']} fuel segments, "
-          f"{info['n_depletable']} depletable materials, seed {seed}, transport {tr}, k_EOC {k_eoc}", flush=True)
+          f"{info['n_depletable']} depletable materials, seed {seed}, transport {tr}, end of cycle "
+          + (f"relative, ratio {ratio:.5f}" if mode == "relative" else f"absolute at k = {k_eoc}"), flush=True)
     t0 = time.time()
-    res = dc.run_adaptive(model, k_eoc, spec_power, case=case, verbose=True, **sched)
+    res = dc.run_adaptive(model, k_eoc if mode == "absolute" else None, spec_power, case=case,
+                          verbose=True, k_target_ratio=(ratio if mode == "relative" else None), **sched)
     wall = time.time() - t0
     errors = {}
 
@@ -330,6 +334,7 @@ def run_design(idx, ckpt, raw, meta, tr, n_layers, k_eoc, out, estimate=False):
         return pc
     sdmap = guarded("k_sd_from_case", lambda: dc.k_sd_from_case(case), {})
     ksd = [sdmap.get(v) for v in res["k_hist"]]
+    k_eoc = res["k_target"]
     sig, ib, slope = dc.bracket_sigma_efpd(res["bu_hist"], res["k_hist"], ksd, k_eoc, spec_power)
     c9 = meta["campaign9"]
     obj = dc.hump_and_cmax(res["k_hist"], res["k_hist"][0], raw[idx]["boron_points"],
@@ -338,7 +343,8 @@ def run_design(idx, ckpt, raw, meta, tr, n_layers, k_eoc, out, estimate=False):
     aligned = len(states) == len(res["k_hist"])
     lb = layer_burnup(states, res["bu_hist"], edges) if aligned else None
     return dict(
-        idx=idx, seed=int(seed), transport=tr, layers=n_layers, k_eoc=k_eoc, spec_power=spec_power,
+        idx=idx, seed=int(seed), transport=tr, layers=n_layers, k_eoc=k_eoc, eoc_mode=mode,
+        k_target_ratio=ratio, spec_power=spec_power,
         info=info, materials=rows, efpd=res["efpd"], bu_eoc=res["bu_eoc"], censored=res["censored"],
         k_hist=res["k_hist"], k_sd=ksd, bu_hist=res["bu_hist"], n_solves=res["n_solves"],
         sigma_efpd=sig, bracket=ib, slope_pcm_per_mwdkg=slope,
@@ -447,6 +453,10 @@ def main(argv=None):
     ap.add_argument("--batches", type=int, default=DEFAULT_TR["batches"])
     ap.add_argument("--inactive", type=int, default=DEFAULT_TR["inactive"])
     ap.add_argument("--k-eoc", type=float, default=1.0)
+    ap.add_argument("--eoc-mode", choices=["relative", "absolute"], default="relative",
+                    help="relative (default): end of cycle when the core has lost the same "
+                         "reactivity as the campaign assembly, k = k(BOL) x k_target/k_inf(BOL). "
+                         "absolute: end of cycle at the fixed k below")
     ap.add_argument("--threads", type=int, default=None)
     ap.add_argument("--out", default="c9_dep_core3d")
     ap.add_argument("--estimate", action="store_true")
@@ -469,7 +479,7 @@ def main(argv=None):
     import hardware3d as hw
     edges, segs = fuel_cuts(hw.HardwareSpec(), a.layers)
     print(f"check 3: designs {a.designs}, {a.layers} layers ({len(segs)} fuel segments, "
-          f"{12 * a.layers} depletable materials), transport {tr}, k_EOC {a.k_eoc}, "
+          f"{12 * a.layers} depletable materials), transport {tr}, end of cycle {a.eoc_mode}, "
           f"schedule {meta.get('schedule')}, cached {sorted(done)}")
     for idx in a.designs:
         r = raw[idx]
@@ -486,7 +496,7 @@ def main(argv=None):
     print(f"  openmc {openmc.__version__}, chain {chain}")
     if a.estimate:
         for idx in a.designs:
-            pc = run_design(idx, ckpt, raw, meta, tr, a.layers, a.k_eoc, out, estimate=True)
+            pc = run_design(idx, ckpt, raw, meta, tr, a.layers, a.k_eoc, out, estimate=True, mode=a.eoc_mode)
             (out / f"estimate_d{idx}.json").write_text(json.dumps(pc, indent=1))
             if pc.get("ok"):
                 print(f"[d{idx}] ESTIMATE fresh solve {pc['fresh_s']:.0f} s, depleted solve {pc['depleted_s']:.0f} s, "
@@ -499,7 +509,7 @@ def main(argv=None):
     for idx in a.designs:
         if f"d{idx}" in done:
             print(f"[d{idx}] cached"); continue
-        res = run_design(idx, ckpt, raw, meta, tr, a.layers, a.k_eoc, out)
+        res = run_design(idx, ckpt, raw, meta, tr, a.layers, a.k_eoc, out, mode=a.eoc_mode)
         done[f"d{idx}"] = res
         store.write_text(json.dumps(done, indent=1))
         print(f"[d{idx}] EFPD {res['efpd']:.1f} d (archive {raw[idx]['cycle_length']:.1f}), c_max {res['c_max']:.0f} "

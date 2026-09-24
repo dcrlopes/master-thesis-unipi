@@ -1,0 +1,101 @@
+  [ 1/60] C9-0   archive  5979.6  reread  5979.6  corrected  5466.7  ok  (openmc (slow), 33 s)
+  [ 2/60] C9-1   archive  2741.7  reread  2741.7  corrected  2424.3  ok  (openmc (slow), 40 s)
+  [ 3/60] C9-2   archive  7179.5  reread  7179.5  corrected  6537.5  ok  (openmc (slow), 75 s)
+  [ 4/60] C9-3   archive  6677.4  reread  6677.4  corrected  6101.7  ok  (openmc (slow), 121 s)
+  [ 5/60] C9-4   archive  7183.6  reread  7183.6  corrected  6643.6  ok  (openmc (slow), 175 s)
+  [ 6/60] C9-5   archive     0.0  reread --  corrected --  MAPPING MISMATCH  (openmc (slow), 181 s)
+  [ 7/60] C9-6   archive  3658.6  reread  3658.6  corrected  3242.7  ok  (openmc (slow), 198 s)
+  [ 8/60] C9-7   archive     0.0  reread --  corrected --  MAPPING MISMATCH  (openmc (slow), 201 s)
+  [ 9/60] C9-8   archive  7130.5  reread  7130.5  corrected  6470.3  ok  (openmc (slow), 264 s)
+  [10/60] C9-9   archive  7754.7  reread  7754.7  corrected  7227.0  ok  (openmc (slow), 313 s)
+  [11/60] C9-10  archive  4163.5  reread  4163.5  corrected  3782.1  ok  (openmc (slow), 338 s)
+  [12/60] C9-11  archive  2456.9  reread  2456.9  corrected  1275.6  ok  (openmc (slow), 350 s)
+  [13/60] C9-12  archive  1971.3  reread  1971.3  corrected  1734.7  ok  (openmc (slow), 358 s)
+  [14/60] C9-13  archive  5024.0  reread  5024.0  corrected  4517.7  ok  (openmc (slow), 393 s)
+  [15/60] C9-14  archive  3778.1  reread  3778.1  corrected  3347.2  ok  (openmc (slow), 408 s)
+  [16/60] C9-15  archive  4599.7  reread  4599.7  corrected  4120.2  ok  (openmc (slow), 440 s)
+  [17/60] C9-16  archive  2282.7  reread  2282.7  corrected  1989.3  ok  (openmc (slow), 454 s)
+  [18/60] C9-17  archive  1599.1  reread  1599.1  corrected  1435.2  ok  (openmc (slow), 462 s)
+  [19/60] C9-18  archive  5972.9  reread  5972.9  corrected  5476.2  ok  (openmc (slow), 506 s)
+  [20/60] C9-19  archive  6517.5  reread  6517.5  corrected  5933.8  ok  (openmc (slow), 549 s)
+  [21/60] C9-20  archive     0.0  reread --  corrected --  MAPPING MISMATCH  (openmc (slow), 552 s)
+  [22/60] C9-21  archive     0.0  reread --  corrected --  MAPPING MISMATCH  (openmc (slow), 559 s)
+  [23/60] C9-22  archive  5031.1  reread  5031.1  corrected  4512.3  ok  (openmc (slow), 594 s)
+  [24/60] C9-23  archive  5177.0  reread  5177.0  corrected  4677.9  ok  (openmc (slow), 630 s)
+  [25/60] C9-24  archive  2570.2  reread  2570.2  corrected  1111.4  ok  (openmc (slow), 637 s)
+  [26/60] C9-25  archive  2044.9  reread  2044.9  corrected  1507.6  ok  (openmc (slow), 642 s)
+  [27/60] C9-26  archive  1899.5  reread  1899.5  corrected  1659.8  ok  (openmc (slow), 647 s)
+  [28/60] C9-27  archive  2372.8  reread  2372.8  corrected  1893.8  ok  (openmc (slow), 655 s)
+  [29/60] C9-28  archive  1265.7  reread  1265.7  corrected   949.4  ok  (openmc (slow), 657 s)
+  [30/60] C9-29  archive  1993.3  reread  1993.3  corrected  1766.2  ok  (openmc (slow), 663 s)
+  [31/60] C9-30  archive  1874.1  reread  1874.1  corrected  1642.0  ok  (openmc (slow), 671 s)
+  [32/60] C9-31  archive  1738.0  reread  1738.0  corrected  1542.7  ok  (openmc (slow), 679 s)
+  [33/60] C9-32  archive  1950.4  reread  1950.4  corrected  1715.5  ok  (openmc (slow), 687 s)
+  [34/60] C9-33  archive  1805.7  reread  1805.7  corrected  1572.5  ok  (openmc (slow), 695 s)
+  [35/60] C9-34  archive  1840.6  reread  1840.6  corrected  1597.1  ok  (openmc (slow), 704 s)
+  [36/60] C9-35  archive  1937.7  reread  1937.7  corrected  1704.6  ok  (openmc (slow), 712 s)
+  [37/60] C9-36  archive    11.6  reread    11.6  corrected    11.6  ok  (openmc (slow), 716 s)
+  [38/60] C9-37  archive  1868.8  reread  1868.8  corrected  1452.3  ok  (openmc (slow), 723 s)
+  [39/60] C9-38  archive  1745.6  reread  1745.6  corrected    34.7  ok  (openmc (slow), 731 s)
+  [40/60] C9-39  archive  1804.4  reread  1804.4  corrected  1597.6  ok  (openmc (slow), 738 s)
+  [41/60] C9-40  archive  1870.3  reread  1870.3  corrected  1638.0  ok  (openmc (slow), 746 s)
+  [42/60] C9-41  archive  1800.0  reread  1800.0  corrected  1547.9  ok  (openmc (slow), 754 s)
+  [43/60] C9-42  archive  1930.1  reread  1930.1  corrected  1660.4  ok  (openmc (slow), 762 s)
+  [44/60] C9-43  archive  1607.4  reread  1607.4  corrected  1393.4  ok  (openmc (slow), 769 s)
+  [45/60] C9-44  archive  1858.4  reread  1858.4  corrected  1628.8  ok  (openmc (slow), 774 s)
+  [46/60] C9-45  archive  1811.6  reread  1811.6  corrected  1582.0  ok  (openmc (slow), 778 s)
+  [47/60] C9-46  archive  1807.4  reread  1807.4  corrected  1576.1  ok  (openmc (slow), 782 s)
+  [48/60] C9-47  archive  1946.7  reread  1946.7  corrected  1689.1  ok  (openmc (slow), 786 s)
+  [49/60] C9-48  archive  1696.4  reread  1696.4  corrected  1244.4  ok  (openmc (slow), 790 s)
+  [50/60] C9-49  archive  1791.7  reread  1791.7  corrected  1571.9  ok  (openmc (slow), 794 s)
+  [51/60] C9-50  archive  1745.9  reread  1745.9  corrected   976.6  ok  (openmc (slow), 798 s)
+  [52/60] C9-51  archive  1840.1  reread  1840.1  corrected  1610.0  ok  (openmc (slow), 803 s)
+  [53/60] C9-52  archive  1792.7  reread  1792.7  corrected  1568.9  ok  (openmc (slow), 807 s)
+  [54/60] C9-53  archive  1811.1  reread  1811.1  corrected  1581.5  ok  (openmc (slow), 811 s)
+  [55/60] C9-54  archive  1841.2  reread  1841.2  corrected  1609.8  ok  (openmc (slow), 815 s)
+  [56/60] C9-55  archive  1813.4  reread  1813.4  corrected  1615.3  ok  (openmc (slow), 822 s)
+  [57/60] C9-56  archive  1860.8  reread  1860.8  corrected  1627.4  ok  (openmc (slow), 830 s)
+  [58/60] C9-57  archive  1853.7  reread  1853.7  corrected  1625.5  ok  (openmc (slow), 839 s)
+  [59/60] C9-58  archive  1873.2  reread  1873.2  corrected  1643.2  ok  (openmc (slow), 846 s)
+  [60/60] C9-59  archive  1814.5  reread  1814.5  corrected  1358.2  ok  (openmc (slow), 850 s)
+mapping check: 56 of 60 designs reproduce their archived cycle length
+  NOT reproduced: {5: 'MAPPING MISMATCH', 7: 'MAPPING MISMATCH', 20: 'MAPPING MISMATCH', 21: 'MAPPING MISMATCH'}
+=== Campaign 9 rescored with the axial burnup correction (archive histories)
+feasible on the assembly (campaign): 22   meets the floor with the correction: 4
+front, assembly cycle length : ['C9-35', 'C9-40', 'C9-34', 'C9-44', 'C9-47']
+front, corrected cycle length: ['C9-16', 'C9-1', 'C9-27']
+
+designs depleted directly in 3D, rescored against measured:
+  C9-47  rescored   1689 d   measured 3D   1573 d   difference +116 d   (used to build the correction)
+  C9-35  rescored   1705 d   measured 3D   1641 d   difference +63 d   (used to build the correction)
+  C9-27  rescored   1894 d   measured 3D   1956 d   difference -62 d   (used to build the correction)
+  C9-1   rescored   2424 d   measured 3D   2271 d   difference +153 d   (used to build the correction)
+  C9-24  rescored   1111 d   measured 3D   1915 d   difference -804 d   (independent test)
+  C9-16  rescored   1989 d   measured 3D   1909 d   difference +81 d   (independent test)
+  C9-11  rescored   1276 d   measured 3D   1839 d   difference -563 d   (independent test)
+
+ design   enr    Gd   F_dH  c_max archive corrected  margin
+  C9-10   7.89  5.94  1.608   4371    4163      3782   +1956
+  C9-1    5.51  2.76  1.591   2615    2742      2424    +598  front
+  C9-16   4.86  4.66  1.552   2715    2283      1989    +163  front
+  C9-27   5.11  5.70  1.603   1633    2373      1894     +68  front
+  C9-29   4.48  4.21  1.551   1452    1993      1766     -60
+  C9-12   4.37  0.14  1.493   3003    1971      1735     -91
+  C9-32   4.42  1.88  1.524   2333    1950      1715    -111
+  C9-35   4.36  2.63  1.490   1908    1938      1705    -121
+  C9-47   4.46  4.42  1.545   1406    1947      1689    -137
+  C9-42   4.40  4.10  1.602   1450    1930      1660    -166
+  C9-26   4.38  3.73  1.523   1805    1899      1660    -166
+  C9-58   4.28  1.31  1.513   2363    1873      1643    -183
+  C9-30   4.29  2.79  1.499   1812    1874      1642    -184
+  C9-40   4.23  2.71  1.495   1768    1870      1638    -188
+  C9-44   4.24  3.15  1.539   1496    1858      1629    -197
+  C9-57   4.24  0.78  1.518   2470    1854      1625    -201
+  C9-51   4.18  2.68  1.523   2154    1840      1610    -216
+  C9-54   4.21  0.33  1.499   2740    1841      1610    -216
+  C9-34   4.26  3.32  1.496   1725    1841      1597    -229
+  C9-25   4.64  5.22  1.559   1515    2045      1508    -318
+  C9-11   5.26  6.91  1.647   1979    2457      1276    -550
+  C9-24   5.42  6.68  1.609   1852    2570      1111    -715
+
+wrote figs_c9_axial/c9_axial_rescore.txt/.json and figs_c9_axial/c9_front_2d_3d.pdf/.png

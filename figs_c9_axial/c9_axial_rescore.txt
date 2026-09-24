@@ -1,0 +1,37 @@
+=== Campaign 9 rescored with the axial burnup correction (archive histories)
+feasible on the assembly (campaign): 22   meets the floor with the correction: 4
+front, assembly cycle length : ['C9-35', 'C9-40', 'C9-34', 'C9-44', 'C9-47']
+front, corrected cycle length: ['C9-16', 'C9-1', 'C9-27']
+
+designs depleted directly in 3D, rescored against measured:
+  C9-47  rescored   1689 d   measured 3D   1573 d   difference +116 d   (used to build the correction)
+  C9-35  rescored   1705 d   measured 3D   1641 d   difference +63 d   (used to build the correction)
+  C9-27  rescored   1894 d   measured 3D   1956 d   difference -62 d   (used to build the correction)
+  C9-1   rescored   2424 d   measured 3D   2271 d   difference +153 d   (used to build the correction)
+  C9-24  rescored   1111 d   measured 3D   1915 d   difference -804 d   (independent test)
+  C9-16  rescored   1989 d   measured 3D   1909 d   difference +81 d   (independent test)
+  C9-11  rescored   1276 d   measured 3D   1839 d   difference -563 d   (independent test)
+
+ design   enr    Gd   F_dH  c_max archive corrected  margin
+  C9-10   7.89  5.94  1.608   4371    4163      3782   +1956
+  C9-1    5.51  2.76  1.591   2615    2742      2424    +598  front
+  C9-16   4.86  4.66  1.552   2715    2283      1989    +163  front
+  C9-27   5.11  5.70  1.603   1633    2373      1894     +68  front
+  C9-29   4.48  4.21  1.551   1452    1993      1766     -60
+  C9-12   4.37  0.14  1.493   3003    1971      1735     -91
+  C9-32   4.42  1.88  1.524   2333    1950      1715    -111
+  C9-35   4.36  2.63  1.490   1908    1938      1705    -121
+  C9-47   4.46  4.42  1.545   1406    1947      1689    -137
+  C9-42   4.40  4.10  1.602   1450    1930      1660    -166
+  C9-26   4.38  3.73  1.523   1805    1899      1660    -166
+  C9-58   4.28  1.31  1.513   2363    1873      1643    -183
+  C9-30   4.29  2.79  1.499   1812    1874      1642    -184
+  C9-40   4.23  2.71  1.495   1768    1870      1638    -188
+  C9-44   4.24  3.15  1.539   1496    1858      1629    -197
+  C9-57   4.24  0.78  1.518   2470    1854      1625    -201
+  C9-51   4.18  2.68  1.523   2154    1840      1610    -216
+  C9-54   4.21  0.33  1.499   2740    1841      1610    -216
+  C9-34   4.26  3.32  1.496   1725    1841      1597    -229
+  C9-25   4.64  5.22  1.559   1515    2045      1508    -318
+  C9-11   5.26  6.91  1.647   1979    2457      1276    -550
+  C9-24   5.42  6.68  1.609   1852    2570      1111    -715

@@ -89,7 +89,8 @@ def fast_k_history(case, spec):
     for ch in chunks:
         with h5py.File(ch, "r") as f:
             t = np.asarray(f["time"])[:, 0] / 86400.0
-            k = np.asarray(f["eigenvalues"])[:, 0, 0]
+            ev = np.asarray(f["eigenvalues"])
+            k = ev[:, 0] if ev.ndim == 2 else ev[:, 0, 0]      # (steps, 2) on OpenMC 0.15.3
         real = k > 0.0
         pairs.extend(zip(t[real], k[real]))
     pairs.sort()

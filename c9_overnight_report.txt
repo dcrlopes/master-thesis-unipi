@@ -1,0 +1,12 @@
+=== Overnight 3D depletions, relative end-of-cycle criterion, 1000 ppm, all rods out
+ design   enr    Gd  c_max   F_dH archive  1 layer 8 layers    loss margin 8L  verdict
+  C9-1    5.51  2.76   2615  1.591    2742     2582     2271  -12.0%      +445  MEETS the floor in 3D
+  C9-11   5.26  6.91   1979  1.647    2457       --     1839      --       +13  at the floor, within noise
+  C9-16   4.86  4.66   2715  1.552    2283       --     1909      --       +83  MEETS the floor in 3D
+  C9-24   5.42  6.68   1852  1.609    2570       --     1915      --       +89  MEETS the floor in 3D
+  C9-27   5.11  5.70   1633  1.603    2373     2320     1956  -15.7%      +130  MEETS the floor in 3D
+  C9-35   4.36  2.63   1908  1.490    1938     1888     1641  -13.1%      -185  misses the floor in 3D
+  C9-47   4.46  4.42   1406  1.545    1947     1894     1573  -16.9%      -253  misses the floor in 3D
+
+loss = 8 layers against 1 layer. Noise about 12 d per run (propagated sigma x 1.33).
+Margins within 30 d of the floor are not resolved by one run.

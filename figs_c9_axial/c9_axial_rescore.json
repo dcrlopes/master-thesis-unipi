@@ -1,485 +1,305 @@
 {
- "provisional": false,
+ "provisional": true,
  "results": {
   "0": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 5979.588445189653,
-   "efpd_check": 5979.588445189651,
-   "efpd_corrected": 5466.7243642255735,
-   "bu_last": 61.499999999999986,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 4551.145550851743
   },
   "1": {
-   "status": "ok",
+   "status": "measured 3D",
    "efpd_archive": 2741.725909453532,
-   "efpd_check": 2741.7259094535325,
-   "efpd_corrected": 2424.3222570627054,
-   "bu_last": 29.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 2271.2
   },
   "2": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 7179.5273949660805,
-   "efpd_check": 7179.527394966079,
-   "efpd_corrected": 6537.476087435967,
-   "bu_last": 77.49999999999999,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 5960.080982219607
   },
   "3": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 6677.375145639479,
-   "efpd_check": 6677.3751456394775,
-   "efpd_corrected": 6101.697541832154,
-   "bu_last": 69.49999999999999,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 5917.419363034251
   },
   "4": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 7183.6138077876185,
-   "efpd_check": 7183.613807787617,
-   "efpd_corrected": 6643.603188790038,
-   "bu_last": 77.49999999999999,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 5898.489506298311
   },
   "5": {
-   "status": "MAPPING MISMATCH",
+   "status": "projected",
    "efpd_archive": 0.0,
-   "efpd_check": null,
-   "efpd_corrected": null,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 0.0
   },
   "6": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 3658.603549461977,
-   "efpd_check": 3658.603549461977,
-   "efpd_corrected": 3242.7307100096523,
-   "bu_last": 37.5,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 3202.593117231767
   },
   "7": {
-   "status": "MAPPING MISMATCH",
+   "status": "projected",
    "efpd_archive": 0.0,
-   "efpd_check": null,
-   "efpd_corrected": null,
-   "bu_last": 13.500000000000002,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 0.0
   },
   "8": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 7130.518078690283,
-   "efpd_check": 7130.518078690281,
-   "efpd_corrected": 6470.274973100171,
-   "bu_last": 77.49999999999999,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 6070.065304200765
   },
   "9": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 7754.724096726463,
-   "efpd_check": 7754.7240967264615,
-   "efpd_corrected": 7226.977677897678,
-   "bu_last": 77.49999999999999,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 6508.18989074539
   },
   "10": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 4163.454329548226,
-   "efpd_check": 4163.454329548226,
-   "efpd_corrected": 3782.075285909881,
-   "bu_last": 45.5,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 3260.6720163883565
   },
   "11": {
-   "status": "ok",
+   "status": "measured 3D",
    "efpd_archive": 2456.88059938395,
-   "efpd_check": 2456.8805993839505,
-   "efpd_corrected": 1275.62854474203,
-   "bu_last": 29.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1839.0
   },
   "12": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1971.3145091638462,
-   "efpd_check": 1971.3145091638467,
-   "efpd_corrected": 1734.708547154807,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1773.5098344853209
   },
   "13": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 5023.983339040345,
-   "efpd_check": 5023.983339040344,
-   "efpd_corrected": 4517.670425196772,
-   "bu_last": 53.499999999999986,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 3988.150410958018
   },
   "14": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 3778.1188857511515,
-   "efpd_check": 3778.1188857511515,
-   "efpd_corrected": 3347.217567532993,
-   "bu_last": 45.5,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 2931.1711668166113
   },
   "15": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 4599.731075469726,
-   "efpd_check": 4599.731075469726,
-   "efpd_corrected": 4120.154451494247,
-   "bu_last": 53.499999999999986,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 3798.4654480193844
   },
   "16": {
-   "status": "ok",
+   "status": "measured 3D",
    "efpd_archive": 2282.7410518715824,
-   "efpd_check": 2282.741051871583,
-   "efpd_corrected": 1989.294802815369,
-   "bu_last": 29.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1908.7
   },
   "17": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1599.1061627341253,
-   "efpd_check": 1599.1061627341253,
-   "efpd_corrected": 1435.1660528022953,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1369.9974484773525
   },
   "18": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 5972.880844232441,
-   "efpd_check": 5972.88084423244,
-   "efpd_corrected": 5476.24859476959,
-   "bu_last": 61.499999999999986,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 5325.300661697551
   },
   "19": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 6517.545967938845,
-   "efpd_check": 6517.545967938843,
-   "efpd_corrected": 5933.759167224541,
-   "bu_last": 69.49999999999999,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 5729.422199222752
   },
   "20": {
-   "status": "MAPPING MISMATCH",
+   "status": "projected",
    "efpd_archive": 0.0,
-   "efpd_check": null,
-   "efpd_corrected": null,
-   "bu_last": 13.500000000000002,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 0.0
   },
   "21": {
-   "status": "MAPPING MISMATCH",
+   "status": "projected",
    "efpd_archive": 0.0,
-   "efpd_check": null,
-   "efpd_corrected": null,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 0.0
   },
   "22": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 5031.082125821567,
-   "efpd_check": 5031.0821258215665,
-   "efpd_corrected": 4512.341175482594,
-   "bu_last": 53.499999999999986,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 4362.144833896665
   },
   "23": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 5176.976750531531,
-   "efpd_check": 5176.976750531529,
-   "efpd_corrected": 4677.9377108308245,
-   "bu_last": 53.499999999999986,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 3885.909751116238
   },
   "24": {
-   "status": "ok",
+   "status": "measured 3D",
    "efpd_archive": 2570.1729894267905,
-   "efpd_check": 2570.172989426791,
-   "efpd_corrected": 1111.3643336796927,
-   "bu_last": 29.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1915.3
   },
   "25": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 2044.885738280418,
-   "efpd_check": 2044.8857382804185,
-   "efpd_corrected": 1507.5529033048463,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1630.9094512811027
   },
   "26": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1899.483510379227,
-   "efpd_check": 1899.4835103792275,
-   "efpd_corrected": 1659.7950828356643,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1571.903325885795
   },
   "27": {
-   "status": "ok",
+   "status": "measured 3D",
    "efpd_archive": 2372.8462599969193,
-   "efpd_check": 2372.84625999692,
-   "efpd_corrected": 1893.845259892447,
-   "bu_last": 29.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1956.1
   },
   "28": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1265.7338771665925,
-   "efpd_check": 1265.7338771665927,
-   "efpd_corrected": 949.3857671340852,
-   "bu_last": 13.500000000000002,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 943.4455560026393
   },
   "29": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1993.2774924182038,
-   "efpd_check": 1993.2774924182042,
-   "efpd_corrected": 1766.246357692457,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1630.4290364272572
   },
   "30": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1874.093958234851,
-   "efpd_check": 1874.0939582348515,
-   "efpd_corrected": 1641.9886033712778,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1586.2114221733273
   },
   "31": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1737.9593509170675,
-   "efpd_check": 1737.959350917068,
-   "efpd_corrected": 1542.660666577292,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1554.2745741238764
   },
   "32": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1950.3652576354234,
-   "efpd_check": 1950.3652576354236,
-   "efpd_corrected": 1715.4933106032317,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1686.6435918991713
   },
   "33": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1805.7344016476686,
-   "efpd_check": 1805.734401647669,
-   "efpd_corrected": 1572.455070224601,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1496.6597582554687
   },
   "34": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1840.6021463529542,
-   "efpd_check": 1840.6021463529544,
-   "efpd_corrected": 1597.1402794718097,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1538.1595429404106
   },
   "35": {
-   "status": "ok",
+   "status": "measured 3D",
    "efpd_archive": 1937.683206698334,
-   "efpd_check": 1937.6832066983345,
-   "efpd_corrected": 1704.628231867565,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1641.4
   },
   "36": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 11.63631866255042,
-   "efpd_check": 11.63631866255042,
-   "efpd_corrected": 11.63631866255042,
-   "bu_last": 13.500000000000002,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 9.048231531074384
   },
   "37": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1868.763824623602,
-   "efpd_check": 1868.7638246236024,
-   "efpd_corrected": 1452.3028593707072,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1510.73337520394
   },
   "38": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1745.607591821827,
-   "efpd_check": 1745.6075918218273,
-   "efpd_corrected": 34.69228202476907,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1379.7815327476862
   },
   "39": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1804.4172826566082,
-   "efpd_check": 1804.4172826566084,
-   "efpd_corrected": 1597.5885736002967,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1515.259196465544
   },
   "40": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1870.315449057937,
-   "efpd_check": 1870.315449057937,
-   "efpd_corrected": 1638.0032760982444,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1585.9826294929362
   },
   "41": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1799.9800992771109,
-   "efpd_check": 1799.980099277111,
-   "efpd_corrected": 1547.922641487294,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1497.6023776589197
   },
   "42": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1930.1300250949485,
-   "efpd_check": 1930.130025094949,
-   "efpd_corrected": 1660.4322573592433,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1583.0275759453891
   },
   "43": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1607.4494393806137,
-   "efpd_check": 1607.449439380614,
-   "efpd_corrected": 1393.394760456346,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1450.134718329261
   },
   "44": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1858.398006566011,
-   "efpd_check": 1858.3980065660112,
-   "efpd_corrected": 1628.8183176848079,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1559.6914688983495
   },
   "45": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1811.5949809750439,
-   "efpd_check": 1811.5949809750443,
-   "efpd_corrected": 1582.0341303120981,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1512.436028988937
   },
   "46": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1807.445951382535,
-   "efpd_check": 1807.4459513825357,
-   "efpd_corrected": 1576.14005995283,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1524.437930520539
   },
   "47": {
-   "status": "ok",
+   "status": "measured 3D",
    "efpd_archive": 1946.7417039865159,
-   "efpd_check": 1946.7417039865163,
-   "efpd_corrected": 1689.0721172704032,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1573.3
   },
   "48": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1696.384564141835,
-   "efpd_check": 1696.3845641418354,
-   "efpd_corrected": 1244.4375337235876,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1363.3207537361063
   },
   "49": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1791.6773545633027,
-   "efpd_check": 1791.6773545633032,
-   "efpd_corrected": 1571.9250625960656,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1524.253008761357
   },
   "50": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1745.945480201587,
-   "efpd_check": 1745.9454802015875,
-   "efpd_corrected": 976.5912018595858,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1388.0002979234946
   },
   "51": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1840.0982667978049,
-   "efpd_check": 1840.0982667978055,
-   "efpd_corrected": 1610.008234078924,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1561.721637437708
   },
   "52": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1792.6662539394001,
-   "efpd_check": 1792.6662539394006,
-   "efpd_corrected": 1568.9384097627615,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1478.6162128740916
   },
   "53": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1811.142476468063,
-   "efpd_check": 1811.1424764680633,
-   "efpd_corrected": 1581.5311287889826,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1544.1023637220865
   },
   "54": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1841.2143516974056,
-   "efpd_check": 1841.214351697406,
-   "efpd_corrected": 1609.796438196052,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1649.3553863051732
   },
   "55": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1813.3680989877546,
-   "efpd_check": 1813.368098987755,
-   "efpd_corrected": 1615.3028615290398,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1633.1830765369516
   },
   "56": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1860.829028776154,
-   "efpd_check": 1860.8290287761545,
-   "efpd_corrected": 1627.3667096007778,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1679.0828713131525
   },
   "57": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1853.732825865444,
-   "efpd_check": 1853.7328258654445,
-   "efpd_corrected": 1625.4969397762907,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1643.910218520682
   },
   "58": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1873.2358730082667,
-   "efpd_check": 1873.2358730082672,
-   "efpd_corrected": 1643.2450477439427,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1641.0906644232798
   },
   "59": {
-   "status": "ok",
+   "status": "projected",
    "efpd_archive": 1814.5319311477,
-   "efpd_check": 1814.5319311477003,
-   "efpd_corrected": 1358.170050132736,
-   "bu_last": 21.500000000000004,
-   "reader": "openmc (slow)"
+   "efpd_corrected": 1449.098113471184
   }
  },
  "front_assembly": [

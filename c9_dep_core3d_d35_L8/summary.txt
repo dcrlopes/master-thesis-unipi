@@ -1,0 +1,10 @@
+=== Check 3: three-dimensional depletion, one material set per axial layer
+C9-35  (8 layers)
+  cycle length   3D  1641.4 d (sigma 7.1)   archive  1937.7 d   difference -296.3 d   margins over 1826: 3D -185, archive +112
+  k_eff BOL      3D 1.03201 (s.d. 63 pcm)   2D archive 1.06445   L_ax at BOL 1.0314   (table 1.0289)
+  hump (3D)      +0 pcm (no floor +236)   archive +0
+  c_max          3D 1908 ppm   archive 1908   difference +0 ppm
+  (the values marked 'last' are at the last computed state, B = 21.5 MWd/kgHM, past the end of cycle at B = 16.4)
+  F_dH           BOL 1.676  max 1.676  last 1.569   F_z BOL 1.453  max 1.453  last 1.173   AO BOL -0.040  last +0.002   entropy conv. max 87
+  layer burnup at the last state [MWd/kgHM], bottom to top: 12.5 21.1 26.0 27.7 28.2 25.4 20.3 10.8   (max/mean 1.309)
+  solves 8, wall 1.00 h

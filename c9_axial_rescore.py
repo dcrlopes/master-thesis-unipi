@@ -23,11 +23,14 @@ METHOD (default, on wks720)
     rescored value. Four of them (C9-47, 35, 27, 1) were used to build the
     correction. C9-24, C9-16 and C9-11 were not, so they test it.
 
-METHOD (--projection, anywhere, provisional)
-    Without the case directories, the rescored cycle is projected as
-    archive x (0.9025 - 0.0201 Gd), the regression on the seven 3D designs
-    (leave-one-out error 71 d rms), and the measured 3D value is used where
-    it exists. The figure is labelled provisional.
+METHOD (--gd-regression, the recommended correction)
+    The rescored cycle is archive x (0.9025 - 0.0201 Gd), the regression of
+    the 3D cycle length on the gadolinia content over the seven designs
+    depleted in 3D (leave-one-out error 71 d rms, 107 d maximum, 2.6 to
+    6.9 wt% gadolinia). The measured 3D value is used where it exists.
+    On the assembly histories this beats the burnup-indexed table (276 d rms)
+    and a table aligned on each design's gadolinium hump (169 d rms). Designs
+    whose corrected margin is within 71 d of the floor are flagged.
 
 OUTPUTS (in --out)
     c9_axial_rescore.json, c9_axial_rescore.txt
@@ -35,7 +38,7 @@ OUTPUTS (in --out)
 
 USAGE (repository root)
     python c9_axial_rescore.py --correction figs_c9_axial/axial_correction.json --out figs_c9_axial
-    python c9_axial_rescore.py --projection --out figs_preview
+    python c9_axial_rescore.py --gd-regression --out figs_c9_axial
 """
 from __future__ import annotations
 
@@ -201,9 +204,9 @@ def figure(ckpt, res, old, new, f_old, f_new, out, provisional):
                     xy=(0.99, 0.02), xycoords="axes fraction", ha="right", fontsize=6.5, color=C_NEW)
     ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.13), ncol=2, frameon=False, fontsize=7)
     if provisional:
-        ax.set_title("PROVISIONAL: cycle length projected from a regression on gadolinia",
-                     loc="left", fontsize=7, color="red")
-    stem = "c9_front_2d_3d" + ("_provisional" if provisional else "")
+        ax.set_title("3D cycle length from the gadolinia regression (leave-one-out 71 d rms) "
+                     "or measured in 3D", loc="left", fontsize=7, color="#444444")
+    stem = "c9_front_2d_3d" if provisional else "c9_front_2d_3d_table"
     for ext, kw in (("pdf", {}), ("png", {"dpi": 300})):
         fig.savefig(out / f"{stem}.{ext}", **kw)
     plt.close(fig)
@@ -215,7 +218,8 @@ def main(argv=None):
     ap.add_argument("--checkpoint", default="out_c9/optimization_checkpoint.json")
     ap.add_argument("--correction", default="figs_c9_axial/axial_correction.json")
     ap.add_argument("--workdir", default="openmc_runs_c9")
-    ap.add_argument("--projection", action="store_true", help="provisional, no case directories needed")
+    ap.add_argument("--gd-regression", "--projection", dest="projection", action="store_true",
+                    help="correct with the gadolinia regression (recommended), no case directories needed")
     ap.add_argument("--out", default="figs_c9_axial")
     a = ap.parse_args(argv)
     ckpt = json.loads(Path(a.checkpoint).read_text())
@@ -231,7 +235,7 @@ def main(argv=None):
     old, new, f_old, f_new = classify(ckpt, res)
     raw = ckpt["all_raw"]
     L = [f"=== Campaign 9 rescored with the axial burnup correction "
-         f"({'PROVISIONAL projection' if a.projection else 'archive histories'})",
+         f"({'gadolinia regression, measured 3D where available' if a.projection else 'burnup-indexed table on the archive histories, NOT recommended'})",
          f"feasible on the assembly (campaign): {len(old)}   meets the floor with the correction: {len(new)}",
          f"front, assembly cycle length : {['C9-%d' % i for i in f_old]}",
          f"front, corrected cycle length: {['C9-%d' % i for i in f_new]}", "",
@@ -245,9 +249,16 @@ def main(argv=None):
     L += ["", f"{'design':>7} {'enr':>5} {'Gd':>5} {'F_dH':>6} {'c_max':>6} {'archive':>7} {'corrected':>9} {'margin':>7}"]
     for i in sorted(set(old) | set(new), key=lambda j: -(res[j].get("efpd_corrected") or 0)):
         r = raw[i]; e = res[i].get("efpd_corrected")
+        flag = ""
+        if res[i].get("status") != "measured 3D" and a.projection:
+            if e is not None and abs(e - FLOOR) < 71.0:
+                flag += "  within the regression error of the floor"
+            if not (2.6 <= r["gd_wt"] <= 6.9):
+                flag += "  Gd outside the fitted 2.6-6.9 wt%"
         L.append(f"  C9-{i:<3} {r['enrich']:5.2f} {r['gd_wt']:5.2f} {r['peaking']:6.3f} {r['c_max']:6.0f} "
                  f"{r['cycle_length']:7.0f} {e if e is None else round(e):>9} "
-                 f"{'--' if e is None else f'{e - FLOOR:+.0f}':>7}" + ("  front" if i in f_new else ""))
+                 f"{'--' if e is None else f'{e - FLOOR:+.0f}':>7}" + ("  front" if i in f_new else "")
+                 + ("  (3D)" if res[i].get("status") == "measured 3D" else "") + flag)
     txt = "\n".join(L)
     (out / "c9_axial_rescore.txt").write_text(txt + "\n")
     (out / "c9_axial_rescore.json").write_text(json.dumps(dict(

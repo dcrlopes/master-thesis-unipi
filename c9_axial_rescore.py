@@ -73,29 +73,70 @@ def nondominated(pts):
     return sorted(out, key=lambda i: pts[i][0])
 
 
+def fast_k_history(case, spec):
+    """(burnup [MWd/kgHM], k) of one campaign case, read with h5py from the
+    two datasets that matter, /time and /eigenvalues, instead of loading every
+    nuclide through openmc.deplete.Results. Same merge rules as
+    zoning.read_k_history: all chunks, zero-filled entries dropped, repeated
+    restart states removed, t in days, bu = t x spec / 1000. Any unexpected
+    layout raises, and the caller falls back to zoning.read_k_history."""
+    import glob
+    import h5py
+    chunks = sorted(glob.glob(str(Path(case) / "dep_*" / "depletion_results.h5")))
+    if not chunks:
+        raise FileNotFoundError(case)
+    pairs = []
+    for ch in chunks:
+        with h5py.File(ch, "r") as f:
+            t = np.asarray(f["time"])[:, 0] / 86400.0
+            k = np.asarray(f["eigenvalues"])[:, 0, 0]
+        real = k > 0.0
+        pairs.extend(zip(t[real], k[real]))
+    pairs.sort()
+    t_out, k_out = [], []
+    for t, kk in pairs:
+        if t_out and abs(t - t_out[-1]) < 1e-6:
+            continue
+        t_out.append(t); k_out.append(kk)
+    return np.asarray(t_out) * spec / 1000.0, np.asarray(k_out)
+
+
 def rescore_archive(ckpt, corr, workdir):
+    import time
     import reactor_model as rm
     import zoning as zn
     import core_geometry as cg
     spec = rm.core_specific_power_w_per_g(rm.Operating(), rm.Geometry17x17())
     grid = np.array(corr["burnup_mwd_kg"]); rho = np.array(corr["rho_A_pcm"])
     out = {}
+    t0 = time.time()
+    n = len(ckpt["all_raw"])
     for i, r in enumerate(ckpt["all_raw"]):
         case = Path(workdir) / f"case_{i:04d}"
+        reader = "h5py"
         try:
-            bu, k = zn.read_k_history(case, spec)
+            try:
+                bu, k = fast_k_history(case, spec)
+            except (KeyError, IndexError, ValueError):
+                reader = "openmc (slow)"
+                bu, k = zn.read_k_history(case, spec)
         except Exception as exc:
-            out[i] = dict(status=f"no history ({exc.__class__.__name__})"); continue
+            out[i] = dict(status=f"no history ({exc.__class__.__name__})")
+            print(f"  [{i + 1:2d}/{n}] C9-{i:<3d} no history ({exc.__class__.__name__})", flush=True)
+            continue
         kt = float(r["k_target"])
         b0 = cg.eoc_crossing_burnup(bu, k, kt)
         e0 = b0 * 1000.0 / spec if b0 is not None else None
         mapping_ok = e0 is not None and abs(e0 - float(r["cycle_length"])) < 0.5
         kc = np.asarray(k) / np.exp(np.interp(bu, grid, rho, left=0.0, right=rho[-1]) / 1e5)
         b1 = cg.eoc_crossing_burnup(bu, kc, kt)
+        e1 = (b1 * 1000.0 / spec) if b1 is not None else None
         out[i] = dict(status="ok" if mapping_ok else "MAPPING MISMATCH",
                       efpd_archive=float(r["cycle_length"]), efpd_check=e0,
-                      efpd_corrected=(b1 * 1000.0 / spec) if b1 is not None else None,
-                      bu_last=float(bu[-1]))
+                      efpd_corrected=e1, bu_last=float(bu[-1]), reader=reader)
+        print(f"  [{i + 1:2d}/{n}] C9-{i:<3d} archive {r['cycle_length']:7.1f}  reread "
+              f"{'--' if e0 is None else f'{e0:7.1f}'}  corrected {'--' if e1 is None else f'{e1:7.1f}'}  "
+              f"{out[i]['status']}  ({reader}, {time.time() - t0:.0f} s)", flush=True)
     return out
 
 

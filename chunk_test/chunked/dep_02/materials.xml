@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='utf-8'?>
+<materials>
+  <material id="12" name="water_1000ppmB" temperature="580.0">
+    <density value="0.72" units="g/cm3"/>
+    <nuclide name="H1" ao="1.99968852"/>
+    <nuclide name="H2" ao="0.00031148"/>
+    <nuclide name="B10" ao="0.00033030277520814056"/>
+    <nuclide name="B11" ao="0.001336209713228492"/>
+    <nuclide name="O16" ao="0.999621"/>
+    <nuclide name="O17" ao="0.000379"/>
+    <sab name="c_H_in_H2O"/>
+  </material>
+  <material id="13" name="Zircaloy-4" temperature="600.0">
+    <density value="6.55" units="g/cm3"/>
+    <nuclide name="O16" wo="0.0004997986073139671"/>
+    <nuclide name="O17" wo="2.0139268603289774e-07"/>
+    <nuclide name="Cr50" wo="4.173686622718313e-05"/>
+    <nuclide name="Cr52" wo="0.000836993623513459"/>
+    <nuclide name="Cr53" wo="9.673586818675183e-05"/>
+    <nuclide name="Cr54" wo="2.4533642072606143e-05"/>
+    <nuclide name="Fe54" wo="0.00011291116445413712"/>
+    <nuclide name="Fe56" wo="0.0018380305755912492"/>
+    <nuclide name="Fe57" wo="4.320737227349273e-05"/>
+    <nuclide name="Fe58" wo="5.850887681121177e-06"/>
+    <nuclide name="Zr90" wo="0.49793407394066963"/>
+    <nuclide name="Zr91" wo="0.10979631478944969"/>
+    <nuclide name="Zr92" wo="0.16967095637282853"/>
+    <nuclide name="Zr94" wo="0.17569064464181233"/>
+    <nuclide name="Zr96" wo="0.028908010255239886"/>
+    <nuclide name="Sn112" wo="0.00013258696500899892"/>
+    <nuclide name="Sn114" wo="9.18244938630758e-05"/>
+    <nuclide name="Sn115" wo="4.771905899254868e-05"/>
+    <nuclide name="Sn116" wo="0.0020584231441515095"/>
+    <nuclide name="Sn117" wo="0.0010966473380910862"/>
+    <nuclide name="Sn118" wo="0.003487981278597598"/>
+    <nuclide name="Sn119" wo="0.0012475771051862219"/>
+    <nuclide name="Sn120" wo="0.004771539508846636"/>
+    <nuclide name="Sn122" wo="0.000689409486231945"/>
+    <nuclide name="Sn124" wo="0.0008762916210303822"/>
+  </material>
+  <material id="14" name="He gap" temperature="600.0">
+    <density value="0.0015" units="g/cm3"/>
+    <nuclide name="He3" ao="2e-06"/>
+    <nuclide name="He4" ao="0.999998"/>
+  </material>
+  <material id="15" name="UO2_8.78" depletable="true" volume="3476.5079843013427" temperature="900.0">
+    <density value="10.4" units="g/cm3"/>
+    <nuclide name="O16" ao="1.999242"/>
+    <nuclide name="O17" ao="0.000758"/>
+    <nuclide name="U234" ao="0.0008266705620414212"/>
+    <nuclide name="U235" ao="0.08877458253843507"/>
+    <nuclide name="U238" ao="0.9103987468995235"/>
+  </material>
+  <material id="16" name="UO2_9.13" depletable="true" volume="10926.167950661362" temperature="900.0">
+    <density value="10.4" units="g/cm3"/>
+    <nuclide name="O16" ao="1.999242"/>
+    <nuclide name="O17" ao="0.000758"/>
+    <nuclide name="U234" ao="0.0008626538926125785"/>
+    <nuclide name="U235" ao="0.09233408497464"/>
+    <nuclide name="U238" ao="0.9068032611327475"/>
+  </material>
+  <material id="19" name="UGd_8.0_1.7" depletable="true" volume="993.2879955146693" temperature="900.0">
+    <density value="10.134551407915431" units="g/cm3"/>
+    <nuclide name="O16" ao="0.6650019447893089"/>
+    <nuclide name="O17" ao="0.0002521312948358909"/>
+    <nuclide name="Gd152" ao="1.695108699026225e-05"/>
+    <nuclide name="Gd154" ao="0.00018476684819385855"/>
+    <nuclide name="Gd155" ao="0.0012543804372794067"/>
+    <nuclide name="Gd156" ao="0.001734943753453341"/>
+    <nuclide name="Gd157" ao="0.001326422556988021"/>
+    <nuclide name="Gd158" ao="0.002105325004190572"/>
+    <nuclide name="Gd160" ao="0.001852753808035664"/>
+    <nuclide name="U234" ao="0.0002447675907250626"/>
+    <nuclide name="U235" ao="0.0264831292303432"/>
+    <nuclide name="U238" ao="0.2995424835996558"/>
+  </material>
+  <material id="22" name="UGd_8.3_1.7" depletable="true" volume="993.2879955146693" temperature="900.0">
+    <density value="10.134551407915431" units="g/cm3"/>
+    <nuclide name="O16" ao="0.6650019955982307"/>
+    <nuclide name="O17" ao="0.0002521313140997733"/>
+    <nuclide name="Gd152" ao="1.695047705203245e-05"/>
+    <nuclide name="Gd154" ao="0.00018476019986715374"/>
+    <nuclide name="Gd155" ao="0.0012543353018504013"/>
+    <nuclide name="Gd156" ao="0.001734881326275521"/>
+    <nuclide name="Gd157" ao="0.0013263748293215391"/>
+    <nuclide name="Gd158" ao="0.0021052492498624307"/>
+    <nuclide name="Gd160" ao="0.0018526871417871467"/>
+    <nuclide name="U234" ao="0.00025542303690496624"/>
+    <nuclide name="U235" ao="0.027545125037758297"/>
+    <nuclide name="U238" ao="0.2984700864869898"/>
+  </material>
+</materials>

@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<tallies>
+  <mesh id="2">
+    <dimension>17 17</dimension>
+    <lower_left>-10.334269752929295 -10.334269752929295</lower_left>
+    <upper_right>10.334269752929295 10.334269752929295</upper_right>
+  </mesh>
+  <filter id="1" type="mesh">
+    <bins>2</bins>
+  </filter>
+  <tally id="1" name="asm_pin_fission">
+    <filters>1</filters>
+    <scores>fission</scores>
+  </tally>
+</tallies>

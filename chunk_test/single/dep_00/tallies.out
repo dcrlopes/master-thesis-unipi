@@ -1,0 +1,873 @@
+ ===================>     TALLY 1: ASM_PIN_FISSION     <====================
+
+ Mesh Index (1, 1)
+   Total Material
+     Fission Rate                         0.00159702 +/- 2.05971e-05
+ Mesh Index (2, 1)
+   Total Material
+     Fission Rate                         0.00160627 +/- 2.13898e-05
+ Mesh Index (3, 1)
+   Total Material
+     Fission Rate                         0.00161822 +/- 2.39374e-05
+ Mesh Index (4, 1)
+   Total Material
+     Fission Rate                         0.00163428 +/- 2.10575e-05
+ Mesh Index (5, 1)
+   Total Material
+     Fission Rate                         0.00169009 +/- 2.15645e-05
+ Mesh Index (6, 1)
+   Total Material
+     Fission Rate                         0.00175314 +/- 2.21456e-05
+ Mesh Index (7, 1)
+   Total Material
+     Fission Rate                         0.00176288 +/- 2.51498e-05
+ Mesh Index (8, 1)
+   Total Material
+     Fission Rate                         0.00169811 +/- 2.25295e-05
+ Mesh Index (9, 1)
+   Total Material
+     Fission Rate                         0.00171559 +/- 2.45445e-05
+ Mesh Index (10, 1)
+   Total Material
+     Fission Rate                         0.00170771 +/- 2.18898e-05
+ Mesh Index (11, 1)
+   Total Material
+     Fission Rate                         0.00170965 +/- 2.30732e-05
+ Mesh Index (12, 1)
+   Total Material
+     Fission Rate                         0.00172063 +/- 2.14655e-05
+ Mesh Index (13, 1)
+   Total Material
+     Fission Rate                         0.0017078 +/- 2.19431e-05
+ Mesh Index (14, 1)
+   Total Material
+     Fission Rate                         0.00168406 +/- 2.16071e-05
+ Mesh Index (15, 1)
+   Total Material
+     Fission Rate                         0.0016472 +/- 2.08044e-05
+ Mesh Index (16, 1)
+   Total Material
+     Fission Rate                         0.00164805 +/- 2.03355e-05
+ Mesh Index (17, 1)
+   Total Material
+     Fission Rate                         0.00163416 +/- 2.19339e-05
+ Mesh Index (1, 2)
+   Total Material
+     Fission Rate                         0.0016122 +/- 1.83328e-05
+ Mesh Index (2, 2)
+   Total Material
+     Fission Rate                         0.00162512 +/- 2.02513e-05
+ Mesh Index (3, 2)
+   Total Material
+     Fission Rate                         0.00167013 +/- 2.10208e-05
+ Mesh Index (4, 2)
+   Total Material
+     Fission Rate                         0.00175711 +/- 2.05595e-05
+ Mesh Index (5, 2)
+   Total Material
+     Fission Rate                         0.00177482 +/- 2.62901e-05
+ Mesh Index (6, 2)
+   Total Material
+     Fission Rate                         0.00185769 +/- 2.2956e-05
+ Mesh Index (7, 2)
+   Total Material
+     Fission Rate                         0.00181161 +/- 2.08582e-05
+ Mesh Index (8, 2)
+   Total Material
+     Fission Rate                         0.00181614 +/- 2.10858e-05
+ Mesh Index (9, 2)
+   Total Material
+     Fission Rate                         0.0018615 +/- 2.28519e-05
+ Mesh Index (10, 2)
+   Total Material
+     Fission Rate                         0.00180712 +/- 1.95273e-05
+ Mesh Index (11, 2)
+   Total Material
+     Fission Rate                         0.00178677 +/- 2.16683e-05
+ Mesh Index (12, 2)
+   Total Material
+     Fission Rate                         0.00187965 +/- 2.41751e-05
+ Mesh Index (13, 2)
+   Total Material
+     Fission Rate                         0.00179006 +/- 2.26179e-05
+ Mesh Index (14, 2)
+   Total Material
+     Fission Rate                         0.00177029 +/- 2.02782e-05
+ Mesh Index (15, 2)
+   Total Material
+     Fission Rate                         0.00167972 +/- 2.19681e-05
+ Mesh Index (16, 2)
+   Total Material
+     Fission Rate                         0.00164249 +/- 1.86824e-05
+ Mesh Index (17, 2)
+   Total Material
+     Fission Rate                         0.0016201 +/- 2.39287e-05
+ Mesh Index (1, 3)
+   Total Material
+     Fission Rate                         0.00161884 +/- 2.41009e-05
+ Mesh Index (2, 3)
+   Total Material
+     Fission Rate                         0.00167029 +/- 2.08037e-05
+ Mesh Index (3, 3)
+   Total Material
+     Fission Rate                         0.00162064 +/- 2.20652e-05
+ Mesh Index (4, 3)
+   Total Material
+     Fission Rate                         0.00190657 +/- 2.15238e-05
+ Mesh Index (5, 3)
+   Total Material
+     Fission Rate                         0.00197364 +/- 2.05518e-05
+ Mesh Index (6, 3)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (7, 3)
+   Total Material
+     Fission Rate                         0.00193444 +/- 2.37085e-05
+ Mesh Index (8, 3)
+   Total Material
+     Fission Rate                         0.00192566 +/- 2.41292e-05
+ Mesh Index (9, 3)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (10, 3)
+   Total Material
+     Fission Rate                         0.00191901 +/- 2.40646e-05
+ Mesh Index (11, 3)
+   Total Material
+     Fission Rate                         0.00193993 +/- 2.42709e-05
+ Mesh Index (12, 3)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (13, 3)
+   Total Material
+     Fission Rate                         0.00195476 +/- 1.98543e-05
+ Mesh Index (14, 3)
+   Total Material
+     Fission Rate                         0.00189174 +/- 2.21132e-05
+ Mesh Index (15, 3)
+   Total Material
+     Fission Rate                         0.00168328 +/- 2.08361e-05
+ Mesh Index (16, 3)
+   Total Material
+     Fission Rate                         0.0016787 +/- 2.00003e-05
+ Mesh Index (17, 3)
+   Total Material
+     Fission Rate                         0.00165492 +/- 2.38065e-05
+ Mesh Index (1, 4)
+   Total Material
+     Fission Rate                         0.00169403 +/- 2.2704e-05
+ Mesh Index (2, 4)
+   Total Material
+     Fission Rate                         0.00170703 +/- 2.04889e-05
+ Mesh Index (3, 4)
+   Total Material
+     Fission Rate                         0.00194034 +/- 2.24148e-05
+ Mesh Index (4, 4)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (5, 4)
+   Total Material
+     Fission Rate                         0.00200185 +/- 2.15155e-05
+ Mesh Index (6, 4)
+   Total Material
+     Fission Rate                         0.00184154 +/- 2.12077e-05
+ Mesh Index (7, 4)
+   Total Material
+     Fission Rate                         0.0019234 +/- 2.35751e-05
+ Mesh Index (8, 4)
+   Total Material
+     Fission Rate                         0.00188336 +/- 2.46064e-05
+ Mesh Index (9, 4)
+   Total Material
+     Fission Rate                         0.00181491 +/- 2.31558e-05
+ Mesh Index (10, 4)
+   Total Material
+     Fission Rate                         0.00186865 +/- 2.21958e-05
+ Mesh Index (11, 4)
+   Total Material
+     Fission Rate                         0.00185134 +/- 2.56814e-05
+ Mesh Index (12, 4)
+   Total Material
+     Fission Rate                         0.00182491 +/- 2.26948e-05
+ Mesh Index (13, 4)
+   Total Material
+     Fission Rate                         0.00197492 +/- 2.07938e-05
+ Mesh Index (14, 4)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (15, 4)
+   Total Material
+     Fission Rate                         0.00192002 +/- 2.51576e-05
+ Mesh Index (16, 4)
+   Total Material
+     Fission Rate                         0.00173195 +/- 2.41292e-05
+ Mesh Index (17, 4)
+   Total Material
+     Fission Rate                         0.00166532 +/- 2.27423e-05
+ Mesh Index (1, 5)
+   Total Material
+     Fission Rate                         0.00175583 +/- 2.20462e-05
+ Mesh Index (2, 5)
+   Total Material
+     Fission Rate                         0.00177744 +/- 2.16734e-05
+ Mesh Index (3, 5)
+   Total Material
+     Fission Rate                         0.00194058 +/- 2.24662e-05
+ Mesh Index (4, 5)
+   Total Material
+     Fission Rate                         0.0020323 +/- 2.38629e-05
+ Mesh Index (5, 5)
+   Total Material
+     Fission Rate                         0.00180711 +/- 1.86783e-05
+ Mesh Index (6, 5)
+   Total Material
+     Fission Rate                         0.00189971 +/- 2.33952e-05
+ Mesh Index (7, 5)
+   Total Material
+     Fission Rate                         0.0018362 +/- 2.4283e-05
+ Mesh Index (8, 5)
+   Total Material
+     Fission Rate                         0.00185973 +/- 1.92935e-05
+ Mesh Index (9, 5)
+   Total Material
+     Fission Rate                         0.00194873 +/- 2.41863e-05
+ Mesh Index (10, 5)
+   Total Material
+     Fission Rate                         0.00180844 +/- 1.90059e-05
+ Mesh Index (11, 5)
+   Total Material
+     Fission Rate                         0.00185749 +/- 1.6897e-05
+ Mesh Index (12, 5)
+   Total Material
+     Fission Rate                         0.00190191 +/- 2.41223e-05
+ Mesh Index (13, 5)
+   Total Material
+     Fission Rate                         0.00174139 +/- 2.1273e-05
+ Mesh Index (14, 5)
+   Total Material
+     Fission Rate                         0.00205824 +/- 2.39605e-05
+ Mesh Index (15, 5)
+   Total Material
+     Fission Rate                         0.00197793 +/- 2.39029e-05
+ Mesh Index (16, 5)
+   Total Material
+     Fission Rate                         0.00177377 +/- 2.10304e-05
+ Mesh Index (17, 5)
+   Total Material
+     Fission Rate                         0.00169719 +/- 2.56494e-05
+ Mesh Index (1, 6)
+   Total Material
+     Fission Rate                         0.00173429 +/- 2.34498e-05
+ Mesh Index (2, 6)
+   Total Material
+     Fission Rate                         0.00188476 +/- 2.09691e-05
+ Mesh Index (3, 6)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (4, 6)
+   Total Material
+     Fission Rate                         0.0018299 +/- 2.26617e-05
+ Mesh Index (5, 6)
+   Total Material
+     Fission Rate                         0.0018964 +/- 2.122e-05
+ Mesh Index (6, 6)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (7, 6)
+   Total Material
+     Fission Rate                         0.00192321 +/- 2.2838e-05
+ Mesh Index (8, 6)
+   Total Material
+     Fission Rate                         0.00193206 +/- 2.38086e-05
+ Mesh Index (9, 6)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (10, 6)
+   Total Material
+     Fission Rate                         0.00193257 +/- 2.41028e-05
+ Mesh Index (11, 6)
+   Total Material
+     Fission Rate                         0.00190003 +/- 1.99803e-05
+ Mesh Index (12, 6)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (13, 6)
+   Total Material
+     Fission Rate                         0.00188253 +/- 2.32061e-05
+ Mesh Index (14, 6)
+   Total Material
+     Fission Rate                         0.00187278 +/- 2.02523e-05
+ Mesh Index (15, 6)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (16, 6)
+   Total Material
+     Fission Rate                         0.0018483 +/- 2.23481e-05
+ Mesh Index (17, 6)
+   Total Material
+     Fission Rate                         0.00170648 +/- 2.37879e-05
+ Mesh Index (1, 7)
+   Total Material
+     Fission Rate                         0.00169488 +/- 2.40305e-05
+ Mesh Index (2, 7)
+   Total Material
+     Fission Rate                         0.00181772 +/- 1.94414e-05
+ Mesh Index (3, 7)
+   Total Material
+     Fission Rate                         0.00191742 +/- 2.15623e-05
+ Mesh Index (4, 7)
+   Total Material
+     Fission Rate                         0.00185627 +/- 1.96253e-05
+ Mesh Index (5, 7)
+   Total Material
+     Fission Rate                         0.00185616 +/- 2.30198e-05
+ Mesh Index (6, 7)
+   Total Material
+     Fission Rate                         0.00191059 +/- 2.17486e-05
+ Mesh Index (7, 7)
+   Total Material
+     Fission Rate                         0.00176955 +/- 2.34384e-05
+ Mesh Index (8, 7)
+   Total Material
+     Fission Rate                         0.00188063 +/- 2.4837e-05
+ Mesh Index (9, 7)
+   Total Material
+     Fission Rate                         0.00182607 +/- 2.02845e-05
+ Mesh Index (10, 7)
+   Total Material
+     Fission Rate                         0.00183495 +/- 2.56455e-05
+ Mesh Index (11, 7)
+   Total Material
+     Fission Rate                         0.00172301 +/- 2.26404e-05
+ Mesh Index (12, 7)
+   Total Material
+     Fission Rate                         0.00186969 +/- 1.96859e-05
+ Mesh Index (13, 7)
+   Total Material
+     Fission Rate                         0.00181055 +/- 2.07964e-05
+ Mesh Index (14, 7)
+   Total Material
+     Fission Rate                         0.00188006 +/- 2.39052e-05
+ Mesh Index (15, 7)
+   Total Material
+     Fission Rate                         0.00192937 +/- 2.33515e-05
+ Mesh Index (16, 7)
+   Total Material
+     Fission Rate                         0.0017651 +/- 2.4595e-05
+ Mesh Index (17, 7)
+   Total Material
+     Fission Rate                         0.00174089 +/- 2.29578e-05
+ Mesh Index (1, 8)
+   Total Material
+     Fission Rate                         0.00169359 +/- 2.32463e-05
+ Mesh Index (2, 8)
+   Total Material
+     Fission Rate                         0.00184852 +/- 2.06274e-05
+ Mesh Index (3, 8)
+   Total Material
+     Fission Rate                         0.00191764 +/- 2.26745e-05
+ Mesh Index (4, 8)
+   Total Material
+     Fission Rate                         0.00188601 +/- 2.04981e-05
+ Mesh Index (5, 8)
+   Total Material
+     Fission Rate                         0.00183414 +/- 2.20914e-05
+ Mesh Index (6, 8)
+   Total Material
+     Fission Rate                         0.00192035 +/- 2.14981e-05
+ Mesh Index (7, 8)
+   Total Material
+     Fission Rate                         0.00186775 +/- 2.30266e-05
+ Mesh Index (8, 8)
+   Total Material
+     Fission Rate                         0.00177396 +/- 2.11338e-05
+ Mesh Index (9, 8)
+   Total Material
+     Fission Rate                         0.00195858 +/- 2.49291e-05
+ Mesh Index (10, 8)
+   Total Material
+     Fission Rate                         0.00173228 +/- 2.24149e-05
+ Mesh Index (11, 8)
+   Total Material
+     Fission Rate                         0.00186943 +/- 1.93794e-05
+ Mesh Index (12, 8)
+   Total Material
+     Fission Rate                         0.00191621 +/- 2.09215e-05
+ Mesh Index (13, 8)
+   Total Material
+     Fission Rate                         0.00182076 +/- 2.15575e-05
+ Mesh Index (14, 8)
+   Total Material
+     Fission Rate                         0.00189798 +/- 2.31794e-05
+ Mesh Index (15, 8)
+   Total Material
+     Fission Rate                         0.00192691 +/- 2.23876e-05
+ Mesh Index (16, 8)
+   Total Material
+     Fission Rate                         0.00180128 +/- 2.36758e-05
+ Mesh Index (17, 8)
+   Total Material
+     Fission Rate                         0.00175894 +/- 2.69114e-05
+ Mesh Index (1, 9)
+   Total Material
+     Fission Rate                         0.00169459 +/- 1.98026e-05
+ Mesh Index (2, 9)
+   Total Material
+     Fission Rate                         0.00191324 +/- 2.43723e-05
+ Mesh Index (3, 9)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (4, 9)
+   Total Material
+     Fission Rate                         0.00181169 +/- 2.2429e-05
+ Mesh Index (5, 9)
+   Total Material
+     Fission Rate                         0.00188385 +/- 1.72465e-05
+ Mesh Index (6, 9)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (7, 9)
+   Total Material
+     Fission Rate                         0.00181725 +/- 2.10145e-05
+ Mesh Index (8, 9)
+   Total Material
+     Fission Rate                         0.00194607 +/- 2.41806e-05
+ Mesh Index (9, 9)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (10, 9)
+   Total Material
+     Fission Rate                         0.00190934 +/- 1.78097e-05
+ Mesh Index (11, 9)
+   Total Material
+     Fission Rate                         0.00181608 +/- 2.03658e-05
+ Mesh Index (12, 9)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (13, 9)
+   Total Material
+     Fission Rate                         0.00191905 +/- 1.85969e-05
+ Mesh Index (14, 9)
+   Total Material
+     Fission Rate                         0.00182004 +/- 1.86539e-05
+ Mesh Index (15, 9)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (16, 9)
+   Total Material
+     Fission Rate                         0.00189094 +/- 2.62839e-05
+ Mesh Index (17, 9)
+   Total Material
+     Fission Rate                         0.00176159 +/- 2.28496e-05
+ Mesh Index (1, 10)
+   Total Material
+     Fission Rate                         0.00168116 +/- 2.13637e-05
+ Mesh Index (2, 10)
+   Total Material
+     Fission Rate                         0.00178798 +/- 1.86061e-05
+ Mesh Index (3, 10)
+   Total Material
+     Fission Rate                         0.00194845 +/- 2.20599e-05
+ Mesh Index (4, 10)
+   Total Material
+     Fission Rate                         0.00189691 +/- 2.36258e-05
+ Mesh Index (5, 10)
+   Total Material
+     Fission Rate                         0.00179853 +/- 2.00376e-05
+ Mesh Index (6, 10)
+   Total Material
+     Fission Rate                         0.00195101 +/- 2.26995e-05
+ Mesh Index (7, 10)
+   Total Material
+     Fission Rate                         0.00187721 +/- 2.0848e-05
+ Mesh Index (8, 10)
+   Total Material
+     Fission Rate                         0.00176425 +/- 1.86073e-05
+ Mesh Index (9, 10)
+   Total Material
+     Fission Rate                         0.00198171 +/- 2.25557e-05
+ Mesh Index (10, 10)
+   Total Material
+     Fission Rate                         0.00174408 +/- 2.00436e-05
+ Mesh Index (11, 10)
+   Total Material
+     Fission Rate                         0.00186438 +/- 2.0199e-05
+ Mesh Index (12, 10)
+   Total Material
+     Fission Rate                         0.00194798 +/- 2.09274e-05
+ Mesh Index (13, 10)
+   Total Material
+     Fission Rate                         0.00179841 +/- 2.03181e-05
+ Mesh Index (14, 10)
+   Total Material
+     Fission Rate                         0.00184765 +/- 2.12268e-05
+ Mesh Index (15, 10)
+   Total Material
+     Fission Rate                         0.0019254 +/- 2.34629e-05
+ Mesh Index (16, 10)
+   Total Material
+     Fission Rate                         0.00182019 +/- 2.10437e-05
+ Mesh Index (17, 10)
+   Total Material
+     Fission Rate                         0.00171877 +/- 1.98597e-05
+ Mesh Index (1, 11)
+   Total Material
+     Fission Rate                         0.00168647 +/- 2.13056e-05
+ Mesh Index (2, 11)
+   Total Material
+     Fission Rate                         0.00181239 +/- 2.30862e-05
+ Mesh Index (3, 11)
+   Total Material
+     Fission Rate                         0.00189656 +/- 2.24952e-05
+ Mesh Index (4, 11)
+   Total Material
+     Fission Rate                         0.00188161 +/- 2.48165e-05
+ Mesh Index (5, 11)
+   Total Material
+     Fission Rate                         0.00181877 +/- 2.11763e-05
+ Mesh Index (6, 11)
+   Total Material
+     Fission Rate                         0.00189619 +/- 1.96571e-05
+ Mesh Index (7, 11)
+   Total Material
+     Fission Rate                         0.00171406 +/- 2.03312e-05
+ Mesh Index (8, 11)
+   Total Material
+     Fission Rate                         0.00185305 +/- 2.29226e-05
+ Mesh Index (9, 11)
+   Total Material
+     Fission Rate                         0.00183239 +/- 1.95065e-05
+ Mesh Index (10, 11)
+   Total Material
+     Fission Rate                         0.00184201 +/- 2.2112e-05
+ Mesh Index (11, 11)
+   Total Material
+     Fission Rate                         0.00175665 +/- 2.00151e-05
+ Mesh Index (12, 11)
+   Total Material
+     Fission Rate                         0.00189265 +/- 2.57761e-05
+ Mesh Index (13, 11)
+   Total Material
+     Fission Rate                         0.00180339 +/- 2.16373e-05
+ Mesh Index (14, 11)
+   Total Material
+     Fission Rate                         0.00185357 +/- 2.15684e-05
+ Mesh Index (15, 11)
+   Total Material
+     Fission Rate                         0.00193772 +/- 2.38294e-05
+ Mesh Index (16, 11)
+   Total Material
+     Fission Rate                         0.00181901 +/- 2.24518e-05
+ Mesh Index (17, 11)
+   Total Material
+     Fission Rate                         0.00173128 +/- 2.06799e-05
+ Mesh Index (1, 12)
+   Total Material
+     Fission Rate                         0.00174156 +/- 2.36579e-05
+ Mesh Index (2, 12)
+   Total Material
+     Fission Rate                         0.00190423 +/- 2.15966e-05
+ Mesh Index (3, 12)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (4, 12)
+   Total Material
+     Fission Rate                         0.00189199 +/- 2.11088e-05
+ Mesh Index (5, 12)
+   Total Material
+     Fission Rate                         0.00195014 +/- 2.2067e-05
+ Mesh Index (6, 12)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (7, 12)
+   Total Material
+     Fission Rate                         0.00191926 +/- 2.19182e-05
+ Mesh Index (8, 12)
+   Total Material
+     Fission Rate                         0.00192524 +/- 2.20226e-05
+ Mesh Index (9, 12)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (10, 12)
+   Total Material
+     Fission Rate                         0.0018947 +/- 2.45377e-05
+ Mesh Index (11, 12)
+   Total Material
+     Fission Rate                         0.00187117 +/- 2.18398e-05
+ Mesh Index (12, 12)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (13, 12)
+   Total Material
+     Fission Rate                         0.0018984 +/- 2.55664e-05
+ Mesh Index (14, 12)
+   Total Material
+     Fission Rate                         0.00183969 +/- 2.33224e-05
+ Mesh Index (15, 12)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (16, 12)
+   Total Material
+     Fission Rate                         0.00191092 +/- 2.23376e-05
+ Mesh Index (17, 12)
+   Total Material
+     Fission Rate                         0.00171784 +/- 2.1484e-05
+ Mesh Index (1, 13)
+   Total Material
+     Fission Rate                         0.00172049 +/- 2.58766e-05
+ Mesh Index (2, 13)
+   Total Material
+     Fission Rate                         0.00177446 +/- 2.06153e-05
+ Mesh Index (3, 13)
+   Total Material
+     Fission Rate                         0.00200472 +/- 2.37539e-05
+ Mesh Index (4, 13)
+   Total Material
+     Fission Rate                         0.00203464 +/- 2.23422e-05
+ Mesh Index (5, 13)
+   Total Material
+     Fission Rate                         0.00176266 +/- 2.02909e-05
+ Mesh Index (6, 13)
+   Total Material
+     Fission Rate                         0.00190713 +/- 2.14131e-05
+ Mesh Index (7, 13)
+   Total Material
+     Fission Rate                         0.00182982 +/- 2.36121e-05
+ Mesh Index (8, 13)
+   Total Material
+     Fission Rate                         0.00183442 +/- 2.17868e-05
+ Mesh Index (9, 13)
+   Total Material
+     Fission Rate                         0.00192163 +/- 2.31623e-05
+ Mesh Index (10, 13)
+   Total Material
+     Fission Rate                         0.00180812 +/- 2.40051e-05
+ Mesh Index (11, 13)
+   Total Material
+     Fission Rate                         0.00184846 +/- 2.18238e-05
+ Mesh Index (12, 13)
+   Total Material
+     Fission Rate                         0.00190716 +/- 2.50275e-05
+ Mesh Index (13, 13)
+   Total Material
+     Fission Rate                         0.00177589 +/- 2.20835e-05
+ Mesh Index (14, 13)
+   Total Material
+     Fission Rate                         0.00200226 +/- 2.57556e-05
+ Mesh Index (15, 13)
+   Total Material
+     Fission Rate                         0.00196721 +/- 2.40423e-05
+ Mesh Index (16, 13)
+   Total Material
+     Fission Rate                         0.00178917 +/- 2.2374e-05
+ Mesh Index (17, 13)
+   Total Material
+     Fission Rate                         0.00171809 +/- 2.08886e-05
+ Mesh Index (1, 14)
+   Total Material
+     Fission Rate                         0.00166433 +/- 2.01129e-05
+ Mesh Index (2, 14)
+   Total Material
+     Fission Rate                         0.00174389 +/- 2.16352e-05
+ Mesh Index (3, 14)
+   Total Material
+     Fission Rate                         0.00188793 +/- 2.09552e-05
+ Mesh Index (4, 14)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (5, 14)
+   Total Material
+     Fission Rate                         0.00198706 +/- 2.56969e-05
+ Mesh Index (6, 14)
+   Total Material
+     Fission Rate                         0.00185565 +/- 2.25249e-05
+ Mesh Index (7, 14)
+   Total Material
+     Fission Rate                         0.00186757 +/- 2.42164e-05
+ Mesh Index (8, 14)
+   Total Material
+     Fission Rate                         0.00185379 +/- 2.18387e-05
+ Mesh Index (9, 14)
+   Total Material
+     Fission Rate                         0.00179623 +/- 2.17176e-05
+ Mesh Index (10, 14)
+   Total Material
+     Fission Rate                         0.00185717 +/- 2.3449e-05
+ Mesh Index (11, 14)
+   Total Material
+     Fission Rate                         0.00187325 +/- 2.26777e-05
+ Mesh Index (12, 14)
+   Total Material
+     Fission Rate                         0.00181727 +/- 1.94295e-05
+ Mesh Index (13, 14)
+   Total Material
+     Fission Rate                         0.0020567 +/- 2.71093e-05
+ Mesh Index (14, 14)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (15, 14)
+   Total Material
+     Fission Rate                         0.00193426 +/- 2.40059e-05
+ Mesh Index (16, 14)
+   Total Material
+     Fission Rate                         0.00170898 +/- 2.05247e-05
+ Mesh Index (17, 14)
+   Total Material
+     Fission Rate                         0.00169962 +/- 2.29237e-05
+ Mesh Index (1, 15)
+   Total Material
+     Fission Rate                         0.00163924 +/- 2.22875e-05
+ Mesh Index (2, 15)
+   Total Material
+     Fission Rate                         0.00169789 +/- 2.08084e-05
+ Mesh Index (3, 15)
+   Total Material
+     Fission Rate                         0.0016466 +/- 2.03207e-05
+ Mesh Index (4, 15)
+   Total Material
+     Fission Rate                         0.00189017 +/- 2.02638e-05
+ Mesh Index (5, 15)
+   Total Material
+     Fission Rate                         0.00194047 +/- 2.14517e-05
+ Mesh Index (6, 15)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (7, 15)
+   Total Material
+     Fission Rate                         0.00192619 +/- 2.1939e-05
+ Mesh Index (8, 15)
+   Total Material
+     Fission Rate                         0.00191319 +/- 2.22156e-05
+ Mesh Index (9, 15)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (10, 15)
+   Total Material
+     Fission Rate                         0.00191143 +/- 2.16686e-05
+ Mesh Index (11, 15)
+   Total Material
+     Fission Rate                         0.00191616 +/- 2.39673e-05
+ Mesh Index (12, 15)
+   Total Material
+     Fission Rate                         0 +/- 0
+ Mesh Index (13, 15)
+   Total Material
+     Fission Rate                         0.00202006 +/- 2.40317e-05
+ Mesh Index (14, 15)
+   Total Material
+     Fission Rate                         0.00190565 +/- 2.09368e-05
+ Mesh Index (15, 15)
+   Total Material
+     Fission Rate                         0.00165269 +/- 1.91852e-05
+ Mesh Index (16, 15)
+   Total Material
+     Fission Rate                         0.00170843 +/- 1.90185e-05
+ Mesh Index (17, 15)
+   Total Material
+     Fission Rate                         0.00165975 +/- 2.13763e-05
+ Mesh Index (1, 16)
+   Total Material
+     Fission Rate                         0.0016087 +/- 1.97633e-05
+ Mesh Index (2, 16)
+   Total Material
+     Fission Rate                         0.00165836 +/- 1.76897e-05
+ Mesh Index (3, 16)
+   Total Material
+     Fission Rate                         0.00166749 +/- 2.1508e-05
+ Mesh Index (4, 16)
+   Total Material
+     Fission Rate                         0.00173373 +/- 2.09241e-05
+ Mesh Index (5, 16)
+   Total Material
+     Fission Rate                         0.00178706 +/- 2.2358e-05
+ Mesh Index (6, 16)
+   Total Material
+     Fission Rate                         0.0018477 +/- 2.39107e-05
+ Mesh Index (7, 16)
+   Total Material
+     Fission Rate                         0.00180399 +/- 2.49676e-05
+ Mesh Index (8, 16)
+   Total Material
+     Fission Rate                         0.0017991 +/- 2.35739e-05
+ Mesh Index (9, 16)
+   Total Material
+     Fission Rate                         0.00190008 +/- 2.61621e-05
+ Mesh Index (10, 16)
+   Total Material
+     Fission Rate                         0.00180332 +/- 2.29024e-05
+ Mesh Index (11, 16)
+   Total Material
+     Fission Rate                         0.00175892 +/- 1.96378e-05
+ Mesh Index (12, 16)
+   Total Material
+     Fission Rate                         0.00185455 +/- 2.28583e-05
+ Mesh Index (13, 16)
+   Total Material
+     Fission Rate                         0.00182951 +/- 2.10131e-05
+ Mesh Index (14, 16)
+   Total Material
+     Fission Rate                         0.00172373 +/- 1.88805e-05
+ Mesh Index (15, 16)
+   Total Material
+     Fission Rate                         0.0016837 +/- 2.19721e-05
+ Mesh Index (16, 16)
+   Total Material
+     Fission Rate                         0.00163209 +/- 2.00695e-05
+ Mesh Index (17, 16)
+   Total Material
+     Fission Rate                         0.00162937 +/- 2.04319e-05
+ Mesh Index (1, 17)
+   Total Material
+     Fission Rate                         0.00160962 +/- 2.27175e-05
+ Mesh Index (2, 17)
+   Total Material
+     Fission Rate                         0.00165473 +/- 1.92407e-05
+ Mesh Index (3, 17)
+   Total Material
+     Fission Rate                         0.00162173 +/- 2.39065e-05
+ Mesh Index (4, 17)
+   Total Material
+     Fission Rate                         0.00164178 +/- 2.16689e-05
+ Mesh Index (5, 17)
+   Total Material
+     Fission Rate                         0.00168744 +/- 2.23306e-05
+ Mesh Index (6, 17)
+   Total Material
+     Fission Rate                         0.00170334 +/- 2.30757e-05
+ Mesh Index (7, 17)
+   Total Material
+     Fission Rate                         0.00170931 +/- 2.41105e-05
+ Mesh Index (8, 17)
+   Total Material
+     Fission Rate                         0.00171789 +/- 2.35601e-05
+ Mesh Index (9, 17)
+   Total Material
+     Fission Rate                         0.001735 +/- 2.4382e-05
+ Mesh Index (10, 17)
+   Total Material
+     Fission Rate                         0.00170486 +/- 2.3705e-05
+ Mesh Index (11, 17)
+   Total Material
+     Fission Rate                         0.00167727 +/- 2.32461e-05
+ Mesh Index (12, 17)
+   Total Material
+     Fission Rate                         0.00169264 +/- 2.46904e-05
+ Mesh Index (13, 17)
+   Total Material
+     Fission Rate                         0.0016468 +/- 2.30624e-05
+ Mesh Index (14, 17)
+   Total Material
+     Fission Rate                         0.00164604 +/- 2.3754e-05
+ Mesh Index (15, 17)
+   Total Material
+     Fission Rate                         0.00164286 +/- 2.30178e-05
+ Mesh Index (16, 17)
+   Total Material
+     Fission Rate                         0.00161448 +/- 2.30965e-05
+ Mesh Index (17, 17)
+   Total Material
+     Fission Rate                         0.00157206 +/- 2.07293e-05
+ ============================>     TALLY 2     <============================
+
+ Internal
+

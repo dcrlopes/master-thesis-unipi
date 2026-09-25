@@ -1,0 +1,10 @@
+replay figs_c9_acq/c9_acquisition_replay_wks720_asrun.json, rule asrun
+distance from each evaluated design to the nearest replayed pick, unit design box:
+  block 1: 0.033 0.010 0.065 0.019 0.041 0.015   | below 1 wt% 1, mean separation 0.197
+  block 2: 0.020 0.015 0.033 0.002 0.017 0.016   | below 1 wt% 2, mean separation 0.162
+  block 3: 0.016 0.002 0.003 0.005 0.010 0.035   | below 1 wt% 1, mean separation 0.196
+  block 4: 0.005 0.021 0.006 0.013 0.005 0.017   | below 1 wt% 1, mean separation 0.127
+  block 5: 0.039 0.166 0.006 0.155 0.074 0.164   | below 1 wt% 2, mean separation 0.185
+  block 6: 0.016 0.022 0.018 0.018 0.019 0.006   | below 1 wt% 3, mean separation 0.158
+identical 0 of 36; median 0.017, max 0.166, 33 of 36 below 0.075 (the loop's own separation is 0.14)
+picks below 1 wt% gadolinia 10 of 36, mean separation 0.171

@@ -785,6 +785,11 @@ def main():
                            "host": platform.node(),
                            "cpu_count": os.cpu_count(),
                            "openmc_version": _openmc_version(),
+                           # the libraries that shape the surrogate and the search, so a replay
+                           # of the acquisition can be matched to the environment that ran it
+                           "library_versions": {m: getattr(__import__(m), "__version__", None)
+                                                for m in ("numpy", "scipy", "sklearn", "pymoo")},
+                           "python_version": _sys.version.split()[0],
                            "workdir": getattr(args, "workdir", "openmc_runs"),
                            "started_utc": datetime.now(timezone.utc)
                                .isoformat(timespec="seconds")}

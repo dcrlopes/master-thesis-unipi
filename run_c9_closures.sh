@@ -118,7 +118,13 @@ stage_E() {
   [ -f c9_post/predicted_front_evallist.json ] || die "missing c9_post/predicted_front_evallist.json (python c9_eval_predicted_front.py --make)"
   local resume=()
   [ -f out_c9_pred/optimization_checkpoint.json ] && resume=(--resume out_c9_pred/optimization_checkpoint.json)
-  python -u run_optimization.py --out out_c9_pred --workdir openmc_runs_c9_pred \n    --ktarget-table ktarget_table_c8.json --k-basis core --k-max 1.166 --k-min 1.02 \n    --f-max 1.65 --enr-max 16 --ctrl-margin 1000 --objective-set c9 --efpd-req 1826 \n    --boron-objective floor --boron-step 2000 --boron-top 3000 --boron-ceiling 2763 \n    --hump-noise 400 --threads "$THREADS" \n    --eval-list c9_post/predicted_front_evallist.json "${resume[@]}" \n    2>&1 | tee -a out_c9_pred.log || die "predicted-front evaluation failed"
+  python -u run_optimization.py --out out_c9_pred --workdir openmc_runs_c9_pred \
+    --ktarget-table ktarget_table_c8.json --k-basis core --k-max 1.166 --k-min 1.02 \
+    --f-max 1.65 --enr-max 16 --ctrl-margin 1000 --objective-set c9 --efpd-req 1826 \
+    --boron-objective floor --boron-step 2000 --boron-top 3000 --boron-ceiling 2763 \
+    --hump-noise 400 --threads "$THREADS" \
+    --eval-list c9_post/predicted_front_evallist.json "${resume[@]}" \
+    2>&1 | tee -a out_c9_pred.log || die "predicted-front evaluation failed"
   python c9_eval_predicted_front.py --compare 2>&1 | tee -a out_c9_pred.log || echo "  WARNING compare failed"
   mark E
 }

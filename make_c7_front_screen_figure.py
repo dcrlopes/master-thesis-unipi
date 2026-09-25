@@ -2,7 +2,7 @@
 """make_c7_front_screen_figure.py -- Campaign 7, Section 5.4.2: the Pareto front
 and the controllability screen, from the campaign checkpoint. No transport.
 
-  (a) objective plane, core F_dH against cycle length, with the front as run
+  (a) objective plane, cycle length against core F_dH, with the front as run
       (upper reactivity bound 1.126 and controllability constraint both active)
       and the front under the controllability constraint alone;
   (b) core k_eff at beginning of life against k_eff with the sixteen
@@ -59,33 +59,34 @@ def scatter(p, x, y):
               lw=1.3, zorder=3, label="Rejected only by the upper reactivity bound")
 
 
-# ---- (a) objective plane, with the front region enlarged in an inset ---------
+# ---- (a) objective plane, cycle length against F_dH as in the other front
+# ---- figures of the thesis, with the front region enlarged in an inset ------
 def fronts(p):
-    p.plot(F[fr_run], E[fr_run], "-", color=C_FE, lw=1.6, zorder=2, label="Pareto front as run")
-    p.plot(F[fr_ctrl], E[fr_ctrl], "--", color=C_KM, lw=1.4, zorder=2,
+    p.plot(E[fr_run], F[fr_run], "-", color=C_FE, lw=1.6, zorder=2, label="Pareto front as run")
+    p.plot(E[fr_ctrl], F[fr_ctrl], "--", color=C_KM, lw=1.4, zorder=2,
            label="Pareto front under the controllability constraint alone")
 
 
-scatter(ax, F, E)
+scatter(ax, E, F)
 fronts(ax)
-ax.set_xlabel(r"Core $F_{\Delta H}$ [-]")
-ax.set_ylabel("Cycle length [EFPD]")
-ax.set_xlim(1.48, 2.13)
-ax.set_ylim(0, 9800)
+ax.set_xlabel("Cycle length [EFPD]")
+ax.set_ylabel(r"Core $F_{\Delta H}$ [-]")
+ax.set_xlim(0, 7000)
+ax.set_ylim(1.48, 2.40)
 ax.set_title("(a) Objective plane", fontsize=10)
 ax.grid(alpha=0.22, lw=0.6)
 
-ix = ax.inset_axes([0.40, 0.66, 0.58, 0.32])
-scatter(ix, F, E)
+ix = ax.inset_axes([0.42, 0.62, 0.56, 0.36])
+scatter(ix, E, F)
 fronts(ix)
-ix.set_xlim(1.505, 1.615)
-ix.set_ylim(3600, 5300)
+ix.set_xlim(3650, 5300)
+ix.set_ylim(1.492, 1.615)
 ix.tick_params(labelsize=7.5)
 ix.grid(alpha=0.22, lw=0.6)
 ax.indicate_inset_zoom(ix, edgecolor="0.4", lw=0.8)
-off = {59: (32, -2), 57: (-26, 2), 55: (-26, 8), 48: (-22, 10), 53: (4, -20), 49: (-28, 0)}
+off = {59: (-4, 18), 57: (22, -14), 55: (24, -14), 48: (28, -10), 53: (26, -12), 49: (-30, 4)}
 for i in fr_ctrl:
-    ix.annotate(f"C7-{i}", (F[i], E[i]), xytext=off[i], textcoords="offset points", fontsize=7.5,
+    ix.annotate(f"C7-{i}", (E[i], F[i]), xytext=off[i], textcoords="offset points", fontsize=7.5,
                 ha="center", va="center",
                 arrowprops=dict(arrowstyle="-", color="0.35", lw=0.6, shrinkA=0, shrinkB=3))
 
@@ -95,7 +96,7 @@ bx.axvspan(K_MAX, 1.26, ymax=(K_CTRL - 0.65) / (1.11 - 0.65), color=C_KM, alpha=
 scatter(bx, kc, kr)
 bx.axvline(K_MAX, color="0.35", lw=1.0, ls="--", label=f"Upper reactivity bound, {K_MAX}")
 bx.axhline(K_CTRL, color=C_LIM, lw=1.2, label=f"Controllability limit, {K_CTRL}")
-offb = {59: (20, -64), 57: (50, -72), 55: (80, -58)}
+offb = {59: (12, -92), 57: (34, -72), 55: (22, 62)}
 for i in (59, 57, 55):
     bx.annotate(f"C7-{i}", (kc[i], kr[i]), xytext=offb[i], textcoords="offset points", fontsize=8.5,
                 ha="center", arrowprops=dict(arrowstyle="-", color="0.35", lw=0.7, shrinkB=4))

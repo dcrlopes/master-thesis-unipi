@@ -297,6 +297,15 @@ def main():
                     help="c9: measured MTC ceiling, ppm (design 47, hardware "
                          "3D, 12.8 MPa). Recorded as g_boron, never "
                          "constrained.")
+    ap.add_argument("--axial-model", metavar="MODEL.json", default=None,
+                    help="c9: raise the mission floor per design by the fitted "
+                         "axial-loss ratio of axial_ratio_model.py, so that "
+                         "g_efpd = E_req(design) - cycle_length with "
+                         "E_req = efpd_req / (ratio_hat - kappa s_loo). Off by "
+                         "default; every earlier reading is unchanged.")
+    ap.add_argument("--axial-kappa", type=float, default=None,
+                    help="c9: margin of the axial floor in leave-one-out rms "
+                         "units, overriding the value stored in the model file.")
     ap.add_argument("--hump-noise", type=float, default=400.0,
                     help="c9: gadolinium humps below this are treated as "
                          "unresolved and set to zero, pcm")
@@ -462,6 +471,7 @@ def main():
     # because the operating-maximum screen starts from k_allre. The EFPD
     # clip is disabled because it acts on objective 0, which is now the
     # peaking factor, and cycle length is a constraint surrogate.
+    axial_meta = None
     if args.objective_set == "c9":
         if args.ctrl_margin is None:
             raise SystemExit("--objective-set c9 requires --ctrl-margin "
@@ -473,6 +483,12 @@ def main():
         ev.c9_ppm_top = float(args.boron_top)
         ev.c9_boron_ceiling_ppm = float(args.boron_ceiling)
         ev.c9_hump_noise_pcm = float(args.hump_noise)
+        if args.axial_model:
+            import axial_ratio_model as arm
+            ev.c9_axial_model = arm.load(args.axial_model, kappa=args.axial_kappa)
+            axial_meta = arm.summary(ev.c9_axial_model)
+            axial_meta["path"] = str(args.axial_model)
+            print(f"CAMPAIGN 9 AXIAL FLOOR: {arm.describe(ev.c9_axial_model)}")
         args.no_efpd_clip = True
         print(f"CAMPAIGN 9: objectives peaking + c_max ({args.boron_objective}) | "
               f"EFPD >= {args.efpd_req:g} | boron points 1000, "
@@ -498,8 +514,19 @@ def main():
     #   exist_ok=True    do not error if the folder is already there
     ckpt_out = args.checkpoint or str(Path(args.out) / "optimization_checkpoint.json")
 
+    prev_meta = {}
     if args.resume:
         prev_meta = json.loads(Path(args.resume).read_text()).get("meta", {})
+        prev_ax = (prev_meta.get("campaign9") or {}).get("axial_model")
+        if (prev_ax is None) != (axial_meta is None):
+            print("!! WARNING: the checkpoint and this run disagree on the axial "
+                  f"floor (checkpoint {'on' if prev_ax else 'off'}, now "
+                  f"{'on' if axial_meta else 'off'}). Every record must be scored "
+                  "by one rule: seed_c9_axial.py rescores an archive.")
+        elif prev_ax and axial_meta and prev_ax.get("coef") != axial_meta.get("coef"):
+            print(f"NOTE: axial model refitted since the checkpoint was written "
+                  f"({prev_ax.get('n')} -> {axial_meta.get('n')} measured designs); "
+                  "seed_c9_axial.py --inplace keeps the archive on the new rule.")
         prev_kt = prev_meta.get("k_target")
         if prev_kt is not None:
             # Numeric vs numeric (both frozen targets): tolerate float noise. Any
@@ -636,10 +663,14 @@ def main():
                                "(m_C 0.720 / balanced m_M / m_P from "
                                "leu_policy), evaluator-zoned from Campaign 6",
                            "schedule": dict(schedule),
+                           # the seeding and rescoring record of the axial
+                           # continuation, carried across saves (seed_c9_axial.py)
+                           "c9_axial": prev_meta.get("c9_axial"),
                            "geometry": "v2-envelope",
                            "objective_set": args.objective_set,
                            "campaign9": ({
                                "efpd_req": args.efpd_req,
+                               "axial_model": axial_meta,
                                "boron_objective": args.boron_objective,
                                "boron_points_ppm": [1000.0, args.boron_step,
                                                     args.boron_top],

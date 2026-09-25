@@ -47,7 +47,7 @@ fig, axes = plt.subplots(1, 2, figsize=(11.6, 5.0), sharex=True, sharey=True)
 
 PANELS = [("k_allre", "(a) Four banks, RE1 to RE4, sixteen assemblies: the constrained state",
            1.206),
-          ("k_re12", "(b) Two banks, RE1 and RE2, eight assemblies: recorded only",
+          ("k_re12", "(b) Two banks, RE1 and RE2, eight assemblies: not constrained",
            1.200)]
 
 for ax, (field, title, x_note) in zip(axes, PANELS):
@@ -75,7 +75,7 @@ for ax, (field, title, x_note) in zip(axes, PANELS):
     ax.axhline(K_CTRL, color=C_CTRL, lw=1.4, zorder=2)
     ax.axvline(K_MAX, color=C_BOUND, lw=1.3, zorder=2)
     ax.axvline(K_MIN, color=C_BOUND, lw=1.0, ls=":", zorder=2)
-    ax.text(0.835, K_CTRL + 0.012, "Subcritical by 1000 pcm", color=C_CTRL, fontsize=9)
+    ax.text(0.835, K_CTRL + 0.012, "Controllability limit, 0.99", color=C_CTRL, fontsize=9)
     ax.text(K_MIN - 0.008, 0.715, r"$k_{\min} = 1.02$", color=C_BOUND, fontsize=8.5,
             rotation=90, va="bottom", ha="right")
     ax.text(K_MAX - 0.008, 0.715, r"$k_{\max} = 1.166$", color=C_BOUND, fontsize=8.5,

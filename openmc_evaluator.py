@@ -735,6 +735,19 @@ def _c9_boron_block(ev, design, res):
                          else obj["c_max_op_ppm"])
     out["c_bol"] = float(obj["c_bol_ppm"])
     out["g_efpd"] = float(ev.c9_efpd_req) - float(res["cycle_length"])
+    # CAMPAIGN 9 CONTINUATION (axial floor): the mission floor is raised per
+    # design by the fitted axial-loss ratio of axial_ratio_model.py, with its
+    # margin, so g_efpd = E_req(design) - cycle_length. Off unless
+    # run_optimization sets ev.c9_axial_model, so every earlier campaign and
+    # the two earlier readings of Campaign 9 are unchanged.
+    model = getattr(ev, "c9_axial_model", None)
+    if model is not None:
+        import axial_ratio_model as arm
+        ax = arm.requirement(model, {**design, **res, **out}, float(ev.c9_efpd_req))
+        out.update(ax)
+        out["axial_measured"] = False
+        out["g_efpd_mission"] = out["g_efpd"]
+        out["g_efpd"] = float(ax["axial_req_efpd"]) - float(res["cycle_length"])
     # recorded, never constrained: the measured MTC ceiling drawn as a line
     out["g_boron"] = out["c_max"] - float(ev.c9_boron_ceiling_ppm)
     out["n_boron_solves"] = n_extra

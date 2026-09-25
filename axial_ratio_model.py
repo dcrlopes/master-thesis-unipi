@@ -60,7 +60,8 @@ VARS = ("enrich", "gd_wt", "refl_thick", "gd_pins")
 # run-directory prefix -> the checkpoint whose indices its runs.json uses
 RUN_DIRS = {"c9_dep_core3d": "out_c9/optimization_checkpoint.json",
             "c9f_dep_core3d": "out_c9f/optimization_checkpoint.json",
-            "c9a_dep_core3d": "out_c9a/optimization_checkpoint.json"}
+            "c9a_dep_core3d": "out_c9a/optimization_checkpoint.json",
+            "gdstudy_dep_core3d": "out_gdstudy/optimization_checkpoint.json"}
 DERIVED = {"inventory": lambda q: float(q["gd_wt"]) * float(q["gd_pins"])}
 CANDIDATES = [[], ["gd_wt"], ["gd_pins"], ["inventory"], ["gd_wt", "gd_pins"], ["enrich"],
               ["refl_thick"], ["k_bol"], ["keff_core_bol"], ["hump_asm_pcm"], ["peaking"],

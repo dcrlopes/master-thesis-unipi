@@ -62,7 +62,11 @@ def load_ckpt(path):
 def design_of(ckpt, idx):
     from reactor_optimization import campaign9_problem
     spec = campaign9_problem(float(ckpt["meta"]["campaign9"]["efpd_req"]))
-    x = [ckpt["all_raw"][idx][v] for v in ckpt["design_variables"]]
+    # the full problem's variables, read from the stored evaluation, which
+    # holds every variable including frozen ones. ckpt["design_variables"]
+    # lists only the live variables of a frozen-subspace checkpoint, and
+    # zipping those against the full design space would misassign them.
+    x = [ckpt["all_raw"][idx][v] for v in spec.design_space.names]
     return spec.design_space.as_dict(np.asarray(x, float))
 
 
@@ -287,7 +291,7 @@ def layer_burnup(states, bu_hist, edges):
 
 
 # ----------------------------------------------------------------- run ----
-def run_design(idx, ckpt, raw, meta, tr, n_layers, k_eoc, out, estimate=False, mode="relative"):
+def run_design(idx, ckpt, raw, meta, tr, n_layers, k_eoc, out, estimate=False, mode="relative", salt="core3d"):
     import reactor_model as rm
     import zoning as zn
     import hardware3d as hw
@@ -296,7 +300,7 @@ def run_design(idx, ckpt, raw, meta, tr, n_layers, k_eoc, out, estimate=False, m
 
     op, geo, spec = rm.Operating(), rm.Geometry17x17(), hw.HardwareSpec()
     design = design_of(ckpt, idx)
-    seed = _design_seed(design, salt="core3d")
+    seed = _design_seed(design, salt=salt)      # another salt gives an independent replica
     model, info, rows, edges, fine, shape = build_layered(
         design, op, geo, spec, n_layers, tr, seed, zn.evaluator_design_map(design))
     spec_power = rm.core_specific_power_w_per_g(op, geo)
@@ -466,6 +470,8 @@ def main(argv=None):
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--analyse", action="store_true")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--salt", default="core3d",
+                    help="seed salt; any other value gives an independent replica of the same design")
     a = ap.parse_args(argv)
     if a.selftest:
         return selftest()
@@ -499,7 +505,7 @@ def main(argv=None):
     print(f"  openmc {openmc.__version__}, chain {chain}")
     if a.estimate:
         for idx in a.designs:
-            pc = run_design(idx, ckpt, raw, meta, tr, a.layers, a.k_eoc, out, estimate=True, mode=a.eoc_mode)
+            pc = run_design(idx, ckpt, raw, meta, tr, a.layers, a.k_eoc, out, estimate=True, mode=a.eoc_mode, salt=a.salt)
             (out / f"estimate_d{idx}.json").write_text(json.dumps(pc, indent=1))
             if pc.get("ok"):
                 print(f"[d{idx}] ESTIMATE fresh solve {pc['fresh_s']:.0f} s, depleted solve {pc['depleted_s']:.0f} s, "
@@ -512,7 +518,8 @@ def main(argv=None):
     for idx in a.designs:
         if f"d{idx}" in done:
             print(f"[d{idx}] cached"); continue
-        res = run_design(idx, ckpt, raw, meta, tr, a.layers, a.k_eoc, out, mode=a.eoc_mode)
+        res = run_design(idx, ckpt, raw, meta, tr, a.layers, a.k_eoc, out, mode=a.eoc_mode, salt=a.salt)
+        res["salt"] = a.salt
         done[f"d{idx}"] = res
         store.write_text(json.dumps(done, indent=1))
         print(f"[d{idx}] EFPD {res['efpd']:.1f} d (archive {raw[idx]['cycle_length']:.1f}), c_max {res['c_max']:.0f} "

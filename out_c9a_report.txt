@@ -1,0 +1,14 @@
+Campaign 9 under the axial floor, 2026-09-25 16:06:11
+model       : ratio = 0.9455 -0.034337 gd_wt -0.000026 hump_asm_pcm  (n 11, LOO 0.0164, kappa 1, margin 0.0164, clamped to the fitted ranges)
+archive     : 96 evaluations, 78 seeded from the first continuation
+front       : 27 69 70   (indices below 60 are Campaign 9, 60 to 77 the 2270 d continuation)
+unmeasured  : 
+
+front members against the 1826 d mission, measured where a run exists:
+ratio = 0.9455 -0.034337 gd_wt -0.000026 hump_asm_pcm  (n 11, LOO 0.0164, kappa 1, margin 0.0164, clamped to the fitted ranges)
+   27: E_asm   2373 d  ratio_hat 0.796  E_req   2341 d  g_efpd    -32  | measured ratio 0.824, 1956 d, margin +130 d
+   69: E_asm   2297 d  ratio_hat 0.836  E_req   2229 d  g_efpd    -69  | measured ratio 0.825, 1895 d, margin +69 d
+   70: E_asm   2280 d  ratio_hat 0.820  E_req   2272 d  g_efpd     -8  | measured ratio 0.806, 1838 d, margin +12 d
+
+hypervolume history (restarts at the seed; moves at each rescoring):
+  1124 1131 1131 1131

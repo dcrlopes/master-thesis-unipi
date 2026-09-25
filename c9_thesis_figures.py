@@ -132,6 +132,27 @@ def tidy(ax):
 
 
 # ----------------------------------------------------------------- figure 1 --
+def place_labels(fig, ax, xy, texts, obstacles, polyline):
+    """Label each point with the first candidate offset that hits nothing."""
+    CAND = [(6, 5), (-34, 5), (6, -13), (-34, -13), (10, -4), (-38, -4), (-14, 10), (-14, -18)]
+    r = fig.canvas.get_renderer()
+    obst = np.vstack([ax.transData.transform(obstacles),
+                      ax.transData.transform(polyline)])
+    taken, frame = [], ax.get_window_extent()
+    for (x, y), s in zip(xy, texts):
+        a = ax.annotate(s, (x, y), xytext=CAND[0], textcoords="offset points",
+                        fontsize=7, color=C_FRONT)
+        for dx, dy in CAND:
+            a.xyann = (dx, dy)
+            b = a.get_window_extent(r).expanded(1.2, 1.3)
+            hit = ((obst[:, 0] > b.x0) & (obst[:, 0] < b.x1)
+                   & (obst[:, 1] > b.y0) & (obst[:, 1] < b.y1)).any()
+            if not hit and frame.contains(b.x0, b.y0) and frame.contains(b.x1, b.y1) \
+               and not any(b.overlaps(o) for o in taken):
+                break
+        taken.append(a.get_window_extent(r))
+
+
 def fig_front(R, out, png):
     """Objective space, the headline result."""
     F = [r for r in R if r["feasible"]]
@@ -140,12 +161,12 @@ def fig_front(R, out, png):
 
     fig, ax = plt.subplots(figsize=(W1, H1))
     ax.axhspan(CLIP_PPM * 0.995, CLIP_PPM * 1.04, color=C_INFEAS, alpha=0.18, lw=0)
-    ax.text(1.70, CLIP_PPM * 1.012, "clip guard, 6000 ppm", fontsize=7, color=C_GREY,
+    ax.text(1.645, CLIP_PPM * 1.030, "Clip guard, 6000 ppm", fontsize=7, color=C_GREY,
             ha="right", va="center")
 
     ax.scatter([r["peaking"] for r in I], [r["c_max_ppm"] for r in I],
                s=22, facecolors="none", edgecolors=C_INFEAS, linewidths=0.8,
-               label=f"infeasible ({len(I)})", zorder=2)
+               label=f"Infeasible ({len(I)})", zorder=2)
     sc = ax.scatter([r["peaking"] for r in F], [r["c_max_ppm"] for r in F],
                     c=[r["cycle_length"] for r in F], cmap="viridis",
                     s=38, edgecolors="k", linewidths=0.4, zorder=3)
@@ -155,7 +176,7 @@ def fig_front(R, out, png):
 
     ax.axhline(CEILING_PPM, color=C_WARN, ls="--", lw=1.2)
     ax.axhline(CEILING_HI_PPM, color=C_WARN, ls=":", lw=1.0)
-    ax.text(1.735, CEILING_PPM * 0.955, "MTC ceiling 12.8 MPa", fontsize=7,
+    ax.text(1.735, CEILING_PPM * 0.955, "MTC boron limit, 12.8 MPa", fontsize=7,
             color=C_WARN, ha="right", va="top")
     ax.text(1.735, CEILING_HI_PPM * 1.02, "15.5 MPa", fontsize=7,
             color=C_WARN, ha="right", va="bottom")
@@ -163,20 +184,25 @@ def fig_front(R, out, png):
     ax.text(F_MAX - 0.004, 300, r"$F_{\Delta H}\leq 1.65$", fontsize=7,
             color=C_GREY, rotation=90, ha="right", va="bottom")
 
-    for j, r in enumerate(front):
-        off = (7, 7) if j % 2 == 0 else (7, -12)
-        ax.annotate(str(r["idx"]), (r["peaking"], r["c_max_ppm"]),
-                    textcoords="offset points", xytext=off, fontsize=7, color=C_FRONT)
+    fxy = [(r["peaking"], r["c_max_ppm"]) for r in front]
+    seg = []
+    for (x0, y0), (x1, y1) in zip(fxy[:-1], fxy[1:]):
+        seg += [(x0 + (x1 - x0) * s, y0 + (y1 - y0) * s) for s in np.linspace(0, 1, 60)]
+    for y in (CEILING_PPM, CEILING_HI_PPM):
+        seg += [(x, y) for x in np.linspace(1.42, 1.74, 200)]
+    seg += [(F_MAX, y) for y in np.linspace(-200, CLIP_PPM * 1.06, 200)]
 
     cb = fig.colorbar(sc, ax=ax, pad=0.02)
-    cb.set_label("cycle length (EFPD)", fontsize=8)
+    cb.set_label("Cycle length (EFPD)", fontsize=8)
     cb.ax.tick_params(labelsize=7)
-    ax.set_xlabel(r"core $F_{\Delta H}$ at BOL (dimensionless)")
+    ax.set_xlabel(r"Core $F_{\Delta H}$ at BOL (dimensionless)")
     ax.set_ylabel(r"$c_{\max}$ (ppm)")
     ax.set_xlim(1.42, 1.74)
     ax.set_ylim(-200, CLIP_PPM * 1.06)
     ax.legend(loc="upper left", frameon=False, fontsize=7.5)
     tidy(ax)
+    place_labels(fig, ax, fxy, [f"C9-{r['idx']}" for r in front],
+                 [(r["peaking"], r["c_max_ppm"]) for r in R], seg)
     save(fig, out, "c9_front", png)
 
 
@@ -248,19 +274,19 @@ def fig_hump(R, out, png):
 
     ax = axes[0]
     ax.axhline(400, color=C_GREY, ls=":", lw=1.0)
-    ax.text(0.15, 560, "noise floor 400 pcm", fontsize=7, color=C_GREY, ha="left")
+    ax.text(0.15, 560, "Noise floor 400 pcm", fontsize=7, color=C_GREY, ha="left")
     inb = [r for r in F if abs(r["enrich"] - BAND_C) <= BAND_H]
     outb = [r for r in F if abs(r["enrich"] - BAND_C) > BAND_H]
     ax.scatter([r["gd_wt"] for r in outb], [r["hump_core_pcm"] for r in outb],
                s=30, facecolors="none", edgecolors=C_FEAS, linewidths=1.0,
-               label="outside the band")
+               label="Outside the band")
     ax.scatter([r["gd_wt"] for r in inb], [r["hump_core_pcm"] for r in inb],
                s=34, color=C_FEAS, edgecolors="k", linewidths=0.4,
                label=f"$e = {BAND_C} \\pm {BAND_H}$ wt%")
     ax.legend(frameon=False, loc="upper right", fontsize=7.5)
     ax.set_xlabel(r"Gd$_2$O$_3$ content (wt%)")
-    ax.set_ylabel(r"core hump $\Delta\rho_\mathrm{hump}$ (pcm)")
-    ax.set_title("(a) hump against gadolinia", fontsize=8, loc="left")
+    ax.set_ylabel(r"Core hump $\Delta\rho_\mathrm{hump}$ (pcm)")
+    ax.set_title("(a) Hump against gadolinia", fontsize=8, loc="left")
     tidy(ax)
 
     ax = axes[1]
@@ -272,11 +298,11 @@ def fig_hump(R, out, png):
         s = np.polyfit(h[ok], d[ok], 1)[0]
         xs = np.linspace(0, h.max() * 1.05, 20)
         ax.plot(xs, s * xs, color=C_GREY, ls="--", lw=1.0,
-                label=f"slope {s:.3f} ppm per pcm")
+                label=f"Slope {s:.3f} ppm per pcm")
         ax.legend(frameon=False, loc="upper left")
-    ax.set_xlabel(r"core hump $\Delta\rho_\mathrm{hump}$ (pcm)")
+    ax.set_xlabel(r"Core hump $\Delta\rho_\mathrm{hump}$ (pcm)")
     ax.set_ylabel(r"$c_{\max}-c_\mathrm{BOL}$ (ppm)")
-    ax.set_title("(b) penalty carried into the objective", fontsize=8, loc="left")
+    ax.set_title("(b) Penalty carried into the objective", fontsize=8, loc="left")
     tidy(ax)
 
     fig.tight_layout()

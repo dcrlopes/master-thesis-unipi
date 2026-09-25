@@ -49,12 +49,14 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
 import numpy as np
 
 FLOOR, CEIL = 1826.0, 2763.0
 MEASURED_3D = {47: 1573.3, 35: 1641.4, 27: 1956.1, 1: 2271.2, 24: 1915.3, 16: 1908.7, 11: 1839.0}
 USED_IN_CORRECTION = {47, 35, 27, 1}
 GD_FIT = (0.9025, -0.0201)          # ratio = a + b Gd, seven 3D designs
+F_MAX = 1.65                        # peaking constraint of Campaign 9
 
 C_OLD = "#D55E00"
 C_NEW = "#0072B2"
@@ -167,45 +169,131 @@ def classify(ckpt, res):
     return old, new, nondominated(old), nondominated(new)
 
 
+def place_labels(fig, ax, xy, texts, colours, obstacles, polyline, orders=None):
+    """First candidate offset whose box is clear of every point, front and label."""
+    CAND = [(6, 5), (-34, 5), (6, -13), (-34, -13), (10, -4), (-38, -4), (-14, 10), (-14, -18),
+            (6, 16), (-34, 16), (6, -24), (-34, -24), (22, 9), (-50, 9), (22, -17), (-50, -17)]
+    import numpy as np
+    r = fig.canvas.get_renderer()
+    obst = np.vstack([ax.transData.transform(obstacles), ax.transData.transform(polyline)])
+    # the limit annotation already on the axes is an obstacle like any other
+    taken = [x.get_window_extent(r) for x in list(ax.texts)]
+    frame = ax.get_window_extent()
+    orders = orders or [None] * len(texts)
+    for (x, y), s, c, order in zip(xy, texts, colours, orders):
+        a = ax.annotate(s, (x, y), xytext=(order or CAND)[0], textcoords="offset points",
+                        fontsize=7, color=c)
+        cands = order or CAND
+        best, best_score = cands[0], None
+        for dx, dy in cands:
+            a.xyann = (dx, dy)
+            b = a.get_window_extent(r).expanded(1.2, 1.3)
+            hit = ((obst[:, 0] > b.x0) & (obst[:, 0] < b.x1)
+                   & (obst[:, 1] > b.y0) & (obst[:, 1] < b.y1)).any()
+            inside = frame.contains(b.x0, b.y0) and frame.contains(b.x1, b.y1)
+            # a label over another label is worse than a label over a point
+            score = (4 * sum(b.overlaps(o) for o in taken) + 2 * int(hit)
+                     + (0 if inside else 8))
+            if best_score is None or score < best_score:
+                best, best_score = (dx, dy), score
+            if score == 0:
+                break
+        a.xyann = best
+        taken.append(a.get_window_extent(r).expanded(1.2, 1.3))
+
+
 def figure(ckpt, res, old, new, f_old, f_new, out, provisional):
     raw = ckpt["all_raw"]
-    fig, ax = plt.subplots(figsize=(6.0, 4.9))
-    ax.axhline(CEIL, color="#CC79A7", ls="--", lw=1.1)
-    ax.text(0.01, CEIL + 25, "boron ceiling 2763 ppm", color="#CC79A7", fontsize=7, va="bottom",
-            transform=ax.get_yaxis_transform())
+    fig, (ax, bx) = plt.subplots(1, 2, figsize=(10.6, 4.6))
+
+    infeas = [i for i in range(len(raw)) if i not in old and i not in new]
     only_old = [i for i in old if i not in new]
-    ax.plot([old[i][0] for i in only_old], [old[i][1] for i in only_old], "x", color=C_GREY, ms=5,
-            label="feasible on the assembly, misses the floor in 3D")
-    ax.plot([new[i][0] for i in new], [new[i][1] for i in new], "o", mfc="none", mec=C_NEW, ms=5,
-            label="meets the floor with the axial correction")
-    xo = [old[i][0] for i in f_old]; yo = [old[i][1] for i in f_old]
-    ax.step(xo, yo, where="post", color=C_OLD, lw=1.3)
-    ax.plot(xo, yo, "s", color=C_OLD, ms=6, label="front, assembly cycle length (campaign)")
-    xn = [new[i][0] for i in f_new]; yn = [new[i][1] for i in f_new]
-    ax.step(xn, yn, where="post", color=C_NEW, lw=1.3)
-    ax.plot(xn, yn, "o", color=C_NEW, ms=6.5, label="front, axially corrected cycle length")
     meas = [i for i in MEASURED_3D if i in old or i in new]
-    ax.plot([raw[i]["peaking"] for i in meas], [raw[i]["c_max"] for i in meas], "o", mfc="none",
-            mec="black", ms=10, mew=0.8, label="depleted directly in 3D")
-    offsets = {35: (6, 4), 40: (-31, -3), 34: (6, -11), 44: (-31, 5), 47: (7, -10),
-               16: (-31, 6), 1: (7, 4), 27: (7, 4)}
-    for i in sorted(set(f_old) | set(f_new)):
-        p, c = raw[i]["peaking"], raw[i]["c_max"]
-        ax.annotate(f"C9-{i}", (p, c), textcoords="offset points", xytext=offsets.get(i, (6, 4)),
-                    fontsize=7, color=C_OLD if i in f_old else C_NEW)
-    ax.set_xlabel(r"Radial peaking $F_{\Delta H}$ (campaign)")
-    ax.set_ylabel(r"$c_\mathrm{max}$ [ppm]")
-    ax.set_ylim(1200, 3300)
-    xs = [v[0] for v in list(old.values()) + list(new.values())]
-    ax.set_xlim(min(xs) - 0.016, max(xs) + 0.008)
-    off = [i for i in new if raw[i]["c_max"] > 3300]
-    if off:
-        ax.annotate(", ".join(f"C9-{i} ({raw[i]['c_max']:.0f} ppm)" for i in off) + " above the scale",
-                    xy=(0.99, 0.02), xycoords="axes fraction", ha="right", fontsize=6.5, color=C_NEW)
-    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.13), ncol=2, frameon=False, fontsize=7)
-    if provisional:
-        ax.set_title("3D cycle length from the gadolinia regression (leave-one-out 71 d rms) "
-                     "or measured in 3D", loc="left", fontsize=7, color="#444444")
+    xo = [old[i][0] for i in f_old]; yo = [old[i][1] for i in f_old]
+    xn = [new[i][0] for i in f_new]; yn = [new[i][1] for i in f_new]
+    labelled = sorted(set(f_old) | set(f_new))
+
+    # the window of panel (b): the two fronts with room for the labels
+    fx = xo + xn
+    fy = yo + yn
+    ZOOM = (min(fx) - 0.016, max(fx) + 0.022, min(fy) - 280, max(fy) + 250)
+
+    for panel in (ax, bx):
+        panel.axhline(CEIL, color="#CC79A7", ls="--", lw=1.1)
+        panel.plot([raw[i]["peaking"] for i in infeas], [raw[i]["c_max"] for i in infeas], "x",
+                   color="#B0B0B0", ms=5, mew=1.0,
+                   label=f"Infeasible on the campaign ({len(infeas)})")
+        panel.plot([old[i][0] for i in only_old], [old[i][1] for i in only_old], "o", mfc="none",
+                   mec=C_GREY, ms=5, mew=1.1,
+                   label="Feasible on the assembly, misses the floor in 3D")
+        panel.plot([new[i][0] for i in new], [new[i][1] for i in new], "o", mfc="none",
+                   mec=C_NEW, ms=5, label="Meets the floor with the axial correction")
+        panel.step(xo, yo, where="post", color=C_OLD, lw=1.3)
+        panel.plot(xo, yo, "s", color=C_OLD, ms=6,
+                   label="Front, assembly cycle length (campaign)")
+        panel.step(xn, yn, where="post", color=C_NEW, lw=1.3)
+        panel.plot(xn, yn, "o", color=C_NEW, ms=6.5,
+                   label="Front, axially corrected cycle length")
+        panel.plot([raw[i]["peaking"] for i in meas], [raw[i]["c_max"] for i in meas], "o",
+                   mfc="none", mec="black", ms=10, mew=0.8, label="Depleted directly in 3D")
+        panel.set_xlabel(r"Radial peaking $F_{\Delta H}$ (campaign)")
+        panel.set_ylabel(r"$c_\mathrm{max}$ [ppm]")
+
+    # ---- (a) the whole archive, no design labels -------------------------
+    xs = [r["peaking"] for r in raw]
+    ys = [r["c_max"] for r in raw]
+    ax.set_xlim(min(xs) - 0.014, max(xs) + 0.012)
+    ax.set_ylim(min(ys) - 260, max(ys) + 320)
+    ax.text(0.99, CEIL + 60, "MTC boron limit 2763 ppm", color="#CC79A7", fontsize=7,
+            va="bottom", ha="right", transform=ax.get_yaxis_transform())
+    ax.add_patch(Rectangle((ZOOM[0], ZOOM[2]), ZOOM[1] - ZOOM[0], ZOOM[3] - ZOOM[2],
+                           facecolor="none", edgecolor="0.25", ls="--", lw=1.0, zorder=5))
+    ax.annotate("Window of panel (b)", xy=(ZOOM[1], ZOOM[3]), xytext=(1.66, 3450),
+                fontsize=8.5, color="0.25", ha="left",
+                arrowprops=dict(arrowstyle="->", color="0.25", lw=1.0))
+    ax.axvline(F_MAX, color="#555555", ls="-.", lw=1.0, zorder=2)
+    ax.text(F_MAX - 0.006, 0.02, r"$F_{\Delta H} \leq 1.65$", color="#555555", fontsize=7.5,
+            rotation=90, ha="right", va="bottom", transform=ax.get_xaxis_transform())
+    # A design measured in 3D that meets the corrected floor without reaching the
+    # front is named in panel (b) where the window holds it, and here where it
+    # does not, so that every such design is named exactly once.
+    off_front = [i for i in sorted(new) if i in MEASURED_3D and i not in f_new]
+    in_window = [i for i in off_front
+                 if ZOOM[0] <= raw[i]["peaking"] <= ZOOM[1]
+                 and ZOOM[2] <= raw[i]["c_max"] <= ZOOM[3]]
+    outside = [i for i in off_front if i not in in_window]
+    place_labels(fig, ax, [(raw[i]["peaking"], raw[i]["c_max"]) for i in outside],
+                 [f"C9-{i}" for i in outside], [C_NEW] * len(outside),
+                 [(r["peaking"], r["c_max"]) for r in raw],
+                 [(F_MAX, min(ys) + (max(ys) - min(ys)) * s / 199.0) for s in range(200)]
+                 + [(min(xs) + (max(xs) - min(xs)) * s / 199.0, CEIL) for s in range(200)])
+    ax.set_title("(a) The whole archive, 60 designs", fontsize=10)
+
+    # ---- (b) the region of the two fronts, with every front member named --
+    bx.set_xlim(ZOOM[0], ZOOM[1])
+    bx.set_ylim(ZOOM[2], ZOOM[3])
+    bx.text(0.99, CEIL + 25, "MTC boron limit", color="#CC79A7", fontsize=7, va="bottom",
+            ha="right", transform=bx.get_yaxis_transform())
+    bx.set_title("(b) The region of the two fronts", fontsize=10)
+
+    seg = []
+    for xx, yy in ((xo, yo), (xn, yn)):
+        for (x0, y0), (x1, y1) in zip(list(zip(xx, yy))[:-1], list(zip(xx, yy))[1:]):
+            seg += [(x0 + (x1 - x0) * s / 40.0, y0) for s in range(41)]
+            seg += [(x1, y0 + (y1 - y0) * s / 40.0) for s in range(41)]
+    seg += [(ZOOM[0] + (ZOOM[1] - ZOOM[0]) * s / 199.0, CEIL) for s in range(200)]
+    named = labelled + [i for i in in_window if i not in labelled]
+    ABOVE = [(-11, 11), (-11, 17), (-11, -19), (5, 11), (-28, 11)]
+    place_labels(fig, bx, [(raw[i]["peaking"], raw[i]["c_max"]) for i in named],
+                 [f"C9-{i}" for i in named],
+                 [C_OLD if i in f_old else C_NEW for i in named],
+                 [(r["peaking"], r["c_max"]) for r in raw], seg,
+                 orders=[None if i in labelled else ABOVE for i in named])
+
+    handles, labels = ax.get_legend_handles_labels()
+    fig.legend(handles, labels, loc="upper center", bbox_to_anchor=(0.5, 0.045), ncol=3,
+               frameon=False, fontsize=8)
+    fig.tight_layout(rect=(0, 0.10, 1, 1))
     stem = "c9_front_2d_3d" if provisional else "c9_front_2d_3d_table"
     for ext, kw in (("pdf", {}), ("png", {"dpi": 300})):
         fig.savefig(out / f"{stem}.{ext}", **kw)

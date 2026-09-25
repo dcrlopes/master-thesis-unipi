@@ -149,7 +149,7 @@ def main():
     if not args.no_screens:
         for s in SCREENS:
             ax.axhline(s, color="#888888", lw=0.9, ls=":", zorder=1)
-            ax.text(2450, s + 0.008, f"screen {s:.2f}", color="#666666",
+            ax.text(2450, s + 0.008, f"Reference peaking {s:.2f}", color="#666666",
                     fontsize=9, va="bottom", ha="left")
 
     # ---- hypervolume reference ------------------------------------------ #
@@ -205,11 +205,11 @@ def main():
 
     # named designs
     by_pos = {r["pos"]: r for r in rows}
-    notes = {1:  ("design 1", (10, 10), "left"),
-             47: ("design 47", (12, -14), "left"),
-             53: ("design 53", (14, -16), "left"),
-             31: ("design 31", (14, 12), "left"),
-             21: ("design 21", (10, 12), "left")}
+    notes = {1:  ("C8-1", (10, 10), "left"),
+             47: ("C8-47", (12, -14), "left"),
+             53: ("C8-53", (14, -16), "left"),
+             31: ("C8-31", (14, 12), "left"),
+             21: ("C8-21", (10, 12), "left")}
     for p, (txt, off, ha) in notes.items():
         if p in by_pos:
             r = by_pos[p]

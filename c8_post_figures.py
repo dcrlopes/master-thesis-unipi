@@ -57,7 +57,7 @@ ELEVEN = FRONT + KEEP
 K_SCREEN = 0.99          # the constraint threshold on k, dimensionless
 MARGIN = -1e5 * (K_SCREEN - 1.0) / K_SCREEN     # 1010.1 pcm on the -rho axis
 PPM = [0.0, 500.0, 1000.0, 1500.0]
-CF_LINES = {"4 y at CF 0.8": 4 * 365.25 * 0.8, "5 y at CF 0.8": 5 * 365.25 * 0.8}
+FIVE_YEARS = 5 * 365.25                         # EFPD at full power
 
 # beginning-of-life ALL-RE 3D hold-down classes for the zero-boron reading
 CLASS_OK, CLASS_MARGINAL, CLASS_NO = "holds with margin", "subcritical, margin < 1000", "supercritical"
@@ -207,8 +207,42 @@ def save(fig, out: Path, name: str):
     print(f"  wrote {name}.pdf/.png")
 
 
+def place_labels(fig, ax, rows, ids, fronts, limits):
+    """Label each front design without covering a point, a front, a limit or a label.
+
+    The candidate offsets are tried in order and the first one whose text box is clear
+    of everything already on the axes is kept, so the placement is deterministic.
+    """
+    import numpy as np
+    CAND = [(5, 4), (-13, 4), (5, -11), (-13, -11), (9, -3), (-17, -3), (-4, 8), (-4, -15)]
+    r = fig.canvas.get_renderer()
+    pts = ax.transData.transform([(rows[i]["efpd"], rows[i]["F"]) for i in rows])
+    seg = []
+    for f in fronts:                      # the step fronts, as drawn with where="post"
+        for (x0, y0), (x1, y1) in zip(f[:-1], f[1:]):
+            seg += [(x, y0) for x in np.linspace(x0, x1, 60)]
+            seg += [(x1, y) for y in np.linspace(y0, y1, 40)]
+    for kind, v in limits:                # the two limit lines, across the whole frame
+        lo, hi = (ax.get_xlim(), ax.get_ylim()) if kind == "h" else (ax.get_ylim(), ax.get_xlim())
+        seg += [(x, v) if kind == "h" else (v, x) for x in np.linspace(lo[0], lo[1], 200)]
+    obst = np.vstack([pts, ax.transData.transform(seg)])
+    taken, frame = [], ax.get_window_extent()
+    for i in ids:
+        a = ax.annotate(f"C8-{i}", (rows[i]["efpd"], rows[i]["F"]), xytext=CAND[0],
+                        textcoords="offset points", fontsize=7.5)
+        for dx, dy in CAND:
+            a.xyann = (dx, dy)
+            b = a.get_window_extent(r).expanded(1.25, 1.35)
+            inside = ((obst[:, 0] > b.x0) & (obst[:, 0] < b.x1)
+                      & (obst[:, 1] > b.y0) & (obst[:, 1] < b.y1)).any()
+            if not inside and frame.contains(b.x0, b.y0) and frame.contains(b.x1, b.y1) \
+               and not any(b.overlaps(o) for o in taken):
+                break
+        taken.append(a.get_window_extent(r))
+
+
 def fig_front(plt, rows, out, sigma_F):
-    fig, ax = plt.subplots(figsize=(6.4, 4.2))
+    fig, ax = plt.subplots(figsize=(5.9, 3.9))
     feas = [i for i in rows if rows[i]["feasible"]]
     infeas = [i for i in rows if not rows[i]["feasible"]]
     two = [i for i in feas if rows[i]["twobank"]]
@@ -216,28 +250,28 @@ def fig_front(plt, rows, out, sigma_F):
     front4 = pareto(rows, feas)
     front2 = pareto(rows, two)
     ax.scatter([rows[i]["efpd"] for i in infeas], [rows[i]["F"] for i in infeas], marker="x", s=22,
-               color="0.55", linewidths=0.8, label="infeasible (35 fail $g_\\mathrm{ctrl}$, 6 fail $g_{k\\min}$)")
+               color="0.55", linewidths=0.8, label="Infeasible (35 fail $g_\\mathrm{ctrl}$, 6 fail $g_{k\\min}$)")
     ax.errorbar([rows[i]["efpd"] for i in four], [rows[i]["F"] for i in four], yerr=sigma_F, fmt="o", ms=5,
-                color="tab:blue", ecolor="tab:blue", elinewidth=0.6, capsize=1.5, label="feasible, four regulating banks needed")
+                color="tab:blue", ecolor="tab:blue", elinewidth=0.6, capsize=1.5, label="Feasible, four regulating banks needed")
     ax.errorbar([rows[i]["efpd"] for i in two], [rows[i]["F"] for i in two], yerr=sigma_F, fmt="s", ms=6,
-                color="tab:green", ecolor="tab:green", elinewidth=0.6, capsize=1.5, label="feasible, controllable with RE1 + RE2")
+                color="tab:green", ecolor="tab:green", elinewidth=0.6, capsize=1.5, label="Feasible, controllable with RE1 + RE2")
     ax.plot([rows[i]["efpd"] for i in front4], [rows[i]["F"] for i in front4], "-", color="tab:blue", lw=1.2,
-            label="four-bank front (8 designs)")
+            label="Four-bank front (8 designs)")
     ax.plot([rows[i]["efpd"] for i in front2], [rows[i]["F"] for i in front2], "-", color="tab:green", lw=1.2,
-            label="two-bank front (3 designs)")
-    for i in front4 + front2:
-        ax.annotate(str(i), (rows[i]["efpd"], rows[i]["F"]), xytext=(4, 4), textcoords="offset points", fontsize=7.5)
-    for lab, x in CF_LINES.items():
-        ax.axvline(x, color="0.3", ls=":", lw=0.8)
-        ax.text(x + 40, 1.795, lab + " (CF assumed)", rotation=90, va="top", fontsize=6.5, color="0.3")
+            label="Two-bank front (3 designs)")
     ax.axhline(1.65, color="tab:red", ls="--", lw=0.7)
-    ax.text(7600, 1.653, "AP1000 design limit 1.65", ha="right", va="bottom", fontsize=7, color="tab:red")
+    ax.text(120, 1.655, "AP1000 design limit 1.65", ha="left", va="bottom", fontsize=7, color="tab:red")
+    ax.axvline(FIVE_YEARS, color="tab:red", ls="--", lw=0.7)
+    ax.text(FIVE_YEARS - 55, 1.797, "Five years at full power", rotation=90, ha="right", va="top",
+            fontsize=7, color="tab:red")
     ax.set_xlabel("Cycle length, EFPD")
     ax.set_ylabel("$F_{\\Delta H}$, core, BOL, 1000 ppm")
     ax.set_xlim(-150, 8200)
     ax.set_ylim(1.49, 1.80)
     ax.legend(loc="lower right", fontsize=7)
-    ax.set_title("Campaign 8 archive: 60 evaluations, 19 feasible, two controllability tiers")
+    place_labels(fig, ax, rows, front4 + front2,
+                 [[(rows[i]["efpd"], rows[i]["F"]) for i in f] for f in (front4, front2)],
+                 [("h", 1.65), ("v", FIVE_YEARS)])
     save(fig, out, "c8_post_front_two_tier")
     plt.close(fig)
     return front4, front2

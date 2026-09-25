@@ -127,9 +127,9 @@ def validate(D):
 def fig_correction(D, grid, vals, out):
     fig, (a, b) = plt.subplots(1, 2, figsize=(7.4, 3.3))
     x = D[47]
-    a.plot(x["b"], x["k1"] / x["k1"][0], "o-", color=C_GREY, ms=3.5, label="1 layer (uniform)")
-    a.plot(x["b"][:len(x["k8"])], x["k8"] / x["k8"][0], "s-", color=C[47], ms=3.5, label="8 layers (resolved)")
-    a.axhline(x["ratio"], color="#CC79A7", ls="--", lw=1.0, label="end-of-cycle target")
+    a.plot(x["b"], x["k1"] / x["k1"][0], "o-", color=C_GREY, ms=3.5, label="1 layer (uniform burnup)")
+    a.plot(x["b"][:len(x["k8"])], x["k8"] / x["k8"][0], "s-", color=C[47], ms=3.5, label="8 layers (resolved burnup)")
+    a.axhline(x["ratio"], color="#CC79A7", ls="--", lw=1.0, label="End-of-cycle target")
     a.set_xlabel("Core-average burnup [MWd/kgHM]")
     a.set_ylabel(r"$k(B)\,/\,k(0)$, C9-47")
     a.legend(loc="lower left", frameon=False)
@@ -137,7 +137,7 @@ def fig_correction(D, grid, vals, out):
 
     for d in D:
         b.plot(D[d]["bn"], D[d]["rho"], "o", ms=4, color=C[d], label=f"C9-{d}")
-    b.plot(grid, vals, "-", color="black", lw=1.6, label="correction (mean)")
+    b.plot(grid, vals, "-", color="black", lw=1.6, label="Correction (mean)")
     b.set_xlabel("Core-average burnup [MWd/kgHM]")
     b.set_ylabel(r"$\rho_A(B)$ [pcm]")
     b.legend(loc="upper left", frameon=False, ncol=2)

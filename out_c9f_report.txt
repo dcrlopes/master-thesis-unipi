@@ -1,6 +1,8 @@
-Campaign 9 under a floor of 2270 d, 2026-09-25 05:07:34
+Campaign 9 under a floor of 2270 d, 2026-09-25 05:36:23
 archive     : 78 evaluations, 60 seeded from Campaign 9
 front       : 69 70 72   (indices below 60 are Campaign 9 designs)
 
 eight-layer confirmation, resolved cycle against the 1826 d mission:
-  no summary yet
+  design 69: assembly   2297 d, eight layers   1895 d, ratio 0.825, margin +69 d
+  design 70: assembly   2280 d, eight layers   1838 d, ratio 0.806, margin +12 d
+  design 72: assembly   2293 d, eight layers   1782 d, ratio 0.777, margin -44 d

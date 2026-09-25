@@ -7,6 +7,9 @@
 #   K  stop the valgrid search (its enumeration is complete and kept; the
 #      search restarts cleanly at the end, its partial output is set aside)
 #   L  reduced-fidelity eight-layer estimate, 10 000 x 100, on design 69   ~10 min
+#   E  evaluate the six designs of the surrogate's predicted front
+#      (c9_post/predicted_front_evallist.json), then compare with the
+#      prediction (c9_eval_predicted_front.py --compare)                  ~2 h
 #   R  second seed of the eight-layer depletion of 70 (+12 d) and 88 (-11 d) ~2 h
 #   C  3D peaking and rodded confirmation of 69 and 70, ARO ARI RE12,
 #      1000 ppm, two seeds, the settings of confirm3d_c9                  ~1.2 h
@@ -50,9 +53,10 @@ case "${1:-}" in
   echo "time        : $(stamp)   host $(hostname)"
   p=$(pgrep -f "^bash run_c9_closures.sh$" | grep -vw "$$" | head -1)
   [ -n "$p" ] && echo "runner      : ALIVE (pid $p)" || echo "runner      : not running"
-  st=""; for s in P K L R C M G F V; do done_ $s && st="$st $s"; done
+  st=""; for s in P K L E R C M G F V; do done_ $s && st="$st $s"; done
   echo "stages done :${st:- none}"
   [ -f c9_dep_estimate_lofi/estimate_d69.json ] && echo "lofi        : $(grep -h PROJECTED_HOURS c9_closures.log 2>/dev/null | tail -1)"
+  [ -f out_c9_pred/optimization_checkpoint.json ] && echo "pred. front : $(python -c "import json, sys; print(len(json.load(open(sys.argv[1]))['all_raw']))" out_c9_pred/optimization_checkpoint.json) of 6 evaluated"
   [ -f c9a_dep_core3d_seed2/runs.json ] && echo "replicas    : $(python -c "import json, sys; print(' '.join(sorted(json.load(open(sys.argv[1])))))" c9a_dep_core3d_seed2/runs.json)"
   [ -f confirm3d_c9a/summary.json ] && echo "confirm3d   : $(python -c "import json, sys; print(' '.join(sorted(json.load(open(sys.argv[1])))))" confirm3d_c9a/summary.json)"
   for d in mtc_c9a_d*_core3d; do [ -f "$d/report.txt" ] && echo "mtc         : $d  $(grep CROSSING "$d/report.txt")"; done
@@ -65,7 +69,7 @@ stage_P() {
   [ "$(hostname)" = "wks720" ] || die "not on wks720"
   [ "${CONDA_DEFAULT_ENV:-}" = "openmc-env" ] || die "conda env is not openmc-env"
   envok || die "environment"
-  for f in c9_dep_core3d.py confirm3d.py mtc_scan.py run_gdstudy.sh run_valgrid_c9.sh axial_ratio_model.py "$CKPT"; do
+  for f in c9_dep_core3d.py confirm3d.py mtc_scan.py run_gdstudy.sh run_valgrid_c9.sh axial_ratio_model.py "$CKPT" \n           c9_post/predicted_front_evallist.json c9_eval_predicted_front.py; do
     [ -f "$f" ] || die "missing $f"
   done
   grep -q -- "--salt" c9_dep_core3d.py || die "c9_dep_core3d.py lacks the --salt flag"
@@ -106,6 +110,17 @@ stage_L() {
     --particles 10000 --batches 100 --inactive 50 --threads "$THREADS" \
     --out c9_dep_estimate_lofi 2>&1 | tee -a c9_dep_estimate_lofi.log || die "estimate failed"
   mark L
+}
+
+stage_E() {
+  done_ E && { echo "[E] already done"; return 0; }
+  hr; echo " STAGE E. Evaluate the surrogate's predicted front, six designs  ($(stamp))"; hr
+  [ -f c9_post/predicted_front_evallist.json ] || die "missing c9_post/predicted_front_evallist.json (python c9_eval_predicted_front.py --make)"
+  local resume=()
+  [ -f out_c9_pred/optimization_checkpoint.json ] && resume=(--resume out_c9_pred/optimization_checkpoint.json)
+  python -u run_optimization.py --out out_c9_pred --workdir openmc_runs_c9_pred \n    --ktarget-table ktarget_table_c8.json --k-basis core --k-max 1.166 --k-min 1.02 \n    --f-max 1.65 --enr-max 16 --ctrl-margin 1000 --objective-set c9 --efpd-req 1826 \n    --boron-objective floor --boron-step 2000 --boron-top 3000 --boron-ceiling 2763 \n    --hump-noise 400 --threads "$THREADS" \n    --eval-list c9_post/predicted_front_evallist.json "${resume[@]}" \n    2>&1 | tee -a out_c9_pred.log || die "predicted-front evaluation failed"
+  python c9_eval_predicted_front.py --compare 2>&1 | tee -a out_c9_pred.log || echo "  WARNING compare failed"
+  mark E
 }
 
 stage_R() {
@@ -162,6 +177,9 @@ stage_F() {
     echo "L. reduced-fidelity estimate (10 000 x 100 x 50) on design 69:"
     grep -h "ESTIMATE\|PROJECTED_HOURS" c9_dep_estimate_lofi.log 2>/dev/null | tail -2 | sed 's/^/  /'
     echo
+    echo "E. the surrogate's predicted front, measured:"
+    [ -f c9_post/predicted_front_eval.txt ] && sed 's/^/  /' c9_post/predicted_front_eval.txt || echo "  no comparison file"
+    echo
     echo "R. eight-layer cycle, first seed against second seed:"
     python - "$CKPT" <<'PY'
 import json, sys, glob
@@ -213,6 +231,7 @@ PY
   echo "  git add -f mtc_c9a_d*_core3d/summary.json mtc_c9a_d*_core3d/report.txt c9_dep_estimate_lofi/estimate_d69.json"
   echo "  git add -f out_gdstudy/optimization_checkpoint.json gdstudy_dep_core3d/runs.json gdstudy_dep_core3d/summary.json gdstudy/list.json"
   echo "  git add run_c9_closures.sh run_gdstudy.sh c9_dep_core3d.py axial_ratio_model.py $REPORT gdstudy_report.txt"
+  echo "  git add -f out_c9_pred/optimization_checkpoint.json c9_post/predicted_front_eval.json c9_post/predicted_front_eval.txt out_c9_pred.log"
   echo "  git add -f c9_closures.log gdstudy.log c9a_dep_core3d_seed2.log confirm3d_c9a.log mtc_c9a_d*_core3d.log"
   echo "  git commit -m 'Campaign 9 closures on the new front members, replicas, MTC limits and the gadolinia study'"
   mark F
@@ -228,6 +247,6 @@ stage_V() {
 
 case "${1:-}" in
   --preflight) stage_P ;;
-  "")          stage_P; stage_K; stage_L; stage_R; stage_C; stage_M; stage_G; stage_F; stage_V ;;
+  "")          stage_P; stage_K; stage_L; stage_E; stage_R; stage_C; stage_M; stage_G; stage_F; stage_V ;;
   *)           die "unknown option $1" ;;
 esac

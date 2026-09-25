@@ -258,6 +258,29 @@ def main():
                          "the value C8 and C9 used; it was 0.05 through C7. "
                          "Halved automatically when the surrogate front is "
                          "too small to supply n_infill picks at this value.")
+    ap.add_argument("--acq-rule", choices=["margin", "pof"], default="margin",
+                    help="ACQUISITION: margin (the C6 to C9 rule: candidates "
+                         "with g_mean + kappa g_std <= 0 on every GP "
+                         "constraint rank first by uncertainty, the rest by "
+                         "their margin score) or pof (rank every candidate by "
+                         "uncertainty weighted by its probability of "
+                         "feasibility, the product over the GP constraints of "
+                         "Phi(-g_mean / g_std); no hard gate).")
+    ap.add_argument("--feas-kappa-per", action="append", default=None,
+                    metavar="NAME=KAPPA",
+                    help="ACQUISITION, margin rule: kappa for one constraint "
+                         "(repeatable), overriding --feas-kappa for that "
+                         "column, e.g. --feas-kappa-per g_efpd=0.5.")
+    ap.add_argument("--margin-constraints", nargs="*", default=None,
+                    metavar="NAME",
+                    help="ACQUISITION, margin rule: apply the gate to these "
+                         "constraints only; the others are ignored by the "
+                         "gate (they still bound the NSGA-II population).")
+    ap.add_argument("--constrain-boron", action="store_true",
+                    help="c9: make the MTC boron limit (--boron-ceiling) a "
+                         "constraint of the loop, g_boron = c_max - ceiling, "
+                         "instead of a recorded quantity. A resumed archive "
+                         "must list g_boron among its constraint names.")
     ap.add_argument("--feas-kappa", type=float, default=1.5,
                     help="FEAS-MARGIN: infill candidates must satisfy "
                          "g_mean + kappa*g_std <= 0 on the surrogate "
@@ -436,6 +459,11 @@ def main():
         cfg.nsga_gen = int(args.nsga_gen)
     cfg.infill_min_sep = float(args.infill_min_sep)  # BATCH-DIVERSITY
     cfg.feas_kappa = float(args.feas_kappa)          # FEAS-MARGIN
+    cfg.acq_rule = args.acq_rule                      # ACQUISITION
+    cfg.feas_kappa_map = ({k: float(v) for k, v in (s.split("=", 1) for s in args.feas_kappa_per)}
+                          if args.feas_kappa_per else None)
+    cfg.margin_constraints = (tuple(args.margin_constraints)
+                              if args.margin_constraints else None)
 
     ev = OpenMCEvaluator(spec, k_target=k_target_arg, transport=transport,
                          core_particles=args.core_particles,
@@ -482,6 +510,9 @@ def main():
         ev.c9_ppm_step = float(args.boron_step)
         ev.c9_ppm_top = float(args.boron_top)
         ev.c9_boron_ceiling_ppm = float(args.boron_ceiling)
+        if args.constrain_boron:
+            spec.constraint_names.append("g_boron")
+            spec.constraint_scales["g_boron"] = float(args.boron_ceiling)
         ev.c9_hump_noise_pcm = float(args.hump_noise)
         if args.axial_model:
             import axial_ratio_model as arm
@@ -739,6 +770,10 @@ def main():
                                    "whether two banks suffice.")},
                            "surrogate_policy": {
                                "efpd_cap_efpd": cfg.efpd_cap,
+                               "acq_rule": cfg.acq_rule,
+                               "feas_kappa_map": cfg.feas_kappa_map,
+                               "margin_constraints": cfg.margin_constraints,
+                               "boron_constrained": bool(args.constrain_boron),
                                "nsga_pop": cfg.nsga_pop,
                                "nsga_gen": cfg.nsga_gen,
                                "infill_min_sep": cfg.infill_min_sep,

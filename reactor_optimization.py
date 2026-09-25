@@ -587,6 +587,16 @@ class OptimizerConfig:
                                    # the pure-uncertainty ordering.
                                    # 1.5 is the C8/C9 value; it was 1.0
                                    # through C7.
+    acq_rule: str = "margin"       # ACQUISITION (25 Sep 2026): "margin" is
+                                   # the C6 to C9 rule; "pof" ranks every
+                                   # candidate by uncertainty weighted by
+                                   # its probability of feasibility
+    feas_kappa_map: dict | None = None   # margin rule: kappa per constraint
+                                         # name, overriding feas_kappa
+    margin_constraints: tuple | None = None  # margin rule: gate on these
+                                             # constraints only
+
+
 
 
 class ActiveLearningMOO:
@@ -685,6 +695,162 @@ class ActiveLearningMOO:
             return Xp
         return Xp[np.argsort(cv)]        # least-infeasible first
 
+    def propose(self, it, verbose=True):
+        """One acquisition step on the current archive: fit the surrogates,
+        run NSGA-II on them, rank the candidates by the configured rule and
+        pick the infill batch. Returns (Xinf, info); nothing is evaluated,
+        so a replay from an archive prefix reproduces what the loop chose."""
+        t_fit0 = time.perf_counter()
+        obj_sur = self._new_surrogate().fit(self.X, self.F)
+        con_sur = (self._new_surrogate().fit(self.X, self.G)
+                   if self.spec.n_constr else None)
+        t_fit = time.perf_counter() - t_fit0
+
+        # NSGA-II on the surrogate (cheap):
+        t_nsga0 = time.perf_counter()
+        prob = _SurrogateProblem(self.spec, obj_sur, con_sur,
+                                 efpd_cap=self.cfg.efpd_cap)  # EFPD-CLIP
+        algo = NSGA2(pop_size=self.cfg.nsga_pop, sampling=LHS())
+        res = minimize(prob, algo,
+                       ("n_gen", self.cfg.nsga_gen),
+                       seed=self.cfg.seed + it, verbose=False)
+        t_nsga = time.perf_counter() - t_nsga0
+        t_acq0 = time.perf_counter()
+        cand = self._least_infeasible_candidates(res)
+        if cand is None or cand.shape[0] == 0:
+            # nothing usable came back: explore randomly this iteration
+            cand = np.atleast_2d(
+                self.spec.design_space.lhs(max(self.cfg.n_infill * 4, 32),
+                                           seed=self.cfg.seed + 777 + it))
+        elif res.X is None and verbose:
+            print(f"[Stage 2] iter {it+1}: surrogate NSGA-II found no "
+                  f"feasible design; infilling on the {cand.shape[0]} "
+                  f"least-infeasible population members.")
+
+        # ---- infill / acquisition: most UNCERTAIN candidates, spread ----
+        # BATCH-DIVERSITY: rank by GP uncertainty (exploration, unchanged)
+        # but force a minimum separation between the picks, and between
+        # each pick and the archive, in the unit design box. Block 2
+        # showed why: top-k by uncertainty on a continuous front returns
+        # k neighbours, and the old 1e-6 raw-unit duplicate test let six
+        # copies of one design through (cases 48-53 span 0.03 wt%).
+        # Separation:  ||(a - b) / (xu - xl)|| / sqrt(n_var) >= min_sep,
+        # a mean per-variable fraction of range. If the front cannot
+        # supply n_infill picks at min_sep, halve it and rescan, so a
+        # small front still fills the batch as diversely as it can. No
+        # candidate is discarded for its predicted objectives.
+        _, std = obj_sur.predict(cand)
+        score = (std / (std.max(axis=0) + 1e-12)).sum(axis=1)
+        # FEAS-MARGIN: block 3 selected five of six infill designs past
+        # the reactivity limit (k_core over 1.35 by 1530 to 7750 pcm)
+        # because the constraint GP is optimistic where the data is
+        # thin and the ranking never asked for margin. Score every
+        # candidate as
+        #     s = max_j ( g_mean_j + kappa * g_std_j )
+        # over the GP-predicted constraints, in the normalised units of
+        # CONSTRAINT-NORM. Exact constraints (geometry, enrichment) are
+        # excluded: the NSGA population satisfies them exactly.
+        # Margin-feasible candidates (s <= 0) rank first, by
+        # uncertainty as before. The rest follow, ordered by s, so
+        # nothing is discarded and the batch always fills. kappa = 0
+        # reproduces the block 3 ranking exactly.
+        g_mean, g_std = con_sur.predict(cand)
+        g_mean = np.atleast_2d(np.asarray(g_mean, dtype=float))
+        g_std = np.atleast_2d(np.asarray(g_std, dtype=float))
+        kappa = float(getattr(self.cfg, "feas_kappa", 1.5))
+        _exact_idx = {self.spec.constraint_names.index(n)
+                      for n in self.spec.exact_constraints}
+        _gp_cols = [j for j in range(g_mean.shape[1])
+                    if j not in _exact_idx]
+        # ACQUISITION RULES (25 Sep 2026). "margin" is the C6 to C9 rule
+        # described above, numerically unchanged when neither
+        # feas_kappa_map nor margin_constraints is set. "pof" ranks every
+        # candidate by uncertainty weighted by its probability of
+        # feasibility, the product over the GP constraints of
+        # Phi(-g_mean / g_std): there is no hard gate, a candidate at 0.9
+        # outranks one at 0.1, and the batch follows the uncertainty again.
+        rule = str(getattr(self.cfg, "acq_rule", "margin") or "margin")
+        _names = list(self.spec.constraint_names)
+        _only = getattr(self.cfg, "margin_constraints", None)
+        if _only:
+            _gp_cols = [j for j in _gp_cols if _names[j] in set(_only)]
+        _kmap = getattr(self.cfg, "feas_kappa_map", None) or {}
+        _kvec = np.array([float(_kmap.get(_names[j], kappa)) for j in _gp_cols],
+                         dtype=float)
+        acq_info = dict(rule=rule, kappa=kappa,
+                        gate_columns=[_names[j] for j in _gp_cols])
+        if rule == "pof" and _gp_cols:
+            from scipy.stats import norm as _norm
+            _sd = np.maximum(g_std[:, _gp_cols], 1e-12)
+            pof = np.prod(_norm.cdf(-g_mean[:, _gp_cols] / _sd), axis=1)
+            s_marg = -pof
+            eligible = pof >= 0.5
+            order = np.argsort(-(score * pof)).astype(int)
+            acq_info.update(pof=pof, weighted=score * pof)
+            if verbose:
+                print(f"           [acquisition] pof rule: "
+                      f"{int(eligible.sum())}/{len(cand)} candidates above "
+                      f"0.5, mean pof {float(pof.mean()):.3f}")
+        else:
+            if _gp_cols:
+                s_marg = (g_mean[:, _gp_cols]
+                          + _kvec * g_std[:, _gp_cols]).max(axis=1)
+            else:
+                s_marg = np.zeros(len(cand), dtype=float)
+            eligible = s_marg <= 0.0
+            if verbose:
+                print(f"           [acquisition] margin-feasible: "
+                      f"{int(eligible.sum())}/{len(cand)} candidates "
+                      f"at kappa={kappa:g}"
+                      + (f" (per constraint {_kmap})" if _kmap else "")
+                      + (f" on {[_names[j] for j in _gp_cols]}" if _only else ""))
+            order = np.concatenate([
+                np.flatnonzero(eligible)[np.argsort(-score[eligible])],
+                np.flatnonzero(~eligible)[np.argsort(s_marg[~eligible])],
+            ]).astype(int)
+        acq_info.update(s_marg=s_marg, eligible=eligible, score=score)
+        _xl = np.asarray(self.spec.design_space.xl, dtype=float)
+        _xu = np.asarray(self.spec.design_space.xu, dtype=float)
+        span = np.where(_xu > _xl, _xu - _xl, 1.0)
+        rootn = np.sqrt(float(self.spec.design_space.n))
+
+        def _sep(a, B):
+            if B is None or len(B) == 0:
+                return np.inf
+            d = (np.atleast_2d(np.asarray(B, dtype=float)) - a) / span
+            return float(np.linalg.norm(d, axis=1).min()) / rootn
+
+        chosen = []
+        min_sep = float(getattr(self.cfg, "infill_min_sep", 0.14))
+        while len(chosen) < self.cfg.n_infill and min_sep > 1e-4:
+            for idx in order:
+                if len(chosen) >= self.cfg.n_infill:
+                    break
+                x = cand[idx]
+                if _sep(x, self.X) < min_sep:
+                    continue
+                if chosen and _sep(x, np.array(chosen)) < min_sep:
+                    continue
+                chosen.append(x)
+            if len(chosen) < self.cfg.n_infill:
+                min_sep *= 0.5          # relax and rescan the ranking
+                if verbose:
+                    print(f"           [acquisition] diversity relaxed "
+                          f"to min_sep={min_sep:.4f} "
+                          f"({len(chosen)}/{self.cfg.n_infill} picked)")
+        if len(chosen) < self.cfg.n_infill:
+            # candidates exhausted even after relaxation: top up with
+            # space-filling randoms rather than duplicating a pick
+            extra = np.atleast_2d(self.spec.design_space.lhs(
+                self.cfg.n_infill - len(chosen),
+                seed=self.cfg.seed + 99 + it))
+            chosen.extend(list(extra))
+        Xinf = np.array(chosen[: self.cfg.n_infill])
+        t_acq = time.perf_counter() - t_acq0
+        return Xinf, dict(t_fit=t_fit, t_nsga=t_nsga, t_acq=t_acq,
+                          obj_sur=obj_sur, con_sur=con_sur, cand=cand,
+                          order=order, acq=acq_info)
+
     # ---- main loop ----------------------------------------------------------
     def run(self, verbose=True):
         t0 = time.time()
@@ -718,120 +884,8 @@ class ActiveLearningMOO:
 
         # ---- STAGE 2 : active-learning loop ---------------------------------
         for it in range(self.cfg.n_iter):
-            t_fit0 = time.perf_counter()
-            obj_sur = self._new_surrogate().fit(self.X, self.F)
-            con_sur = (self._new_surrogate().fit(self.X, self.G)
-                       if self.spec.n_constr else None)
-            t_fit = time.perf_counter() - t_fit0
-
-            # NSGA-II on the surrogate (cheap):
-            t_nsga0 = time.perf_counter()
-            prob = _SurrogateProblem(self.spec, obj_sur, con_sur,
-                                     efpd_cap=self.cfg.efpd_cap)  # EFPD-CLIP
-            algo = NSGA2(pop_size=self.cfg.nsga_pop, sampling=LHS())
-            res = minimize(prob, algo,
-                           ("n_gen", self.cfg.nsga_gen),
-                           seed=self.cfg.seed + it, verbose=False)
-            t_nsga = time.perf_counter() - t_nsga0
-            t_acq0 = time.perf_counter()
-            cand = self._least_infeasible_candidates(res)
-            if cand is None or cand.shape[0] == 0:
-                # nothing usable came back: explore randomly this iteration
-                cand = np.atleast_2d(
-                    self.spec.design_space.lhs(max(self.cfg.n_infill * 4, 32),
-                                               seed=self.cfg.seed + 777 + it))
-            elif res.X is None and verbose:
-                print(f"[Stage 2] iter {it+1}: surrogate NSGA-II found no "
-                      f"feasible design; infilling on the {cand.shape[0]} "
-                      f"least-infeasible population members.")
-
-            # ---- infill / acquisition: most UNCERTAIN candidates, spread ----
-            # BATCH-DIVERSITY: rank by GP uncertainty (exploration, unchanged)
-            # but force a minimum separation between the picks, and between
-            # each pick and the archive, in the unit design box. Block 2
-            # showed why: top-k by uncertainty on a continuous front returns
-            # k neighbours, and the old 1e-6 raw-unit duplicate test let six
-            # copies of one design through (cases 48-53 span 0.03 wt%).
-            # Separation:  ||(a - b) / (xu - xl)|| / sqrt(n_var) >= min_sep,
-            # a mean per-variable fraction of range. If the front cannot
-            # supply n_infill picks at min_sep, halve it and rescan, so a
-            # small front still fills the batch as diversely as it can. No
-            # candidate is discarded for its predicted objectives.
-            _, std = obj_sur.predict(cand)
-            score = (std / (std.max(axis=0) + 1e-12)).sum(axis=1)
-            # FEAS-MARGIN: block 3 selected five of six infill designs past
-            # the reactivity limit (k_core over 1.35 by 1530 to 7750 pcm)
-            # because the constraint GP is optimistic where the data is
-            # thin and the ranking never asked for margin. Score every
-            # candidate as
-            #     s = max_j ( g_mean_j + kappa * g_std_j )
-            # over the GP-predicted constraints, in the normalised units of
-            # CONSTRAINT-NORM. Exact constraints (geometry, enrichment) are
-            # excluded: the NSGA population satisfies them exactly.
-            # Margin-feasible candidates (s <= 0) rank first, by
-            # uncertainty as before. The rest follow, ordered by s, so
-            # nothing is discarded and the batch always fills. kappa = 0
-            # reproduces the block 3 ranking exactly.
-            g_mean, g_std = con_sur.predict(cand)
-            g_mean = np.atleast_2d(np.asarray(g_mean, dtype=float))
-            g_std = np.atleast_2d(np.asarray(g_std, dtype=float))
-            kappa = float(getattr(self.cfg, "feas_kappa", 1.5))
-            _exact_idx = {self.spec.constraint_names.index(n)
-                          for n in self.spec.exact_constraints}
-            _gp_cols = [j for j in range(g_mean.shape[1])
-                        if j not in _exact_idx]
-            if _gp_cols:
-                s_marg = (g_mean[:, _gp_cols]
-                          + kappa * g_std[:, _gp_cols]).max(axis=1)
-            else:
-                s_marg = np.zeros(len(cand), dtype=float)
-            eligible = s_marg <= 0.0
-            if verbose:
-                print(f"           [acquisition] margin-feasible: "
-                      f"{int(eligible.sum())}/{len(cand)} candidates "
-                      f"at kappa={kappa:g}")
-            order = np.concatenate([
-                np.flatnonzero(eligible)[np.argsort(-score[eligible])],
-                np.flatnonzero(~eligible)[np.argsort(s_marg[~eligible])],
-            ]).astype(int)
-            _xl = np.asarray(self.spec.design_space.xl, dtype=float)
-            _xu = np.asarray(self.spec.design_space.xu, dtype=float)
-            span = np.where(_xu > _xl, _xu - _xl, 1.0)
-            rootn = np.sqrt(float(self.spec.design_space.n))
-
-            def _sep(a, B):
-                if B is None or len(B) == 0:
-                    return np.inf
-                d = (np.atleast_2d(np.asarray(B, dtype=float)) - a) / span
-                return float(np.linalg.norm(d, axis=1).min()) / rootn
-
-            chosen = []
-            min_sep = float(getattr(self.cfg, "infill_min_sep", 0.14))
-            while len(chosen) < self.cfg.n_infill and min_sep > 1e-4:
-                for idx in order:
-                    if len(chosen) >= self.cfg.n_infill:
-                        break
-                    x = cand[idx]
-                    if _sep(x, self.X) < min_sep:
-                        continue
-                    if chosen and _sep(x, np.array(chosen)) < min_sep:
-                        continue
-                    chosen.append(x)
-                if len(chosen) < self.cfg.n_infill:
-                    min_sep *= 0.5          # relax and rescan the ranking
-                    if verbose:
-                        print(f"           [acquisition] diversity relaxed "
-                              f"to min_sep={min_sep:.4f} "
-                              f"({len(chosen)}/{self.cfg.n_infill} picked)")
-            if len(chosen) < self.cfg.n_infill:
-                # candidates exhausted even after relaxation: top up with
-                # space-filling randoms rather than duplicating a pick
-                extra = np.atleast_2d(self.spec.design_space.lhs(
-                    self.cfg.n_infill - len(chosen),
-                    seed=self.cfg.seed + 99 + it))
-                chosen.extend(list(extra))
-            Xinf = np.array(chosen[: self.cfg.n_infill])
-            t_acq = time.perf_counter() - t_acq0
+            Xinf, _p = self.propose(it, verbose=verbose)
+            t_fit, t_nsga, t_acq = _p["t_fit"], _p["t_nsga"], _p["t_acq"]
 
             # evaluate the infill points with the TRUTH:
             t_ev0 = time.perf_counter()

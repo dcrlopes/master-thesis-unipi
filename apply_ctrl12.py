@@ -69,7 +69,7 @@ EDITS.append(dict(
     name="V1 _ctrl_solve takes positions and salt",
     old='''def _ctrl_solve(ev, design):
     """One zoned core solve with the sixteen regulating-bank CRAs inserted
-    (zn.RE_BANK_POSITIONS), SH banks out. Same fidelity, zoning path and
+    (zn.RE_BANK_POSITIONS), the SH bank out. Same fidelity, zoning path and
     deterministic seeding as every other core solve; the case directory is
     keyed by the design hash so re-evaluations reuse it."""
     tag = _design_seed(design, salt="ctrl") & 0xFFFFFFFF
@@ -84,7 +84,7 @@ EDITS.append(dict(
 ''',
     new='''def _ctrl_solve(ev, design, positions=None, salt="ctrl"):
     """One zoned core solve with a set of regulating-bank CRAs inserted,
-    SH banks out. Same fidelity, zoning path and deterministic seeding as
+    the SH bank out. Same fidelity, zoning path and deterministic seeding as
     every other core solve; the case directory is keyed by the design hash
     AND the salt, so the ALL-RE and the RE1+RE2 readings each reuse their
     own cache. Defaults (positions=None, salt="ctrl") reproduce the

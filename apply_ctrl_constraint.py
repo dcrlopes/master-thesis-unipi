@@ -66,7 +66,7 @@ FILES = {
 # CTRL-SCREEN: the sixteen regulating-bank positions (RE1..RE4)               #
 # --------------------------------------------------------------------------- #
 # The complete inner sixteen assemblies: the C ring (RE1), the M-ring
-# diagonals (RE2) and both M-edge orbits (RE3, RE4). The SH banks occupy the
+# diagonals (RE2) and both M-edge orbits (RE3, RE4). The SH bank occupies the
 # outer sixteen and are reserved for scram, so operational controllability
 # means subcritical under ALL-RE. Single source shared by the evaluator's
 # g_ctrl constraint and by rod_bank_worth.py.
@@ -87,7 +87,7 @@ RE_BANK_POSITIONS = frozenset([
 '''            "g_peak":  core["fdh_core"] - self.f_max,     # CORE peaking
             # CTRL-SCREEN (Campaign 7): operational controllability. One
             # extra zoned core solve with the sixteen regulating-bank CRAs
-            # (zn.RE_BANK_POSITIONS) fully inserted; SH banks stay out,
+            # (zn.RE_BANK_POSITIONS) fully inserted; the SH bank stays out,
             # reserved for scram. Feasible iff subcritical by the operating
             # margin. Enabled only when run_optimization passes
             # --ctrl-margin, so earlier campaigns are bit-for-bit unchanged.
@@ -196,7 +196,7 @@ CTRL_SOLVE = '''
 # --------------------------------------------------------------------------- #
 def _ctrl_solve(ev, design):
     """One zoned core solve with the sixteen regulating-bank CRAs inserted
-    (zn.RE_BANK_POSITIONS), SH banks out. Same fidelity, zoning path and
+    (zn.RE_BANK_POSITIONS), the SH bank out. Same fidelity, zoning path and
     deterministic seeding as every other core solve; the case directory is
     keyed by the design hash so re-evaluations reuse it."""
     tag = _design_seed(design, salt="ctrl") & 0xFFFFFFFF

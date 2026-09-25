@@ -238,7 +238,7 @@ def main() -> None:
                          f"margin={marg:7.0f} {'ok' if ok else 'NO'}")
                 verdicts.append(f"{name}:{'ok' if ok else 'NO'}")
             # composite reading: operational control by regulating banks,
-            # shutdown authority by everything, SH banks reserved for scram
+            # shutdown authority by everything, the SH bank reserved for scram
             rec["verdict"] = " ".join(verdicts)
             print(line)
             results["states"].append(rec)

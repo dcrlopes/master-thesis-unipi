@@ -309,7 +309,7 @@ class OpenMCEvaluator(Evaluator):
             "g_peak":  core["fdh_core"] - self.f_max,     # CORE peaking
             # CTRL-SCREEN (Campaign 7): operational controllability. One
             # extra zoned core solve with the sixteen regulating-bank CRAs
-            # (zn.RE_BANK_POSITIONS) fully inserted; SH banks stay out,
+            # (zn.RE_BANK_POSITIONS) fully inserted; the SH bank stays out,
             # reserved for scram. Feasible iff subcritical by the operating
             # margin. Enabled only when run_optimization passes
             # --ctrl-margin, so earlier campaigns are bit-for-bit unchanged.
@@ -666,7 +666,7 @@ if __name__ == "__main__":
 # --------------------------------------------------------------------------- #
 def _ctrl_solve(ev, design, positions=None, salt="ctrl"):
     """One zoned core solve with a set of regulating-bank CRAs inserted,
-    SH banks out. Same fidelity, zoning path and deterministic seeding as
+    the SH bank out. Same fidelity, zoning path and deterministic seeding as
     every other core solve; the case directory is keyed by the design hash
     AND the salt, so the ALL-RE and the RE1+RE2 readings each reuse their
     own cache. Defaults (positions=None, salt="ctrl") reproduce the

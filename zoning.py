@@ -191,7 +191,7 @@ def evaluator_design_map(design: dict) -> dict:
 # CTRL-SCREEN: the sixteen regulating-bank positions (RE1..RE4)               #
 # --------------------------------------------------------------------------- #
 # The complete inner sixteen assemblies: the C ring (RE1), the M-ring
-# diagonals (RE2) and both M-edge orbits (RE3, RE4). The SH banks occupy the
+# diagonals (RE2) and both M-edge orbits (RE3, RE4). The SH bank occupies the
 # outer sixteen and are reserved for scram, so operational controllability
 # means subcritical under ALL-RE. Single source shared by the evaluator's
 # g_ctrl constraint and by rod_bank_worth.py.

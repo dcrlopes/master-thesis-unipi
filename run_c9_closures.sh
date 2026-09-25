@@ -69,7 +69,7 @@ stage_P() {
   [ "$(hostname)" = "wks720" ] || die "not on wks720"
   [ "${CONDA_DEFAULT_ENV:-}" = "openmc-env" ] || die "conda env is not openmc-env"
   envok || die "environment"
-  for f in c9_dep_core3d.py confirm3d.py mtc_scan.py run_gdstudy.sh run_valgrid_c9.sh axial_ratio_model.py "$CKPT" \n           c9_post/predicted_front_evallist.json c9_eval_predicted_front.py; do
+  for f in c9_dep_core3d.py confirm3d.py mtc_scan.py run_gdstudy.sh run_valgrid_c9.sh axial_ratio_model.py "$CKPT" c9_post/predicted_front_evallist.json c9_eval_predicted_front.py; do
     [ -f "$f" ] || die "missing $f"
   done
   grep -q -- "--salt" c9_dep_core3d.py || die "c9_dep_core3d.py lacks the --salt flag"

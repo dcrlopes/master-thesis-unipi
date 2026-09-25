@@ -109,3 +109,6 @@ kh_probe/
 recheck_entropy/
 verify_mp/
 verify_zoned_ev/
+
+*.bak.enrbox
+kh_c6_v2/

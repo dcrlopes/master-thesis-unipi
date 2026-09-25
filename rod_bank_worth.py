@@ -9,35 +9,40 @@ rods_pos86/71/74/107, which the thesis will cite. Changing its ORDER would
 make those logs irreproducible from the committed code. This script is the
 operational counterpart: same solver, same conventions, bank semantics.
 
-THE SIX BANKS (position lists, (row, col) on the 6x6 map, corners empty)
-------------------------------------------------------------------------
+THE FIVE BANKS (position lists, (row, col) on the 6x6 map, corners empty)
+-------------------------------------------------------------------------
 Adapted from the NuScale-like benchmark (16 CRAs of 37 FAs, regulating
 inboard, shutdown outboard), extended so EVERY assembly carries a CRA:
 the four RE banks are the complete inner sixteen (C and M rings) and the
-three SH banks are the complete outer sixteen (P ring), 32 CRAs of 32:
+one SH bank is the complete outer sixteen (P ring), 32 CRAs of 32:
 
     RE1  inner ring (C)                 (2,2) (2,3) (3,2) (3,3)
     RE2  M-ring diagonals               (1,1) (1,4) (4,1) (4,4)
     RE3  M-ring edges, orbit A          (1,2) (2,4) (4,3) (3,1)
     RE4  M-ring edges, orbit B          (1,3) (3,4) (4,2) (2,1)
-    SH3  P-ring edge mids, orbit A      (0,2) (2,5) (5,3) (3,0)
-    SH4  P-ring edge mids, orbit B      (0,3) (3,5) (5,2) (2,0)
-    SH5  P-ring corner-adjacent, both orbits (8 CRAs)
-         (0,1) (1,5) (5,4) (4,0) (0,4) (4,5) (5,1) (1,0)
+    SH   P ring, all sixteen            (0,1) (0,2) (0,3) (0,4) (1,0) (1,5)
+                                        (2,0) (2,5) (3,0) (3,5) (4,0) (4,5)
+                                        (5,1) (5,2) (5,3) (5,4)
 
-Every bank is closed under 90-degree rotation (SH5 is the union of the two
-P-corner orbits), so every bank pattern and every prefix of the operational
-sequence is exactly four-fold symmetric, and no assembly is left unrodded.
+Every bank is closed under 90-degree rotation, so every bank pattern and
+every prefix of the operational sequence is exactly four-fold symmetric, and
+no assembly is left unrodded.
+
+The shutdown bank is one bank because it is only ever withdrawn (every
+controllability state) or inserted whole (the SCRAM state). Earlier versions
+of this script split it into SH3, SH4 and SH5 for an insertion ladder that
+was never run. The logs banks_screen*.log still print that split, and their
+RE12, ALLRE and SCRAM states insert exactly the positions this version does.
 
 OPERATIONAL SEQUENCE
-    RE1 -> RE2 -> RE3 -> RE4 -> SH3 -> SH4 -> SH5
+    RE1 -> RE2 -> RE3 -> RE4 -> SH
 Regulating banks first, inboard to outboard. The controllability criterion
 is that the four RE banks alone hold the core subcritical by the operating
-margin, because SH3 and SH4 are reserved for scram.
+margin, because the SH bank is reserved for scram.
 
 MODES
     --check                geometry self-test and ASCII map, no transport
-    --sequence             the six-step operational insertion ladder
+    --sequence             the five-step operational insertion ladder
     --banks RE1,RE2        one state with exactly those banks inserted
     --screen I,J,K,...     controllability screen over archive designs:
                            unrodded plus ALL-RE per design, verdict per
@@ -70,12 +75,10 @@ BANKS = {
     "RE2": [(1, 1), (1, 4), (4, 1), (4, 4)],
     "RE3": [(1, 2), (2, 4), (4, 3), (3, 1)],
     "RE4": [(1, 3), (3, 4), (4, 2), (2, 1)],
-    "SH3": [(0, 2), (2, 5), (5, 3), (3, 0)],
-    "SH4": [(0, 3), (3, 5), (5, 2), (2, 0)],
-    "SH5": [(0, 1), (1, 5), (5, 4), (4, 0),
-            (0, 4), (4, 5), (5, 1), (1, 0)],
+    "SH": [(0, 1), (0, 2), (0, 3), (0, 4), (1, 0), (1, 5), (2, 0), (2, 5),
+           (3, 0), (3, 5), (4, 0), (4, 5), (5, 1), (5, 2), (5, 3), (5, 4)],
 }
-SEQUENCE = ["RE1", "RE2", "RE3", "RE4", "SH3", "SH4", "SH5"]
+SEQUENCE = ["RE1", "RE2", "RE3", "RE4", "SH"]
 RE_BANKS = ["RE1", "RE2", "RE3", "RE4"]
 CORE = [(r, c) for r in range(6) for c in range(6)
         if (r, c) not in [(0, 0), (0, 5), (5, 0), (5, 5)]]
@@ -90,7 +93,7 @@ def self_check() -> None:
     print("[check] bank geometry")
     seen = []
     for name, cells in BANKS.items():
-        assert len(cells) in (4, 8), f"{name} has {len(cells)} cells"
+        assert len(cells) in (4, 16), f"{name} has {len(cells)} cells"
         assert all(p in CORE for p in cells), f"{name} leaves the core map"
         u = set(cells)
         assert all(rot(p) in u for p in u), \
@@ -99,7 +102,7 @@ def self_check() -> None:
     assert len(seen) == len(set(seen)) == 32, \
         "banks must cover all 32 assemblies exactly once"
     n_cra = sum(len(c) for c in BANKS.values())
-    print(f"    7 banks, {n_cra} CRAs of 32 assemblies, full coverage,")
+    print(f"    {len(BANKS)} banks, {n_cra} CRAs of 32 assemblies, full coverage,")
     print(f"    every bank closed under 90-degree rotation")
     print("    map (bank name, or -- for no rod, .. outside the core):")
     grid = [[".." for _ in range(6)] for _ in range(6)]
@@ -120,7 +123,7 @@ def main() -> None:
     ap.add_argument("--m-periphery", type=float)
     ap.add_argument("--absorber", choices=["B4C", "AIC"], default="B4C")
     ap.add_argument("--sequence", action="store_true",
-                    help="operational ladder RE1->RE2->RE3->RE4->SH3->SH4")
+                    help="operational ladder RE1->RE2->RE3->RE4->SH")
     ap.add_argument("--banks", default=None,
                     help="comma list of banks for ONE state, e.g. RE1,RE2")
     ap.add_argument("--screen", default=None,
@@ -129,7 +132,7 @@ def main() -> None:
     ap.add_argument("--screen-states", default="RE12,ALLRE,SCRAM",
                     help="comma list of graded screen states, from "
                          "RE12 (RE1+RE2 only), ALLRE (all four regulating "
-                         "banks) and SCRAM (all seven banks). Each state "
+                         "banks) and SCRAM (all 32 CRAs). Each state "
                          "adds one core solve per seed per design.")
     ap.add_argument("--margin", type=float, default=1000.0,
                     help="required subcriticality under ALL-RE, in pcm of "

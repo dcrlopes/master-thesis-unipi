@@ -7,7 +7,7 @@ WHAT IT ADDS
 ------------
 One extra zoned core solve per evaluation, with the sixteen regulating-bank
 CRAs (RE1..RE4, the complete inner C and M rings) fully inserted and the SH
-banks out, because SH3, SH4 and SH5 are reserved for scram. The new
+bank out, because the SH bank is reserved for scram. The new
 constraint is
 
     g_ctrl = k_ALLRE - (1 - margin)  <=  0

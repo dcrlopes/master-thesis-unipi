@@ -21,7 +21,7 @@ WHICH GROUP TO DERIVE FROM
     ALLRE   the four regulating banks, 16 CRAs (default). Operational
             control without chemical shim, the criterion of this study.
     RE12    RE1 + RE2 only, 8 CRAs. Much stricter.
-    SCRAM   all seven banks, 32 CRAs. Closest to the licensing shutdown
+    SCRAM   all 32 CRAs, RE1 to RE4 and SH. Closest to the licensing shutdown
             criterion, though a true shutdown margin also requires the
             highest-worth cluster stuck out and the cold, xenon-free state.
 

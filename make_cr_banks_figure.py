@@ -6,7 +6,7 @@ controllability screen of the Methodology chapter.
 The regulating banks RE1 to RE4 are the sixteen central assemblies listed in
 zoning.RE_BANK_POSITIONS, with RE1 and RE2 the subset of zoning.RE12_POSITIONS
 read by the two-bank diagnostic. The remaining sixteen assemblies of the core
-map carry the shutdown banks, withdrawn in the screen and reserved for scram.
+map carry the shutdown bank, withdrawn in the screen and reserved for scram.
 
 Drawing only, no transport.
 Usage: python make_cr_banks_figure.py <out.pdf> <out.png>
@@ -60,7 +60,7 @@ ax.set_title("Control rod banks of the 32-assembly core", fontsize=10)
 handles = [Patch(facecolor=c, edgecolor="white", label=f"Regulating bank {n}")
            for n, _, c in BANKS]
 handles.append(Patch(facecolor=SH_COLOUR, edgecolor="white",
-                     label="Shutdown banks, withdrawn in the screen"))
+                     label="Shutdown bank, withdrawn in the screen"))
 ax.legend(handles=handles, loc="upper center", bbox_to_anchor=(0.5, -0.02),
           ncol=2, fontsize=8, frameon=False)
 

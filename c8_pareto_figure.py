@@ -121,42 +121,24 @@ def main():
     fig, ax = plt.subplots(figsize=(9.0, 6.0), dpi=300)
     y_lo, y_hi = 1.30, 2.16
 
-    # ---- refuelling requirement bands and lines ------------------------- #
-    e05, e08, e10 = (efpd_req(cf) for cf in CF_LINES)
-    ax.axvspan(e05, e08, color=C_PROTO, alpha=0.14, lw=0, zorder=0)
-    ax.axvspan(e08, e10, color=C_BOAT, alpha=0.14, lw=0, zorder=0)
-    for cf in CF_LINES:
-        x = efpd_req(cf)
-        heavy = abs(cf - CF_REF) < 1e-9
-        ax.axvline(x, color="#333333", lw=1.6 if heavy else 0.9,
-                   ls="-" if heavy else ":", zorder=1)
-        ax.text(x, y_lo + 0.012, f"CF {cf:.1f}\n{x:.0f} d",
-                fontsize=8.5, ha="center", va="bottom", color="#333333",
-                bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="none",
-                          alpha=0.85))
-    band_handles = [
-        Patch(fc=C_PROTO, alpha=0.4, ec="none",
-              label="5 years, prototype duty, CF 0.5 to 0.8"),
-        Patch(fc=C_BOAT, alpha=0.4, ec="none",
-              label="5 years, at-sea duty, CF 0.8 to 1.0"),
-    ]
+    # ---- five years at full power ------------------------------------- #
+    e_5y = efpd_req(1.0)
+    ax.axvline(e_5y, color="#333333", lw=1.4, zorder=1)
+    ax.text(e_5y + 40, 1.93, f"Five years, {e_5y:.0f} EFPD",
+            fontsize=9, ha="left", va="bottom", color="#333333")
+    band_handles = []
 
     # ---- peaking limit and screens -------------------------------------- #
     ax.axhspan(F_LIMIT, y_hi, color="#D55E00", alpha=0.06, zorder=0)
     ax.axhline(F_LIMIT, color="#D55E00", lw=1.4, ls="--", zorder=1)
-    ax.text(2450, F_LIMIT + 0.012, r"$F_{\Delta H}$ limit (2.0)",
+    ax.text(2450, F_LIMIT + 0.012, r"$F_{\Delta H}$ limit, 2.0",
             color="#D55E00", fontsize=10, va="bottom")
     if not args.no_screens:
         for s in SCREENS:
             ax.axhline(s, color="#888888", lw=0.9, ls=":", zorder=1)
-            ax.text(2450, s + 0.008, f"Reference peaking {s:.2f}", color="#666666",
-                    fontsize=9, va="bottom", ha="left")
-
-    # ---- hypervolume reference ------------------------------------------ #
-    ax.plot(*ref, marker="*", ms=14, color="black", mfc="#F0E442",
-            zorder=6, ls="none")
-    ax.annotate("HV reference", ref, textcoords="offset points",
-                xytext=(-8, -16), fontsize=8.5, color="#333333", ha="right")
+            ax.text(1.01, s, f"Reference\npeaking {s:.2f}", color="#666666",
+                    fontsize=8.5, va="center", ha="left",
+                    transform=ax.get_yaxis_transform())
 
     # ---- designs ---------------------------------------------------------- #
     inf = [r for r in rows if not r["feas"]]
@@ -166,32 +148,36 @@ def main():
             ax.scatter([r["efpd"] for r in pts], [r["fdh"] for r in pts],
                        marker="x", s=42, c=BLOCK_COLOR[b], lw=1.3,
                        alpha=0.85, zorder=2)
-    ax.scatter([], [], marker="x", s=42, c="#444444", lw=1.3,
-               label=f"Infeasible ({len(inf)}, colour = block)")
+    # legend entries are proxies of one size, so that the enlarged front
+    # members and the large two-bank ring do not set the legend marker size
+    LEG_S = 60
+    ax.scatter([], [], marker="x", s=LEG_S, c="#444444", lw=1.3,
+               label=f"Infeasible ({len(inf)}), colour by block")
 
     seen = set()
     for r in rows:
         if not r["feas"]:
             continue
         b = block_of(r["pos"])
-        lab = None
-        if b not in seen:
-            seen.add(b)
-            n_b = sum(1 for q in rows if q["feas"] and block_of(q["pos"]) == b)
-            lab = f"{BLOCK_NAMES[b]}, feasible ({n_b})"
+        seen.add(b)
         on_front = r["pos"] in front_pos
         ax.scatter(r["efpd"], r["fdh"], marker=BLOCK_MARK[b],
                    s=140 if on_front else 60, c=BLOCK_COLOR[b],
                    edgecolors="black" if on_front else "none",
                    linewidths=1.5 if on_front else 0.0,
                    alpha=1.0 if on_front else 0.8,
-                   label=lab, zorder=5 if on_front else 3)
+                   zorder=5 if on_front else 3)
+    for b in sorted(seen):
+        n_b = sum(1 for q in rows if q["feas"] and block_of(q["pos"]) == b)
+        ax.scatter([], [], marker=BLOCK_MARK[b], s=LEG_S, c=BLOCK_COLOR[b],
+                   label=f"{BLOCK_NAMES[b]}, feasible ({n_b})")
 
     # two-bank ring
     ax.scatter([r["efpd"] for r in two], [r["fdh"] for r in two],
                marker="o", s=330, facecolors="none", edgecolors=C_TWOBANK,
-               linewidths=2.0, zorder=4,
-               label=f"Two-bank controllable ({len(two)})")
+               linewidths=2.0, zorder=4)
+    ax.scatter([], [], marker="o", s=LEG_S, facecolors="none", edgecolors=C_TWOBANK,
+               linewidths=1.5, label=f"Two-bank controllable ({len(two)})")
 
     # Pareto step line
     fx = [r["efpd"] for r in front]; fy = [r["fdh"] for r in front]
@@ -205,11 +191,18 @@ def main():
 
     # named designs
     by_pos = {r["pos"]: r for r in rows}
-    notes = {1:  ("C8-1", (10, 10), "left"),
-             47: ("C8-47", (12, -14), "left"),
+    notes = {1:  ("C8-1", (-6, 30), "center"),
+             47: ("C8-47", (20, -70), "center"),
+             42: ("C8-42", (40, -40), "center"),
+             23: ("C8-23", (40, -78), "center"),
+             29: ("C8-29", (0, -44), "center"),
+             21: ("C8-21", (16, -34), "left"),
+             44: ("C8-44", (-14, -72), "center"),
+             59: ("C8-59", (22, -66), "center"),
              53: ("C8-53", (14, -16), "left"),
              31: ("C8-31", (14, 12), "left"),
-             21: ("C8-21", (10, 12), "left")}
+             12: ("C8-12", (0, 28), "center"),
+             13: ("C8-13", (-4, 30), "center")}
     for p, (txt, off, ha) in notes.items():
         if p in by_pos:
             r = by_pos[p]
@@ -220,9 +213,8 @@ def main():
     # ---- axes ------------------------------------------------------------ #
     ax.set_xlim(0, 6400)
     ax.set_ylim(y_lo, y_hi)
-    ax.set_xlabel("Cycle length (EFPD)", fontsize=13)
-    ax.set_ylabel(r"Radial enthalpy-rise factor $F_{\Delta H}$ (core)",
-                  fontsize=13)
+    ax.set_xlabel("Cycle length [EFPD]", fontsize=13)
+    ax.set_ylabel(r"Core $F_{\Delta H}$ [-]", fontsize=13)
     if args.title:
         ax.set_title(args.title, fontsize=14, pad=10)
     ax.grid(alpha=0.22, lw=0.6)
@@ -231,7 +223,8 @@ def main():
         ax.spines[side].set_visible(False)
     handles, labels = ax.get_legend_handles_labels()
     ax.legend(band_handles + handles, [h.get_label() for h in band_handles]
-              + labels, loc="upper right", fontsize=8.8, frameon=True,
+              + labels, loc="upper right", bbox_to_anchor=(1.0, 0.93),
+              fontsize=8.8, frameon=True,
               framealpha=0.94, borderpad=0.7, labelspacing=0.4)
 
     fig.tight_layout()

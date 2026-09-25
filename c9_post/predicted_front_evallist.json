@@ -1,0 +1,54 @@
+{
+ "source": "figs_c9_gp/gp_predicted_fronts.json",
+ "cut": "60",
+ "designs": [
+  {
+   "enrich": 4.1778499995487275,
+   "gd_wt": 1.1669320801625457e-07,
+   "refl_thick": 5.659999341306439,
+   "gd_pins": 27.0,
+   "predicted_peaking": 1.495409855805004,
+   "predicted_c_max": 3044.1428495003747
+  },
+  {
+   "enrich": 4.206368326671401,
+   "gd_wt": 0.3376712756555147,
+   "refl_thick": 5.659999522459832,
+   "gd_pins": 20.0,
+   "predicted_peaking": 1.5032220449112943,
+   "predicted_c_max": 2760.3182789145108
+  },
+  {
+   "enrich": 4.21119171621546,
+   "gd_wt": 1.1046913246950953,
+   "refl_thick": 5.659999930334426,
+   "gd_pins": 18.0,
+   "predicted_peaking": 1.5111935426977494,
+   "predicted_c_max": 2341.9847714571683
+  },
+  {
+   "enrich": 4.229731158420992,
+   "gd_wt": 5.002266756695386,
+   "refl_thick": 5.659999505261326,
+   "gd_pins": 15.0,
+   "predicted_peaking": 1.5189885362587328,
+   "predicted_c_max": 1583.7908582543484
+  },
+  {
+   "enrich": 4.222207378724618,
+   "gd_wt": 5.161054534323656,
+   "refl_thick": 5.659999959980749,
+   "gd_pins": 17.0,
+   "predicted_peaking": 1.5268852160214565,
+   "predicted_c_max": 1360.0130028221847
+  },
+  {
+   "enrich": 4.222207378724618,
+   "gd_wt": 5.180919442957306,
+   "refl_thick": 5.659998603263852,
+   "gd_pins": 18.0,
+   "predicted_peaking": 1.5348233331708792,
+   "predicted_c_max": 1250.2244863224837
+  }
+ ]
+}

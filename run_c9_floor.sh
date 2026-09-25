@@ -154,6 +154,7 @@ stage_C() {
 
 stage_F() {
   hr; echo " REPORT  ($(stamp))"; hr
+  python c9_dep_core3d.py --checkpoint "$OUT/optimization_checkpoint.json" --out "$DEP" --analyse >> "$DEP.log" 2>&1 || echo "  WARNING aggregation failed"
   { echo "Campaign 9 under a floor of $FLOOR d, $(stamp)"
     echo "archive     : $(n_arch $OUT) evaluations, $N_SEED seeded from Campaign 9"
     echo "front       : $(front_of $OUT)   (indices below $N_SEED are Campaign 9 designs)"

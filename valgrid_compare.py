@@ -78,18 +78,43 @@ def load(path):
     cons = ck["constraint_names"]
     meta = ck.get("meta", {})
     lim = meta.get("limits", {})
+    c9 = meta.get("campaign9") or {}
     scales = {"g_kmin": float(lim.get("k_min", 1.02)),
               "g_kmax": float(lim.get("k_max", 1.35)),
               "g_enr": float(lim.get("enr_max", 19.75)),
               "g_peak": float(lim.get("f_max", 2.0)),
               "g_geom": cg.R_VESSEL_INNER - cg.VESSEL_CLEARANCE_CM,
-              "g_ctrl": 1.0}
+              "g_ctrl": 1.0,
+              # Campaign 9 (run_optimization.py: campaign9_problem)
+              "g_efpd": float(c9.get("efpd_req", 1826.0)),
+              "g_ctrl_peak": 1.0,
+              "g_boron": float(c9.get("boron_ceiling_ppm", 2763.0))}
+    missing = [c for c in cons if c not in scales]
+    if missing:
+        raise SystemExit(f"{path}: no scale for constraints {missing}")
+    # objectives as the archive states them; maximised ones are negated, as
+    # the loop does, so F is always in minimisation space. Campaign 8 stores
+    # [cycle_length max, peaking min], Campaign 9 [peaking min, c_max min].
+    objs = [tuple(o) for o in (ck.get("objectives") or [["cycle_length", "max"], ["peaking", "min"]])]
+    sign = np.array([-1.0 if s == "max" else 1.0 for _, s in objs])
     X = np.array([[float(r[n]) for n in names] for r in raw])
-    F = np.array([[-float(r["cycle_length"]), float(r["peaking"])] for r in raw])
+    F = np.array([[sign[j] * float(r[o]) for j, (o, _) in enumerate(objs)] for r in raw])
     G = np.array([[float(r[c]) / scales[c] for c in cons] for r in raw])
     feas = np.all(G <= 1e-9, axis=1)
     return dict(ck=ck, raw=raw, names=names, cons=cons, meta=meta,
-                scales=scales, X=X, F=F, G=G, feas=feas, path=path)
+                scales=scales, X=X, F=F, G=G, feas=feas, path=path,
+                objs=objs, sign=sign)
+
+
+# label, unit and physical reference (the worst acceptable value) per objective
+OBJ = {"cycle_length": ("Cycle length", "EFPD", lambda d: 0.0),
+       "peaking": (r"Core $F_{\Delta H}$", "-", lambda d: d["scales"]["g_peak"]),
+       "c_max": (r"$c_\mathrm{max}$", "ppm", lambda d: d["scales"]["g_boron"])}
+
+
+def phys(d, F):
+    """Minimisation-space objectives back to physical values."""
+    return np.asarray(F, float) * d["sign"]
 
 
 def same_problem(a, b):
@@ -104,6 +129,8 @@ def same_problem(a, b):
         diffs.append(("design_variables", a["names"], b["names"]))
     if a["cons"] != b["cons"]:
         diffs.append(("constraint_names", a["cons"], b["cons"]))
+    if a["objs"] != b["objs"]:
+        diffs.append(("objectives", a["objs"], b["objs"]))
     ea = a["meta"].get("enrichment_policy", {}).get("e_box_used_wtpc")
     eb = b["meta"].get("enrichment_policy", {}).get("e_box_used_wtpc")
     if ea != eb:
@@ -247,8 +274,10 @@ def main() -> int:
     Ng, No = (Fg - lo) / rng, (Fo - lo) / rng
     # reference points
     ref_nadir = hi + 0.10 * rng
-    fmax = g["scales"]["g_peak"]
-    ref_phys = np.array([0.0, fmax])
+    names_o = [o for o, _ in g["objs"]]
+    lab = [OBJ.get(o, (o, "", None))[0] for o in names_o]
+    unit = [OBJ.get(o, (o, "", None))[1] for o in names_o]
+    ref_phys = g["sign"] * np.array([OBJ[o][2](g) for o in names_o])   # minimisation space
     hv_g_n, hv_o_n = hv(Fg, ref_nadir), hv(Fo, ref_nadir)
     hv_g_p, hv_o_p = hv(Fg, ref_phys), hv(Fo, ref_phys)
     D = dist_matrix(Ng, No)
@@ -267,7 +296,8 @@ def main() -> int:
     print(f"HV ratio (nadir + 10 %): {hv_o_n / hv_g_n if hv_g_n > 0 else float('nan'):.4f}   "
           f"(physical ref: {hv_o_p / hv_g_p if hv_g_p > 0 else float('nan'):.4f})")
     print(f"IGD {igd:.4f} (max {igd_max:.4f}) | GD {gd:.4f} | "
-          f"eps+(opt,grid) {e_og:.4f} = {e_og * rng[0]:.0f} EFPD / {e_og * rng[1]:.4f} F_dH | "
+          f"eps+(opt,grid) {e_og:.4f} = {e_og * rng[0]:.4g} {unit[0]} ({names_o[0]}) / "
+          f"{e_og * rng[1]:.4g} {unit[1]} ({names_o[1]}) | "
           f"eps+(grid,opt) {e_go:.4f}")
     print(f"coverage of the grid front: strict {cov_strict:.2f}, within tol "
           f"{a.tol:g}: {cov_eps:.2f}")
@@ -288,20 +318,23 @@ def main() -> int:
     gp_cols = [j for j in range(g["G"].shape[1]) if j not in exact_idx]
     pred_mean = np.all(muG <= 0, axis=1)
     pred_marg = (muG[:, gp_cols] + kappa * sdG[:, gp_cols]).max(axis=1) <= 0
-    y_c, m_c, s_c = -g["F"][:, 0], -muF[:, 0], sdF[:, 0]
-    y_p, m_p, s_p = g["F"][:, 1], muF[:, 1], sdF[:, 1]
+    # both objectives in physical units (a maximised objective is un-negated)
+    Y, MU, SD = phys(g, g["F"]), phys(g, muF), np.asarray(sdF, float)
+    y_c, m_c, s_c = Y[:, 0], MU[:, 0], SD[:, 0]
+    y_p, m_p, s_p = Y[:, 1], MU[:, 1], SD[:, 1]
     fe = g["feas"]
     sur = dict(
-        cycle_all=metrics(y_c, m_c, s_c), cycle_feasible=metrics(y_c[fe], m_c[fe], s_c[fe]),
-        peaking_all=metrics(y_p, m_p, s_p), peaking_feasible=metrics(y_p[fe], m_p[fe], s_p[fe]),
+        objectives=names_o,
+        obj0_all=metrics(y_c, m_c, s_c), obj0_feasible=metrics(y_c[fe], m_c[fe], s_c[fe]),
+        obj1_all=metrics(y_p, m_p, s_p), obj1_feasible=metrics(y_p[fe], m_p[fe], s_p[fe]),
         feasibility_mean=dict(tp=int((pred_mean & fe).sum()), fp=int((pred_mean & ~fe).sum()),
                               fn=int((~pred_mean & fe).sum()), tn=int((~pred_mean & ~fe).sum())),
         feasibility_margin=dict(tp=int((pred_marg & fe).sum()), fp=int((pred_marg & ~fe).sum()),
                                 fn=int((~pred_marg & fe).sum()), tn=int((~pred_marg & ~fe).sum())),
         kappa=kappa)
-    print(f"surrogate on the grid: cycle RMSE {sur['cycle_all']['rmse']:.0f} EFPD "
-          f"(R2 {sur['cycle_all']['r2']:.3f}), peaking RMSE {sur['peaking_all']['rmse']:.4f} "
-          f"(R2 {sur['peaking_all']['r2']:.3f}); feasibility mean rule "
+    print(f"surrogate on the grid: {names_o[0]} RMSE {sur['obj0_all']['rmse']:.4g} {unit[0]} "
+          f"(R2 {sur['obj0_all']['r2']:.3f}), {names_o[1]} RMSE {sur['obj1_all']['rmse']:.4g} {unit[1]} "
+          f"(R2 {sur['obj1_all']['r2']:.3f}); feasibility mean rule "
           f"{sur['feasibility_mean']}, margin rule {sur['feasibility_margin']}")
 
     res = dict(
@@ -317,8 +350,9 @@ def main() -> int:
                 ref_phys=ref_phys.tolist(), grid_phys=hv_g_p, opt_phys=hv_o_p,
                 ratio_phys=hv_o_p / hv_g_p if hv_g_p > 0 else None),
         igd=igd, igd_max=igd_max, gd=gd,
+        objectives=[list(o) for o in g["objs"]],
         eps_plus=dict(opt_covers_grid=e_og, grid_covers_opt=e_go,
-                      opt_covers_grid_efpd=e_og * rng[0], opt_covers_grid_fdh=e_og * rng[1]),
+                      opt_covers_grid_phys={names_o[0]: e_og * rng[0], names_o[1]: e_og * rng[1]}),
         coverage=dict(tol=a.tol, within_tol=cov_eps, strict=cov_strict),
         union_front=dict(from_grid=n_union_grid, from_opt=n_union_opt,
                          opt_points_no_grid_node_dominates=new_pts),
@@ -330,19 +364,20 @@ def main() -> int:
     # -------- figures ----------------------------------------------------------
     plt = setup_mpl()
     fig, ax = plt.subplots(figsize=(6.4, 4.2))
-    ax.scatter(-g["F"][~fe, 0], g["F"][~fe, 1], s=22, facecolors="none",
-               edgecolors="0.55", label="grid node, infeasible")
-    ax.scatter(-g["F"][fe, 0], g["F"][fe, 1], s=22, c="0.55", label="grid node, feasible")
-    og = np.argsort(-Fg[:, 0])
-    ax.plot(-Fg[og, 0], Fg[og, 1], "-", c="0.3", lw=1.0, label="enumerated front")
-    ax.scatter(-o["F"][:, 0], o["F"][:, 1], s=26, marker="^", c="tab:orange",
-               edgecolors="k", linewidths=0.4, label="search evaluations")
-    oo = np.argsort(-Fo[:, 0])
-    ax.plot(-Fo[oo, 0], Fo[oo, 1], "-", c="crimson", lw=1.2, label="recovered front")
-    ax.scatter(-Fo[:, 0], Fo[:, 1], s=40, marker="^", c="crimson", edgecolors="k",
+    Pg, Po, PFg, PFo = phys(g, g["F"]), phys(o, o["F"]), phys(g, Fg), phys(o, Fo)
+    ax.scatter(Pg[~fe, 0], Pg[~fe, 1], s=22, facecolors="none",
+               edgecolors="0.55", label="Grid point, infeasible")
+    ax.scatter(Pg[fe, 0], Pg[fe, 1], s=22, c="0.55", label="Grid point, feasible")
+    og = np.argsort(PFg[:, 0])
+    ax.plot(PFg[og, 0], PFg[og, 1], "-", c="0.3", lw=1.0, label="Enumerated front")
+    ax.scatter(Po[:, 0], Po[:, 1], s=26, marker="^", c="tab:orange",
+               edgecolors="k", linewidths=0.4, label="Search evaluations")
+    oo = np.argsort(PFo[:, 0])
+    ax.plot(PFo[oo, 0], PFo[oo, 1], "-", c="crimson", lw=1.2, label="Recovered front")
+    ax.scatter(PFo[:, 0], PFo[:, 1], s=40, marker="^", c="crimson", edgecolors="k",
                linewidths=0.4, zorder=4)
-    ax.set_xlabel("cycle length [EFPD]")
-    ax.set_ylabel(r"$F_{\Delta H}$")
+    ax.set_xlabel(f"{lab[0]} [{unit[0]}]")
+    ax.set_ylabel(f"{lab[1]} [{unit[1]}]")
     ax.legend(loc="upper left", fontsize=7.5)
     fig.tight_layout()
     save(fig, out, "valgrid_objective")
@@ -373,8 +408,8 @@ def main() -> int:
     save(fig, out, "valgrid_design")
 
     fig, axs = plt.subplots(1, 2, figsize=(7.4, 3.5))
-    for ax, y, mu, sd, lab in ((axs[0], y_c, m_c, s_c, "cycle length [EFPD]"),
-                               (axs[1], y_p, m_p, s_p, r"$F_{\Delta H}$")):
+    for ax, y, mu, sd, lab_ in ((axs[0], y_c, m_c, s_c, f"{lab[0]} [{unit[0]}]"),
+                                (axs[1], y_p, m_p, s_p, f"{lab[1]} [{unit[1]}]")):
         lo_, hi_ = min(y.min(), (mu - sd).min()), max(y.max(), (mu + sd).max())
         pad = 0.04 * (hi_ - lo_ if hi_ > lo_ else 1.0)
         ax.plot([lo_ - pad, hi_ + pad], [lo_ - pad, hi_ + pad], "-", c="0.5", lw=0.8)
@@ -382,8 +417,8 @@ def main() -> int:
                     ecolor="0.6", elinewidth=0.6, label="infeasible node")
         ax.errorbar(y[fe], mu[fe], yerr=sd[fe], fmt="o", ms=3.6, c="tab:blue",
                     elinewidth=0.7, label="feasible node")
-        ax.set_xlabel(f"true {lab}")
-        ax.set_ylabel(f"predicted {lab}")
+        ax.set_xlabel(f"True {lab_}")
+        ax.set_ylabel(f"Predicted {lab_}")
         ax.set_xlim(lo_ - pad, hi_ + pad)
         ax.set_ylim(lo_ - pad, hi_ + pad)
         ax.set_aspect("equal", adjustable="box")
@@ -417,8 +452,8 @@ def main() -> int:
         f"    IGD, normalised & \\multicolumn{{2}}{{r}}{{{f(igd)}}} \\\\",
         f"    GD, normalised & \\multicolumn{{2}}{{r}}{{{f(gd)}}} \\\\",
         f"    $I_{{\\varepsilon+}}$(search, enumeration), normalised & \\multicolumn{{2}}{{r}}{{{f(e_og)}}} \\\\",
-        f"    $I_{{\\varepsilon+}}$ in cycle length [EFPD] & \\multicolumn{{2}}{{r}}{{{f(e_og * rng[0], 0)}}} \\\\",
-        f"    $I_{{\\varepsilon+}}$ in $F_{{\\Delta H}}$ & \\multicolumn{{2}}{{r}}{{{f(e_og * rng[1], 4)}}} \\\\",
+        f"    $I_{{\\varepsilon+}}$ in {lab[0]} [{unit[0]}] & \\multicolumn{{2}}{{r}}{{{f(e_og * rng[0], 4 if unit[0] == '-' else 0)}}} \\\\",
+        f"    $I_{{\\varepsilon+}}$ in {lab[1]} [{unit[1]}] & \\multicolumn{{2}}{{r}}{{{f(e_og * rng[1], 4 if unit[1] == '-' else 0)}}} \\\\",
         f"    Enumerated-front coverage, strict / within {a.tol:g} & \\multicolumn{{2}}{{r}}{{{f(cov_strict, 2)} / {f(cov_eps, 2)}}} \\\\",
         f"    Wall-clock [h] & {f(t_g, 1)} & {f(t_o, 1)} \\\\",
         r"    \bottomrule",

@@ -1,0 +1,93 @@
+[
+ {
+  "enrich": 4.1778499995487275,
+  "gd_wt": 1.1669320801625457e-07,
+  "refl_thick": 5.659999341306439,
+  "gd_pins": 27.0,
+  "predicted_peaking": 1.495409855805004,
+  "measured_peaking": 1.5242298395198737,
+  "predicted_c_max": 3044.1428495003747,
+  "measured_c_max": 3349.3760371502717,
+  "cycle_length": 1796.8027384819648,
+  "violated": [
+   "g_kmax",
+   "g_efpd",
+   "g_ctrl_peak",
+   "g_ctrl"
+  ],
+  "status": "evaluated"
+ },
+ {
+  "enrich": 4.206368326671401,
+  "gd_wt": 0.3376712756555147,
+  "refl_thick": 5.659999522459832,
+  "gd_pins": 20.0,
+  "predicted_peaking": 1.5032220449112943,
+  "measured_peaking": 1.4830525276935385,
+  "predicted_c_max": 2760.3182789145108,
+  "measured_c_max": 2749.092798609046,
+  "cycle_length": 1871.4523658150392,
+  "violated": [],
+  "status": "evaluated"
+ },
+ {
+  "enrich": 4.21119171621546,
+  "gd_wt": 1.1046913246950953,
+  "refl_thick": 5.659999930334426,
+  "gd_pins": 18.0,
+  "predicted_peaking": 1.5111935426977494,
+  "measured_peaking": 1.4857012905602407,
+  "predicted_c_max": 2341.9847714571683,
+  "measured_c_max": 2420.9816570079097,
+  "cycle_length": 1819.9366345984427,
+  "violated": [
+   "g_efpd"
+  ],
+  "status": "evaluated"
+ },
+ {
+  "enrich": 4.229731158420992,
+  "gd_wt": 5.002266756695386,
+  "refl_thick": 5.659999505261326,
+  "gd_pins": 15.0,
+  "predicted_peaking": 1.5189885362587328,
+  "measured_peaking": 1.524631724256495,
+  "predicted_c_max": 1583.7908582543484,
+  "measured_c_max": 1537.5390085533068,
+  "cycle_length": 1776.2648151308808,
+  "violated": [
+   "g_efpd"
+  ],
+  "status": "evaluated"
+ },
+ {
+  "enrich": 4.222207378724618,
+  "gd_wt": 5.161054534323656,
+  "refl_thick": 5.659999959980749,
+  "gd_pins": 17.0,
+  "predicted_peaking": 1.5268852160214565,
+  "measured_peaking": 1.5113498216463181,
+  "predicted_c_max": 1360.0130028221847,
+  "measured_c_max": 1512.6890293114461,
+  "cycle_length": 1738.902079289947,
+  "violated": [
+   "g_efpd"
+  ],
+  "status": "evaluated"
+ },
+ {
+  "enrich": 4.222207378724618,
+  "gd_wt": 5.180919442957306,
+  "refl_thick": 5.659998603263852,
+  "gd_pins": 18.0,
+  "predicted_peaking": 1.5348233331708792,
+  "measured_peaking": 1.5210223629369444,
+  "predicted_c_max": 1250.2244863224837,
+  "measured_c_max": 1518.5805876317963,
+  "cycle_length": 1798.3018908196195,
+  "violated": [
+   "g_efpd"
+  ],
+  "status": "evaluated"
+ }
+]

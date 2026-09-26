@@ -1,0 +1,13 @@
+Designed gadolinia study: fixed inventory, pin ladder
+
+pins  gd_wt  E_asm   hump   E_3D sigma  ratio  source
+  12  7.345   2227  -1579   1730  12.7  0.777  gdstudy/0
+  16  5.509   2282  -1608   1827   7.8  0.801  gdstudy/1
+  20  4.407   2280  -1010   1838   9.1  0.806  design 70
+  24  3.672   2221    965   1842   7.7  0.829  gdstudy/2
+  32  2.754   2278   5532   1919   6.4  0.842  gdstudy/3
+  40  2.203   2276   7998   1977   6.4  0.869  gdstudy/4
+
+slope of the ratio against the pin count: +0.00295 +/- 0.00024 per pin
+predictions: gd_wt fit +0.0036 per pin (rises), gd_pins fit -0.0042 (decreases), inventory fit 0 (constant)
+verdict at two standard errors: the ratio rises with the pin count: the weight fraction governs  (t = +12.4)

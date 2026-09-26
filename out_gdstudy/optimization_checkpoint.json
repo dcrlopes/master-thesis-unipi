@@ -1,0 +1,683 @@
+{
+  "design_variables": [
+    "enrich",
+    "gd_wt",
+    "gd_pins"
+  ],
+  "objectives": [
+    [
+      "peaking",
+      "min"
+    ],
+    [
+      "c_max",
+      "min"
+    ]
+  ],
+  "constraint_names": [
+    "g_kmin",
+    "g_kmax",
+    "g_enr",
+    "g_peak",
+    "g_geom",
+    "g_efpd",
+    "g_ctrl_peak",
+    "g_ctrl"
+  ],
+  "all_raw": [
+    {
+      "enrich": 4.868085595357532,
+      "gd_wt": 7.344974,
+      "gd_pins": 12.0,
+      "enrich_inner": 4.868085595357532,
+      "enrich_outer": 4.868085595357532,
+      "pitch": 1.26,
+      "refl_thick": 5.659998064895427,
+      "cycle_length": 2227.361238468907,
+      "peaking": 1.554003495503558,
+      "g_kmin": -0.08762371379443645,
+      "g_kmax": -0.058376286205563455,
+      "g_enr": -10.40170156533884,
+      "e_max_zoned": 5.598298434661161,
+      "g_peak": -0.09599650449644193,
+      "k_allre": 0.9376864983111782,
+      "F_allre": 2.2712429154192453,
+      "t_ctrl_s": 98.87068724632263,
+      "g_ctrl": -0.05231350168882176,
+      "k_re12": 1.021970543035664,
+      "F_re12": 1.9586417069313513,
+      "t_ctrl12_s": 109.89619159698486,
+      "g_ctrl12": 0.031970543035664045,
+      "g_geom": -0.009093614665914629,
+      "peaking_asm": 1.198919920444099,
+      "gd_pins_used": 12,
+      "keff_core_bol": 1.1076237137944365,
+      "k_basis": "core",
+      "k_max_used": 1.166,
+      "g_kmax_asm": 0.02919713808440383,
+      "g_kmax_core": -0.058376286205563455,
+      "g_kmin_asm": -0.17519713808440374,
+      "g_kmin_core": -0.08762371379443645,
+      "dk_asm_core_pcm": 8757.342428996728,
+      "core_entropy_conv": 8,
+      "k_bol": 1.1951971380844038,
+      "k_target": 1.0819990010261917,
+      "censored": false,
+      "bu_eoc_mwd_kg": 22.236535784311886,
+      "n_dep_solves": 10,
+      "t_eval_s": 1152.197300304193,
+      "t_asm_bol_s": 10.727918808930553,
+      "t_core_bol_s": 107.60884750401601,
+      "t_deplete_s": 614.8975866909605,
+      "t_start_utc": "2026-09-26T02:30:07+00:00",
+      "k_peak": 1.1730654323216607,
+      "bu_index": 1,
+      "hump_asm_pcm": -1578.5309661373503,
+      "hump_xe_pcm": 0.0,
+      "l_ax": 1.0790642374294814,
+      "hump_core_pcm": 0.0,
+      "hump_core_op_pcm": -1703.3363132338225,
+      "c_bol_ppm": 2593.459131543865,
+      "w_b_bol_pcm_per_ppm": 5.940930004537246,
+      "c_bol_status": "interp",
+      "c_max_ppm": 2593.459131543865,
+      "w_b_max_pcm_per_ppm": 5.940930004537246,
+      "c_max_status": "interp",
+      "c_max_op_ppm": 2306.7470659357973,
+      "c_max_op_status": "interp",
+      "boron_points": {
+        "1000": 9716.631420407663,
+        "2000": 3525.6991610555647,
+        "3000": -2415.2308434816814
+      },
+      "ctrl_margin_bol_pcm": 6645.451523622405,
+      "ctrl_margin_peak_pcm": 6645.451523622405,
+      "ctrl_screen_pcm": 1010.1010101010111,
+      "g_ctrl_peak": -0.05635350513521395,
+      "c_max": 2593.459131543865,
+      "c_bol": 2593.459131543865,
+      "g_efpd": -401.3612384689068,
+      "g_boron": -169.54086845613483,
+      "n_boron_solves": 2,
+      "t_boron_s": 210.19606845697854
+    },
+    {
+      "enrich": 4.868085595357532,
+      "gd_wt": 5.508731,
+      "gd_pins": 16.0,
+      "enrich_inner": 4.868085595357532,
+      "enrich_outer": 4.868085595357532,
+      "pitch": 1.26,
+      "refl_thick": 5.659998064895427,
+      "cycle_length": 2282.2498918611923,
+      "peaking": 1.5319226396555465,
+      "g_kmin": -0.05689660381227912,
+      "g_kmax": -0.08910339618772078,
+      "g_enr": -10.40170156533884,
+      "e_max_zoned": 5.598298434661161,
+      "g_peak": -0.11807736034445337,
+      "k_allre": 0.9168887054601614,
+      "F_allre": 2.281138166368699,
+      "t_ctrl_s": 101.66013813018799,
+      "g_ctrl": -0.07311129453983856,
+      "k_re12": 0.9965888131004511,
+      "F_re12": 1.950343829038795,
+      "t_ctrl12_s": 102.04828333854675,
+      "g_ctrl12": 0.0065888131004511186,
+      "g_geom": -0.009093614665914629,
+      "peaking_asm": 1.202060143181127,
+      "gd_pins_used": 16,
+      "keff_core_bol": 1.0768966038122791,
+      "k_basis": "core",
+      "k_max_used": 1.166,
+      "g_kmax_asm": -0.0004354174314318282,
+      "g_kmax_core": -0.08910339618772078,
+      "g_kmin_asm": -0.14556458256856808,
+      "g_kmin_core": -0.05689660381227912,
+      "dk_asm_core_pcm": 8866.797875628896,
+      "core_entropy_conv": 8,
+      "k_bol": 1.165564582568568,
+      "k_target": 1.0819990010261917,
+      "censored": false,
+      "bu_eoc_mwd_kg": 22.784508643060768,
+      "n_dep_solves": 10,
+      "t_eval_s": 1117.8461237318115,
+      "t_asm_bol_s": 10.99637767195236,
+      "t_core_bol_s": 105.55377882404719,
+      "t_deplete_s": 588.0807096160715,
+      "t_start_utc": "2026-09-26T02:49:30+00:00",
+      "k_peak": 1.1441251512318265,
+      "bu_index": 1,
+      "hump_asm_pcm": -1607.693984697864,
+      "hump_xe_pcm": 0.0,
+      "l_ax": 1.0823365757143248,
+      "hump_core_pcm": 0.0,
+      "hump_core_op_pcm": -1740.0660021944043,
+      "c_bol_ppm": 2170.9175380235365,
+      "w_b_bol_pcm_per_ppm": 5.864468564849214,
+      "c_bol_status": "interp",
+      "c_max_ppm": 2170.9175380235365,
+      "w_b_max_pcm_per_ppm": 5.864468564849214,
+      "c_max_status": "interp",
+      "c_max_op_ppm": 1879.8147020779522,
+      "c_max_op_status": "interp",
+      "boron_points": {
+        "1000": 7140.574456271894,
+        "2000": 1002.3405289204488,
+        "3000": -4862.128035928766
+      },
+      "ctrl_margin_bol_pcm": 9064.491038541833,
+      "ctrl_margin_peak_pcm": 9064.491038541833,
+      "ctrl_screen_pcm": 1010.1010101010111,
+      "g_ctrl_peak": -0.08054390028440823,
+      "c_max": 2170.9175380235365,
+      "c_bol": 2170.9175380235365,
+      "g_efpd": -456.2498918611923,
+      "g_boron": -592.0824619764635,
+      "n_boron_solves": 2,
+      "t_boron_s": 209.5068361510057
+    },
+    {
+      "enrich": 4.868085595357532,
+      "gd_wt": 3.672487,
+      "gd_pins": 24.0,
+      "enrich_inner": 4.868085595357532,
+      "enrich_outer": 4.868085595357532,
+      "pitch": 1.26,
+      "refl_thick": 5.659998064895427,
+      "cycle_length": 2221.2381027705324,
+      "peaking": 1.5904948962330296,
+      "g_kmin": -0.02020268278797066,
+      "g_kmax": -0.12579731721202925,
+      "g_enr": -10.40170156533884,
+      "e_max_zoned": 5.598298434661161,
+      "g_peak": -0.05950510376697027,
+      "k_allre": 0.8864020104814374,
+      "F_allre": 2.306840496169164,
+      "t_ctrl_s": 99.88429236412048,
+      "g_ctrl": -0.10359798951856258,
+      "k_re12": 0.9643559517839306,
+      "F_re12": 2.1220294818711887,
+      "t_ctrl12_s": 103.25520730018616,
+      "g_ctrl12": -0.02564404821606936,
+      "g_geom": -0.009093614665914629,
+      "peaking_asm": 1.2252353923023247,
+      "gd_pins_used": 24,
+      "keff_core_bol": 1.0402026827879707,
+      "k_basis": "core",
+      "k_max_used": 1.166,
+      "g_kmax_asm": -0.042251910200844955,
+      "g_kmax_core": -0.12579731721202925,
+      "g_kmin_asm": -0.10374808979915495,
+      "g_kmin_core": -0.02020268278797066,
+      "dk_asm_core_pcm": 8354.540701118429,
+      "core_entropy_conv": 9,
+      "k_bol": 1.123748089799155,
+      "k_target": 1.0819990010261917,
+      "censored": false,
+      "bu_eoc_mwd_kg": 22.17540635289434,
+      "n_dep_solves": 10,
+      "t_eval_s": 1018.5376393353799,
+      "t_asm_bol_s": 10.96934238995891,
+      "t_core_bol_s": 107.21439453901257,
+      "t_deplete_s": 588.3405539760133,
+      "t_start_utc": "2026-09-26T03:08:20+00:00",
+      "k_peak": 1.1360736471437618,
+      "bu_index": 5,
+      "hump_asm_pcm": 965.4529506867984,
+      "hump_xe_pcm": 2212.867529234276,
+      "l_ax": 1.0803164694665701,
+      "hump_core_pcm": 1042.9947231220447,
+      "hump_core_op_pcm": 1042.9947231220447,
+      "c_bol_ppm": 1635.3050575591888,
+      "w_b_bol_pcm_per_ppm": 6.083517377900844,
+      "c_bol_status": "interp",
+      "c_max_ppm": 1806.7510580113048,
+      "w_b_max_pcm_per_ppm": 6.083517377900844,
+      "c_max_status": "interp",
+      "c_max_op_ppm": 1806.7510580113048,
+      "c_max_op_status": "interp",
+      "boron_points": {
+        "1000": 3864.88935792962,
+        "2000": -2218.6280199712232
+      },
+      "ctrl_margin_bol_pcm": 12815.62859462191,
+      "ctrl_margin_peak_pcm": 11772.633871499866,
+      "ctrl_screen_pcm": 1010.1010101010111,
+      "g_ctrl_peak": -0.10762532861398856,
+      "c_max": 1806.7510580113048,
+      "c_bol": 1635.3050575591888,
+      "g_efpd": -395.23810277053235,
+      "g_boron": -956.2489419886952,
+      "n_boron_solves": 1,
+      "t_boron_s": 108.87384876608849
+    },
+    {
+      "enrich": 4.868085595357532,
+      "gd_wt": 2.754365,
+      "gd_pins": 32.0,
+      "enrich_inner": 4.868085595357532,
+      "enrich_outer": 4.868085595357532,
+      "pitch": 1.26,
+      "refl_thick": 5.659998064895427,
+      "cycle_length": 2277.5744137604615,
+      "peaking": 1.5950769482749667,
+      "g_kmin": 0.025067350509466624,
+      "g_kmax": -0.17106735050946653,
+      "g_enr": -10.40170156533884,
+      "e_max_zoned": 5.598298434661161,
+      "g_peak": -0.0549230517250332,
+      "k_allre": 0.8565427136481432,
+      "F_allre": 2.3259074210640933,
+      "t_ctrl_s": 103.36131930351257,
+      "g_ctrl": -0.13345728635185683,
+      "k_re12": 0.9270693668791955,
+      "F_re12": 2.0989448687746464,
+      "t_ctrl12_s": 105.10469079017639,
+      "g_ctrl12": -0.06293063312080449,
+      "g_geom": -0.009093614665914629,
+      "peaking_asm": 1.2359077154586697,
+      "gd_pins_used": 32,
+      "keff_core_bol": 0.9949326494905334,
+      "k_basis": "core",
+      "k_max_used": 1.166,
+      "g_kmax_asm": -0.08471247704487395,
+      "g_kmax_core": -0.17106735050946653,
+      "g_kmin_asm": -0.06128752295512596,
+      "g_kmin_core": 0.025067350509466624,
+      "dk_asm_core_pcm": 8635.487346459258,
+      "core_entropy_conv": 9,
+      "k_bol": 1.081287522955126,
+      "k_target": 1.0819990010261917,
+      "censored": false,
+      "bu_eoc_mwd_kg": 22.737831689946894,
+      "n_dep_solves": 10,
+      "t_eval_s": 995.0300007236656,
+      "t_asm_bol_s": 11.11834058293607,
+      "t_core_bol_s": 108.36236360599287,
+      "t_deplete_s": 561.0550031610765,
+      "t_start_utc": "2026-09-26T03:25:30+00:00",
+      "k_peak": 1.1500831464784018,
+      "bu_index": 5,
+      "hump_asm_pcm": 5532.104564192015,
+      "hump_xe_pcm": 6900.1295294309075,
+      "l_ax": 1.0867946925943295,
+      "hump_core_pcm": 6012.2618792407475,
+      "hump_core_op_pcm": 6012.2618792407475,
+      "c_bol_ppm": 917.8992658022552,
+      "w_b_bol_pcm_per_ppm": 6.203549070268135,
+      "c_bol_status": "interp",
+      "c_max_ppm": 1887.0641440258878,
+      "w_b_max_pcm_per_ppm": 6.203549070268135,
+      "c_max_status": "extrap_hi",
+      "c_max_op_ppm": 1887.0641440258878,
+      "c_max_op_status": "extrap_hi",
+      "boron_points": {
+        "0": 5694.233136967384,
+        "1000": -509.3159333007516
+      },
+      "ctrl_margin_bol_pcm": 16748.410098645385,
+      "ctrl_margin_peak_pcm": 10736.148219404637,
+      "ctrl_screen_pcm": 1010.1010101010111,
+      "g_ctrl_peak": -0.09726047209303627,
+      "c_max": 1887.0641440258878,
+      "c_bol": 917.8992658022552,
+      "g_efpd": -451.57441376046154,
+      "g_boron": -875.9358559741122,
+      "n_boron_solves": 1,
+      "t_boron_s": 106.02828327997122
+    },
+    {
+      "enrich": 4.868085595357532,
+      "gd_wt": 2.203492,
+      "gd_pins": 40.0,
+      "enrich_inner": 4.868085595357532,
+      "enrich_outer": 4.868085595357532,
+      "pitch": 1.26,
+      "refl_thick": 5.659998064895427,
+      "cycle_length": 2275.5640496613933,
+      "peaking": 1.6447203257327263,
+      "g_kmin": 0.05571338123734215,
+      "g_kmax": -0.20171338123734206,
+      "g_enr": -10.40170156533884,
+      "e_max_zoned": 5.598298434661161,
+      "g_peak": -0.005279674267273604,
+      "k_allre": 0.8332588222162944,
+      "F_allre": 2.342484388655879,
+      "t_ctrl_s": 100.14051556587219,
+      "g_ctrl": -0.15674117778370555,
+      "k_re12": 0.9007775744616515,
+      "F_re12": 2.1207406326679803,
+      "t_ctrl12_s": 105.51022529602051,
+      "g_ctrl12": -0.08922242553834847,
+      "g_geom": -0.009093614665914629,
+      "peaking_asm": 1.2630310156535796,
+      "gd_pins_used": 40,
+      "keff_core_bol": 0.9642866187626579,
+      "k_basis": "core",
+      "k_max_used": 1.166,
+      "g_kmax_asm": -0.1138246570971353,
+      "g_kmax_core": -0.20171338123734206,
+      "g_kmin_asm": -0.03217534290286461,
+      "g_kmin_core": 0.05571338123734215,
+      "dk_asm_core_pcm": 8788.872414020676,
+      "core_entropy_conv": 8,
+      "k_bol": 1.0521753429028646,
+      "k_target": 1.0819990010261917,
+      "censored": false,
+      "bu_eoc_mwd_kg": 22.717761513427547,
+      "n_dep_solves": 10,
+      "t_eval_s": 989.4710186989978,
+      "t_asm_bol_s": 11.02984141802881,
+      "t_core_bol_s": 109.48529600398615,
+      "t_deplete_s": 559.1343769220402,
+      "t_start_utc": "2026-09-26T03:42:17+00:00",
+      "k_peak": 1.1488548797010782,
+      "bu_index": 5,
+      "hump_asm_pcm": 7997.99756569045,
+      "hump_xe_pcm": 9391.416294818882,
+      "l_ax": 1.0911437765806424,
+      "hump_core_pcm": 8726.965268910262,
+      "hump_core_op_pcm": 8726.965268910262,
+      "c_bol_ppm": 396.6011127873947,
+      "w_b_bol_pcm_per_ppm": 6.1379072959667385,
+      "c_bol_status": "interp",
+      "c_max_ppm": 1818.4155599760666,
+      "w_b_max_pcm_per_ppm": 6.1379072959667385,
+      "c_max_status": "extrap_hi",
+      "c_max_op_ppm": 1818.4155599760666,
+      "c_max_op_status": "extrap_hi",
+      "boron_points": {
+        "0": 2434.3008637662774,
+        "1000": -3703.606432200461
+      },
+      "ctrl_margin_bol_pcm": 20010.730560308843,
+      "ctrl_margin_peak_pcm": 11283.76529139858,
+      "ctrl_screen_pcm": 1010.1010101010111,
+      "g_ctrl_peak": -0.1027366428129757,
+      "c_max": 1818.4155599760666,
+      "c_bol": 396.6011127873947,
+      "g_efpd": -449.56404966139326,
+      "g_boron": -944.5844400239334,
+      "n_boron_solves": 1,
+      "t_boron_s": 104.17076349304989
+    }
+  ],
+  "hv_history": [
+    251.8909334948339,
+    439.69566371421047,
+    567.8860786473816,
+    567.8860786473816,
+    567.8860786473816
+  ],
+  "hv_ref": [
+    1.9425053693794474,
+    3241.8239154298312
+  ],
+  "n_real_evaluations": 5,
+  "phase_log": [
+    {
+      "stage": "enumerate",
+      "iteration": 0,
+      "n_eval": 1,
+      "list_index": 0,
+      "t_eval_s": 1163.6580986029003,
+      "t_hv_s": 0.0003037370042875409,
+      "t_ckpt_s": 0.00047654600348323584
+    },
+    {
+      "stage": "enumerate",
+      "iteration": 1,
+      "n_eval": 1,
+      "list_index": 1,
+      "t_eval_s": 1129.419114933,
+      "t_hv_s": 0.0003460589796304703,
+      "t_ckpt_s": 0.000631547998636961
+    },
+    {
+      "stage": "enumerate",
+      "iteration": 2,
+      "n_eval": 1,
+      "list_index": 2,
+      "t_eval_s": 1030.069465719047,
+      "t_hv_s": 0.00043031794484704733,
+      "t_ckpt_s": 0.0008975350065156817
+    },
+    {
+      "stage": "enumerate",
+      "iteration": 3,
+      "n_eval": 1,
+      "list_index": 3,
+      "t_eval_s": 1006.6872058829758,
+      "t_hv_s": 0.0005764000816270709,
+      "t_ckpt_s": 0.0008373799500986934
+    },
+    {
+      "stage": "enumerate",
+      "iteration": 4,
+      "n_eval": 1,
+      "list_index": 4,
+      "t_eval_s": 1001.2986570840003,
+      "t_hv_s": 0.0003291990142315626,
+      "t_ckpt_s": 0.0007531170267611742
+    }
+  ],
+  "meta": {
+    "k_target": "ktarget_table_c8.json",
+    "smoke": false,
+    "transport": {
+      "particles": 4000,
+      "batches": 60,
+      "inactive": 20
+    },
+    "core_transport": {
+      "particles": 100000,
+      "batches": 170,
+      "inactive": 60
+    },
+    "gd_model": "zone-matched enrichment, 5 percent/wt% relative reduction, Strategy-A ladder {12,16,20,24,32,40}",
+    "objective_def": "peaking = ZONED core BOL F_dh (m_C 0.720 / balanced m_M / m_P from leu_policy), evaluator-zoned from Campaign 6",
+    "schedule": {
+      "bol_steps": [
+        0.5,
+        1.0,
+        2.0,
+        4.0,
+        6.0
+      ],
+      "dep_step": 4.0,
+      "max_burnup": 100.0,
+      "chunk_steps": 2
+    },
+    "c9_axial": null,
+    "geometry": "v2-envelope",
+    "objective_set": "c9",
+    "campaign9": {
+      "efpd_req": 1826.0,
+      "axial_model": null,
+      "boron_objective": "floor",
+      "boron_points_ppm": [
+        1000.0,
+        2000.0,
+        3000.0
+      ],
+      "boron_ceiling_ppm": 2763.0,
+      "hump_noise_pcm": 400.0,
+      "hump_reference": "xenon-free k_hist[0], core solve is xenon-free",
+      "worth": "local slope of the measured rho(c) at the root",
+      "g_boron_note": "recorded, not constrained"
+    },
+    "limits": {
+      "k_basis": "core",
+      "k_max": 1.166,
+      "k_min": 1.02,
+      "f_max": 1.65,
+      "enr_max": 16.0
+    },
+    "enrichment_policy": {
+      "leu_cap_wtpc": 19.75,
+      "m_p_design": 1.15,
+      "e_search_max_wtpc": 17.17391304347826,
+      "e_box_used_wtpc": [
+        2.0,
+        13.913043478260871
+      ]
+    },
+    "zoning_policy": {
+      "evaluator_zoned": true,
+      "m_c_design": 0.72,
+      "m_m_balanced": 0.8933333333333335,
+      "m_p_design": 1.15,
+      "ring_counts": [
+        4,
+        12,
+        16
+      ]
+    },
+    "ctrl_screen": {
+      "enabled": true,
+      "margin_pcm": 1000.0,
+      "absorber": "B4C",
+      "re_positions": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          4,
+          4
+        ]
+      ],
+      "re12_positions": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          4,
+          4
+        ]
+      ],
+      "re12_constrained": false,
+      "bank_definitions": {
+        "ALLRE": "RE1 inner ring, RE2 M diagonals, RE3 and RE4 M edge orbits (sixteen assemblies)",
+        "RE12": "RE1 inner ring and RE2 M diagonals (eight assemblies)",
+        "SH": "outer sixteen assemblies, reserved for scram, never inserted in either screen"
+      },
+      "re12_note": "k_re12 is the beginning-of-life core eigenvalue with only the first two regulating banks inserted. g_ctrl12 = k_re12 - (1 - margin) is RECORDED and NOT constrained: it never enters constraint_names, so feasibility is set by the ALL-RE screen alone and the front can afterwards be split by whether two banks suffice."
+    },
+    "surrogate_policy": {
+      "efpd_cap_efpd": null,
+      "acq_rule": "margin",
+      "feas_kappa_map": null,
+      "margin_constraints": null,
+      "boron_constrained": false,
+      "nsga_pop": 60,
+      "nsga_gen": 80,
+      "infill_min_sep": 0.14,
+      "feas_kappa": 1.5,
+      "constraint_norm": "g / own limit (CONSTRAINT-NORM)"
+    },
+    "omp_threads": 64,
+    "host": "wks720",
+    "cpu_count": 64,
+    "openmc_version": "0.15.3",
+    "library_versions": {
+      "numpy": "2.4.3",
+      "scipy": "1.18.0",
+      "sklearn": "1.9.0",
+      "pymoo": "0.6.2"
+    },
+    "python_version": "3.13.13",
+    "workdir": "openmc_runs_gdstudy",
+    "started_utc": "2026-09-26T02:30:07+00:00",
+    "frozen": {
+      "refl_thick": 5.659998064895427
+    },
+    "eval_list": "gdstudy/list.json",
+    "enr_box_high": null,
+    "block_started_utc": [
+      "2026-09-26T02:30:07+00:00"
+    ]
+  }
+}

@@ -1,0 +1,48 @@
+==========================================================================
+Moderator temperature coefficient versus soluble boron
+==========================================================================
+design            : 70
+level             : core3d
+pressure          : 12.8 MPa, saturation 602.8 K
+  T = 547.0 K -> rho = 0.77109 g/cm3 (subcooling 55.8 K)
+  T = 567.0 K -> rho = 0.73403 g/cm3 (subcooling 35.8 K)
+density change    : -4.81 per cent over 20 K
+boron points      : [0.0, 1000.0, 2000.0, 3000.0] ppm
+seeds             : 2
+16 solves in total
+==========================================================================
+==========================================================================
+ PREFLIGHT
+==========================================================================
+  host        : wks720
+  cwd         : /home/diogo/master-thesis-unipi
+  conda env   : openmc-env
+  openmc      : 0.15.3
+  iapws       : available
+  branch      : main
+  XS          : /home/diogo/openmc_data/endfb-vii.1-hdf5/cross_sections.xml
+  threads     : 64 of 64
+  no simulation currently running
+preflight OK
+
+design 70: enrich 4.868 wt%, gd_wt 4.407 wt%, pins 20, refl 5.660 cm
+
+==========================================================================
+MODERATOR TEMPERATURE COEFFICIENT, design 70, core3d
+==========================================================================
+  547 K -> 567 K at 12.8 MPa, rho 0.77109 -> 0.73403 g/cm3
+
+      ppm     k(lo)     k(hi)       MTC      sd  verdict
+        0   1.11009   1.09847    -47.63    1.50  negative, acceptable
+     1000   1.03107   1.02445    -31.33    1.73  negative, acceptable
+     2000   0.96550   0.96269    -15.12    1.87  negative, acceptable
+     3000   0.90963   0.90946     -1.01    1.94  not resolved from zero
+
+  MTC in pcm per K. A negative coefficient is the self-stabilising
+  direction. The crossing is the boron ceiling for this lattice.
+
+  NO CROSSING inside 0 to 3000 ppm.
+  The coefficient is negative throughout.
+  Extend the sweep with --boron before drawing any conclusion.
+
+wrote mtc_c9a_d70_p128_core3d/report.txt and mtc_c9a_d70_p128_core3d/summary.json

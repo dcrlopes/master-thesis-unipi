@@ -1,0 +1,36 @@
+{
+ "designs": [
+  {
+   "enrich": 4.868085595357532,
+   "gd_wt": 7.344974,
+   "gd_pins": 12.0
+  },
+  {
+   "enrich": 4.868085595357532,
+   "gd_wt": 5.508731,
+   "gd_pins": 16.0
+  },
+  {
+   "enrich": 4.868085595357532,
+   "gd_wt": 3.672487,
+   "gd_pins": 24.0
+  },
+  {
+   "enrich": 4.868085595357532,
+   "gd_wt": 2.754365,
+   "gd_pins": 32.0
+  },
+  {
+   "enrich": 4.868085595357532,
+   "gd_wt": 2.203492,
+   "gd_pins": 40.0
+  }
+ ],
+ "anchor": {
+  "checkpoint": "out_c9f/optimization_checkpoint.json",
+  "index": 70,
+  "gd_pins_snapped": 20,
+  "inventory": 88.13969124296769,
+  "refl_thick": 5.659998064895427
+ }
+}

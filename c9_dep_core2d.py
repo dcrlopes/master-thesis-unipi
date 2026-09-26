@@ -86,7 +86,7 @@ def lax_of(meta, override=None):
 # ------------------------------------------------------------- the model ----
 def build(design, tr, seed, geo, op):
     """The zoned 2D core with the pin-fission mesh tally of core_bol_solve and
-    the six ring fuel materials marked depletable with their volumes."""
+    the twelve ring fuel materials marked depletable with their volumes."""
     import openmc
     import reactor_model as rm
     import zoning as zn

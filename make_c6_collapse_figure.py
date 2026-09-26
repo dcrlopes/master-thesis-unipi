@@ -8,13 +8,15 @@ same batch), each variable divided by its range in the Campaign 6 design space.
 Read from the checkpoint, no transport.
 
   (a) the separation against the evaluation index, by block, with the
-      threshold in force in each iteration drawn as a step: delta_min = 0.14
-      from evaluation 61, halved as many times as the batch needed
-      (Section 4.12.3). The relaxation depth is not recorded in the archive, so
-      the step shows the shallowest level that admits every design of the
-      batch, the lowest level the selection can have used.
+      threshold in force drawn as a step where the archive confirms it.
+      meta.surrogate_policy stores the policy of the last session only,
+      evaluations 85-114 (delta_min = 0.14). The sessions that started at
+      evaluations 61 and 67 ran code whose default was 0.05 (commits d2aa233,
+      cb06fba), and their launch value is not recorded, so evaluations 61-84
+      are hatched. From 85 the step is the shallowest level of the 0.14
+      halving series that admits every design of the batch.
   (b) the same separations sorted within each block, smallest first, with the
-      three levels 0.14, 0.07 and 0.035.
+      levels 0.14, 0.07 and 0.035 and the code default of 0.05.
 
 usage (plot only, runs anywhere):
     python make_c6_collapse_figure.py CHECKPOINT.json OUT.pdf [OUT.png]
@@ -31,6 +33,7 @@ SRC, OUT = sys.argv[1], sys.argv[2]
 B6 = {"enrich_inner": (2.0, 17.174), "enrich_outer": (2.0, 17.174), "gd_wt": (0.0, 8.0),
       "pitch": (1.15, 1.43), "refl_thick": (2.0, 19.5), "gd_pins": (12, 40)}
 DMIN, N_DOE, N_INFILL, FIRST_DIV = 0.14, 42, 6, 3      # the threshold enters at iteration 4
+FIRST_CONF, D_DEFAULT = 7, 0.05                        # 0.14 confirmed from iteration 8 (evaluation 85)
 
 ck = json.load(open(SRC))
 raw, dv = ck["all_raw"], ck["design_variables"]
@@ -48,7 +51,7 @@ level = []
 for it in range(n_it):
     a, b = N_DOE + N_INFILL * it, N_DOE + N_INFILL * (it + 1)
     m = np.nanmin(d[a:b])
-    if it < FIRST_DIV:
+    if it < FIRST_CONF:
         level.append(np.nan)
     else:
         k = 0
@@ -80,14 +83,16 @@ for it, lv in enumerate(level):
     ys += [lv, lv]
 ax.step(xs, ys, where="post", color=C_THR, lw=1.6, zorder=2,
         label="Threshold in force, shallowest level that admits the batch")
-ax.axhline(DMIN, color=C_THR, lw=1.1, ls="-", zorder=1)
+ax.hlines(DMIN, 84.5, 115, color=C_THR, lw=1.1, zorder=1)
+ax.axvspan(60.5, 84.5, facecolor="none", edgecolor="0.55", hatch="///", lw=0, zorder=1,
+           label="Threshold not recorded: 0.14 or the code default 0.05")
 for lv, lab in ((DMIN, r"$\delta_\mathrm{min}=0.14$"), (DMIN / 2, "0.07"),
                 (DMIN / 4, "0.035"), (DMIN / 8, "0.0175")):
     ax.text(115.6, lv, lab, fontsize=8.2, color=C_THR, va="center", ha="left")
 ax.set_xlim(42, 115)
 ax.set_xlabel("Transport evaluation")
 ax.set_ylabel(r"Separation $d$ from the nearest earlier design [-]", fontsize=9.5)
-ax.set_title("(a) By evaluation, with the threshold in force", fontsize=10)
+ax.set_title("(a) By evaluation, with the threshold where recorded", fontsize=10)
 
 # ---- (b) sorted within each block --------------------------------------------------
 for name, a, b, col, mk in BLOCKS:
@@ -96,6 +101,7 @@ for name, a, b, col, mk in BLOCKS:
     bx.plot(frac, v, marker=mk, ms=4.5, color=col, lw=1.2, zorder=3)
 for lv, ls in ((DMIN, "-"), (DMIN / 2, "--"), (DMIN / 4, "-.")):
     bx.axhline(lv, color=C_THR, lw=1.1, ls=ls, zorder=2)
+bx.axhline(D_DEFAULT, color="0.35", lw=1.1, ls=":", zorder=2)
 bx.set_xlim(0, 1)
 bx.set_xlabel("Fraction of the block, smallest separation first")
 bx.set_title("(b) Sorted within each block", fontsize=10)
@@ -108,8 +114,10 @@ for axis in (ax, bx):
 handles, labels = ax.get_legend_handles_labels()
 handles += [plt.Line2D([], [], color=C_THR, lw=1.1, ls="-"),
             plt.Line2D([], [], color=C_THR, lw=1.1, ls="--"),
-            plt.Line2D([], [], color=C_THR, lw=1.1, ls="-.")]
-labels += [r"$\delta_\mathrm{min} = 0.14$", "First relaxation, 0.07", "Second relaxation, 0.035"]
+            plt.Line2D([], [], color=C_THR, lw=1.1, ls="-."),
+            plt.Line2D([], [], color="0.35", lw=1.1, ls=":")]
+labels += [r"$\delta_\mathrm{min} = 0.14$", "First relaxation, 0.07", "Second relaxation, 0.035",
+           "Code default at the time, 0.05"]
 fig.legend(handles, labels, loc="lower center", ncol=3, fontsize=8.4, frameon=False,
            bbox_to_anchor=(0.5, -0.02))
 fig.tight_layout(rect=(0, 0.13, 1, 1))

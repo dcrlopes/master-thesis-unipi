@@ -56,7 +56,7 @@ def run(a):
     os.environ["OMP_NUM_THREADS"] = str(a.threads)
     import openmc
     from c9_dep_replicas import CAMPAIGN, design_of, load_ckpt, make_evaluator
-    ckpt = load_ckpt(a.checkpoint)
+    ckpt, _raw, _meta = load_ckpt(a.checkpoint)       # load_ckpt returns (checkpoint, all_raw, meta)
     design, spec = design_of(ckpt, a.design)
     work = OUT / "work" / a.tag
     transport = dict(CAMPAIGN)

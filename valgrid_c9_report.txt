@@ -1,0 +1,17 @@
+grid: 35 designs, 13 feasible | opt: 20 designs, 16 feasible
+live variables ['enrich', 'gd_wt'] | frozen {'refl_thick': 5.659998, 'gd_pins': 20.982985}
+meta agree: same slice, same limits, same fidelity, same schedule
+grid front: 3 members [14, 27, 30]
+opt  front: 5 members [9, 10, 14, 16, 18]
+HV ratio (nadir + 10 %): 1.1222   (physical ref: 1.2488)
+IGD 0.2506 (max 0.3502) | GD 0.3760 | eps+(opt,grid) 0.1739 = 0.009696 - (peaking) / 214.7 ppm (c_max) | eps+(grid,opt) 0.3248
+coverage of the grid front: strict 0.33, within tol 0.02: 0.33
+union front: 2 from the grid, 4 from the search | search points no grid node dominates: [9, 10, 14, 18]
+feasible grid nodes dominated by the search front: 11/13
+cost: 20 vs 35 evaluations (ratio 0.57), wall 5.7 h vs 12.1 h
+surrogate on the grid: peaking RMSE 0.01928 - (R2 0.677), c_max RMSE 255.2 ppm (R2 0.976); feasibility mean rule {'tp': 9, 'fp': 1, 'fn': 4, 'tn': 21}, margin rule {'tp': 8, 'fp': 0, 'fn': 5, 'tn': 22}
+  wrote valgrid_compare.json
+  wrote valgrid_objective.pdf/.png
+  wrote valgrid_design.pdf/.png
+  wrote valgrid_surrogate.pdf/.png
+  wrote valgrid_table.tex

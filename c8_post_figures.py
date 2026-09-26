@@ -207,17 +207,25 @@ def save(fig, out: Path, name: str):
     print(f"  wrote {name}.pdf/.png")
 
 
-def place_labels(fig, ax, rows, ids, fronts, limits):
-    """Label each front design without covering a point, a front, a limit or a label.
+def place_labels(fig, ax, rows, ids, fronts, limits, errbars=(), boxes=()):
+    """Label each front design without covering a point, an error bar, a front, a limit,
+    a limit label, the legend or another label.
 
     The candidate offsets are tried in order and the first one whose text box is clear
     of everything already on the axes is kept, so the placement is deterministic.
     """
     import numpy as np
-    CAND = [(5, 4), (-13, 4), (5, -11), (-13, -11), (9, -3), (-17, -3), (-4, 8), (-4, -15)]
+    # (dx, dy, ha, va) in points, nearest first: right, left, below, above, then diagonals,
+    # then the same directions further out
+    CAND = []
+    for d in (5, 9, 14, 20, 27):
+        CAND += [(d, 0, "left", "center"), (-d, 0, "right", "center"),
+                 (0, -d, "center", "top"), (0, d, "center", "bottom"),
+                 (d, -d, "left", "top"), (d, d, "left", "bottom"),
+                 (-d, -d, "right", "top"), (-d, d, "right", "bottom")]
     r = fig.canvas.get_renderer()
     pts = ax.transData.transform([(rows[i]["efpd"], rows[i]["F"]) for i in rows])
-    seg = []
+    seg = [(x, y) for x, y0, s in errbars for y in np.linspace(y0 - s, y0 + s, 25)]
     for f in fronts:                      # the step fronts, as drawn with where="post"
         for (x0, y0), (x1, y1) in zip(f[:-1], f[1:]):
             seg += [(x, y0) for x in np.linspace(x0, x1, 60)]
@@ -226,18 +234,27 @@ def place_labels(fig, ax, rows, ids, fronts, limits):
         lo, hi = (ax.get_xlim(), ax.get_ylim()) if kind == "h" else (ax.get_ylim(), ax.get_xlim())
         seg += [(x, v) if kind == "h" else (v, x) for x in np.linspace(lo[0], lo[1], 200)]
     obst = np.vstack([pts, ax.transData.transform(seg)])
-    taken, frame = [], ax.get_window_extent()
+    taken, frame = [b.expanded(1.05, 1.1) for b in boxes], ax.get_window_extent()
     for i in ids:
-        a = ax.annotate(f"C8-{i}", (rows[i]["efpd"], rows[i]["F"]), xytext=CAND[0],
+        a = ax.annotate(f"C8-{i}", (rows[i]["efpd"], rows[i]["F"]), xytext=CAND[0][:2],
                         textcoords="offset points", fontsize=7.5)
-        for dx, dy in CAND:
+        best = None
+        for dx, dy, ha, va in CAND:
             a.xyann = (dx, dy)
-            b = a.get_window_extent(r).expanded(1.25, 1.35)
-            inside = ((obst[:, 0] > b.x0) & (obst[:, 0] < b.x1)
-                      & (obst[:, 1] > b.y0) & (obst[:, 1] < b.y1)).any()
-            if not inside and frame.contains(b.x0, b.y0) and frame.contains(b.x1, b.y1) \
-               and not any(b.overlaps(o) for o in taken):
+            a.set_ha(ha); a.set_va(va)
+            b = a.get_window_extent(r).expanded(1.15, 1.3)
+            hits = int(((obst[:, 0] > b.x0) & (obst[:, 0] < b.x1)
+                        & (obst[:, 1] > b.y0) & (obst[:, 1] < b.y1)).sum())
+            hits += 100 * sum(b.overlaps(o) for o in taken)
+            hits += 1000 * (not (frame.contains(b.x0, b.y0) and frame.contains(b.x1, b.y1)))
+            if best is None or hits < best[0]:
+                best = (hits, dx, dy, ha, va)
+            if hits == 0:
                 break
+        _, dx, dy, ha, va = best
+        a.xyann = (dx, dy); a.set_ha(ha); a.set_va(va)
+        if best[0]:
+            print(f"  label C8-{i}: best position still touches {best[0]} obstacle points")
         taken.append(a.get_window_extent(r))
 
 
@@ -260,18 +277,28 @@ def fig_front(plt, rows, out, sigma_F):
     ax.plot([rows[i]["efpd"] for i in front2], [rows[i]["F"] for i in front2], "-", color="tab:green", lw=1.2,
             label="Two-bank front (3 designs)")
     ax.axhline(1.65, color="tab:red", ls="--", lw=0.7)
-    ax.text(120, 1.655, "AP1000 design limit 1.65", ha="left", va="bottom", fontsize=7, color="tab:red")
+    ap = ax.text(0.006, 1.656, "AP1000 design limit", ha="left", va="bottom", fontsize=6.5,
+                 color="tab:red", transform=ax.get_yaxis_transform())
     ax.axvline(FIVE_YEARS, color="tab:red", ls="--", lw=0.7)
-    ax.text(FIVE_YEARS - 55, 1.797, "Five years at full power", rotation=90, ha="right", va="top",
-            fontsize=7, color="tab:red")
+    fy = ax.text(FIVE_YEARS - 55, 1.797, "Five years at full power", rotation=90, ha="right", va="top",
+                 fontsize=7, color="tab:red")
     ax.set_xlabel("Cycle length, EFPD")
     ax.set_ylabel("$F_{\\Delta H}$, core, BOL, 1000 ppm")
     ax.set_xlim(-150, 8200)
     ax.set_ylim(1.49, 1.80)
-    ax.legend(loc="lower right", fontsize=7)
-    place_labels(fig, ax, rows, front4 + front2,
-                 [[(rows[i]["efpd"], rows[i]["F"]) for i in f] for f in (front4, front2)],
-                 [("h", 1.65), ("v", FIVE_YEARS)])
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.16), ncol=2, fontsize=7, frameon=False)
+    # labels placed by hand next to their own point, clear of points, error bars, the
+    # fronts and the limit lines: (dx, dy) in points, ha, va
+    LAB = {53: (-7, 0, "right", "center"), 13: (6, -6, "left", "top"),
+           31: (-6, 3, "right", "bottom"), 47: (7, -2, "left", "center"),
+           42: (-1, 21, "left", "bottom"), 23: (6, -7, "left", "top"),
+           29: (6, -6, "left", "top"), 21: (6, -6, "left", "top"),
+           44: (6, -6, "left", "top"), 59: (6, -3, "left", "top"),
+           1: (8, 0, "left", "center")}
+    for i in front4 + front2:
+        dx, dy, ha, va = LAB.get(i, (6, 4, "left", "bottom"))
+        ax.annotate(f"C8-{i}", (rows[i]["efpd"], rows[i]["F"]), xytext=(dx, dy),
+                    textcoords="offset points", ha=ha, va=va, fontsize=7.5)
     save(fig, out, "c8_post_front_two_tier")
     plt.close(fig)
     return front4, front2

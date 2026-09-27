@@ -1,0 +1,31 @@
+Campaign 9 checks, 2026-09-26 23:20:56
+
+T. thread reproducibility of the depletion of C9-47 (pcm; 0 = bit-identical):
+  note: t1a ran at {'particles': 1000, 'batches': 30, 'inactive': 10}, compare it only with its own pair
+  note: t1b ran at {'particles': 1000, 'batches': 30, 'inactive': 10}, compare it only with its own pair
+  step                   t1a                   t1b                  t64a                  t64b               archive
+     0    1.1219357299534725    1.1219357299534725    1.1157872707434484    1.1157872707434457    1.1157900000000001
+     1    1.0830905485737723    1.0830905485737723    1.0941004986000560    1.0940851780042467    1.0922499999999999
+     2    1.1050911644377635    1.1050911644377635    1.0905156197191721    1.0972093940929866    1.0938099999999999
+  
+  pairwise difference per step, pcm (0 = bit-identical)
+         t1a vs t1b     : 0 (identical)  0 (identical)  0 (identical)  0 (identical)
+         t1a vs t64a    : +615  -1.1e+03  +1.46e+03  +52.6
+         t1a vs t64b    : +615  -1.1e+03  +788  -99.1
+         t1a vs archive : +615  -916  +1.13e+03
+         t1b vs t64a    : +615  -1.1e+03  +1.46e+03  +52.6
+         t1b vs t64b    : +615  -1.1e+03  +788  -99.1
+         t1b vs archive : +615  -916  +1.13e+03
+        t64a vs t64b    : +2.66e-10  +1.53  -669  -152
+        t64a vs archive : -0.273  +185  -329
+        t64b vs archive : -0.273  +184  +340
+
+L. reduced-fidelity (10 000 x 100 / 50) against full-fidelity eight-layer depletion:
+  design        full [d]    reduced [d]  diff [d]      z  full h reduced h
+  C9-24    1915.3 +/-  9.5  1977.6 +/- 17.6     +62.2  +3.11    0.88      0.33
+  C9-27    1956.1 +/-  8.8  1942.9 +/- 20.0     -13.2  -0.61    0.93      0.32
+  C9-72    1782.3 +/- 10.2  1799.4 +/- 18.4     +17.1  +0.82    0.89      0.34
+  C9-69    1895.2 +/-  6.7  1894.7 +/- 13.8      -0.5  -0.03    0.89      0.35
+  
+  mean difference +16.4 d, rms 32.9 d over 4 designs
+  the reduced fidelity is usable in the loop if the rms is well below the front margins (+12 to +69 d)

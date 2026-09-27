@@ -1,0 +1,17 @@
+==========================================================================
+MODERATOR TEMPERATURE COEFFICIENT, design 27, core3d
+==========================================================================
+  570 K -> 590 K at 15.5 MPa, rho 0.73291 -> 0.68830 g/cm3
+
+      ppm     k(lo)     k(hi)       MTC      sd  verdict
+        0   1.08043   1.06581    -63.48    1.53  negative, acceptable
+     1000   1.01069   1.00154    -45.21    1.75  negative, acceptable
+     2000   0.95206   0.94782    -23.52    1.91  negative, acceptable
+     3000   0.90167   0.90024     -8.80    2.10  negative, acceptable
+
+  MTC in pcm per K. A negative coefficient is the self-stabilising
+  direction. The crossing is the boron ceiling for this lattice.
+
+  NO CROSSING inside 0 to 3000 ppm.
+  The coefficient is negative throughout.
+  Extend the sweep with --boron before drawing any conclusion.

@@ -1,0 +1,12 @@
+================================================================================================
+MTC ceiling of each lattice against its own boron demand, 12.8 MPa
+================================================================================================
+ceiling refitted by weighted least squares over the three points nearest the sign change, uncertainty
+propagated from the fit covariance, inflated by sqrt(chi2/dof) where that exceeds one.
+'quoted' is the two-point interpolation printed by mtc_scan.py, kept
+for comparison.
+
+  id  Gd wt%  pins  invent  ceiling +/- sd  quoted  demand   margin   k_sig  verdict
+  --------------------------------------------------------------------------------------------
+  69    4.38    16    70.1     2867 +/- 115    2836    2268     +599    +5.2  clears
+

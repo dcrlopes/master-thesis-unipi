@@ -1,0 +1,23 @@
+[
+ {
+  "idx": 69,
+  "dir": "mtc_c9a_d69_p155_core3d",
+  "gd_wt": 4.3817290560922135,
+  "pins": 16.0,
+  "inventory": 70.10766489747542,
+  "enrich": 4.86837511156334,
+  "ceiling": 3270.6809058903773,
+  "sigma": 113.0920657562025,
+  "quoted": null,
+  "slope": 0.018181738193181342,
+  "chi2": 1.3832100181648423,
+  "n_points": 4,
+  "demand": 2268.222236632323,
+  "margin": 1002.4586692580542,
+  "k_sigma": 8.86409371475359,
+  "resolved": true,
+  "feasible": true,
+  "n_scans": 1,
+  "merge_chi2": null
+ }
+]

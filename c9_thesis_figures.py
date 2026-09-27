@@ -50,11 +50,11 @@ PROXY_A, PROXY_B = 23.292, -0.8496   # C8 proxy law w_B(e) = A e^B
 BAND_C, BAND_H = 4.31, 0.35          # enrichment band of sec:res-c9-gd, wt%
 
 # Pareto membership frequency of Table tab:c9-stability, 2000 perturbations
-# with sigma_F = 0.010 and sigma_c = 10 ppm. Values are copied from the
+# with sigma_F = 0.012 and sigma_c = 10 ppm (c9_step0.py --sigma 0.012 10). Values are copied from the
 # dissertation table so that figure and table cannot drift apart.
-STABILITY = [(47, 1.00, True), (34, 1.00, True), (44, 0.59, True),
-             (40, 0.54, True), (35, 0.45, True), (29, 0.31, False),
-             (30, 0.24, False), (12, 0.21, False), (54, 0.10, False)]
+STABILITY = [(47, 1.00, True), (34, 0.99, True), (44, 0.54, True),
+             (40, 0.54, True), (35, 0.42, True), (29, 0.34, False),
+             (30, 0.26, False), (12, 0.20, False), (54, 0.12, False)]
 
 # constraint set of Campaign 8, used to re-score the Campaign 9 archive
 C8_CONS = ["g_kmin", "g_kmax", "g_enr", "g_peak", "g_geom", "g_ctrl"]

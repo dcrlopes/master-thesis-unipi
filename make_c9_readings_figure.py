@@ -94,6 +94,15 @@ for ax in axes:
     ax.text(1.715, MTC_REF + 30, "MTC boron limit of C8-47, 2763 ppm", color="#CC3311",
             fontsize=7.5, ha="right", va="bottom")
 
+# MTC boron limit of the C9-27 lattice, 12.8 MPa (mtc_front_table.py, c9_post/d27_p128)
+LIM27 = json.load(open("c9_post/d27_p128/mtc_ceiling_table.json"))[0]
+for ax, fmap in ((axes[0], F2), (axes[1], F3)):
+    x27, y27, s27 = fmap[27], LIM27["ceiling"], LIM27["sigma"]
+    ax.fill_between([x27 - 0.025, x27 + 0.025], y27 - s27, y27 + s27, color="#882255", alpha=0.12, lw=0, zorder=1)
+    ax.hlines(y27, x27 - 0.025, x27 + 0.025, colors="#882255", linestyles="-", lw=1.6, zorder=2)
+    ax.annotate(f"MTC boron limit of C9-27\n{y27:.0f} $\\pm$ {s27:.0f} ppm", (x27, y27 + s27 + 25),
+                fontsize=7.5, color="#882255", va="bottom", ha="center")
+
 ax = axes[0]
 background(ax, F2)
 for r in R2D:

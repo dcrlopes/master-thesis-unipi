@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """make_restart_defect_figure.py -- the restarted-depletion defect on design C5-7,
-for Section 5.3.2.
+for Section 5.1.2.3 and 4.4.5.
 
 Horizontal, two bars on one burnup axis:
 
-  top     the burnup label the evaluator recorded, nine blocks, with the first
+  top     the burnup label the evaluator stored, nine blocks, with the first
           step of every restarted block hatched: the label advanced by 4.0
           MWd/kgHM while the fuel did not burn (OpenMC 0.15.3 restarted without
           reaction rates, Section 4.4.5);
@@ -91,7 +91,7 @@ ax.text(HORIZON + 1.2, (Y_REC + Y_PHY) / 2,
         va="center", ha="left", fontsize=9, color=C_LOST)
 
 ax.set_yticks([Y_REC, Y_PHY])
-ax.set_yticklabels(["Recorded label", "Physical burnup"], fontsize=9.5)
+ax.set_yticklabels(["Stored label", "Physical burnup"], fontsize=9.5)
 ax.set_ylim(-0.7, 1.7)
 ax.set_xlim(0, 98)
 ax.set_xlabel("Burnup [MWd/kgHM]")

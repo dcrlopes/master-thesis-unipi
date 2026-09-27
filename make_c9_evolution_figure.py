@@ -45,7 +45,7 @@ plt.rcParams.update({"font.size": 9, "font.family": "DejaVu Sans"})
 fig, (ax, bx) = plt.subplots(1, 2, figsize=(8.0, 3.3))
 for axis, y in ((ax, F), (bx, C)):
     for b in range(1, 7):
-        axis.axvline(EDGES[b] + 0.5, color="0.75", lw=0.7, ls=":")
+        axis.axvline(EDGES[b] + 0.5, color="0.45", lw=0.8, ls=":")
     for i in range(len(A)):
         b = block(i)
         if i in feas:
@@ -54,7 +54,7 @@ for axis, y in ((ax, F), (bx, C)):
             axis.scatter(n[i], y[i], marker=MK[b], s=34, facecolors="none", edgecolors=COL[b], linewidths=0.9, alpha=0.9, zorder=3)
     for i in front:
         axis.scatter(n[i], y[i], marker="o", s=150, facecolors="none", edgecolors="crimson", linewidths=1.2, zorder=5)
-    axis.grid(alpha=0.3)
+    axis.grid(alpha=0.3, axis="y")
 for b in range(7):
     ax.text((EDGES[b] + EDGES[b + 1]) / 2 + 0.5, 1.755, SHORT[b], ha="center", va="top", fontsize=7, color="0.35")
 ax.axhline(F_MAX, color="tab:orange", ls="--", lw=0.8)
@@ -65,7 +65,9 @@ ax.set_title("(a) Radial peaking factor", fontsize=9)
 bx.axhspan(TRUNC - 150, TRUNC + 150, color="0.9", zorder=0)
 bx.text(1, TRUNC + 200, f"Truncation, {TRUNC} ppm", fontsize=6.5, color="0.35", va="bottom")
 bx.axhline(LIMIT, color="tab:red", ls="--", lw=0.8)
-bx.text(60.4, LIMIT + 80, "MTC limit of C9-47", fontsize=6.5, color="tab:red", ha="right", va="bottom")
+bx.annotate("MTC boron limit of C9-47", (47, LIMIT), xytext=(40, 3900), textcoords="data",
+            ha="center", va="center", fontsize=6.5, color="tab:red",
+            arrowprops=dict(arrowstyle="-", color="tab:red", lw=0.6, shrinkA=0, shrinkB=0), zorder=6)
 bx.set_ylim(0, 6500)
 bx.set_xlim(0, 61)
 ax.set_xlim(0, 61)
@@ -73,15 +75,17 @@ ax.set_xlabel("Evaluation")
 bx.set_xlabel("Evaluation")
 bx.set_ylabel(r"$c_\mathrm{max}$ [ppm]")
 bx.set_title("(b) Critical boron at the operating maximum", fontsize=9)
-OFA = {34: (-8, -10, "right", "top"), 35: (0, -12, "center", "top"), 40: (8, -10, "left", "top"),
-       44: (0, 12, "center", "bottom"), 47: (0, -12, "center", "top")}
-OFB = {34: (0, -12, "center", "top"), 35: (8, 8, "left", "bottom"), 40: (0, -12, "center", "top"),
-       44: (0, -12, "center", "top"), 47: (8, 8, "left", "bottom")}
+# labels in free space, ordered as the points, with a thin leader to each point
+ARROW = dict(arrowstyle="-", color="0.45", lw=0.6, shrinkA=0, shrinkB=2)
+LA = {34: (30.0, 1.452), 35: (37.0, 1.442), 40: (44.0, 1.452),
+      44: (42.0, 1.592), 47: (51.0, 1.592)}
+LB = {34: (30.0, 650), 35: (36.0, 2550), 40: (41.0, 650),
+      44: (47.0, 650), 47: (53.0, 800)}
 for i in front:
-    dx, dy, ha, va = OFA[i]
-    ax.annotate(f"C9-{i}", (n[i], F[i]), xytext=(dx, dy), textcoords="offset points", ha=ha, va=va, fontsize=6.5)
-    dx, dy, ha, va = OFB[i]
-    bx.annotate(f"C9-{i}", (n[i], C[i]), xytext=(dx, dy), textcoords="offset points", ha=ha, va=va, fontsize=6.5)
+    ax.annotate(f"C9-{i}", (n[i], F[i]), xytext=LA[i], textcoords="data",
+                ha="center", va="center", fontsize=6.5, arrowprops=ARROW, zorder=6)
+    bx.annotate(f"C9-{i}", (n[i], C[i]), xytext=LB[i], textcoords="data",
+                ha="center", va="center", fontsize=6.5, arrowprops=ARROW, zorder=6)
 handles = [Line2D([], [], marker=MK[b], ls="", color=COL[b], markeredgecolor="k", markersize=6, label=f"{NAMES[b]}, feasible")
            for b in range(7)]
 handles += [Line2D([], [], marker="o", ls="", markerfacecolor="none", markeredgecolor="0.4", markersize=6, label="Infeasible, open marker of its block"),

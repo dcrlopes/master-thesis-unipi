@@ -109,7 +109,7 @@ bx.set_title("(b) Sorted within each block", fontsize=10)
 for axis in (ax, bx):
     axis.set_yscale("log")
     axis.set_ylim(4e-4, 0.6)
-    axis.grid(alpha=0.22, lw=0.6, which="major")
+    axis.grid(alpha=0.22, lw=0.6, which="major", axis="y")
 
 handles, labels = ax.get_legend_handles_labels()
 handles += [plt.Line2D([], [], color=C_THR, lw=1.1, ls="-"),

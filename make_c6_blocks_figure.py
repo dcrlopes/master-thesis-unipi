@@ -82,7 +82,7 @@ ax.set_ylabel("Hypervolume")
 ax.set_xlim(36, 118)
 ax.set_ylim(1250, 1720)
 ax.set_title("(a) Hypervolume by acquisition revision", fontsize=10)
-ax.grid(alpha=0.25, lw=0.6)
+ax.grid(alpha=0.25, lw=0.6, axis="y")
 
 # ---- (b) feasible fraction and minimum separation per block ---------------
 x = np.arange(len(BLOCKS))

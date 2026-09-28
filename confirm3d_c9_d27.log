@@ -1,0 +1,54 @@
+python : 3.13.13   cwd: /home/diogo/master-thesis-unipi
+openmc : 0.15.3   XS: /home/diogo/openmc_data/endfb-vii.1-hdf5/cross_sections.xml
+boron  : 1000.0 ppm in every solve
+
+=== design 27 ===
+radial [cm]: R_env 77.231  fuel cyl 77.251  reflector -> 82.911  barrel -> 87.991  downcomer 2.009  vessel 90.0 -> 100.0
+axial [cm from the fuel mid-plane]:
+  water_below     -86.365 to  -71.365
+  bottom_nozzle   -71.365 to  -61.205
+  lower_cap       -61.205 to  -60.000
+  fuel            -60.000 to   60.000
+  plenum           60.000 to   73.490
+  upper_cap        73.490 to   74.695
+  upper_gap        74.695 to   83.176
+  top_nozzle       83.176 to   92.196
+  water_above      92.196 to  107.196
+  grid 1 htm   -56.445 to  -52.000  in fuel
+  grid 2 htp   -15.045 to  -10.600  in fuel
+  grid 3 htp    26.355 to   30.800  in fuel
+  grid 4 htp    67.755 to   72.200  in plenum
+inserted rod (benchmark): unrodded -60.000 to -47.960, AIC to -17.480, B4C to 60.000 (B4C length 77.48 cm)
+parked rod AIC: 60.000 to 83.176 (plenum + cap + gap, on)
+grid strap area fraction of the cell 0.0560 (explicit box 1.2242 -> pitch), spring fraction of the rod bore 0.0243
+homogenised slabs (volume fractions per assembly cell):
+  bottom_nozzle          ss 0.1720  water 0.8280
+  top_nozzle             ss 0.1770  water 0.8230
+  lower_cap              zr 0.4161  water 0.5839
+  plenum                 zr 0.1063  inconel 0.0075  he 0.3023  water 0.5839
+  plenum_parked          zr 0.1063  inconel 0.0075  he 0.3023  aic 0.0299  cr_ss 0.0071  cr_he 0.0014  water 0.5454
+  plenum_inserted        zr 0.1063  inconel 0.0075  he 0.3023  cr_ss 0.0071  cr_he 0.0314  water 0.5454
+  upper_cap              zr 0.4161  water 0.5839
+  upper_cap_parked       zr 0.4161  aic 0.0299  cr_ss 0.0071  cr_he 0.0014  water 0.5454
+  upper_cap_inserted     zr 0.4161  cr_ss 0.0071  cr_he 0.0314  water 0.5454
+  upper_gap              zr 0.0082  water 0.9918
+  upper_gap_parked       zr 0.0082  aic 0.0299  cr_ss 0.0071  cr_he 0.0014  water 0.9533
+  upper_gap_inserted     zr 0.0082  cr_ss 0.0071  cr_he 0.0314  water 0.9533
+  plenum_grid            zr 0.1623  inconel 0.0075  he 0.3023  water 0.5279
+  plenum_parked_grid     zr 0.1623  inconel 0.0075  he 0.3023  aic 0.0299  cr_ss 0.0071  cr_he 0.0014  water 0.4894
+  plenum_inserted_grid   zr 0.1623  inconel 0.0075  he 0.3023  cr_ss 0.0071  cr_he 0.0314  water 0.4894
+departures exposed: refl_steel_vol campaign 0.90, cr_abs_radius campaign 0.4331
+  d27 ARO  2D   seed 0: k = 1.03886 +/- 0.00022 F = 1.582 entropy_conv 12 (174.420508146286 s)
+  d27 ARO  2D   seed 1: k = 1.03844 +/- 0.00021 F = 1.576 entropy_conv 9 (172.99598097801208 s)
+  d27 ARO  3Dhw seed 0: k = 1.00779 +/- 0.00020 F = 1.561 entropy_conv 9 (205.5 s)
+  d27 ARO  3Dhw seed 1: k = 1.00840 +/- 0.00020 F = 1.569 entropy_conv 9 (208.9 s)
+  d27 ARI  2D   seed 0: k = 0.88655 +/- 0.00023 F = 2.348 entropy_conv 10 (174.19563555717468 s)
+  d27 ARI  2D   seed 1: k = 0.88687 +/- 0.00022 F = 2.298 entropy_conv 9 (171.93186783790588 s)
+  d27 ARI  3Dhw seed 0: k = 0.87230 +/- 0.00020 F = 2.169 entropy_conv 10 (216.1 s)
+  d27 ARI  3Dhw seed 1: k = 0.87255 +/- 0.00022 F = 2.191 entropy_conv 8 (212.7 s)
+  d27 RE12 2D   seed 0: k = 0.96346 +/- 0.00022 F = 2.013 entropy_conv 9 (176.18115305900574 s)
+  d27 RE12 2D   seed 1: k = 0.96395 +/- 0.00019 F = 2.093 entropy_conv 7 (175.8303747177124 s)
+  d27 RE12 3Dhw seed 0: k = 0.94053 +/- 0.00021 F = 1.972 entropy_conv 6 (217.9 s)
+  d27 RE12 3Dhw seed 1: k = 0.94065 +/- 0.00023 F = 1.988 entropy_conv 6 (217.8 s)
+design 27:  L_ax_hw(ARO) 1.0303  F2D 1.579  F3D 1.565  ARI margin 2D/3D 12777/14623 pcm, L_ax 1.0164  RE12 margin 2D/3D 3766/6316 pcm, L_ax 1.0246
+wrote confirm3d_c9_d27/summary.json

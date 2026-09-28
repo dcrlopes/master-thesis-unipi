@@ -59,8 +59,11 @@ def setting_axis(a):
 slope, c = d["slope_free"], d["fit_logc"]
 SHORT = d["shortfall_4k_vs_fit"]
 xx = np.logspace(np.log10(N.min() * 0.7), np.log10(N.max() * 1.4), 50)
-ax.plot(xx, np.exp(c) * xx ** slope, "-", color=C_FIT, lw=1.1, zorder=1,
-        label=f"Fit to the converged settings, slope {slope:.2f}")
+# fit_logc is the intercept of the 1/sqrt(N) law (slope fixed at -1/2), so the
+# line is drawn with that slope; the free slope is quoted in the label only.
+ax.plot(xx, np.exp(c) * xx ** -0.5, "-", color=C_FIT, lw=1.1, zorder=1,
+        label=f"$1/\\sqrt{{N}}$ law fitted to the converged settings "
+              f"(free slope {slope:.2f})")
 ax.errorbar(N[1:], sd[1:], yerr=se[1:], fmt="o", ms=7, color=C_OK, capsize=3,
             zorder=3, label="Converged settings")
 ax.errorbar(N[:1], sd[:1], yerr=se[:1], fmt="s", ms=8, color=C_LOW, capsize=3,

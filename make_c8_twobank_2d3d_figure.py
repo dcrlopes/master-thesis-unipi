@@ -106,13 +106,14 @@ bx.axhline(MARGIN, color="tab:red", ls=":", lw=0.9)
 bx.axvline(MARGIN, color="tab:red", ls=":", lw=0.9)
 bx.scatter(m2, m3, marker="o", s=34, color="tab:blue", label="Beginning of life", zorder=4)
 bx.scatter(m2, m3p, marker="v", s=34, color="tab:purple", label="Operating maximum", zorder=4)
-BL = {53: (-7, -4, "right", "top"), 13: (7, -4, "left", "top"), 31: (-7, 4, "right", "bottom"),
-      47: (7, 2, "left", "bottom"), 42: (-7, 2, "right", "bottom"), 23: (7, 0, "left", "center"),
-      29: (7, -2, "left", "top"), 21: (7, 4, "left", "bottom"), 44: (7, -4, "left", "top"),
-      59: (-7, -3, "right", "top"), 1: (-7, -2, "right", "top")}
+# labels on alternate sides of the diagonal, clear of the markers and the lines
+UL, LR = (-14, 14, "right", "bottom"), (14, -14, "left", "top")
+BL = {53: LR, 13: LR, 31: UL, 47: UL, 42: LR, 23: UL, 59: LR, 21: UL, 44: LR, 1: UL, 29: LR}
 for d, x, y in zip(conf, m2, m3):
     dx, dy, ha, va = BL[d]
-    bx.annotate(f"C8-{d}", (x, y), xytext=(dx, dy), textcoords="offset points", ha=ha, va=va, fontsize=7)
+    bx.annotate(f"C8-{d}", (x, y), xytext=(dx, dy), textcoords="offset points", ha=ha, va=va,
+                fontsize=7, zorder=6,
+                arrowprops=dict(arrowstyle="-", lw=0.5, color="0.45", shrinkA=0, shrinkB=3))
 bx.text(MARGIN + 150, -7200, "Constraint, 1010 pcm", rotation=90, fontsize=7, color="tab:red", va="bottom")
 bx.set_xlim(-7500, 7000)
 bx.set_ylim(-8000, 9500)

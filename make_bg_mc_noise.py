@@ -115,6 +115,21 @@ def main():
     law = lambda x: math.exp(logc) / np.sqrt(x)
     slope_free = float(np.polyfit(np.log(N), np.log(S), 1, w=np.sqrt(W))[0])
 
+    # ---- core estimator, Campaign 9 front (ladder_core_c9.py, 170 batches, 60 inactive)
+    core = json.loads(Path("ladder_core_c9/summary.json").read_text())
+    core_pts = []
+    for p_str, s_ in sorted(core["pooled_sd"].items(), key=lambda kv: int(kv[0])):
+        p_ = int(p_str)
+        dof = sum(r["n"] - 1 for d in core["per_design"].values()
+                  for r in d["rungs"] if r["particles"] == p_)
+        core_pts.append(dict(label=f"{p_ // 1000}k × 170", particles=p_, N=p_ * 110,
+                             sd=float(s_), dof=dof, designs=len(core["per_design"]),
+                             se=float(s_) / math.sqrt(2 * dof)))
+    Nc = np.array([p["N"] for p in core_pts], float)
+    Sc = np.array([p["sd"] for p in core_pts], float)
+    core_slope, core_icpt = np.polyfit(np.log(Nc), np.log(Sc), 1)
+    core_law = lambda x: np.exp(core_icpt) * x ** core_slope
+
     # ---- paired check on the same three designs -----------------------------
     cc = list(csv.DictReader(open("results_campaign2/figs/corrected_candidates.csv")))
     paired = []
@@ -155,17 +170,26 @@ def main():
 
     xx = np.logspace(np.log10(1.0e5), np.log10(5.0e7), 50)
     ax.loglog(xx, law(xx), "-", color="#888888", lw=1.3,
-              label=r"Fitted $\sigma \propto 1/\sqrt{N}$")
+              label=r"Fitted $\sigma \propto 1/\sqrt{N}$, assembly")
     ax.errorbar(N, S, yerr=[p["se"] for p in pts], fmt="o", color="#173a5e", ms=6,
-                capsize=3, label="Measured, 120 batches")
+                capsize=3, label="Assembly estimator, 120 batches")
     for p in pts:
         ax.annotate(f"{p['label']}\n{p['designs']} designs", (p["N"], p["sd"]),
                     textcoords="offset points", xytext=(8, 4), fontsize=7.5)
     ax.errorbar([p4["N"]], [p4["sd"]], yerr=[p4["se"]], fmt="s", mfc="white", mec="#B23A48",
                 ecolor="#B23A48", mew=1.5, ms=6, capsize=3,
-                label="Measured, 60 batches (not fitted)")
+                label="Assembly estimator, 60 batches, not fitted")
     ax.annotate(f"{p4['label']}\n{p4['designs']} designs", (p4["N"], p4["sd"]),
                 textcoords="offset points", xytext=(8, -18), fontsize=7.5, color="#B23A48")
+    xxc = np.logspace(np.log10(1.8e6), np.log10(5.5e7), 40)
+    ax.loglog(xxc, core_law(xxc), "--", color="#2E6F4E", lw=1.2,
+              label=rf"Fitted $\sigma \propto N^{{{core_slope:.2f}}}$, core")
+    ax.errorbar(Nc, Sc, yerr=[p["se"] for p in core_pts], fmt="D", color="#2E6F4E",
+                ms=5.5, capsize=3, label="Core estimator, Campaign 9 front, 170 batches")
+    for p in core_pts:
+        ax.annotate(f"{p['label']}\n{p['designs']} designs", (p["N"], p["sd"]),
+                    textcoords="offset points", xytext=(8, 4), fontsize=7.5,
+                    color="#2E6F4E")
     ax.set_xlim(8.0e4, 6.0e7)
     ax.set_ylim(1.5e-3, 4.0e-2)
     ax.set_xlabel("Active neutron histories $N$")
@@ -196,6 +220,7 @@ def main():
 
     summary = dict(
         points=pts, point_4k=p4, fit_logc=logc, slope_free=slope_free,
+        core_points=core_pts, core_slope=float(core_slope),
         fit_prediction_4k=float(law(N_4K)),
         shortfall_4k_vs_fit=1.0 - p4["sd"] / float(law(N_4K)),
         paired=dict(designs=paired, pooled_sd_16k=s16p, dof_16k=dof16p,

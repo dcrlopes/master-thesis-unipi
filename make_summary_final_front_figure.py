@@ -31,12 +31,13 @@ from matplotlib.lines import Line2D
 B = json.load(open("out_c9a/optimization_checkpoint.json"))
 A = B["all_raw"]
 F3 = {int(k): v["ARO_3Dhw"]["F"] for k, v in json.load(open("confirm3d_c9_all/summary.json")).items()}
-for f in ("confirm3d_c9_front/summary.json", "confirm3d_c9a/summary.json"):
+for f in ("confirm3d_c9_front/summary.json", "confirm3d_c9a/summary.json", "confirm3d_c9a_rest/summary.json"):
     F3.update({int(k): v["ARO_3Dhw"]["F"] for k, v in json.load(open(f)).items()})
 C = {i: r["c_max"] for i, r in enumerate(A)}
 C9 = json.load(open("out_c9/optimization_checkpoint.json"))       # Campaign 9 constraints, C9-0 to C9-59
 feas = {i: all(r[c] is not None and r[c] <= 0 for c in C9["constraint_names"])
         for i, r in enumerate(C9["all_raw"])}
+feas.update({i: all(A[i][c] is not None and A[i][c] <= 0 for c in B["constraint_names"]) for i in range(60, 96)})
 LIM27 = json.load(open("c9_post/d27_p128/mtc_ceiling_table.json"))[0]
 
 # label, members, colour, marker. The five members of the Campaign 9 front show
@@ -62,7 +63,7 @@ def fz_runs(key, dirs):
 SEEDS = [f"_seed{k}" for k in (2, 3, 4, 5)]
 L8 = [("C9-27, 8 layers, 5 seeds", "d27", ["c9_dep_core3d_d27_L8"] + ["c9_dep_core3d_d27" + s for s in SEEDS], "#0072B2", "D"),
       ("C9-70, 8 layers, 5 seeds", "d70", ["c9f_dep_core3d"] + ["c9a_dep_core3d" + s for s in SEEDS], "#000000", "s"),
-      ("C9-69, 8 layers, 1 seed", "d69", ["c9f_dep_core3d"], "#CC79A7", "o")]
+      ("C9-69, 8 layers, 5 seeds", "d69", ["c9f_dep_core3d"] + ["c9a_dep_core3d_d69" + s for s in SEEDS], "#CC79A7", "o")]
 bu1, fz1, spec_power = fz_runs("d27", ["c9_dep_core3d_d27_L1"])
 BU_MIN = 1826.0 * spec_power / 1000.0                 # burnup of the minimum cycle length, MWd/kgHM
 
@@ -73,7 +74,7 @@ plt.rcParams.update({"font.size": 9, "font.family": "DejaVu Sans", "axes.grid": 
 fig, (ax, bx) = plt.subplots(1, 2, figsize=(8.8, 3.9))    # printed at 0.86 of the text width
 
 # (a) objective plane, three-dimensional peaking
-for i in range(60):
+for i in range(96):
     if i in F3 and C[i] is not None:
         ax.scatter(F3[i], C[i], s=16, zorder=2, linewidths=0.8, alpha=0.75,
                    facecolors="#9E9E9E" if feas[i] else "none", edgecolors="#9E9E9E")
@@ -81,9 +82,9 @@ y27 = LIM27["ceiling"]                                # its uncertainty is in Ta
 ax.axhline(y27, color="#882255", ls="--", lw=1.1, zorder=1)
 ax.text(1.715, y27 + 30, f"MTC boron limit of C9-27, {y27:.0f} ppm", fontsize=7.5, color="#882255",
         va="bottom", ha="right")
-shown = [i for i in range(60) if i in F3 and C[i] is not None]
+shown = [i for i in range(96) if i in F3 and C[i] is not None]
 inside = [i for i in shown if 1.42 <= F3[i] <= 1.72 and 1000 <= C[i] <= 4200]
-print(f"Campaign 9 designs with a 3D peaking factor and a c_max: {len(shown)} of 60, "
+print(f"Evaluated designs with a 3D peaking factor and a c_max: {len(shown)} of 96, "
       f"{len(inside)} inside the axes; continuation designs with a 3D solve: "
       f"{sorted(i for i in F3 if i >= 60)}")
 for name, members, col, mk in FRONTS:
@@ -108,8 +109,8 @@ ax.set_ylim(1000, 4200)
 ax.set_xlabel(r"Radial peaking factor $F_{\Delta H}$, three-dimensional core")
 ax.set_ylabel(r"Critical boron concentration $c_\mathrm{max}$ [ppm]")
 ax.set_title("(a) Objective plane", fontsize=9, loc="left")
-h = [Line2D([], [], ls="", marker="o", ms=5, mfc="#9E9E9E", mec="#9E9E9E", label="Campaign 9 design, feasible"),
-     Line2D([], [], ls="", marker="o", ms=5, mfc="none", mec="#9E9E9E", label="Campaign 9 design, infeasible")]
+h = [Line2D([], [], ls="", marker="o", ms=5, mfc="#9E9E9E", mec="#9E9E9E", label="Evaluated design, feasible"),
+     Line2D([], [], ls="", marker="o", ms=5, mfc="none", mec="#9E9E9E", label="Evaluated design, infeasible")]
 h += [Line2D([], [], color=c, marker=m, ms=6, lw=1.4, label=n) for n, _, c, m in FRONTS]
 ax.legend(handles=h, fontsize=7.5, loc="upper right", frameon=True, framealpha=0.9, edgecolor="none")
 

@@ -78,10 +78,13 @@ for i in range(96):
     if i in F3 and C[i] is not None:
         ax.scatter(F3[i], C[i], s=16, zorder=2, linewidths=0.8, alpha=0.75,
                    facecolors="#9E9E9E" if feas[i] else "none", edgecolors="#9E9E9E")
-y27 = LIM27["ceiling"]                                # its uncertainty is in Table 3 of the summary
-ax.axhline(y27, color="#882255", ls="--", lw=1.1, zorder=1)
-ax.text(1.715, y27 + 30, f"MTC boron limit of C9-27, {y27:.0f} ppm", fontsize=7.5, color="#882255",
-        va="bottom", ha="right")
+# MTC boron limit of each lattice of the final front, 12.8 MPa, without its uncertainty
+for d in (27, 70, 69):
+    y = json.load(open(f"c9_post/d{d}_p128/mtc_ceiling_table.json"))[0]["ceiling"]
+    ax.axhline(y, color="#882255", ls="--", lw=1.0, zorder=1)
+    above = d == 27                                   # the three lines are 110 to 150 ppm apart
+    ax.text(1.715, y + (8 if above else -12), f"MTC boron limit of C9-{d}, {y:.0f} ppm", fontsize=7,
+            color="#882255", va="bottom" if above else "top", ha="right")
 shown = [i for i in range(96) if i in F3 and C[i] is not None]
 inside = [i for i in shown if 1.42 <= F3[i] <= 1.72 and 1000 <= C[i] <= 4200]
 print(f"Evaluated designs with a 3D peaking factor and a c_max: {len(shown)} of 96, "

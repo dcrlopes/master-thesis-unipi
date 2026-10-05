@@ -1,0 +1,4 @@
+C9-63: 1 seed(s) 2015.1 d; mean 2015.1 d; margin over 1826 d +189.1 d
+C9-68: 1 seed(s) 1913.4 d; mean 1913.4 d; margin over 1826 d +87.4 d
+C9-79: 1 seed(s) 1798.4 d; mean 1798.4 d; margin over 1826 d -27.6 d
+C9-94: 1 seed(s) 1887.3 d; mean 1887.3 d; margin over 1826 d +61.3 d

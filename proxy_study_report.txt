@@ -1,0 +1,25 @@
+reference: 17 designs, eight-layer core depletion at 20 000 x 160
+  C9-1   2271.2 d  (1 seed(s))  margin +445.2 d
+  C9-11  1839.0 d  (1 seed(s))  margin  +13.0 d
+  C9-16  1908.7 d  (1 seed(s))  margin  +82.7 d
+  C9-24  1915.3 d  (1 seed(s))  margin  +89.3 d
+  C9-27  1926.3 d  (5 seed(s))  margin +100.3 d
+  C9-32  1664.1 d  (1 seed(s))  margin -161.9 d
+  C9-35  1641.4 d  (1 seed(s))  margin -184.6 d
+  C9-47  1573.3 d  (1 seed(s))  margin -252.7 d
+  C9-63  2015.1 d  (1 seed(s))  margin +189.1 d
+  C9-68  1913.4 d  (1 seed(s))  margin  +87.4 d
+  C9-69  1904.9 d  (5 seed(s))  margin  +78.9 d
+  C9-70  1849.7 d  (5 seed(s))  margin  +23.7 d
+  C9-72  1782.3 d  (1 seed(s))  margin  -43.7 d
+  C9-79  1798.4 d  (1 seed(s))  margin  -27.6 d
+  C9-85  1789.8 d  (1 seed(s))  margin  -36.2 d
+  C9-88  1811.9 d  (5 seed(s))  margin  -14.1 d
+  C9-94  1887.3 d  (1 seed(s))  margin  +61.3 d
+campaign assembly      n 17  wall   9.3 min  bias  +433.2 d  scatter 105.5 d  Spearman +0.767  calibrated (x0.810) LOO rms  85.6 d  wrong decisions 4 [72, 85, 88, 94], of which clear 3 [72, 85, 94]
+lofi core, 8 layers    n 17  wall  20.4 min  bias    +0.8 d  scatter  18.0 d  Spearman +0.975  calibrated (x1.000) LOO rms  18.5 d  wrong decisions 2 [11, 88], of which clear 0 []
+asm3d_L1               n 1: fewer than 3 common designs
+asm3d_L12              n 1: fewer than 3 common designs
+asm3d_L4               n 1: fewer than 3 common designs
+asm3d_L8               n 17  wall  19.0 min  bias   +84.1 d  scatter  46.8 d  Spearman +0.961  calibrated (x0.957) LOO rms  44.8 d  wrong decisions 0 [], of which clear 0 []
+asm3d_bare_L8          n 1: fewer than 3 common designs

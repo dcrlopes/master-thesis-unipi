@@ -6,7 +6,10 @@ core depletion at 20 000 x 160, on the designs that have it. No transport.
 Reference   mean over the seeds of every eight-layer core depletion at
             20 000 x 160 found in */runs.json
 Proxies     campaign    assembly depletion stored in the checkpoint
-            lofi        eight-layer core depletion at 10 000 x 100 (lofi_dep_core3d*)
+            lofi        eight-layer core depletion at 10 000 x 100 (lofi_dep_core3d*),
+                        seed replicas in lofi_dep_core3d_seed*/ are averaged and
+                        their seed standard deviation reported
+            lofi5k      the same at 5 000 x 60 (lofi5k_core3d*)
             asm3d_*     single-assembly depletions of c9_dep_asm3d.py (asm3d_*)
 
 For each proxy, on the designs it shares with the reference:
@@ -79,7 +82,8 @@ def main():
         print(f"  C9-{i:<2d} {ref[i]:7.1f} d  ({len(refs[i])} seed(s))  margin {ref[i] - REQ:+6.1f} d")
     lines = [metrics("campaign assembly", {i: raw[i]["cycle_length"] for i in ref}, ref,
                      st.mean(raw[i]["t_deplete_s"] for i in ref) / 60.0)]
-    groups = {"lofi core, 8 layers": "lofi_dep_core3d*/runs.json"}
+    groups = {"lofi core, 8 layers": "lofi_dep_core3d*/runs.json",
+              "lofi5k core, 8 layers": "lofi5k_core3d*/runs.json"}
     for d in sorted(glob.glob("asm3d_*")):
         if os.path.exists(os.path.join(d, "runs.json")):
             groups[d] = os.path.join(d, "runs.json")
@@ -88,6 +92,13 @@ def main():
         if runs:
             lines.append(metrics(name, {i: st.mean(e for e, _ in v) for i, v in runs.items()}, ref,
                                  st.mean(w for v in runs.values() for _, w in v)))
+            multi = {i: [e for e, _ in v] for i, v in runs.items() if len(v) > 1}
+            if multi:                       # seed standard deviation of the proxy itself
+                sds = [st.stdev(v) for v in multi.values()]
+                pooled = (sum(s * s * (len(v) - 1) for s, v in zip(sds, multi.values()))
+                          / sum(len(v) - 1 for v in multi.values())) ** 0.5
+                lines.append(f"{'':22s} seed SD of the proxy: pooled {pooled:.1f} d over "
+                             + ", ".join(f"C9-{i} ({len(v)} seeds, {st.stdev(v):.1f} d)" for i, v in sorted(multi.items())))
     print("\n".join(lines))
 
 

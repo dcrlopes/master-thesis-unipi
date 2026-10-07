@@ -291,7 +291,13 @@ def layer_burnup(states, bu_hist, edges):
 
 
 # ----------------------------------------------------------------- run ----
-def run_design(idx, ckpt, raw, meta, tr, n_layers, k_eoc, out, estimate=False, mode="relative", salt="core3d"):
+def deplete_design(design, rec, schedule, hump_noise_pcm, tr, n_layers, case, salt="core3d",
+                   mode="relative", k_eoc=1.0, estimate=False, label="d?"):
+    """The eight-layer core depletion of one design, from its design dict and
+    the record of its campaign evaluation (k_target, k_bol, boron_points,
+    and n_dep_solves for an estimate). Shared by run_design, which reads
+    both from a checkpoint, and by the evaluator hook of run_optimization
+    --cycle-core3d, which passes the evaluation it has just made."""
     import reactor_model as rm
     import zoning as zn
     import hardware3d as hw
@@ -299,23 +305,20 @@ def run_design(idx, ckpt, raw, meta, tr, n_layers, k_eoc, out, estimate=False, m
     from openmc_evaluator import _design_seed
 
     op, geo, spec = rm.Operating(), rm.Geometry17x17(), hw.HardwareSpec()
-    design = design_of(ckpt, idx)
     seed = _design_seed(design, salt=salt)      # another salt gives an independent replica
     model, info, rows, edges, fine, shape = build_layered(
         design, op, geo, spec, n_layers, tr, seed, zn.evaluator_design_map(design))
     spec_power = rm.core_specific_power_w_per_g(op, geo)
-    sch = meta["schedule"]
-    case = out / ("estimate" if estimate else "work") / f"d{idx}"
+    case = Path(case)
     if estimate:
         import shutil
         shutil.rmtree(case, ignore_errors=True)
         sched = dict(bol_steps=[0.5, 0.5], dep_step=0.5, chunk_steps=1, max_burnup=1.0)
     else:
-        sched = dict(bol_steps=sch["bol_steps"], dep_step=sch["dep_step"],
-                     chunk_steps=sch["chunk_steps"], max_burnup=sch["max_burnup"])
-    rec = raw[idx]
+        sched = dict(bol_steps=schedule["bol_steps"], dep_step=schedule["dep_step"],
+                     chunk_steps=schedule["chunk_steps"], max_burnup=schedule["max_burnup"])
     ratio = float(rec["k_target"]) / float(rec["k_bol"])
-    print(f"[d{idx}] 3D hardware core, {n_layers} layers, {info['n_fuel_segments']} fuel segments, "
+    print(f"[{label}] 3D hardware core, {n_layers} layers, {info['n_fuel_segments']} fuel segments, "
           f"{info['n_depletable']} depletable materials, seed {seed}, transport {tr}, end of cycle "
           + (f"relative, ratio {ratio:.5f}" if mode == "relative" else f"absolute at k = {k_eoc}"), flush=True)
     t0 = time.time()
@@ -333,21 +336,19 @@ def run_design(idx, ckpt, raw, meta, tr, n_layers, k_eoc, out, estimate=False, m
             return default
     times = guarded("solve_times", lambda: dc.solve_times(case), [])
     if estimate:
-        pc = dc.project_cost(times, int(raw[idx]["n_dep_solves"]), wall)
-        pc.update(idx=idx, transport=tr, layers=n_layers, wall_estimate_s=wall, k_bol=res["k_hist"][0])
+        pc = dc.project_cost(times, int(rec["n_dep_solves"]), wall)
+        pc.update(transport=tr, layers=n_layers, wall_estimate_s=wall, k_bol=res["k_hist"][0])
         return pc
     sdmap = guarded("k_sd_from_case", lambda: dc.k_sd_from_case(case), {})
     ksd = [sdmap.get(v) for v in res["k_hist"]]
     k_eoc = res["k_target"]
     sig, ib, slope = dc.bracket_sigma_efpd(res["bu_hist"], res["k_hist"], ksd, k_eoc, spec_power)
-    c9 = meta["campaign9"]
-    obj = dc.hump_and_cmax(res["k_hist"], res["k_hist"][0], raw[idx]["boron_points"],
-                           float(c9["hump_noise_pcm"]))
+    obj = dc.hump_and_cmax(res["k_hist"], res["k_hist"][0], rec["boron_points"], float(hump_noise_pcm))
     states = guarded("read_states", lambda: read_states(case, shape, fine, edges, tr["inactive"], op.power_mwth), [])
     aligned = len(states) == len(res["k_hist"])
     lb = layer_burnup(states, res["bu_hist"], edges) if aligned else None
     return dict(
-        idx=idx, seed=int(seed), transport=tr, layers=n_layers, k_eoc=k_eoc, eoc_mode=mode,
+        seed=int(seed), transport=tr, layers=n_layers, k_eoc=k_eoc, eoc_mode=mode,
         k_target_ratio=ratio, spec_power=spec_power,
         info=info, materials=rows, efpd=res["efpd"], bu_eoc=res["bu_eoc"], censored=res["censored"],
         k_hist=res["k_hist"], k_sd=ksd, bu_hist=res["bu_hist"], n_solves=res["n_solves"],
@@ -357,6 +358,18 @@ def run_design(idx, ckpt, raw, meta, tr, n_layers, k_eoc, out, estimate=False, m
         c_max_status=obj["c_max_status"], g_efpd=EFPD_REQ - res["efpd"],
         states=states, states_aligned=aligned, layer_burnup=lb, solve_times=times, wall_s=wall,
         post_errors=errors)
+
+
+def run_design(idx, ckpt, raw, meta, tr, n_layers, k_eoc, out, estimate=False, mode="relative", salt="core3d"):
+    """deplete_design on design idx of a checkpoint, as before the refactor."""
+    design = design_of(ckpt, idx)
+    case = Path(out) / ("estimate" if estimate else "work") / f"d{idx}"
+    r = deplete_design(design, raw[idx], meta["schedule"], meta["campaign9"]["hump_noise_pcm"], tr, n_layers,
+                       case, salt=salt, mode=mode, k_eoc=k_eoc, estimate=estimate, label=f"d{idx}")
+    r["idx"] = idx
+    return r
+
+
 
 
 # ------------------------------------------------------------- analysis ----

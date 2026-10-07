@@ -332,6 +332,16 @@ def main():
     ap.add_argument("--hump-noise", type=float, default=400.0,
                     help="c9: gadolinium humps below this are treated as "
                          "unresolved and set to zero, pcm")
+    ap.add_argument("--cycle-core3d", metavar="P,B,I", default=None,
+                    help="c10: read the cycle-length constraint from the "
+                         "eight-layer three-dimensional core depletion of "
+                         "c9_dep_core3d.py at this transport setting, e.g. "
+                         "10000,100,50 (particles, batches, inactive), after "
+                         "the assembly depletion of every evaluation. The "
+                         "assembly value is kept as cycle_length_asm. Off by "
+                         "default; every earlier campaign is unchanged.")
+    ap.add_argument("--cycle-layers", type=int, default=8,
+                    help="c10: number of axial layers of --cycle-core3d")
     args = ap.parse_args()
 
     # FROZEN TARGET (float) vs ROUTE B (per-design table) -- computed once, used by
@@ -500,6 +510,7 @@ def main():
     # clip is disabled because it acts on objective 0, which is now the
     # peaking factor, and cycle length is a constraint surrogate.
     axial_meta = None
+    cycle_core3d_meta = None
     if args.objective_set == "c9":
         if args.ctrl_margin is None:
             raise SystemExit("--objective-set c9 requires --ctrl-margin "
@@ -520,6 +531,16 @@ def main():
             axial_meta = arm.summary(ev.c9_axial_model)
             axial_meta["path"] = str(args.axial_model)
             print(f"CAMPAIGN 9 AXIAL FLOOR: {arm.describe(ev.c9_axial_model)}")
+        if args.cycle_core3d:
+            if args.axial_model:
+                raise SystemExit("--cycle-core3d measures the axial cycle length, "
+                                 "so --axial-model (the fitted ratio) must not be given")
+            p, b, i = (int(v) for v in args.cycle_core3d.split(","))
+            cycle_core3d_meta = {"transport": {"particles": p, "batches": b, "inactive": i},
+                                 "layers": int(args.cycle_layers), "salt": "core3d-loop"}
+            ev.c9_cycle_core3d = cycle_core3d_meta
+            print(f"CAMPAIGN 10: cycle length from the {args.cycle_layers}-layer 3D core depletion "
+                  f"at {p} x {b} ({i} inactive); the assembly value is kept as cycle_length_asm")
         args.no_efpd_clip = True
         print(f"CAMPAIGN 9: objectives peaking + c_max ({args.boron_objective}) | "
               f"EFPD >= {args.efpd_req:g} | boron points 1000, "
@@ -702,6 +723,7 @@ def main():
                            "campaign9": ({
                                "efpd_req": args.efpd_req,
                                "axial_model": axial_meta,
+                               "cycle_core3d": cycle_core3d_meta,
                                "boron_objective": args.boron_objective,
                                "boron_points_ppm": [1000.0, args.boron_step,
                                                     args.boron_top],

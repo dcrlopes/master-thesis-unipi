@@ -372,6 +372,7 @@ class OpenMCEvaluator(Evaluator):
         if getattr(self, "c9_efpd_req", None) is not None:
             res.update(_c9_boron_block(self, design, res))
             res["t_eval_s"] += float(res.get("t_boron_s", 0.0))
+            res["t_eval_s"] += float(res.get("t_dep3d_s", 0.0))   # Campaign 10 hook
         if self.verbose:
             print(f"  [case {self.n_calls:04d}] "
                   f"e=({e_in:5.2f}/{e_out:5.2f}) Gd={design['gd_wt']:4.2f} "
@@ -752,6 +753,14 @@ def _c9_boron_block(ev, design, res):
     out["g_boron"] = out["c_max"] - float(ev.c9_boron_ceiling_ppm)
     out["n_boron_solves"] = n_extra
     out["t_boron_s"] = time.perf_counter() - t0
+    # CAMPAIGN 10 (proxy study, October 2026): the cycle-length constraint
+    # is read from the eight-layer three-dimensional core depletion at low
+    # statistics instead of the assembly depletion. The objectives are
+    # unchanged. Off unless run_optimization sets ev.c9_cycle_core3d, so
+    # every earlier campaign is bit-for-bit unchanged.
+    cfg3d = getattr(ev, "c9_cycle_core3d", None)
+    if cfg3d is not None:
+        out.update(_c9_core3d_cycle(ev, design, {**res, **out}, cfg3d))
     if getattr(ev, "verbose", False):
         print(f"      c9: c_BOL={out['c_bol']:6.0f} ppm ({obj['c_bol_status']}) "
               f"c_max={out['c_max']:6.0f} ppm ({obj['c_max_status']}) "
@@ -759,3 +768,75 @@ def _c9_boron_block(ev, design, res):
               f"g_efpd={out['g_efpd']:+7.0f} g_ctrl_peak={ctrl['g_ctrl_peak']:+.4f} "
               f"[{n_extra} boron solves, {out['t_boron_s']:.0f} s]")
     return out
+
+
+# --------------------------------------------------------------------------- #
+# CAMPAIGN 10 hook: the cycle length from the eight-layer core depletion       #
+# --------------------------------------------------------------------------- #
+def core3d_cycle_fields(res, dep, efpd_req):
+    """Pure bookkeeping of the hook, kept separate so it can be tested
+    without OpenMC. `res` is the evaluation so far (assembly cycle length
+    in "cycle_length"), `dep` the dict of c9_dep_core3d.deplete_design.
+    Returns the fields that replace the cycle-length constraint."""
+    efpd = float(dep["efpd"])
+    out = {
+        "cycle_length_asm": float(res["cycle_length"]),   # the campaign assembly value, kept
+        "cycle_length": efpd,                              # the constraint now reads the 3D value
+        "efpd_3d": efpd,
+        "sigma_efpd_3d": dep.get("sigma_efpd"),
+        "censored_3d": bool(dep.get("censored", False)),
+        "n_solves_3d": int(dep.get("n_solves", 0)),
+        "k_hist_3d": [float(v) for v in dep.get("k_hist", [])],
+        "bu_hist_3d": [float(v) for v in dep.get("bu_hist", [])],
+        "fz_bol_3d": (float(dep["states"][0]["fz"]) if dep.get("states") else None),
+        "c_max_3d": dep.get("c_max"),                      # diagnostic only, the objective stays 2D
+        "hump_core_3d_pcm": dep.get("hump_core_pcm"),
+        "layers_3d": int(dep.get("layers", 0)),
+        "transport_3d": dep.get("transport"),
+        "seed_3d": dep.get("seed"),
+        "t_dep3d_s": float(dep.get("wall_s", 0.0)),
+        "axial_measured": True,
+        "g_efpd_mission": float(efpd_req) - float(res["cycle_length"]),   # what the assembly would say
+        "g_efpd": float(efpd_req) - efpd,
+    }
+    return out
+
+
+def _c9_core3d_cycle(ev, design, rec, cfg):
+    """Run c9_dep_core3d.deplete_design on the design just evaluated and
+    return the fields of core3d_cycle_fields. On any failure the evaluation
+    keeps the assembly value, flagged, so a transport crash never loses the
+    rest of the evaluation."""
+    import c9_dep_core3d as d3
+    case = ev.workdir / f"case_{ev.n_calls:04d}" / "core3d"
+    schedule = dict(bol_steps=list(ev.bol_steps), dep_step=ev.dep_step,
+                    chunk_steps=ev.chunk_steps, max_burnup=ev.max_burnup)
+    try:
+        dep = d3.deplete_design(design, rec, schedule, float(ev.c9_hump_noise_pcm),
+                                dict(cfg["transport"]), int(cfg["layers"]), case,
+                                salt=str(cfg.get("salt", "core3d-loop")), label=f"case {ev.n_calls:04d} 3D")
+    except Exception as exc:                     # keep the evaluation, say so loudly
+        print(f"      WARNING core3d cycle failed, assembly value kept: {exc!r}", flush=True)
+        return {"axial_measured": False, "core3d_error": repr(exc), "t_dep3d_s": 0.0}
+    out = core3d_cycle_fields(rec, dep, float(ev.c9_efpd_req))
+    if getattr(ev, "verbose", False):
+        print(f"      3D: EFPD {out['efpd_3d']:.1f} d (assembly {out['cycle_length_asm']:.1f}) "
+              f"g_efpd={out['g_efpd']:+.0f} F_z(BOL)={out['fz_bol_3d'] if out['fz_bol_3d'] else float('nan'):.3f} "
+              f"[{out['n_solves_3d']} solves, {out['t_dep3d_s'] / 60:.1f} min]", flush=True)
+    return out
+
+
+def _core3d_selftest():
+    res = {"cycle_length": 2300.0}
+    dep = {"efpd": 1900.0, "sigma_efpd": 12.0, "censored": False, "n_solves": 8, "k_hist": [1.08, 1.0],
+           "bu_hist": [0.0, 21.5], "states": [{"fz": 1.44}], "c_max": 1500.0, "hump_core_pcm": 0.0,
+           "layers": 8, "transport": {"particles": 10000, "batches": 100, "inactive": 50}, "seed": 7,
+           "wall_s": 1200.0}
+    out = core3d_cycle_fields(res, dep, 1826.0)
+    assert out["cycle_length"] == 1900.0 and out["cycle_length_asm"] == 2300.0
+    assert abs(out["g_efpd"] - (1826.0 - 1900.0)) < 1e-9 and abs(out["g_efpd_mission"] - (1826.0 - 2300.0)) < 1e-9
+    assert out["axial_measured"] and out["fz_bol_3d"] == 1.44 and out["t_dep3d_s"] == 1200.0
+    merged = {**res, **out}
+    assert merged["cycle_length"] == 1900.0, "the 3D value must win when merged into the evaluation"
+    print("core3d hook selftest OK")
+

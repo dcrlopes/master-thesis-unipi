@@ -1,0 +1,23 @@
+==========================================================================
+MODERATOR TEMPERATURE COEFFICIENT, design 94, core3d
+==========================================================================
+  547 K -> 567 K at 12.8 MPa, rho 0.77109 -> 0.73403 g/cm3
+
+      ppm     k(lo)     k(hi)       MTC      sd  verdict
+        0   1.20665   1.19565    -38.10    1.32  negative, acceptable
+     1000   1.11160   1.10639    -21.18    1.41  negative, acceptable
+     2000   1.03404   1.03280     -5.78    1.62  negative, acceptable
+     3000   0.96896   0.96992     +5.09    1.87  POSITIVE, not acceptable
+
+  MTC in pcm per K. A negative coefficient is the self-stabilising
+  direction. The crossing is the boron ceiling for this lattice.
+
+  CROSSING CONCENTRATION: 2532 ppm
+
+  design 94 needs 3181 ppm (c_max)  -> ABOVE the ceiling  margin -649 ppm
+  for reference only, 9 of the 21 feasible designs demand less than 2532 ppm.
+  That is not an operability count. The ceiling is a property of
+  the design 94 lattice and each design has its own.
+
+  Linear interpolation between the two bracketing points. Add points
+  near the crossing if the bracket is wide.

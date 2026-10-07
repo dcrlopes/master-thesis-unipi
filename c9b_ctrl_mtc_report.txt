@@ -1,0 +1,6 @@
+C9-63: two-bank margin 3D -629 pcm, four-bank margin 3D 7323 pcm, F_3D all rods out 1.472
+C9-68: two-bank margin 3D 2189 pcm, four-bank margin 3D 10286 pcm, F_3D all rods out 1.484
+C9-94: two-bank margin 3D -2343 pcm, four-bank margin 3D 5754 pcm, F_3D all rods out 1.460
+C9-63 MTC:   CROSSING CONCENTRATION: 2855 ppm
+C9-68 MTC:   CROSSING CONCENTRATION: 2828 ppm
+C9-94 MTC:   CROSSING CONCENTRATION: 2532 ppm

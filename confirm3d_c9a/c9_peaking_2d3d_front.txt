@@ -1,0 +1,12 @@
+2D versus 3D unrodded peaking, 2 designs (front)
+ id     e    Gd   F_2D   F_3D  ratio    diff
+ 69  4.87  4.38  1.528  1.496  0.980  -0.031
+ 70  4.87  4.41  1.539  1.516  0.985  -0.023
+
+ratio F_3D/F_2D : mean 0.9823  sd 0.0039  relative sd 0.40 %  range 0.980 to 0.985
+difference      : mean -0.0272  sd 0.0058  range -0.031 to -0.023
+Spearman rho 1.000, largest rank shift 0 of 2
+ranking by F_2D: [69, 70]
+ranking by F_3D: [69, 70]
+
+DECISION (ratio and ranking only, no manifest): ranking preserved to within one place, consistent with a constant ratio

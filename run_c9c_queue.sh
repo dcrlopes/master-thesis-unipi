@@ -39,6 +39,7 @@ run_queue() {
   [ -f "$MARK" ] || die "no marker $MARK: run 'bash run_c9c_queue.sh start'"
   echo "$(stamp) queue started on $(hostname), env ${CONDA_DEFAULT_ENV:-none}, head $(git log --oneline -1)"
   b=$(busy); [ -z "$b" ] || die "another transport job is running: $b"
+  [ -n "${OPENMC_CHAIN_FILE:-}" ] || die "OPENMC_CHAIN_FILE unset: run 'bash run_c9c_queue.sh install' again from a shell where it is set"
   if proxy2_done; then echo "$(stamp) 1. proxy study 2: already done"; else
     echo "$(stamp) 1. proxy study 2"
     bash run_c9c_proxy2.sh run || die "run_c9c_proxy2.sh failed, the queue stops here"
@@ -57,7 +58,13 @@ install)
   [ "${CONDA_DEFAULT_ENV:-}" = "openmc-env" ] || die "activate openmc-env first, the paths are taken from it"
   CONDA_SH="$(dirname "$(dirname "$CONDA_EXE")")/etc/profile.d/conda.sh"
   [ -f "$CONDA_SH" ] || die "conda.sh not found at $CONDA_SH"
-  LINE="@reboot sleep 120 && /bin/bash -c 'cd $PWD && . $CONDA_SH && conda activate openmc-env && [ -f $MARK ] && setsid nohup bash run_c9c_queue.sh run >> $LOG 2>&1 < /dev/null' $TAG"
+  # cron starts without the shell profile, so the OpenMC data paths of this
+  # shell are written into the line (8 Oct 2026: a reboot relaunched the queue
+  # without OPENMC_CHAIN_FILE and the preflight stopped it)
+  [ -n "${OPENMC_CHAIN_FILE:-}" ]     || die "OPENMC_CHAIN_FILE unset in this shell, nothing to write into the @reboot line"
+  [ -n "${OPENMC_CROSS_SECTIONS:-}" ] || die "OPENMC_CROSS_SECTIONS unset in this shell"
+  ENV="export OPENMC_CHAIN_FILE=$OPENMC_CHAIN_FILE OPENMC_CROSS_SECTIONS=$OPENMC_CROSS_SECTIONS OMP_NUM_THREADS=${OMP_NUM_THREADS:-64}"
+  LINE="@reboot sleep 120 && /bin/bash -c 'cd $PWD && . $CONDA_SH && conda activate openmc-env && $ENV && [ -f $MARK ] && setsid nohup bash run_c9c_queue.sh run >> $LOG 2>&1 < /dev/null' $TAG"
   { crontab -l 2>/dev/null | grep -v "$TAG"; echo "$LINE"; } | crontab - || die "crontab failed"
   echo "$(stamp) installed in the crontab:"; crontab -l | grep "$TAG" ;;
 uninstall)

@@ -69,7 +69,13 @@ install)
   CONDA_SH="$(dirname "$(dirname "$CONDA_EXE")")/etc/profile.d/conda.sh"
   [ -f "$CONDA_SH" ] || die "conda.sh not found at $CONDA_SH"
   # cron runs /bin/sh, so the conda activation is done inside an explicit bash
-  LINE="@reboot sleep 120 && /bin/bash -c 'cd $PWD && . $CONDA_SH && conda activate openmc-env && [ -f $MARK ] && setsid nohup bash run_c9b_queue.sh run >> $LOG 2>&1 < /dev/null' $TAG"
+  # cron starts without the shell profile, so the OpenMC data paths of this
+  # shell are written into the line (8 Oct 2026: a reboot relaunched the queue
+  # without OPENMC_CHAIN_FILE and the preflight stopped it)
+  [ -n "${OPENMC_CHAIN_FILE:-}" ]     || die "OPENMC_CHAIN_FILE unset in this shell, nothing to write into the @reboot line"
+  [ -n "${OPENMC_CROSS_SECTIONS:-}" ] || die "OPENMC_CROSS_SECTIONS unset in this shell"
+  ENV="export OPENMC_CHAIN_FILE=$OPENMC_CHAIN_FILE OPENMC_CROSS_SECTIONS=$OPENMC_CROSS_SECTIONS OMP_NUM_THREADS=${OMP_NUM_THREADS:-64}"
+  LINE="@reboot sleep 120 && /bin/bash -c 'cd $PWD && . $CONDA_SH && conda activate openmc-env && $ENV && [ -f $MARK ] && setsid nohup bash run_c9b_queue.sh run >> $LOG 2>&1 < /dev/null' $TAG"
   { crontab -l 2>/dev/null | grep -v "$TAG"; echo "$LINE"; } | crontab - || die "crontab failed"
   echo "$(stamp) installed in the crontab:"; crontab -l | grep "$TAG" ;;
 uninstall)

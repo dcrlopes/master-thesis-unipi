@@ -119,12 +119,14 @@ stage_F() {
          "${COMMON[@]}" "${LOOP[@]}" --n-init "$N_INIT" --n-infill "$N_INFILL" --iters "$left" \
          --cycle-core3d "$CYCLE3D" 2>&1 | tee -a "$OUT.log" || die "resumed run failed"
   else
-    if [ -d "$OUT" ] || [ -d "$WORK" ]; then
-      die "$OUT or $WORK exists with fewer than $N_INIT evaluations ($n): the design of experiments cannot be resumed. Move both away and relaunch."
-    fi
+    # no checkpoint yet: the design of experiments was interrupted or never
+    # started. The same command relaunches it; the evaluations already made
+    # are replayed from $WORK/eval_cache.json (the sampling is seeded), so
+    # nothing is lost and the case numbering continues.
+    [ -f "$WORK/eval_cache.json" ] && echo "  replaying $(python -c "import json; print(len(json.load(open('$WORK/eval_cache.json'))))") cached evaluations from $WORK/eval_cache.json"
     python -u run_optimization.py --out "$OUT" --workdir "$WORK" "${COMMON[@]}" "${LOOP[@]}" \
          --n-init "$N_INIT" --n-infill "$N_INFILL" --iters "$ITERS" \
-         --cycle-core3d "$CYCLE3D" 2>&1 | tee "$OUT.log" || die "full run failed"
+         --cycle-core3d "$CYCLE3D" 2>&1 | tee -a "$OUT.log" || die "full run failed"
   fi
   [ "$(n_eval)" -ge $((N_INIT + ITERS * N_INFILL)) ] || die "the run ended with $(n_eval) evaluations, relaunch to resume"
   mark F

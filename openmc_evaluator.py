@@ -269,6 +269,49 @@ class OpenMCEvaluator(Evaluator):
     def evaluate_one(self, design: dict) -> dict:
         case = self.workdir / f"case_{self.n_calls:04d}"
         case.mkdir(parents=True, exist_ok=True)
+        # EVAL-CACHE (12 Oct 2026): every finished evaluation is stored in
+        # workdir/eval_cache.json under the design values, and a design found
+        # there is returned without transport. The loop writes its checkpoint
+        # only after the whole design of experiments, so a crash during the
+        # design of experiments used to lose every evaluation made; with the
+        # cache a relaunch replays them in seconds (the sampling is seeded).
+        cached = self._eval_cache_get(design)
+        if cached is not None:
+            if self.verbose:
+                print(f"  [case {self.n_calls:04d}] from eval_cache.json (EFPD={cached.get('cycle_length', 0):.0f}, "
+                      f"F_dh={cached.get('peaking', 0):.3f})", flush=True)
+            return cached
+        res = self._evaluate_one_transport(design, case)
+        self._eval_cache_put(design, res)
+        return res
+
+    _EVAL_CACHE = "eval_cache.json"
+
+    @staticmethod
+    def eval_cache_key(design: dict) -> str:
+        """The design values, rounded, as a stable string."""
+        return json.dumps({k: round(float(v), 9) for k, v in sorted(design.items())
+                           if isinstance(v, (int, float))}, sort_keys=True)
+
+    def _eval_cache_get(self, design):
+        p = self.workdir / self._EVAL_CACHE
+        if not p.exists():
+            return None
+        try:
+            return json.loads(p.read_text()).get(self.eval_cache_key(design))
+        except Exception:
+            return None
+
+    def _eval_cache_put(self, design, res):
+        p = self.workdir / self._EVAL_CACHE
+        try:
+            cache = json.loads(p.read_text()) if p.exists() else {}
+        except Exception:
+            cache = {}
+        cache[self.eval_cache_key(design)] = json.loads(json.dumps(res, default=float))
+        p.write_text(json.dumps(cache))
+
+    def _evaluate_one_transport(self, design: dict, case: Path) -> dict:
 
         # wall-clock instrumentation: one timer per transport phase, so the
         # cost tables of the thesis come from the archive, not from a
@@ -803,21 +846,41 @@ def core3d_cycle_fields(res, dep, efpd_req):
 
 
 def _c9_core3d_cycle(ev, design, rec, cfg):
-    """Run c9_dep_core3d.deplete_design on the design just evaluated and
-    return the fields of core3d_cycle_fields. On any failure the evaluation
-    keeps the assembly value, flagged, so a transport crash never loses the
-    rest of the evaluation."""
-    import c9_dep_core3d as d3
+    """Run the eight-layer core depletion of the design just evaluated in a
+    separate process (core3d_subprocess.py) and return the fields of
+    core3d_cycle_fields. On any failure, including a crash of OpenMC in that
+    process, the evaluation keeps the assembly value, flagged, so the
+    campaign goes on.
+
+    The depletion stops at cfg["max_burnup"] (default 29.5 MWd/kgHM, about
+    3000 d): the constraint needs to know that the cycle exceeds 1826 d, not
+    by how much, and the designs of the design of experiments reach 7000 d,
+    which cost an hour each in three dimensions on 11 Oct 2026."""
+    import subprocess
+    import sys as _sys
     case = ev.workdir / f"case_{ev.n_calls:04d}" / "core3d"
-    schedule = dict(bol_steps=list(ev.bol_steps), dep_step=ev.dep_step,
-                    chunk_steps=ev.chunk_steps, max_burnup=ev.max_burnup)
-    try:
-        dep = d3.deplete_design(design, rec, schedule, float(ev.c9_hump_noise_pcm),
-                                dict(cfg["transport"]), int(cfg["layers"]), case,
-                                salt=str(cfg.get("salt", "core3d-loop")), label=f"case {ev.n_calls:04d} 3D")
-    except Exception as exc:                     # keep the evaluation, say so loudly
-        print(f"      WARNING core3d cycle failed, assembly value kept: {exc!r}", flush=True)
-        return {"axial_measured": False, "core3d_error": repr(exc), "t_dep3d_s": 0.0}
+    case.mkdir(parents=True, exist_ok=True)
+    schedule = dict(bol_steps=list(ev.bol_steps), dep_step=ev.dep_step, chunk_steps=ev.chunk_steps,
+                    max_burnup=float(cfg.get("max_burnup", ev.max_burnup)))
+    spec = dict(design={k: float(v) if isinstance(v, (int, float)) else v for k, v in design.items()},
+                rec={k: rec[k] for k in ("k_target", "k_bol", "boron_points", "n_dep_solves") if k in rec},
+                schedule=schedule, hump_noise_pcm=float(ev.c9_hump_noise_pcm), transport=dict(cfg["transport"]),
+                layers=int(cfg["layers"]), case=str(case), salt=str(cfg.get("salt", "core3d-loop")),
+                label=f"case {ev.n_calls:04d} 3D")
+    fin, fout = case / "core3d_in.json", case / "core3d_out.json"
+    fin.write_text(json.dumps(spec, default=float))
+    if fout.exists():
+        fout.unlink()
+    script = Path(__file__).resolve().parent / "core3d_subprocess.py"
+    t0 = time.perf_counter()
+    proc = subprocess.run([_sys.executable, "-u", str(script), str(fin), str(fout)], cwd=str(script.parent))
+    wall = time.perf_counter() - t0
+    if proc.returncode != 0 or not fout.exists():
+        msg = f"core3d_subprocess exit {proc.returncode}" + ("" if fout.exists() else ", no result file")
+        print(f"      WARNING core3d cycle failed after {wall / 60:.1f} min, assembly value kept: {msg}", flush=True)
+        return {"axial_measured": False, "core3d_error": msg, "t_dep3d_s": float(wall)}
+    dep = json.loads(fout.read_text())
+    dep["wall_s"] = float(wall)                  # the whole subprocess, model build included
     out = core3d_cycle_fields(rec, dep, float(ev.c9_efpd_req))
     if getattr(ev, "verbose", False):
         print(f"      3D: EFPD {out['efpd_3d']:.1f} d (assembly {out['cycle_length_asm']:.1f}) "

@@ -342,6 +342,13 @@ def main():
                          "default; every earlier campaign is unchanged.")
     ap.add_argument("--cycle-layers", type=int, default=8,
                     help="c10: number of axial layers of --cycle-core3d")
+    ap.add_argument("--cycle-max-burnup", type=float, default=29.5,
+                    help="c10: the three-dimensional depletion of --cycle-core3d "
+                         "stops at this core-average burnup, MWd/kgHM (29.5 is "
+                         "about 3000 d, 9 solves). A design still above the "
+                         "end-of-cycle criterion there is right-censored at "
+                         "that cycle length, which satisfies the 1826 d "
+                         "constraint with margin.")
     args = ap.parse_args()
 
     # FROZEN TARGET (float) vs ROUTE B (per-design table) -- computed once, used by
@@ -537,10 +544,12 @@ def main():
                                  "so --axial-model (the fitted ratio) must not be given")
             p, b, i = (int(v) for v in args.cycle_core3d.split(","))
             cycle_core3d_meta = {"transport": {"particles": p, "batches": b, "inactive": i},
-                                 "layers": int(args.cycle_layers), "salt": "core3d-loop"}
+                                 "layers": int(args.cycle_layers), "salt": "core3d-loop",
+                                 "max_burnup": float(args.cycle_max_burnup), "subprocess": True}
             ev.c9_cycle_core3d = cycle_core3d_meta
             print(f"CAMPAIGN 10: cycle length from the {args.cycle_layers}-layer 3D core depletion "
-                  f"at {p} x {b} ({i} inactive); the assembly value is kept as cycle_length_asm")
+                  f"at {p} x {b} ({i} inactive), in a subprocess, stopped at {args.cycle_max_burnup:g} MWd/kgHM; "
+                  f"the assembly value is kept as cycle_length_asm")
         args.no_efpd_clip = True
         print(f"CAMPAIGN 9: objectives peaking + c_max ({args.boron_objective}) | "
               f"EFPD >= {args.efpd_req:g} | boron points 1000, "

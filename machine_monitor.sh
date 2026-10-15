@@ -14,12 +14,17 @@
 #   swap_used_gb
 #   n_proc            processes on the machine
 #   users             per user with any CPU use or more than 20 processes:
-#                     user:processes:cpu_pct:resident_gb  (cpu_pct over the
-#                     1 s sample; 6400 is every CPU busy)
+#                     user:processes:cpu_pct:rss_gb  (cpu_pct over the 1 s
+#                     sample, 6400 is every CPU busy; rss_gb is the sum of the
+#                     resident set sizes of the user's processes, which counts
+#                     shared pages once per process, so it exceeds the memory
+#                     really used and can exceed the machine's memory: compare
+#                     users and follow growth with it, read the absolute from
+#                     mem_avail_gb)
 set -u
 OUT=${1:?usage: machine_monitor.sh OUT.csv [interval_s]}
 INTERVAL=${2:-60}
-[ -f "$OUT" ] || echo "time;load1;cpu_idle_pct;mem_free_gb;mem_avail_gb;swap_used_gb;n_proc;users" > "$OUT"
+[ -f "$OUT" ] || echo "time;load1;cpu_idle_pct;mem_free_gb;mem_avail_gb;swap_used_gb;n_proc;users(user:processes:cpu_pct:rss_gb)" > "$OUT"
 while true; do
   snap=$(top -bn2 -d 1 -w 512 2>/dev/null)
   idle=$(echo "$snap" | grep "^%Cpu" | tail -1 | sed 's/.*, *\([0-9.]*\) id.*/\1/')

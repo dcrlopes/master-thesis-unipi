@@ -117,6 +117,7 @@ PY
 # The evaluations already made are replayed from $WORK/eval_cache.json, so a
 # relaunch costs only the evaluation in progress. A failed 3D depletion in
 # the cache is retried on the replay.
+MACHINE_CSV=c10_machine.csv            # written by machine_monitor.sh during stage F
 STALL_MIN=${STALL_MIN:-100}          # longest silence allowed; one 3D solve is a few minutes, one evaluation about 90
 POLL_S=300
 MAX_LAUNCHES=${MAX_LAUNCHES:-25}
@@ -165,6 +166,13 @@ kill_driver() {
 stage_F() {
   done_ F && { echo "[F] already done"; return 0; }
   hr; echo " STAGE F. Full campaign, $N_INIT + $ITERS x $N_INFILL evaluations, watchdog $STALL_MIN min"; hr
+  # the machine is shared: one line per minute with the load, the free CPU
+  # and memory and the processes of every user, so that a stall can be read
+  # against what else was running (user's request, 16 Oct 2026)
+  bash machine_monitor.sh "$MACHINE_CSV" 60 &
+  MONITOR=$!
+  trap 'kill $MONITOR 2>/dev/null' EXIT
+  echo "$(stamp)   machine monitor pid $MONITOR, one line per minute in $MACHINE_CSV"
   local launches=0
   while [ "$(n_eval)" -lt "$TARGET" ]; do
     launches=$((launches + 1))
@@ -183,15 +191,16 @@ stage_F() {
     wait "$DRIVER" 2>/dev/null
     echo "$(stamp)   driver ended, $(n_eval) evaluations in the checkpoint, cache $(python -c "import json,os; p='$WORK/eval_cache.json'; print(len(json.load(open(p))) if os.path.exists(p) else 0)")"
   done
+  kill "$MONITOR" 2>/dev/null
   mark F
   echo "$(stamp) Campaign 10 finished. To send the results back:"
-  echo "  git add -f $OUT/optimization_checkpoint.json $OUT.log && git commit -m 'Campaign 10: 3D cycle-length proxy in the loop' && git push"
+  echo "  git add -f $OUT/optimization_checkpoint.json $OUT.log $MACHINE_CSV && git commit -m 'Campaign 10: 3D cycle-length proxy in the loop' && git push"
 }
 
 case "${1:-}" in
   --preflight) stage_P; exit 0 ;;
   --smoke)     stage_P; stage_S; exit 0 ;;
-  --status)    echo "$(stamp) markers: $(ls "$MARK" 2>/dev/null | tr '\n' ' ')"; echo "evaluations in $OUT: $(n_eval), cached $(python -c "import json,os; p='$WORK/eval_cache.json'; print(len(json.load(open(p))) if os.path.exists(p) else 0)"), newest file $(( $(newest_s) / 60 )) min ago"; grep "launch\|killing\|driver ended" "$OUT.log" 2>/dev/null | tail -n 3; exit 0 ;;
+  --status)    echo "$(stamp) markers: $(ls "$MARK" 2>/dev/null | tr '\n' ' ')"; echo "evaluations in $OUT: $(n_eval), cached $(python -c "import json,os; p='$WORK/eval_cache.json'; print(len(json.load(open(p))) if os.path.exists(p) else 0)"), newest file $(( $(newest_s) / 60 )) min ago"; grep "launch\|killing\|driver ended" "$OUT.log" 2>/dev/null | tail -n 3; [ -f "$MACHINE_CSV" ] && { echo "machine, last 3 minutes:"; tail -n 3 "$MACHINE_CSV"; }; exit 0 ;;
   "")          stage_P; stage_S; stage_F ;;
   *)           die "unknown option $1" ;;
 esac

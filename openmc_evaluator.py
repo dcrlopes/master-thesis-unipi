@@ -277,6 +277,16 @@ class OpenMCEvaluator(Evaluator):
         # cache a relaunch replays them in seconds (the sampling is seeded).
         cached = self._eval_cache_get(design)
         if cached is not None:
+            cfg3d = getattr(self, "c9_cycle_core3d", None)
+            if cfg3d is not None and cached.get("axial_measured") is False:
+                # the campaign part is kept, only the failed 3D depletion is repeated
+                if self.verbose:
+                    print(f"  [case {self.n_calls:04d}] from eval_cache.json, retrying the 3D depletion "
+                          f"({cached.get('core3d_error', '')})", flush=True)
+                cached = {**cached, **_c9_core3d_cycle(self, design, cached, cfg3d)}
+                cached["t_eval_s"] = float(cached["t_eval_s"]) + float(cached.get("t_dep3d_s", 0.0))
+                self._eval_cache_put(design, cached)
+                return cached
             if self.verbose:
                 print(f"  [case {self.n_calls:04d}] from eval_cache.json (EFPD={cached.get('cycle_length', 0):.0f}, "
                       f"F_dh={cached.get('peaking', 0):.3f})", flush=True)
@@ -873,10 +883,21 @@ def _c9_core3d_cycle(ev, design, rec, cfg):
         fout.unlink()
     script = Path(__file__).resolve().parent / "core3d_subprocess.py"
     t0 = time.perf_counter()
-    proc = subprocess.run([_sys.executable, "-u", str(script), str(fin), str(fout)], cwd=str(script.parent))
+    # TIME LIMIT (16 Oct 2026): a three-dimensional depletion hung for days
+    # inside OpenMC (case 0012 of Campaign 10, no file written after its
+    # second chunk). The subprocess is killed after cfg["timeout_s"] and the
+    # evaluation keeps the assembly value, flagged "timeout".
+    limit = float(cfg.get("timeout_s", 3 * 3600))
+    try:
+        proc = subprocess.run([_sys.executable, "-u", str(script), str(fin), str(fout)], cwd=str(script.parent),
+                              timeout=limit)
+        rc = proc.returncode
+    except subprocess.TimeoutExpired:
+        rc = "timeout"
     wall = time.perf_counter() - t0
-    if proc.returncode != 0 or not fout.exists():
-        msg = f"core3d_subprocess exit {proc.returncode}" + ("" if fout.exists() else ", no result file")
+    if rc != 0 or not fout.exists():
+        msg = (f"core3d_subprocess timeout after {limit / 60:.0f} min" if rc == "timeout"
+               else f"core3d_subprocess exit {rc}") + ("" if fout.exists() else ", no result file")
         print(f"      WARNING core3d cycle failed after {wall / 60:.1f} min, assembly value kept: {msg}", flush=True)
         return {"axial_measured": False, "core3d_error": msg, "t_dep3d_s": float(wall)}
     dep = json.loads(fout.read_text())

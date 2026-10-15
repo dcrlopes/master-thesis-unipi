@@ -349,6 +349,10 @@ def main():
                          "end-of-cycle criterion there is right-censored at "
                          "that cycle length, which satisfies the 1826 d "
                          "constraint with margin.")
+    ap.add_argument("--cycle-timeout-min", type=float, default=180.0,
+                    help="c10: the subprocess of --cycle-core3d is killed after "
+                         "this many minutes and the evaluation keeps the "
+                         "assembly value, flagged")
     args = ap.parse_args()
 
     # FROZEN TARGET (float) vs ROUTE B (per-design table) -- computed once, used by
@@ -545,7 +549,8 @@ def main():
             p, b, i = (int(v) for v in args.cycle_core3d.split(","))
             cycle_core3d_meta = {"transport": {"particles": p, "batches": b, "inactive": i},
                                  "layers": int(args.cycle_layers), "salt": "core3d-loop",
-                                 "max_burnup": float(args.cycle_max_burnup), "subprocess": True}
+                                 "max_burnup": float(args.cycle_max_burnup), "subprocess": True,
+                                 "timeout_s": 60.0 * float(args.cycle_timeout_min)}
             ev.c9_cycle_core3d = cycle_core3d_meta
             print(f"CAMPAIGN 10: cycle length from the {args.cycle_layers}-layer 3D core depletion "
                   f"at {p} x {b} ({i} inactive), in a subprocess, stopped at {args.cycle_max_burnup:g} MWd/kgHM; "

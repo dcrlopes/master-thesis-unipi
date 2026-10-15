@@ -48,6 +48,7 @@ HUMP_NOISE=400
 HUMP_NOISE_SMOKE=2500
 BORON_OBJ=floor
 CYCLE3D="10000,100,50"            # the proxy that met every criterion on 7 Oct 2026
+CYCLE3D_BU=29.5                   # horizon of the 3D depletion, MWd/kgHM: about 3000 d, 9 solves; kept for consistency with the cached evaluations
 CYCLE3D_SMOKE="2000,40,20"
 LAYERS=8
 
@@ -107,28 +108,81 @@ PY
   mark S
 }
 
-stage_F() {
-  done_ F && { echo "[F] already done"; return 0; }
-  hr; echo " STAGE F. Full campaign, $N_INIT + $ITERS x $N_INFILL evaluations"; hr
+# ---- stage F as a watchdog (16 Oct 2026) -----------------------------------
+# Twice the run stopped writing files for days inside OpenMC (the smoke run
+# at its first solve, the full run at the 3D depletion of case 0012) with the
+# processes asleep at 0 per cent CPU. The driver is now launched in its own
+# background and watched: when no file under $WORK has changed for
+# STALL_MIN minutes, it and its descendants are killed and the same command relaunched.
+# The evaluations already made are replayed from $WORK/eval_cache.json, so a
+# relaunch costs only the evaluation in progress. A failed 3D depletion in
+# the cache is retried on the replay.
+STALL_MIN=${STALL_MIN:-100}          # longest silence allowed; one 3D solve is a few minutes, one evaluation about 90
+POLL_S=300
+MAX_LAUNCHES=${MAX_LAUNCHES:-25}
+TARGET=$((N_INIT + ITERS * N_INFILL))
+
+newest_s() {                          # seconds since the newest file under $WORK or the log changed
+  local f
+  f=$(find "$WORK" "$OUT.log" -type f -printf '%T@\n' 2>/dev/null | sort -n | tail -1)
+  [ -n "$f" ] && echo $(( $(date +%s) - ${f%.*} )) || echo 0
+}
+
+launch_driver() {                     # fresh or resumed, by the checkpoint; in the background
+  local n left
   n=$(n_eval)
-  if [ "$n" -ge $((N_INIT + ITERS * N_INFILL)) ]; then echo "[F] $n evaluations already in $OUT"; mark F; return 0; fi
   if [ "$n" -ge "$N_INIT" ]; then
-    left=$(( (N_INIT + ITERS * N_INFILL - n + N_INFILL - 1) / N_INFILL ))
-    echo "  resuming $OUT at $n evaluations: $left more batch(es) of $N_INFILL"
+    left=$(( (TARGET - n + N_INFILL - 1) / N_INFILL ))
+    echo "$(stamp)   resuming $OUT at $n evaluations: $left more batch(es) of $N_INFILL"
     python -u run_optimization.py --resume "$OUT/optimization_checkpoint.json" --out "$OUT" --workdir "$WORK" \
          "${COMMON[@]}" "${LOOP[@]}" --n-init "$N_INIT" --n-infill "$N_INFILL" --iters "$left" \
-         --cycle-core3d "$CYCLE3D" 2>&1 | tee -a "$OUT.log" || die "resumed run failed"
+         --cycle-core3d "$CYCLE3D" --cycle-max-burnup "$CYCLE3D_BU" >> "$OUT.log" 2>&1 < /dev/null &
   else
-    # no checkpoint yet: the design of experiments was interrupted or never
-    # started. The same command relaunches it; the evaluations already made
-    # are replayed from $WORK/eval_cache.json (the sampling is seeded), so
-    # nothing is lost and the case numbering continues.
-    [ -f "$WORK/eval_cache.json" ] && echo "  replaying $(python -c "import json; print(len(json.load(open('$WORK/eval_cache.json'))))") cached evaluations from $WORK/eval_cache.json"
+    [ -f "$WORK/eval_cache.json" ] && echo "$(stamp)   replaying $(python -c "import json; print(len(json.load(open('$WORK/eval_cache.json'))))") cached evaluations"
     python -u run_optimization.py --out "$OUT" --workdir "$WORK" "${COMMON[@]}" "${LOOP[@]}" \
          --n-init "$N_INIT" --n-infill "$N_INFILL" --iters "$ITERS" \
-         --cycle-core3d "$CYCLE3D" 2>&1 | tee -a "$OUT.log" || die "full run failed"
+         --cycle-core3d "$CYCLE3D" --cycle-max-burnup "$CYCLE3D_BU" >> "$OUT.log" 2>&1 < /dev/null &
   fi
-  [ "$(n_eval)" -ge $((N_INIT + ITERS * N_INFILL)) ] || die "the run ended with $(n_eval) evaluations, relaunch to resume"
+  DRIVER=$!
+  echo "$(stamp)   driver pid $DRIVER"
+}
+
+descendants() {                       # the pid and every descendant: openmc executables, the 3D subprocess
+  local pid=$1 child
+  echo "$pid"
+  for child in $(ps -o pid= --ppid "$pid" 2>/dev/null); do descendants "$child"; done
+}
+
+kill_driver() {
+  local pids
+  pids=$(descendants "$DRIVER" | tr '
+' ' ')
+  echo "$(stamp)   killing $pids"
+  kill -TERM $pids 2>/dev/null; sleep 10; kill -KILL $pids 2>/dev/null
+  wait "$DRIVER" 2>/dev/null
+}
+
+stage_F() {
+  done_ F && { echo "[F] already done"; return 0; }
+  hr; echo " STAGE F. Full campaign, $N_INIT + $ITERS x $N_INFILL evaluations, watchdog $STALL_MIN min"; hr
+  local launches=0
+  while [ "$(n_eval)" -lt "$TARGET" ]; do
+    launches=$((launches + 1))
+    [ "$launches" -le "$MAX_LAUNCHES" ] || die "$MAX_LAUNCHES launches without finishing, see $OUT.log"
+    echo "$(stamp) launch $launches, $(n_eval) evaluations in the checkpoint"
+    launch_driver
+    while kill -0 "$DRIVER" 2>/dev/null; do
+      sleep "$POLL_S"
+      s=$(newest_s)
+      if [ "$s" -gt $((STALL_MIN * 60)) ]; then
+        echo "$(stamp)   no file written for $((s / 60)) min: killing the driver group and relaunching"
+        kill_driver
+        break
+      fi
+    done
+    wait "$DRIVER" 2>/dev/null
+    echo "$(stamp)   driver ended, $(n_eval) evaluations in the checkpoint, cache $(python -c "import json,os; p='$WORK/eval_cache.json'; print(len(json.load(open(p))) if os.path.exists(p) else 0)")"
+  done
   mark F
   echo "$(stamp) Campaign 10 finished. To send the results back:"
   echo "  git add -f $OUT/optimization_checkpoint.json $OUT.log && git commit -m 'Campaign 10: 3D cycle-length proxy in the loop' && git push"
@@ -137,7 +191,7 @@ stage_F() {
 case "${1:-}" in
   --preflight) stage_P; exit 0 ;;
   --smoke)     stage_P; stage_S; exit 0 ;;
-  --status)    echo "$(stamp) markers: $(ls "$MARK" 2>/dev/null | tr '\n' ' ')"; echo "evaluations in $OUT: $(n_eval)"; tail -n 3 "$OUT.log" 2>/dev/null; exit 0 ;;
+  --status)    echo "$(stamp) markers: $(ls "$MARK" 2>/dev/null | tr '\n' ' ')"; echo "evaluations in $OUT: $(n_eval), cached $(python -c "import json,os; p='$WORK/eval_cache.json'; print(len(json.load(open(p))) if os.path.exists(p) else 0)"), newest file $(( $(newest_s) / 60 )) min ago"; grep "launch\|killing\|driver ended" "$OUT.log" 2>/dev/null | tail -n 3; exit 0 ;;
   "")          stage_P; stage_S; stage_F ;;
   *)           die "unknown option $1" ;;
 esac

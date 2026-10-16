@@ -122,7 +122,11 @@ def build_tallies(o, geo, pitch, edges, hz):
 
 def read_statepoint(o, sp_path, shape_asm, edges, inactive):
     ny, nx = shape_asm
-    with o.StatePoint(sp_path) as sp:
+    # autolink=False: only tallies, keff and entropy are read, so the summary.h5
+    # of the directory is not loaded. Loading it rebuilds the whole Python
+    # geometry, minutes per statepoint on the eight-layer core (case 0027 of
+    # Campaign 10 spent 30 of its 57 min here, 16 Oct 2026).
+    with o.StatePoint(sp_path, autolink=False) as sp:
         keff = float(sp.keff.nominal_value); sd = float(sp.keff.std_dev)
         asm = sp.get_tally(name="asm_fission").get_values(scores=["fission"])
         pin = sp.get_tally(name="pin_fission").get_values(scores=["fission"])

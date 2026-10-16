@@ -268,7 +268,7 @@ def read_states(case, shape, fine, edges, inactive, power_mw):
     out = []
     for p in dc.statepoints_in_order(case):
         keff, sd, asm, pin, axf, conv = ax.read_statepoint(o, str(p), shape, fine, inactive)
-        with o.StatePoint(str(p)) as sp:
+        with o.StatePoint(str(p), autolink=False) as sp:   # no summary.h5 load, see axial_shape_c9.read_statepoint
             lay = sp.get_tally(name="layer_fission").get_values(scores=["fission"]).ravel()
         d = ax.derive(asm, pin, axf, fine, power_mw)
         share = (lay / lay.sum()).tolist()

@@ -283,6 +283,7 @@ class OpenMCEvaluator(Evaluator):
                 if self.verbose:
                     print(f"  [case {self.n_calls:04d}] from eval_cache.json, retrying the 3D depletion "
                           f"({cached.get('core3d_error', '')})", flush=True)
+                cached.pop("core3d_error", None)    # a successful retry must not keep the old failure message
                 cached = {**cached, **_c9_core3d_cycle(self, design, cached, cfg3d)}
                 cached["t_eval_s"] = float(cached["t_eval_s"]) + float(cached.get("t_dep3d_s", 0.0))
                 self._eval_cache_put(design, cached)

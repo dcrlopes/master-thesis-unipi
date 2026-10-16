@@ -85,6 +85,7 @@ def main():
         dep = json.loads(fout.read_text())
         dep["wall_s"] = wall
         out = fields({"cycle_length": res.get("cycle_length_asm", res["cycle_length"])}, dep, a.efpd_req)
+        res.pop("core3d_error", None)    # the retry succeeded, the old failure message no longer applies
         res.update(out)
         res["t_eval_s"] = float(res["t_eval_s"]) + wall
         cache[key] = res

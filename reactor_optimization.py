@@ -882,6 +882,7 @@ class ActiveLearningMOO:
             if verbose:
                 print(f"[Stage 1] design of experiments taken from {len(doe_raw)} given "
                       f"evaluations. HV={self.history[-1]:.4g}")
+            self._checkpoint_now(verbose, "after the design of experiments")
         elif len(self.X) == 0:
             accept = (self.spec.exact_ok if self.spec.exact_constraints
                       else None)
@@ -899,6 +900,10 @@ class ActiveLearningMOO:
             if verbose:
                 print(f"[Stage 1] {self.cfg.n_init} real evaluations done. "
                       f"HV={self.history[-1]:.4g}")
+            # a checkpoint right after the design of experiments (16 Oct 2026):
+            # until now the first one came after the first infill batch, so a
+            # crash in that batch repeated the whole design of experiments
+            self._checkpoint_now(verbose, "after the design of experiments")
         else:
             if not self.history:
                 self.history.append(self._hv())
@@ -954,6 +959,18 @@ class ActiveLearningMOO:
             print(f"Done in {time.time()-t0:.1f}s, "
                   f"{self.evaluator.n_calls} total real evaluations.")
         return self.results()
+
+    def _checkpoint_now(self, verbose, when=""):
+        """Write the checkpoint if a path is configured; never raise."""
+        ckpt_path = getattr(self, "checkpoint_path", None)
+        if not ckpt_path:
+            return
+        try:
+            self.save_checkpoint(ckpt_path, meta=getattr(self, "checkpoint_meta", None))
+            if verbose:
+                print(f"           checkpoint written {when} -> {ckpt_path}")
+        except Exception as exc:            # never kill a live campaign
+            print(f"           WARNING: checkpoint failed {when}: {exc}")
 
     # ---- final products -----------------------------------------------------
     def results(self) -> dict:

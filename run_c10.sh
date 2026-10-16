@@ -127,7 +127,11 @@ MAX_LAUNCHES=${MAX_LAUNCHES:-25}
 # experiments (--doe-from-cache) when the cache holds at least MIN_CACHE_DOE
 # of them, and the target counts from their number.
 MIN_CACHE_DOE=${MIN_CACHE_DOE:-12}
-cache_n() { python -c "import json,os; p='$WORK/eval_cache.json'; print(sum(1 for v in json.load(open(p)).values() if v.get('axial_measured') is not False) if os.path.exists(p) else 0)"; }
+# the design of experiments is frozen in $DOE_FILE at the first launch that
+# takes it from the cache, so that later launches (before the checkpoint
+# exists) do not count infill evaluations as design-of-experiments ones
+DOE_FILE=$OUT/doe_from_cache.json
+cache_n() { python -c "import json,os; p='$DOE_FILE' if os.path.exists('$DOE_FILE') else '$WORK/eval_cache.json'; print(sum(1 for v in json.load(open(p)).values() if v.get('axial_measured') is not False) if os.path.exists(p) else 0)"; }
 doe_n() { local c; c=$(cache_n); [ "$c" -ge "$MIN_CACHE_DOE" ] && echo "$c" || echo "$N_INIT"; }
 TARGET=$(( $(doe_n) + ITERS * N_INFILL ))
 
@@ -152,8 +156,9 @@ launch_driver() {                     # fresh or resumed, by the checkpoint; in 
       # finished 3D depletions that failed are retried first (about an hour each)
       python -u c10_retry_3d.py --cache "$WORK/eval_cache.json" --workdir "$WORK" --transport "$CYCLE3D" \
              --layers "$LAYERS" --max-burnup "$CYCLE3D_BU" --hump-noise "$HUMP_NOISE" >> "$OUT.log" 2>&1
-      extra=(--doe-from-cache "$WORK/eval_cache.json")
-      echo "$(stamp)   design of experiments from the $(cache_n) finished evaluations of the cache"
+      mkdir -p "$OUT"; [ -f "$DOE_FILE" ] || cp "$WORK/eval_cache.json" "$DOE_FILE"
+      extra=(--doe-from-cache "$DOE_FILE")
+      echo "$(stamp)   design of experiments from the $(cache_n) finished evaluations of $DOE_FILE"
     fi
     python -u run_optimization.py --out "$OUT" --workdir "$WORK" "${COMMON[@]}" "${LOOP[@]}" \
          --n-init "$N_INIT" --n-infill "$N_INFILL" --iters "$ITERS" "${extra[@]}" \

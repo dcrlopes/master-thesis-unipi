@@ -25,7 +25,7 @@
 #   bash run_c10.sh --status
 set -u -o pipefail
 
-THREADS=${THREADS:-64}
+THREADS=${THREADS:-$(nproc 2>/dev/null || sysctl -n hw.ncpu)}   # every CPU of the machine unless THREADS is set
 MARK=.c10_markers
 OUT=out_c10
 OUT_SMOKE=out_c10_smoke
@@ -70,7 +70,7 @@ LOOP=(--nsga-pop 300 --nsga-gen 400 --infill-min-sep 0.14 --feas-kappa 1.5)
 
 stage_P() {
   hr; echo " STAGE P. Preflight"; hr
-  [ "$(hostname)" = "wks720" ] || die "not on wks720"
+  [ "$(hostname)" = "wks720" ] || [ -n "${ALLOW_HOST:-}" ] || die "not on wks720 (set ALLOW_HOST=1 to run elsewhere, e.g. the Mac mini)"
   [ "${CONDA_DEFAULT_ENV:-}" = "openmc-env" ] || die "conda env is not openmc-env"
   python -c "import numpy, openmc; print('  openmc      :', openmc.__version__)" || die "openmc import failed"
   [ -n "${OPENMC_CHAIN_FILE:-}" ] || die "OPENMC_CHAIN_FILE unset"
@@ -166,7 +166,7 @@ launch_driver() {                     # fresh or resumed, by the checkpoint; in 
 descendants() {                       # the pid and every descendant: openmc executables, the 3D subprocess
   local pid=$1 child
   echo "$pid"
-  for child in $(ps -o pid= --ppid "$pid" 2>/dev/null); do descendants "$child"; done
+  for child in $(pgrep -P "$pid" 2>/dev/null); do descendants "$child"; done   # pgrep -P: Linux and macOS
 }
 
 kill_driver() {
@@ -184,7 +184,11 @@ stage_F() {
   # the machine is shared: one line per minute with the load, the free CPU
   # and memory and the processes of every user, so that a stall can be read
   # against what else was running (user's request, 16 Oct 2026)
-  bash machine_monitor.sh "$MACHINE_CSV" 60 &
+  if command -v free >/dev/null 2>&1; then          # Linux (or a Linux container); macOS has no free/top -b
+    bash machine_monitor.sh "$MACHINE_CSV" 60 &
+  else
+    sleep 1 &
+  fi
   MONITOR=$!
   trap 'kill $MONITOR 2>/dev/null' EXIT
   echo "$(stamp)   machine monitor pid $MONITOR, one line per minute in $MACHINE_CSV"

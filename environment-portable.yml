@@ -1,0 +1,30 @@
+# Portable conda environment for the LABGENE-MOO code: the same packages as
+# environment.yml without the linux-64 build strings, so that it resolves on
+# linux-aarch64 (an arm64 Docker container on an Apple-silicon Mac) and on
+# osx-arm64 (a native conda on the Mac). Versions pinned where the results
+# depend on them (OpenMC, numpy, scipy, scikit-learn, pymoo); the rest free.
+#
+#   conda env create -n openmc-env -f environment-portable.yml
+#   conda activate openmc-env
+#
+# Note: on osx-arm64 the conda-forge openmc build is serial-OpenMP without
+# MPI, which is what this code uses (OpenMP threads, no mpirun).
+name: openmc-env
+channels:
+  - conda-forge
+dependencies:
+  - python=3.13
+  - openmc=0.15.3
+  - numpy=2.4.*
+  - scipy=1.18.*
+  - scikit-learn=1.9.*
+  - h5py
+  - matplotlib-base
+  - pandas
+  - lxml
+  - uncertainties
+  - psutil
+  - pip
+  - pip:
+      - pymoo==0.6.2
+      - pyDOE2==1.3.0

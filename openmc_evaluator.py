@@ -291,6 +291,22 @@ class OpenMCEvaluator(Evaluator):
                 print(f"  [case {self.n_calls:04d}] from eval_cache.json (EFPD={cached.get('cycle_length', 0):.0f}, "
                       f"F_dh={cached.get('peaking', 0):.3f})", flush=True)
             return cached
+        # A design that is not in the cache has never been finished, so a
+        # case directory with this number is the leftover of an evaluation
+        # that was interrupted (killed by the watchdog, or the driver crashed).
+        # The depletion restarts of run_chunk read the depletion_results.h5
+        # they find in dep_NN, and a leftover written for another design or
+        # another schedule makes CoupledOperator fail (Campaign 10, launches
+        # 1 to 3 of 16 Oct 2026). The leftover is moved aside, the last one
+        # kept for inspection.
+        if any(case.iterdir()):
+            import shutil
+            stale = case.with_name(case.name + "_stale")
+            shutil.rmtree(stale, ignore_errors=True)
+            case.rename(stale)
+            case.mkdir(parents=True, exist_ok=True)
+            if self.verbose:
+                print(f"  [case {self.n_calls:04d}] leftover of an interrupted evaluation moved to {stale.name}", flush=True)
         res = self._evaluate_one_transport(design, case)
         self._eval_cache_put(design, res)
         return res

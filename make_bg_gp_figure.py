@@ -8,6 +8,9 @@ the legend. Plot only, no transport.
 
 usage:
     python make_bg_gp_figure.py OUT.pdf
+    python make_bg_gp_figure.py OUT.pdf OUT.png slide
+With slide: the true function in a strong orange dashed line, and the
+annotation above the data with its arrow into the prediction interval.
 """
 import sys
 
@@ -17,6 +20,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 OUT = sys.argv[1]
+SLIDE = "slide" in sys.argv[2:]
 plt.rcParams.update({"font.size": 10, "axes.edgecolor": "#444"})
 
 
@@ -45,17 +49,27 @@ fig, ax = plt.subplots(figsize=(7.0, 4.2))
 ax.fill_between(Xs, mu - 1.96 * s, mu + 1.96 * s, color="#5b8ac0", alpha=0.22,
                 label="95% prediction interval, noise included")
 ax.plot(Xs, mu, color="#173a5e", lw=2.0, label="GP posterior mean")
-ax.plot(Xs, f(Xs), "--", color="#8a8a8a", lw=1.2, label="True function")
+if SLIDE:
+    ax.plot(Xs, f(Xs), "--", color="#D55E00", lw=2.0, label="True function", zorder=3)
+else:
+    ax.plot(Xs, f(Xs), "--", color="#8a8a8a", lw=1.2, label="True function")
 ax.errorbar(Xt, yt, yerr=0.08, fmt="o", ms=6, mfc="#B23A48", mec="white",
             ecolor="#B23A48", elinewidth=1.0, capsize=2.5,
             label="Noisy evaluations")
-ax.annotate("Uncertainty grows away from the data:\nthe basis of active learning",
-            xy=(9.25, float(mu[-4] + 1.96 * s[-4])), xytext=(5.4, 1.05),
-            fontsize=8.5, arrowprops=dict(arrowstyle="->", lw=1.0))
+if SLIDE:                                   # text in the free region above the data, arrow into the interval
+    ax.annotate("Uncertainty grows away from the data:\nthe basis of active learning",
+                xy=(8.9, 1.0), xytext=(2.6, 1.55), ha="center", va="center",
+                fontsize=8.5, arrowprops=dict(arrowstyle="->", lw=1.0, shrinkB=0))
+else:
+    ax.annotate("Uncertainty grows away from the data:\nthe basis of active learning",
+                xy=(9.25, float(mu[-4] + 1.96 * s[-4])), xytext=(5.4, 1.05),
+                fontsize=8.5, arrowprops=dict(arrowstyle="->", lw=1.0))
 ax.set_xlabel("Design variable (one-dimensional illustration)")
 ax.set_ylabel("Objective")
 ax.grid(alpha=0.25, lw=0.5)
 ax.legend(fontsize=8, loc="lower right")
 ax.set_title("Gaussian-process regression on noisy evaluations", fontsize=10)
 fig.savefig(OUT, bbox_inches="tight")
+if len(sys.argv) > 2 and sys.argv[2].endswith(".png"):
+    fig.savefig(sys.argv[2], dpi=200, bbox_inches="tight")
 print("written", OUT)

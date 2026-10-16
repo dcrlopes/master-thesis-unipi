@@ -15,7 +15,8 @@ style of the Campaign 3 figure (make_c3_space_figure.py).
 
 Reads out_c9/optimization_checkpoint.json and c9_post/c9_front.json.
 Drawing only, no transport.
-Usage: python make_c9_pareto_blocks_figure.py <out.pdf> [out.png]
+Usage: python make_c9_pareto_blocks_figure.py <out.pdf> [out.png] [slide]
+With slide: no two-bank rings and no "Two-bank controllable" legend entry.
 """
 import json
 import sys
@@ -54,6 +55,7 @@ def block(i):
 F = np.array([a["peaking"] for a in A])
 C = np.array([a["c_max"] for a in A])
 
+SLIDE = "slide" in sys.argv[3:]
 plt.rcParams.update({"font.size": 9, "font.family": "DejaVu Sans"})
 fig, (ax, bx) = plt.subplots(1, 2, figsize=(12.0, 4.8), gridspec_kw={"width_ratios": [1.15, 1.0]})
 
@@ -67,14 +69,20 @@ for i in range(len(A)):
     else:
         ax.scatter(F[i], C[i], marker=MK[b], s=36, facecolors="none", edgecolors=COL[b],
                    linewidths=0.9, alpha=0.9, zorder=3)
-for i in two:
+for i in ([] if SLIDE else two):
     ax.scatter(F[i], C[i], marker="o", s=150, facecolors="none", edgecolors="#6A3D9A", linewidths=1.3, zorder=5)
 fx = np.array([F[i] for i in front]); fy = np.array([C[i] for i in front])
 o = np.argsort(fx)
 ax.step(fx[o], fy[o], where="post", color="crimson", lw=1.4, zorder=2)
 LAB = {47: (0, -11, "center", "top"), 44: (0, 10, "center", "bottom"), 34: (-10, -6, "right", "top"),
        40: (10, 5, "left", "bottom"), 35: (-10, 6, "right", "bottom")}
+SLIDE_LAB = {47: (1.578, 1150, "left"), 34: (1.478, 1480, "right"), 40: (1.457, 1650, "right")}   # label in free space, with a leader
 for i in front:
+    if SLIDE and i in SLIDE_LAB:
+        xl_, yl_, ha = SLIDE_LAB[i]
+        ax.annotate(f"C9-{i}", (F[i], C[i]), xytext=(xl_, yl_), textcoords="data", ha=ha, va="center",
+                    fontsize=7.5, arrowprops=dict(arrowstyle="-", color="0.45", lw=0.6, shrinkB=3), zorder=6)
+        continue
     dx, dy, ha, va = LAB[i]
     ax.annotate(f"C9-{i}", (F[i], C[i]), xytext=(dx, dy), textcoords="offset points", ha=ha, va=va, fontsize=7.5)
 ax.axhline(LIMIT_128, color="tab:red", ls="--", lw=0.8)
@@ -119,9 +127,10 @@ handles = [Line2D([], [], marker=MK[b], ls="-", color=COL[b], markeredgecolor="k
                   label=f"{NAMES[b]}, feasible ({nf[b]})") for b in range(7)]
 handles += [Line2D([], [], marker="o", ls=":", color="0.4", markerfacecolor="none", markersize=6,
                    label="Infeasible (38), open marker, dotted line"),
-            Line2D([], [], marker="o", ls="", markerfacecolor="none", markeredgecolor="#6A3D9A",
-                   markersize=10, label=f"Two-bank controllable ({len(two)})"),
             Line2D([], [], color="crimson", lw=1.8, label=f"Pareto front ({len(front)} designs)")]
+if not SLIDE:
+    handles.insert(-1, Line2D([], [], marker="o", ls="", markerfacecolor="none", markeredgecolor="#6A3D9A",
+                              markersize=10, label=f"Two-bank controllable ({len(two)})"))
 fig.legend(handles=handles, loc="lower center", ncol=4, fontsize=7.5, frameon=False,
            bbox_to_anchor=(0.5, -0.13), columnspacing=1.4)
 fig.tight_layout(rect=(0, 0.02, 1, 1))

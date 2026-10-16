@@ -17,6 +17,19 @@ Reads  out_c9a/optimization_checkpoint.json, out_c9/optimization_checkpoint.json
        c9f_dep_core3d, c9a_dep_core3d_seed2..5 /runs.json
 Usage (repository root)
        python make_summary_final_front_figure.py ../thesis_vFinal/summary/sum_final_front.pdf
+       python make_summary_final_front_figure.py --split <stem>
+With --split the two panels are two figures, <stem>_a.pdf/.png and <stem>_b.pdf/.png,
+no panel letters, and the label of C9-34 is beside its marker without a leader.
+       python make_summary_final_front_figure.py --split <stem> 2d
+With 2d as well, panel (a) alone is written as <stem>_a_2d.pdf/.png, with the
+two-dimensional core peaking factor of the campaign evaluator on the x axis
+(the "peaking" of the checkpoint) in place of the three-dimensional one.
+       python make_summary_final_front_figure.py --split <stem> [2d] screen
+With screen, the feasible designs are split by the eight-layer check: confirmed
+feasible (eight-layer cycle length of at least 1826 d), confirmed infeasible,
+and, for the designs without an eight-layer depletion, screened by the assembly
+cycle length against the per-design adjusted minimum (axial_req_efpd). Output
+<stem>_a_screen or <stem>_a_2d_screen. Reads every */runs.json with 8 layers.
 """
 import json
 import sys
@@ -71,11 +84,61 @@ BU_MIN = 1826.0 * spec_power / 1000.0                 # burnup of the minimum cy
 plt.rcParams.update({"font.size": 9, "font.family": "DejaVu Sans", "axes.grid": True,
                      "grid.alpha": 0.25, "grid.linewidth": 0.5, "axes.axisbelow": True,
                      "pdf.fonttype": 42})
-fig, (ax, bx) = plt.subplots(1, 2, figsize=(8.8, 3.9))    # printed at 0.86 of the text width
+SPLIT = sys.argv[1:2] == ["--split"]
+TWO_D = SPLIT and "2d" in sys.argv[3:]
+SCREEN = SPLIT and "screen" in sys.argv[3:]
+if SCREEN:
+    import glob, os
+    E8 = {}                                               # design -> eight-layer cycle lengths
+    for f in glob.glob("*/runs.json"):
+        d = os.path.dirname(f)
+        if "lofi" in d or "asm3d" in d:
+            continue
+        try:
+            R = json.load(open(f))
+        except Exception:
+            continue
+        for k, r in R.items():
+            if isinstance(r, dict) and r.get("layers") == 8 and "efpd" in r:
+                E8.setdefault(int(k[1:]), []).append(float(r["efpd"]))
+    def klass(i):
+        """feasible designs: 3d_ok, 3d_fail, screen_ok, screen_fail"""
+        if i in E8:
+            return "3d_ok" if np.mean(E8[i]) >= 1826.0 else "3d_fail"
+        return "screen_ok" if A[i]["cycle_length"] >= A[i]["axial_req_efpd"] else "screen_fail"
+    KL = {i: klass(i) for i in range(96) if feas[i]}
+    STYLE = {"3d_ok": dict(marker="o", s=30, facecolors="#1A1A1A", edgecolors="#1A1A1A", lw=0.8),
+             "3d_fail": dict(marker="o", s=30, facecolors="none", edgecolors="#1A1A1A", lw=1.3),
+             "screen_ok": dict(marker="s", s=26, facecolors="#9E9E9E", edgecolors="#9E9E9E", lw=0.8),
+             "screen_fail": dict(marker="s", s=26, facecolors="none", edgecolors="#9E9E9E", lw=1.0)}
+    NAME = {"3d_ok": "Feasible, eight-layer cycle length at least 1826 d",
+            "3d_fail": "Feasible in 2D, eight-layer cycle length below 1826 d",
+            "screen_ok": "Feasible, no eight-layer depletion, assembly cycle above its adjusted minimum",
+            "screen_fail": "Feasible, no eight-layer depletion, assembly cycle below its adjusted minimum"}
+    print("screen classes:", {k: sorted(i for i in KL if KL[i] == k) for k in STYLE})
+if SPLIT:                                                 # the depletion model of each front, named in full
+    FRONTS[0] = ("Campaign 9 front, 2D assembly depletion cycle length",) + FRONTS[0][1:]
+    FRONTS[1] = ("Final front, 3D eight-layer core depletion cycle length",) + FRONTS[1][1:]
+if TWO_D:
+    F3 = {i: r["peaking"] for i, r in enumerate(A)}       # two-dimensional core, campaign evaluator
+    OFF.update({34: (-2, -11), 40: (-32, -4), 35: (-12, 7), 27: (6, 5), 69: (-34, 4), 70: (6, 4)})
+elif SPLIT:
+    OFF[34] = (-2, -11)                                   # beside the marker, below left
+if SPLIT:
+    LEADER = set()
+    fig_a, ax = plt.subplots(figsize=(5.2, 4.2))
+    fig_b, bx = plt.subplots(figsize=(5.2, 4.2))
+else:
+    fig, (ax, bx) = plt.subplots(1, 2, figsize=(8.8, 3.9))    # printed at 0.86 of the text width
 
 # (a) objective plane, three-dimensional peaking
 for i in range(96):
     if i in F3 and C[i] is not None:
+        if SCREEN and feas[i]:
+            st = STYLE[KL[i]]
+            ax.scatter(F3[i], C[i], marker=st["marker"], s=st["s"], facecolors=st["facecolors"],
+                       edgecolors=st["edgecolors"], linewidths=st["lw"], zorder=2, alpha=0.9)
+            continue
         ax.scatter(F3[i], C[i], s=16, zorder=2, linewidths=0.8, alpha=0.75,
                    facecolors="#9E9E9E" if feas[i] else "none", edgecolors="#9E9E9E")
 # MTC boron limit of each lattice of the final front, 12.8 MPa, without its uncertainty
@@ -104,18 +167,27 @@ for name, members, col, mk in FRONTS:
                edgecolors="white", linewidths=0.6, zorder=4)
     for x, y, i in pts:
         ax.annotate(f"C9-{i}", (x, y), xytext=OFF[i], textcoords="offset points",
-                    fontsize=7, color=col, zorder=5,
+                    fontsize=7, color=col, zorder=5, ha="right" if SPLIT and i == 34 else "left",
                     arrowprops=dict(arrowstyle="-", color=col, lw=0.6) if i in LEADER else None,
                     bbox=dict(fc="white", ec="none", alpha=0.7, pad=0.4))
 ax.set_xlim(1.42, 1.72)
 ax.set_ylim(1000, 4200)
-ax.set_xlabel(r"Radial peaking factor $F_{\Delta H}$, three-dimensional core")
+ax.set_xlabel(r"Radial peaking factor $F_{\Delta H}$, " + ("two" if TWO_D else "three") + "-dimensional core")
 ax.set_ylabel(r"Critical boron concentration $c_\mathrm{max}$ [ppm]")
-ax.set_title("(a) Objective plane", fontsize=9, loc="left")
-h = [Line2D([], [], ls="", marker="o", ms=5, mfc="#9E9E9E", mec="#9E9E9E", label="Evaluated design, feasible"),
-     Line2D([], [], ls="", marker="o", ms=5, mfc="none", mec="#9E9E9E", label="Evaluated design, infeasible")]
+ax.set_title("Objective plane" if SPLIT else "(a) Objective plane", fontsize=9, loc="left")
+if SCREEN:
+    h = [Line2D([], [], ls="", marker=STYLE[k]["marker"], ms=5.5, mfc=STYLE[k]["facecolors"], mec=STYLE[k]["edgecolors"],
+                mew=STYLE[k]["lw"], label=f"{NAME[k]} ({sum(1 for i in KL if KL[i] == k)})") for k in STYLE]
+    h.append(Line2D([], [], ls="", marker="o", ms=5, mfc="none", mec="#9E9E9E", label="Evaluated design, infeasible"))
+else:
+    h = [Line2D([], [], ls="", marker="o", ms=5, mfc="#9E9E9E", mec="#9E9E9E", label="Evaluated design, feasible"),
+         Line2D([], [], ls="", marker="o", ms=5, mfc="none", mec="#9E9E9E", label="Evaluated design, infeasible")]
 h += [Line2D([], [], color=c, marker=m, ms=6, lw=1.4, label=n) for n, _, c, m in FRONTS]
-ax.legend(handles=h, fontsize=7.5, loc="upper right", frameon=True, framealpha=0.9, edgecolor="none")
+if SCREEN:                                                # seven entries: below the axes, clear of the data
+    fig_a.set_size_inches(5.6, 6.4)
+    ax.legend(handles=h, fontsize=7.5, loc="upper left", bbox_to_anchor=(-0.02, -0.16), ncol=1, frameon=False)
+else:
+    ax.legend(handles=h, fontsize=7.5, loc="upper right", frameon=True, framealpha=0.9, edgecolor="none")
 
 # (b) axial peaking factor against burnup
 for name, key, dirs, col, mk in L8:
@@ -138,7 +210,7 @@ bx.set_xlim(-0.5, 22.5)
 bx.set_ylim(1.10, 1.50)
 bx.set_xlabel("Core-average burnup [MWd/kgHM]")
 bx.set_ylabel(r"Axial peaking factor $F_z$")
-bx.set_title("(b) Axial peaking factor during the depletion", fontsize=9, loc="left")
+bx.set_title(("" if SPLIT else "(b) ") + "Axial peaking factor during the depletion", fontsize=9, loc="left")
 hb, lb = bx.get_legend_handles_labels()
 order = sorted(range(len(lb)), key=lambda k: (lb[k][:5], "1 layer" in lb[k]))   # each design together, 8 layers first
 bx.legend([hb[k] for k in order], [lb[k] for k in order], fontsize=7.5, loc="lower left",
@@ -147,10 +219,23 @@ bx.legend([hb[k] for k in order], [lb[k] for k in order], fontsize=7.5, loc="low
 for a in (ax, bx):
     a.spines["top"].set_visible(False)
     a.spines["right"].set_visible(False)
-fig.tight_layout()
-for out in sys.argv[1:]:
-    fig.savefig(out, dpi=200, bbox_inches="tight")
-    print("wrote", out)
+if TWO_D or SCREEN:
+    suffix = "_a" + ("_2d" if TWO_D else "") + ("_screen" if SCREEN else "")
+    fig_a.tight_layout()
+    for ext in (".pdf", ".png"):
+        fig_a.savefig(sys.argv[2] + suffix + ext, dpi=200, bbox_inches="tight")
+    print("wrote", sys.argv[2] + suffix + ".pdf")
+elif SPLIT:
+    for f, suffix in ((fig_a, "_a"), (fig_b, "_b")):
+        f.tight_layout()
+        for ext in (".pdf", ".png"):
+            f.savefig(sys.argv[2] + suffix + ext, dpi=200, bbox_inches="tight")
+        print("wrote", sys.argv[2] + suffix + ".pdf")
+else:
+    fig.tight_layout()
+    for out in sys.argv[1:]:
+        fig.savefig(out, dpi=200, bbox_inches="tight")
+        print("wrote", out)
 print(f"1 layer: F_z {fz1[0][0]:.3f} at BOL, {fz1[0][bu1 <= 21.5][-1]:.3f} at 21.5; "
       f"minimum cycle length at {BU_MIN:.2f} MWd/kgHM")
 for _, members, _, _ in FRONTS:

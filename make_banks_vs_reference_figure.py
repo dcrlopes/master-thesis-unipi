@@ -9,7 +9,10 @@ redrawn from Fig. 1 of the reference specification: 37 assemblies, RE1 around
 the centre, RE2 at the ends of the axes, SH3 and SH4 on the diagonals.
 
 Drawing only, no transport.
-Usage: python make_banks_vs_reference_figure.py <out.pdf> <out.png>
+Usage: python make_banks_vs_reference_figure.py <out.pdf> <out.png> [re12|ref]
+With ref, only the reference core is drawn, with its four banks.
+With the third argument re12, only RE1 and RE2 are coloured and labelled in
+both panels, and the legend has these two entries only.
 """
 import sys
 
@@ -19,6 +22,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch, Rectangle
 
 OUT_PDF, OUT_PNG = sys.argv[1], sys.argv[2]
+TWO_BANKS = len(sys.argv) > 3 and sys.argv[3] == "re12"
 
 C = {"RE1": "#B23A48", "RE2": "#E08A3C", "RE3": "#3f6d8c", "RE4": "#5f9a7f",
      "SH": "#8f9aa3", "SH3": "#8f9aa3", "SH4": "#b9c2c9", "": "#f2f4f6"}
@@ -49,6 +53,12 @@ for name, cells in [("RE1", {(2, 3), (3, 2), (3, 4), (4, 3)}),
         REF[c] = name
 
 
+if TWO_BANKS:
+    C[""] = "#b9c2c9"                       # one neutral colour for every other assembly
+    WORK = {k: v if v in ("RE1", "RE2") else "" for k, v in WORK.items()}
+    REF = {k: v if v in ("RE1", "RE2") else "" for k, v in REF.items()}
+
+
 def draw(ax, cells, n, title):
     for (i, j), lab in cells.items():
         ax.add_patch(Rectangle((j, n - 1 - i), 1, 1, facecolor=C[lab],
@@ -67,16 +77,28 @@ def draw(ax, cells, n, title):
 
 
 plt.rcParams.update({"font.size": 9, "font.family": "DejaVu Sans"})
-fig, (a1, a2) = plt.subplots(1, 2, figsize=(9.6, 5.0))
-draw(a1, WORK, 6, "(a) This work, 32 assemblies")
-draw(a2, REF, 7, "(b) NuScale-like reference, 37 assemblies")
+REF_ONLY = len(sys.argv) > 3 and sys.argv[3] == "ref"     # the reference core alone, all four banks
+if REF_ONLY:
+    fig, a2 = plt.subplots(figsize=(5.4, 5.4))
+    draw(a2, REF, 7, "NuScale-like reference, 37 assemblies")
+else:
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(9.6, 5.0))
+    draw(a1, WORK, 6, "(a) This work, 32 assemblies")
+    draw(a2, REF, 7, "(b) NuScale-like reference, 37 assemblies")
 
 handles = [Patch(facecolor=C[k], edgecolor="white", label=l) for k, l in [
     ("RE1", "Regulating bank RE1"), ("RE2", "Regulating bank RE2"),
     ("RE3", "Regulating bank RE3"), ("RE4", "Regulating bank RE4"),
     ("SH", "Shutdown bank SH, SH3"), ("SH4", "Shutdown bank SH4"),
     ("", "No control rod assembly")]]
-fig.legend(handles=handles, loc="lower center", ncol=4, fontsize=8,
+if TWO_BANKS:
+    handles = handles[:2]
+if REF_ONLY:
+    handles = [Patch(facecolor=C[k], edgecolor="white", label=l) for k, l in [
+        ("RE1", "Regulating bank RE1"), ("RE2", "Regulating bank RE2"),
+        ("SH3", "Shutdown bank SH3"), ("SH4", "Shutdown bank SH4"),
+        ("", "No control rod assembly")]]
+fig.legend(handles=handles, loc="lower center", ncol=2 if REF_ONLY else 4, fontsize=8,
            frameon=False, bbox_to_anchor=(0.5, -0.02))
 fig.tight_layout(rect=(0, 0.08, 1, 1))
 fig.savefig(OUT_PDF, bbox_inches="tight")

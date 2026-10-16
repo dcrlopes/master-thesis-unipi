@@ -18,7 +18,9 @@ Drawing only, no transport.
       Radii from core_geometry.core_envelope_radius + FUEL_PAD_CM,
       refl_thick of C9-47, and HardwareSpec (barrel 5.08, vessel 90 / 100).
 
-Usage: python make_c9_layered_model_figure.py <out.pdf> [out.png]
+Usage: python make_c9_layered_model_figure.py <out.pdf> [out.png] [full]
+With full, panel (b) is the whole vertical section through the core, both sides of the axis.
+With full and only_b, the figure is that section alone, with its legend, no panel (a).
 """
 import math
 import sys
@@ -89,9 +91,20 @@ C_NOZ, C_CAP, C_PLEN, C_GAP = "#8fa2ae", "#c8ced4", "#e3c46b", "#9fc7e8"
 C_HTM, C_HTP = "#3f007d", "#807dba"
 
 plt.rcParams.update({"font.size": 9, "font.family": "DejaVu Sans"})
-fig = plt.figure(figsize=(12.0, 6.6))
-ax = fig.add_axes([0.03, 0.22, 0.36, 0.70])
-bx = fig.add_axes([0.62, 0.12, 0.52, 0.82])
+FULL = "full" in sys.argv[3:]
+ONLY_B = FULL and "only_b" in sys.argv[3:]
+if ONLY_B:
+    fig = plt.figure(figsize=(13.0, 6.6))
+    ax = fig.add_axes([0.0, 0.0, 0.01, 0.01]); ax.set_visible(False)
+    bx = fig.add_axes([0.17, 0.12, 0.80, 0.82])
+elif FULL:
+    fig = plt.figure(figsize=(17.0, 6.6))
+    ax = fig.add_axes([0.02, 0.22, 0.26, 0.70])
+    bx = fig.add_axes([0.44, 0.12, 0.74, 0.82])
+else:
+    fig = plt.figure(figsize=(12.0, 6.6))
+    ax = fig.add_axes([0.03, 0.22, 0.36, 0.70])
+    bx = fig.add_axes([0.62, 0.12, 0.52, 0.82])
 
 # --------------------------------------------------------------- (a) ------
 ax.add_patch(Rectangle((0, 0), A, A, facecolor=C_W, edgecolor="k", lw=1.0))
@@ -112,9 +125,10 @@ leg_a = [Patch(facecolor=C_FUEL, label="UO$_2$ fuel rod"),
          Patch(facecolor=C_GD, label="UO$_2$–Gd$_2$O$_3$ rod, 20 rods, %.2f wt%% Gd$_2$O$_3$" % GDW),
          Patch(facecolor=C_W, edgecolor=C_GT, lw=1.6, label="Guide tube, all rods out"),
          Patch(facecolor="none", edgecolor="k", ls="--", label="Central 9 $\\times$ 9 block, own materials")]
-ax.legend(handles=leg_a, loc="upper center", bbox_to_anchor=(0.5, -0.02), fontsize=7.8, frameon=False)
-fig.text(0.21, 0.05, "Enrichment %.2f wt%% scaled by ring: C %.2f, M %.2f, P %.2f wt%%"
-         % (E, E * M["C"], E * M["M"], E * M["P"]), ha="center", fontsize=7.8)
+if not ONLY_B:
+    ax.legend(handles=leg_a, loc="upper center", bbox_to_anchor=(0.5, -0.02), fontsize=7.8, frameon=False)
+    fig.text(0.21, 0.05, "Enrichment %.2f wt%% scaled by ring: C %.2f, M %.2f, P %.2f wt%%"
+             % (E, E * M["C"], E * M["M"], E * M["P"]), ha="center", fontsize=7.8)
 
 # --------------------------------------------------------------- (b) ------
 zb, zt = Z["water_below"][0], Z["water_above"][1]
@@ -124,6 +138,17 @@ x_fuel, x_refl, x_bar, x_vin, x_vout = X(R_FUEL), X(R_REFL), X(R_BAR), X(R_VIN),
 
 def box(x0, x1, z0, z1, **kw):
     bx.add_patch(Rectangle((x0, z0), x1 - x0, z1 - z0, **kw))
+    if FULL and x0 >= 0:                        # the mirror image on the other side of the axis
+        bx.add_patch(Rectangle((-x1, z0), x1 - x0, z1 - z0, **kw))
+
+
+def vline(x, z0, z1):
+    bx.plot([x, x], [z0, z1], color="k", lw=0.6)
+    if FULL and x > 0:
+        bx.plot([-x, -x], [z0, z1], color="k", lw=0.6)
+
+
+X_LEFT = -x_vout if FULL else 0.0                  # left edge of the section
 
 
 # full-height radial regions outside the fuel cylinder
@@ -144,26 +169,31 @@ for k, ring in enumerate(("C", "M", "P")):
     for l in range(8):
         box(k * A, (k + 1) * A, LAYERS[l], LAYERS[l + 1], facecolor=RING_C[ring][l % 2], edgecolor="none")
     bx.text((k + 0.5) * A, 62.5, "Ring " + ring, ha="center", va="bottom", fontsize=8, color="k")
+    if FULL:
+        bx.text(-(k + 0.5) * A, 62.5, "Ring " + ring, ha="center", va="bottom", fontsize=8, color="k")
 for l in range(9):
-    bx.plot([0, x_lat], [LAYERS[l]] * 2, color="k", lw=0.6)
+    bx.plot([-x_lat if FULL else 0, x_lat], [LAYERS[l]] * 2, color="k", lw=0.6)
 for l in range(8):
     zm = 0.5 * (LAYERS[l] + LAYERS[l + 1])
     for g0, g1, _ in GRIDS:                     # keep the number clear of a grid band
         if g0 - 2.5 <= zm <= g1 + 2.5:
             zm = g1 + 3.5 if LAYERS[l + 1] - g1 > 6 else g0 - 3.5
-    bx.text(1.2, zm, str(l + 1), ha="left", va="center", fontsize=7.5, color="w", fontweight="bold")
+    bx.text((-x_lat if FULL else 0) + 1.2, zm, str(l + 1), ha="left", va="center", fontsize=7.5, color="w", fontweight="bold")
 for g0, g1, kind in GRIDS:
     box(0, x_lat, g0, g1, facecolor=C_HTM if kind == "htm" else C_HTP, edgecolor="none", alpha=0.85)
-for k in range(1, 3):
-    bx.plot([k * A, k * A], [Z["bottom_nozzle"][0], Z["top_nozzle"][1]], color="k", lw=0.6)
-bx.plot([x_lat, x_lat], [Z["bottom_nozzle"][0], Z["top_nozzle"][1]], color="k", lw=0.6)
-bx.plot([0, x_vout], [zb, zb], color="k", lw=1.0); bx.plot([0, x_vout], [zt, zt], color="k", lw=1.0)
+for k in range(0 if FULL else 1, 3):
+    vline(k * A, Z["bottom_nozzle"][0], Z["top_nozzle"][1])
+vline(x_lat, Z["bottom_nozzle"][0], Z["top_nozzle"][1])
+bx.plot([X_LEFT, x_vout], [zb, zb], color="k", lw=1.0); bx.plot([X_LEFT, x_vout], [zt, zt], color="k", lw=1.0)
 bx.plot([x_vout, x_vout], [zb, zt], color="k", lw=1.0)
-bx.set_xlim(0, x_vout + 1)
+if FULL:
+    bx.plot([-x_vout, -x_vout], [zb, zt], color="k", lw=1.0)
+bx.set_xlim(X_LEFT - 1 if FULL else 0, x_vout + 1)
 bx.set_ylim(zb - 2, zt + 2)
 bx.set_xlabel("Distance from the core axis along the section (cm)")
 bx.set_ylabel("Elevation from the core mid-plane (cm)")
-bx.set_title("(b) Core, vertical half section: 8 depletion layers of 15 cm", fontsize=10, loc="left")
+bx.set_title(("Core of C9-47, vertical section" if ONLY_B else "(b) Core, vertical section" if FULL else "(b) Core, vertical half section")
+             + ": 8 depletion layers of 15 cm", fontsize=10, loc="left")
 leg_b = [Patch(facecolor=RING_C["C"][1], label="Fuel, ring C"), Patch(facecolor=RING_C["M"][1], label="Fuel, ring M"),
          Patch(facecolor=RING_C["P"][1], label="Fuel, ring P"),
          Patch(facecolor=C_HTM, label="Spacer grid, Inconel"), Patch(facecolor=C_HTP, label="Spacer grid, Zircaloy"),
@@ -171,7 +201,7 @@ leg_b = [Patch(facecolor=RING_C["C"][1], label="Fuel, ring C"), Patch(facecolor=
          Patch(facecolor=C_GAP, label="Coolant gap"), Patch(facecolor=C_NOZ, label="Nozzle"),
          Patch(facecolor=C_W, edgecolor="0.6", label="Water, 1000 ppm boron"), Patch(facecolor=C_REFL, label="Heavy reflector"),
          Patch(facecolor=C_SS, label="Barrel"), Patch(facecolor=C_VES, label="Vessel wall")]
-bx.legend(handles=leg_b, loc="upper right", bbox_to_anchor=(-0.09, 1.0), fontsize=7.5, frameon=False)
+bx.legend(handles=leg_b, loc="upper right", bbox_to_anchor=(-0.06 if FULL else -0.09, 1.0), fontsize=7.5, frameon=False)
 fig.savefig(sys.argv[1], bbox_inches="tight")
 if len(sys.argv) > 2:
     fig.savefig(sys.argv[2], dpi=170, bbox_inches="tight")

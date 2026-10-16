@@ -349,6 +349,13 @@ def main():
                          "end-of-cycle criterion there is right-censored at "
                          "that cycle length, which satisfies the 1826 d "
                          "constraint with margin.")
+    ap.add_argument("--doe-from-cache", metavar="EVAL_CACHE.json", default=None,
+                    help="fresh run only: take the design of experiments from "
+                         "the finished evaluations of this evaluator cache "
+                         "(workdir/eval_cache.json) instead of sampling it; "
+                         "n_init becomes their number. Entries whose 3D "
+                         "cycle length failed (axial_measured false) are "
+                         "left out.")
     ap.add_argument("--cycle-timeout-min", type=float, default=180.0,
                     help="c10: the subprocess of --cycle-core3d is killed after "
                          "this many minutes and the evaluation keeps the "
@@ -571,6 +578,21 @@ def main():
     print(f"surrogate policy: cycle-length clip {_cap_txt} | "
           f"NSGA-II {cfg.nsga_pop}x{cfg.nsga_gen} | constraint norm active")
     opt = ActiveLearningMOO(spec, ev, cfg)
+    if args.doe_from_cache and not args.resume:
+        cache = json.loads(Path(args.doe_from_cache).read_text())
+        names = spec.design_space.names
+        recs = []
+        for key, res in cache.items():
+            d = json.loads(key)                 # the design values are the cache key
+            if res.get("axial_measured") is False:
+                continue
+            recs.append({**{n: float(d[n]) for n in names if n in d}, **d, **res})
+        if not recs:
+            raise SystemExit(f"--doe-from-cache: no usable evaluation in {args.doe_from_cache}")
+        opt.doe_raw = recs
+        cfg.n_init = len(recs)
+        print(f"DOE FROM CACHE: {len(recs)} finished evaluations of {len(cache)} in "
+              f"{args.doe_from_cache} are the design of experiments")
     # Ensure the output directory exists BEFORE anything tries to write into it
     # (results JSON, checkpoint, and the HV plot all land here). write_text does
     # not create missing parent folders, so without this the run crashes at the

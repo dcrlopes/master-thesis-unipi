@@ -75,7 +75,7 @@ stage_P() {
   python -c "import numpy, openmc; print('  openmc      :', openmc.__version__)" || die "openmc import failed"
   [ -n "${OPENMC_CHAIN_FILE:-}" ] || die "OPENMC_CHAIN_FILE unset"
   echo "  head        : $(git log --oneline -1)"
-  for f in "$KT" run_optimization.py openmc_evaluator.py reactor_optimization.py c9_dep_core3d.py test_core3d_hook.py; do
+  for f in "$KT" run_optimization.py openmc_evaluator.py reactor_optimization.py c9_dep_core3d.py test_core3d_hook.py c10_retry_3d.py core3d_subprocess.py machine_monitor.sh; do
     [ -f "$f" ] || die "missing $f"
   done
   grep -q "cycle-core3d" run_optimization.py || die "run_optimization.py has no --cycle-core3d (git pull?)"
@@ -121,7 +121,15 @@ MACHINE_CSV=c10_machine.csv            # written by machine_monitor.sh during st
 STALL_MIN=${STALL_MIN:-100}          # longest silence allowed; one 3D solve is a few minutes, one evaluation about 90
 POLL_S=300
 MAX_LAUNCHES=${MAX_LAUNCHES:-25}
-TARGET=$((N_INIT + ITERS * N_INFILL))
+# The sampling of the design of experiments was not reproducible before
+# 16 Oct 2026 (seed ignored), so the 22 evaluations made in the launches of
+# 12 to 16 Oct are 22 different designs. They become the design of
+# experiments (--doe-from-cache) when the cache holds at least MIN_CACHE_DOE
+# of them, and the target counts from their number.
+MIN_CACHE_DOE=${MIN_CACHE_DOE:-12}
+cache_n() { python -c "import json,os; p='$WORK/eval_cache.json'; print(sum(1 for v in json.load(open(p)).values() if v.get('axial_measured') is not False) if os.path.exists(p) else 0)"; }
+doe_n() { local c; c=$(cache_n); [ "$c" -ge "$MIN_CACHE_DOE" ] && echo "$c" || echo "$N_INIT"; }
+TARGET=$(( $(doe_n) + ITERS * N_INFILL ))
 
 newest_s() {                          # seconds since the newest file under $WORK or the log changed
   local f
@@ -132,16 +140,23 @@ newest_s() {                          # seconds since the newest file under $WOR
 launch_driver() {                     # fresh or resumed, by the checkpoint; in the background
   local n left
   n=$(n_eval)
-  if [ "$n" -ge "$N_INIT" ]; then
+  if [ "$n" -ge "$(doe_n)" ]; then
     left=$(( (TARGET - n + N_INFILL - 1) / N_INFILL ))
     echo "$(stamp)   resuming $OUT at $n evaluations: $left more batch(es) of $N_INFILL"
     python -u run_optimization.py --resume "$OUT/optimization_checkpoint.json" --out "$OUT" --workdir "$WORK" \
          "${COMMON[@]}" "${LOOP[@]}" --n-init "$N_INIT" --n-infill "$N_INFILL" --iters "$left" \
          --cycle-core3d "$CYCLE3D" --cycle-max-burnup "$CYCLE3D_BU" >> "$OUT.log" 2>&1 < /dev/null &
   else
-    [ -f "$WORK/eval_cache.json" ] && echo "$(stamp)   replaying $(python -c "import json; print(len(json.load(open('$WORK/eval_cache.json'))))") cached evaluations"
+    local extra=()
+    if [ "$(cache_n)" -ge "$MIN_CACHE_DOE" ]; then
+      # finished 3D depletions that failed are retried first (about an hour each)
+      python -u c10_retry_3d.py --cache "$WORK/eval_cache.json" --workdir "$WORK" --transport "$CYCLE3D" \
+             --layers "$LAYERS" --max-burnup "$CYCLE3D_BU" --hump-noise "$HUMP_NOISE" >> "$OUT.log" 2>&1
+      extra=(--doe-from-cache "$WORK/eval_cache.json")
+      echo "$(stamp)   design of experiments from the $(cache_n) finished evaluations of the cache"
+    fi
     python -u run_optimization.py --out "$OUT" --workdir "$WORK" "${COMMON[@]}" "${LOOP[@]}" \
-         --n-init "$N_INIT" --n-infill "$N_INFILL" --iters "$ITERS" \
+         --n-init "$N_INIT" --n-infill "$N_INFILL" --iters "$ITERS" "${extra[@]}" \
          --cycle-core3d "$CYCLE3D" --cycle-max-burnup "$CYCLE3D_BU" >> "$OUT.log" 2>&1 < /dev/null &
   fi
   DRIVER=$!
@@ -165,7 +180,7 @@ kill_driver() {
 
 stage_F() {
   done_ F && { echo "[F] already done"; return 0; }
-  hr; echo " STAGE F. Full campaign, $N_INIT + $ITERS x $N_INFILL evaluations, watchdog $STALL_MIN min"; hr
+  hr; echo " STAGE F. Full campaign, $(doe_n) + $ITERS x $N_INFILL evaluations, watchdog $STALL_MIN min"; hr
   # the machine is shared: one line per minute with the load, the free CPU
   # and memory and the processes of every user, so that a stall can be read
   # against what else was running (user's request, 16 Oct 2026)

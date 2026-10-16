@@ -110,13 +110,19 @@ class DesignSpace:
             points still come from LHS rounds, so space-filling quality inside
             the feasible region is preserved.
         """
+        # pymoo's LHS takes its random numbers from the random_state it is
+        # given (a fresh generator when none). Until 16 Oct 2026 the seed
+        # argument was never passed on, so every launch of a campaign drew a
+        # different design of experiments, which made the relaunch-and-replay
+        # of Campaign 10 recompute it from scratch.
+        rs = np.random.default_rng(int(seed))
         sampler = LHS()
         if accept is None:
-            unit = sampler(_BoxProblem(self.n), n_samples).get("X")  # in [0,1]
+            unit = sampler(_BoxProblem(self.n), n_samples, random_state=rs).get("X")  # in [0,1]
             return self.xl + unit * (self.xu - self.xl)
         kept = []
         for round_ in range(50):                      # hard stop: 50 rounds
-            unit = sampler(_BoxProblem(self.n), n_samples).get("X")
+            unit = sampler(_BoxProblem(self.n), n_samples, random_state=rs).get("X")
             X = self.xl + unit * (self.xu - self.xl)
             for x in X:
                 if accept(self.as_dict(x)):
@@ -858,7 +864,25 @@ class ActiveLearningMOO:
         # Skipped entirely on a RESUMED run: if load_checkpoint() has already
         # pre-seeded the data set, we keep the existing (X, F, G, raw, history,
         # frozen HV reference) intact and go straight to more active learning.
-        if len(self.X) == 0:
+        doe_raw = getattr(self, "doe_raw", None)
+        if len(self.X) == 0 and doe_raw:
+            # DOE FROM RECORDS (16 Oct 2026): the design of experiments is the
+            # given list of finished evaluations, for instance the evaluation
+            # cache of an interrupted campaign whose sampling was not
+            # reproducible. The records are taken as they are, in order.
+            self._seed_from_raw(doe_raw)
+            self.evaluator.n_calls = len(doe_raw)
+            self.cfg.n_init = len(doe_raw)
+            t_ev = float(sum(float(r.get("t_eval_s", 0.0)) for r in doe_raw))
+            t_hv0 = time.perf_counter()
+            self.history.append(self._hv())
+            self.phase_log.append(dict(
+                stage="DOE", iteration=0, n_eval=int(len(doe_raw)), from_records=True,
+                t_eval_s=t_ev, t_hv_s=time.perf_counter() - t_hv0))
+            if verbose:
+                print(f"[Stage 1] design of experiments taken from {len(doe_raw)} given "
+                      f"evaluations. HV={self.history[-1]:.4g}")
+        elif len(self.X) == 0:
             accept = (self.spec.exact_ok if self.spec.exact_constraints
                       else None)
             X0 = self.spec.design_space.lhs(self.cfg.n_init,

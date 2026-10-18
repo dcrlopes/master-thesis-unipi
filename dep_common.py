@@ -133,6 +133,19 @@ def unmark_unused(model, rows) -> list[dict]:
     return off
 
 
+def serial_depletion_pool() -> str:
+    """openmc.deplete solves the Bateman equations of the depletable
+    materials in a multiprocessing pool forked from the process that holds
+    the live OpenMP threads of openmc.lib. Three Campaign 10 depletions hung
+    for 103 min each (17 Oct 2026): a forked worker died with a segmentation
+    fault in SuperLU (scipy spsolve, the CRAM solver) and multiprocessing.Pool
+    waits forever for a worker that a signal killed. Serial solves cost
+    seconds per step and cannot hang. DEPLETE_POOL=1 restores the pool."""
+    import openmc.deplete.pool as pool
+    pool.USE_MULTIPROCESSING = os.environ.get("DEPLETE_POOL", "0") == "1"
+    return "multiprocessing pool (DEPLETE_POOL=1)" if pool.USE_MULTIPROCESSING else "serial"
+
+
 # ---------------------------------------------------- adaptive depletion ----
 def run_adaptive(model, k_target, spec_power: float, *, bol_steps,
                  dep_step: float, chunk_steps: int, max_burnup: float,
@@ -160,6 +173,9 @@ def run_adaptive(model, k_target, spec_power: float, *, bol_steps,
 
     case = Path(case)
     case.mkdir(parents=True, exist_ok=True)
+    mode = serial_depletion_pool()
+    if verbose:
+        print(f"      depletion chain solver: {mode}", flush=True)
     bu_hist = [0.0]
     k_hist: list[float] = []
     state = {"prev": None, "power_w": None, "chunk": 0}

@@ -64,6 +64,9 @@ import numpy as np
 import openmc
 import openmc.deplete
 
+import dep_common
+dep_common.serial_depletion_pool()   # the assembly depletion of the loop: no forked pool, see dep_common
+
 import core_geometry as cg
 import leu_policy as _leu
 import reactor_model as rm

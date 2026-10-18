@@ -912,7 +912,13 @@ class ActiveLearningMOO:
                       f"evaluations. HV={self.history[-1]:.4g}")
 
         # ---- STAGE 2 : active-learning loop ---------------------------------
-        for it in range(self.cfg.n_iter):
+        # BATCH NUMBER OF THE CAMPAIGN (17 Oct 2026): propose() seeds NSGA-II
+        # with it, so it counts the infill batches of the whole campaign,
+        # restored from phase_log on a resume. With the index of the launch,
+        # launch 4 of Campaign 10 resumed in the middle of batch 3, proposed a
+        # different batch 3, and 4 finished evaluations were not used.
+        n_done = sum(1 for p in self.phase_log if p.get("stage") == "infill")
+        for it in range(n_done, n_done + self.cfg.n_iter):
             Xinf, _p = self.propose(it, verbose=verbose)
             t_fit, t_nsga, t_acq = _p["t_fit"], _p["t_nsga"], _p["t_acq"]
 
@@ -935,7 +941,7 @@ class ActiveLearningMOO:
                       f"(fit {t_fit:.1f}, NSGA-II {t_nsga:.1f}, "
                       f"acquisition {t_acq:.2f}, HV {t_hv:.3f})")
             if verbose:
-                print(f"[Stage 2] iter {it+1}/{self.cfg.n_iter}: "
+                print(f"[Stage 2] iter {it+1}/{n_done + self.cfg.n_iter}: "
                       f"+{len(Xinf)} real evals "
                       f"(total {self.evaluator.n_calls}), "
                       f"HV={self.history[-1]:.4g}")

@@ -1,0 +1,37 @@
+=== Check 3: three-dimensional depletion, one material set per axial layer
+C9-31  (8 layers)
+  cycle length   3D  1859.4 d (sigma 8.4)   archive  1831.9 d   difference +27.5 d   margins over 1826: 3D +33, archive +6
+  k_eff BOL      3D 1.00997 (s.d. 69 pcm)   2D archive 1.04017   L_ax at BOL 1.0299   (table 1.0289)
+  hump (3D)      +0 pcm (no floor -1623)   archive +0
+  c_max          3D 1658 ppm   archive 1658   difference +0 ppm
+  (the values marked 'last' are at the last computed state, B = 21.5 MWd/kgHM, past the end of cycle at B = 18.6)
+  F_dH           BOL 1.745  max 1.745  last 1.562   F_z BOL 1.439  max 1.439  last 1.211   AO BOL -0.028  last -0.009   entropy conv. max 8
+  layer burnup at the last state [MWd/kgHM], bottom to top: 11.9 20.9 26.6 28.8 29.1 25.5 19.4 9.9   (max/mean 1.355)
+  solves 8, wall 1.07 h
+C9-42  (8 layers)
+  cycle length   3D  1977.1 d (sigma 6.5)   archive  1956.8 d   difference +20.3 d   margins over 1826: 3D +151, archive +131
+  k_eff BOL      3D 1.05734 (s.d. 69 pcm)   2D archive 1.08898   L_ax at BOL 1.0299   (table 1.0289)
+  hump (3D)      +0 pcm (no floor -2142)   archive +0
+  c_max          3D 2396 ppm   archive 2396   difference +0 ppm
+  (the values marked 'last' are at the last computed state, B = 21.5 MWd/kgHM, past the end of cycle at B = 19.7)
+  F_dH           BOL 1.637  max 1.637  last 1.585   F_z BOL 1.441  max 1.441  last 1.177   AO BOL -0.020  last -0.032   entropy conv. max 10
+  layer burnup at the last state [MWd/kgHM], bottom to top: 12.2 21.0 26.3 28.2 28.6 25.5 19.8 10.4   (max/mean 1.329)
+  solves 8, wall 0.94 h
+C9-48  (8 layers)
+  cycle length   3D  1829.3 d (sigma 9.2)   archive  1836.4 d   difference -7.1 d   margins over 1826: 3D +3, archive +10
+  k_eff BOL      3D 1.00891 (s.d. 74 pcm)   2D archive 1.03951   L_ax at BOL 1.0303   (table 1.0289)
+  hump (3D)      +0 pcm (no floor -1998)   archive +0
+  c_max          3D 1640 ppm   archive 1640   difference +0 ppm
+  (the values marked 'last' are at the last computed state, B = 21.5 MWd/kgHM, past the end of cycle at B = 18.3)
+  F_dH           BOL 1.749  max 1.749  last 1.558   F_z BOL 1.439  max 1.439  last 1.221   AO BOL -0.023  last -0.010   entropy conv. max 10
+  layer burnup at the last state [MWd/kgHM], bottom to top: 11.8 20.7 26.5 28.7 29.1 25.6 19.6 10.1   (max/mean 1.353)
+  solves 8, wall 1.06 h
+C9-56  (8 layers)
+  cycle length   3D  1860.4 d (sigma 8.4)   archive  1847.3 d   difference +13.1 d   margins over 1826: 3D +34, archive +21
+  k_eff BOL      3D 1.02354 (s.d. 57 pcm)   2D archive 1.05485   L_ax at BOL 1.0306   (table 1.0289)
+  hump (3D)      +0 pcm (no floor -1869)   archive +0
+  c_max          3D 1873 ppm   archive 1873   difference +0 ppm
+  (the values marked 'last' are at the last computed state, B = 21.5 MWd/kgHM, past the end of cycle at B = 18.6)
+  F_dH           BOL 1.624  max 1.672  last 1.541   F_z BOL 1.426  max 1.427  last 1.195   AO BOL -0.025  last -0.018   entropy conv. max 8
+  layer burnup at the last state [MWd/kgHM], bottom to top: 11.8 20.7 26.3 28.5 29.1 25.7 19.7 10.2   (max/mean 1.352)
+  solves 8, wall 1.04 h

@@ -448,7 +448,12 @@ class GPSurrogate(Surrogate):
     """One Gaussian Process per output column. Native, well-calibrated
     uncertainty -- ideal to *drive* active learning.  Great for <~1000 points,
     which is exactly the regime of expensive OpenMC data."""
-    def __init__(self):
+    def __init__(self, nu: float = 2.5):
+        # nu: smoothness of the Matern kernel. 2.5 is the campaign kernel of
+        # Campaigns 6 to 10. 0.5 (exponential) is the Campaign 11 choice for
+        # the constraints: better calibrated on the cycle-length constraint
+        # (paper_finds.md Section 9: 5 wrong decisions of 36 against 17).
+        self.nu = float(nu)
         self.xscaler = StandardScaler()
         self.models: list[GaussianProcessRegressor] = []
 
@@ -459,7 +464,7 @@ class GPSurrogate(Surrogate):
         for j in range(n_out):
             kernel = (ConstantKernel(1.0, (1e-3, 1e4))
                       * Matern(length_scale=np.ones(X.shape[1]),
-                               length_scale_bounds=(1e-2, 1e3), nu=2.5)
+                               length_scale_bounds=(1e-2, 1e3), nu=self.nu)
                       + WhiteKernel(1e-3, (1e-8, 1e1)))
             gp = GaussianProcessRegressor(kernel=kernel, normalize_y=True,
                                           n_restarts_optimizer=4,
@@ -575,6 +580,7 @@ class OptimizerConfig:
     nsga_pop: int = 80          # NSGA-II population on the surrogate
     nsga_gen: int = 120         # NSGA-II generations on the surrogate
     surrogate: str = "gp"       # "gp" or "mlp"
+    con_kernel_nu: float = 2.5  # Matern nu of the CONSTRAINT surrogates (objectives keep 2.5)
     seed: int = 0
     hv_ref: tuple | None = None # reference point for hypervolume (in MIN space)
     efpd_cap: float | None = None  # EFPD-CLIP: ceiling on the SURROGATE's
@@ -621,9 +627,10 @@ class ActiveLearningMOO:
         self._hv_ref_frozen = None # fixed reference point (set after Stage 1)
 
     # ---- surrogate factory --------------------------------------------------
-    def _new_surrogate(self):
-        return GPSurrogate() if self.cfg.surrogate == "gp" \
-            else MLPEnsembleSurrogate(seed=self.cfg.seed)
+    def _new_surrogate(self, constraints=False):
+        if self.cfg.surrogate != "gp":
+            return MLPEnsembleSurrogate(seed=self.cfg.seed)
+        return GPSurrogate(nu=float(getattr(self.cfg, "con_kernel_nu", 2.5)) if constraints else 2.5)
 
     # ---- bookkeeping --------------------------------------------------------
     def _add(self, X, F, G, raw):
@@ -708,7 +715,7 @@ class ActiveLearningMOO:
         so a replay from an archive prefix reproduces what the loop chose."""
         t_fit0 = time.perf_counter()
         obj_sur = self._new_surrogate().fit(self.X, self.F)
-        con_sur = (self._new_surrogate().fit(self.X, self.G)
+        con_sur = (self._new_surrogate(constraints=True).fit(self.X, self.G)
                    if self.spec.n_constr else None)
         t_fit = time.perf_counter() - t_fit0
 

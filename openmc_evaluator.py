@@ -897,6 +897,19 @@ def _c9_core3d_cycle(ev, design, rec, cfg):
                 schedule=schedule, hump_noise_pcm=float(ev.c9_hump_noise_pcm), transport=dict(cfg["transport"]),
                 layers=int(cfg["layers"]), case=str(case), salt=str(cfg.get("salt", "core3d-loop")),
                 label=f"case {ev.n_calls:04d} 3D")
+    kbol_info = {}
+    if cfg.get("kbol_transport"):
+        # HIGH-STATISTICS k_bol (22 Oct 2026): the criterion k_3D(BOL) x k_target / k_bol
+        # carried the 264 pcm noise of the campaign assembly solve, about 43 d per
+        # three-dimensional cycle length (paper_finds.md Section 12). One fresh-assembly
+        # eigenvalue solve at cfg["kbol_transport"] (about 8 min at 20 000 x 160, 64 pcm)
+        # replaces the campaign k_bol in the ratio; the campaign value stays in the record.
+        kbol_info = _kbol_high_statistics(ev, design, case.parent, cfg["kbol_transport"])
+        spec["rec"]["k_bol"] = kbol_info["k_bol_hifi"]
+        if getattr(ev, "verbose", False):
+            print(f"      k_bol high statistics {kbol_info['k_bol_hifi']:.5f} +/- {1e5 * kbol_info['k_bol_hifi_sd']:.0f} pcm "
+                  f"(campaign {rec['k_bol']:.5f}, {1e5 * (rec['k_bol'] - kbol_info['k_bol_hifi']):+.0f} pcm) "
+                  f"[{kbol_info['t_kbol_s'] / 60:.1f} min]", flush=True)
     fin, fout = case / "core3d_in.json", case / "core3d_out.json"
     fin.write_text(json.dumps(spec, default=float))
     if fout.exists():
@@ -919,15 +932,35 @@ def _c9_core3d_cycle(ev, design, rec, cfg):
         msg = (f"core3d_subprocess timeout after {limit / 60:.0f} min" if rc == "timeout"
                else f"core3d_subprocess exit {rc}") + ("" if fout.exists() else ", no result file")
         print(f"      WARNING core3d cycle failed after {wall / 60:.1f} min, assembly value kept: {msg}", flush=True)
-        return {"axial_measured": False, "core3d_error": msg, "t_dep3d_s": float(wall)}
+        return {"axial_measured": False, "core3d_error": msg, "t_dep3d_s": float(wall), **kbol_info}
     dep = json.loads(fout.read_text())
     dep["wall_s"] = float(wall)                  # the whole subprocess, model build included
     out = core3d_cycle_fields(rec, dep, float(ev.c9_efpd_req))
+    out.update(kbol_info)
+    out["k_target_ratio_3d"] = float(spec["rec"]["k_target"]) / float(spec["rec"]["k_bol"])
     if getattr(ev, "verbose", False):
         print(f"      3D: EFPD {out['efpd_3d']:.1f} d (assembly {out['cycle_length_asm']:.1f}) "
               f"g_efpd={out['g_efpd']:+.0f} F_z(BOL)={out['fz_bol_3d'] if out['fz_bol_3d'] else float('nan'):.3f} "
               f"[{out['n_solves_3d']} solves, {out['t_dep3d_s'] / 60:.1f} min]", flush=True)
     return out
+
+
+def _kbol_high_statistics(ev, design, case_dir, tr):
+    """One fresh-assembly eigenvalue solve of `design` at the transport `tr`
+    (particles, batches, inactive), the same reflective 17x17 model as the
+    campaign assembly depletion, with its own seed salt. Returns the k_inf,
+    the uncertainty OpenMC reports and the wall time."""
+    import openmc
+    model, _cells, _lat = rm.make_assembly_model(design, ev.op, ev.geo, bc="reflective", **tr)
+    model.settings.seed = _design_seed(design, salt="kbol-hifi")
+    d = Path(case_dir) / "kbol_hifi"
+    d.mkdir(parents=True, exist_ok=True)
+    t0 = time.perf_counter()
+    sp_path = model.run(cwd=str(d), output=False)
+    with openmc.StatePoint(str(sp_path), autolink=False) as sp:
+        k, sd = float(sp.keff.nominal_value), float(sp.keff.std_dev)
+    return {"k_bol_hifi": k, "k_bol_hifi_sd": sd, "kbol_transport": dict(tr),
+            "t_kbol_s": float(time.perf_counter() - t0)}
 
 
 def _core3d_selftest():

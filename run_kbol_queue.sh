@@ -31,6 +31,8 @@ C9=out_c9a/optimization_checkpoint.json
 C10=out_c10/optimization_checkpoint.json
 JOBS="$C9:69 $C9:70 $C10:42 $C10:56 $C10:48
       $C9:1 $C9:11 $C9:16 $C9:24 $C9:32 $C9:35 $C9:47 $C9:63 $C9:68 $C9:72 $C9:79 $C9:85 $C9:88 $C9:94"
+# JOBS_FILE=<file>: one "checkpoint:index" per line replaces the list above (run_c11.sh stage K)
+[ -n "${JOBS_FILE:-}" ] && JOBS=$(grep -v '^\s*$' "$JOBS_FILE" | tr '\n' ' ')
 TRANSPORT="--particles 20000 --batches 160 --inactive 60"
 THREADS=${THREADS:-$(nproc 2>/dev/null || sysctl -n hw.ncpu)}
 STALL_MIN=${STALL_MIN:-30}       # a solve at 20 000 x 160 is about 8 min and OpenMC writes a line per batch

@@ -271,6 +271,18 @@ def main():
                     help="ACQUISITION, margin rule: kappa for one constraint "
                          "(repeatable), overriding --feas-kappa for that "
                          "column, e.g. --feas-kappa-per g_efpd=0.5.")
+    ap.add_argument("--con-kernel-nu", type=float, default=2.5, choices=[0.5, 1.5, 2.5],
+                    help="c11: Matern smoothness of the CONSTRAINT surrogates "
+                         "(the objectives keep the campaign kernel, 2.5). 0.5 is "
+                         "the exponential kernel, better calibrated on the "
+                         "cycle-length constraint (paper_finds.md Section 9).")
+    ap.add_argument("--kbol-transport", metavar="P,B,I", default=None,
+                    help="c11, with --cycle-core3d: one extra fresh-assembly "
+                         "eigenvalue solve at this transport (e.g. 20000,160,60, "
+                         "about 8 min) gives the k_bol of the end-of-cycle "
+                         "criterion of the 3D depletion, instead of the campaign "
+                         "solve whose 264 pcm put about 43 d into every cycle "
+                         "length (paper_finds.md Section 12).")
     ap.add_argument("--margin-constraints", nargs="*", default=None,
                     metavar="NAME",
                     help="ACQUISITION, margin rule: apply the gate to these "
@@ -492,6 +504,7 @@ def main():
                           if args.feas_kappa_per else None)
     cfg.margin_constraints = (tuple(args.margin_constraints)
                               if args.margin_constraints else None)
+    cfg.con_kernel_nu = float(args.con_kernel_nu)     # c11: constraint kernel
 
     ev = OpenMCEvaluator(spec, k_target=k_target_arg, transport=transport,
                          core_particles=args.core_particles,
@@ -558,6 +571,11 @@ def main():
                                  "layers": int(args.cycle_layers), "salt": "core3d-loop",
                                  "max_burnup": float(args.cycle_max_burnup), "subprocess": True,
                                  "timeout_s": 60.0 * float(args.cycle_timeout_min)}
+            if args.kbol_transport:
+                kp, kb, ki = (int(v) for v in args.kbol_transport.split(","))
+                cycle_core3d_meta["kbol_transport"] = {"particles": kp, "batches": kb, "inactive": ki}
+                print(f"CAMPAIGN 11: k_bol of the end-of-cycle criterion from a fresh-assembly solve at "
+                      f"{kp} x {kb} ({ki} inactive); constraint kernel Matern nu={args.con_kernel_nu}")
             ev.c9_cycle_core3d = cycle_core3d_meta
             print(f"CAMPAIGN 10: cycle length from the {args.cycle_layers}-layer 3D core depletion "
                   f"at {p} x {b} ({i} inactive), in a subprocess, stopped at {args.cycle_max_burnup:g} MWd/kgHM; "

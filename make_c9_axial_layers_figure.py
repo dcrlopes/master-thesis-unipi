@@ -30,7 +30,10 @@ ZONED_2D, FLOOR = 1910.0, 1826.0
 
 runs = {L: json.load(open(f"{d}/runs.json"))["d47"] for L, d in LAYER_RUNS.items()}
 L = sorted(runs)
-efpd = [runs[k]["efpd"] for k in L]
+import kbol_correction as kc                       # criterion at the high-statistics k_bol (22 Oct 2026)
+_rec = json.load(open("out_c9/optimization_checkpoint.json"))["all_raw"][47]
+efpd = [kc.efpd_of(runs[k], _rec, "c9", 47)[0] for k in L]
+assert kc.hifi_kbol("c9", 47) is not None, "C9-47: no high-statistics k_bol in repro_c9"
 sig = [runs[k]["sigma_efpd"] for k in L]
 
 r12 = runs[12]

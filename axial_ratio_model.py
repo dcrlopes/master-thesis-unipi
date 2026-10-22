@@ -78,10 +78,14 @@ def quantity(q, name):
     return float(q[name])
 
 
-def measurements(run_dirs=RUN_DIRS, root="."):
+def measurements(run_dirs=RUN_DIRS, root=".", kbol_corrected=False):
     """One row per measured design: the archive record plus ratio, efpd_3d,
-    sigma_3d, source and x."""
+    sigma_3d, source and x. kbol_corrected (22 Oct 2026): the cycle length with
+    the end-of-cycle criterion at the high-statistics k_bol (kbol_correction.py),
+    and only the designs that have one."""
     root = Path(root)
+    if kbol_corrected:
+        import kbol_correction as kc
     rows, seen = [], set()
     for prefix, ckpath in run_dirs.items():
         p = root / ckpath
@@ -105,8 +109,14 @@ def measurements(run_dirs=RUN_DIRS, root="."):
                 seen.add(key)
                 q = dict(rec)
                 E = float(rec["cycle_length"])
-                q.update(source=f"{d.name}/d{r['idx']}", ratio=float(r["efpd"]) / E,
-                         efpd_3d=float(r["efpd"]), sigma_3d=float(r.get("sigma_efpd") or 0.0), x=x)
+                e3 = float(r["efpd"])
+                if kbol_corrected:
+                    e3, ok = kc.efpd_of(r, rec, "c9", int(r["idx"]), root)
+                    if not ok:
+                        seen.discard(key)
+                        continue
+                q.update(source=f"{d.name}/d{r['idx']}", ratio=e3 / E,
+                         efpd_3d=e3, sigma_3d=float(r.get("sigma_efpd") or 0.0), x=x)
                 rows.append(q)
     return rows
 
@@ -245,6 +255,9 @@ def main(argv=None):
     ap.add_argument("--predict", nargs="+", metavar="ARG",
                     help="MODEL CHECKPOINT IDX [IDX ...]")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--kbol-corrected", action="store_true",
+                    help="fit on the cycle lengths with the high-statistics k_bol in the criterion "
+                         "(kbol_correction.py), only the designs that have one")
     a = ap.parse_args(argv)
     if a.selftest:
         return selftest()
@@ -265,7 +278,7 @@ def main(argv=None):
                          f"margin {m['efpd_3d'] - a.mission:+.0f} d")
             print(line)
         return 0
-    rows = measurements(root=a.root)
+    rows = measurements(root=a.root, kbol_corrected=a.kbol_corrected)
     if a.report:
         report(rows, a.mission)
         return 0

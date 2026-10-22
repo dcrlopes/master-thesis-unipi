@@ -36,12 +36,12 @@ raw = json.load(open("out_c9/optimization_checkpoint.json"))["all_raw"]
 
 
 def efpd(folder, i):
-    """Cycle length of design i from its run record, or from the summary when
-    the record is not stored."""
-    p = Path(folder) / "runs.json"
-    if p.exists():
-        return json.load(open(p))[f"d{i}"]["efpd"]
-    return json.load(open(Path(folder) / "summary.json"))[str(i)]["efpd_3d"]
+    """Cycle length of design i from its run record, with the end-of-cycle
+    criterion at the high-statistics k_bol (kbol_correction.py, 22 Oct 2026)."""
+    import kbol_correction as kc
+    value, corrected = kc.efpd_of(json.load(open(Path(folder) / "runs.json"))[f"d{i}"], raw[i], "c9", i)
+    assert corrected, f"C9-{i}: no high-statistics k_bol in repro_c9"
+    return value
 
 
 D = []

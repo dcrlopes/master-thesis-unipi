@@ -15,10 +15,17 @@ echo "stage K, high-statistics k_bol of Campaign 10: $n of 58 designs"
 if [ -f .c11_markers/K ]; then
   echo "  done"
 else
-  first=$(grep -m1 "launch 1 of kbol_c10_" kbol_queue.log 2>/dev/null | cut -c1-19)
-  if [ -n "$first" ] && [ "$n" -gt 4 ]; then
-    el=$(( $(date +%s) - $(date -d "$first" +%s) )); per=$(( el / (n - 4) ))
-    echo "  first solve $first, $(( per / 60 )) min per design, about $(( (58 - n) * per / 3600 )) h left"
+  # the start of stage K is in c11.log; kbol_queue.log also holds the queues of 21 and 22 Oct
+  start=$(grep -o "STAGE K.*([0-9-]* [0-9:]*)" c11.log 2>/dev/null | tail -1 | grep -o "[0-9]\{4\}-[0-9-]* [0-9:]*")
+  if [ -n "$start" ]; then
+    nk=$(find repro_c9 -name 'kbol_c10_*_hifi.json' -newermt "$start" 2>/dev/null | wc -l)
+    mapfile -t T < <(grep "kbol_c10_.*ended" kbol_queue.log | awk -v s="$start" 'substr($0, 1, 19) >= s' | tail -n 6 | cut -c1-19)
+    line="  stage K started $start, $nk designs solved since"
+    if [ "${#T[@]}" -ge 2 ]; then
+      per=$(( ($(date -d "${T[-1]}" +%s) - $(date -d "${T[0]}" +%s)) / (${#T[@]} - 1) ))
+      line="$line, last $(( ${#T[@]} - 1 )) at $(( per / 60 )) min each, about $(( (58 - n) * per / 3600 )) h left"
+    fi
+    echo "$line"
   fi
   grep "^2026" kbol_queue.log 2>/dev/null | grep "kbol_c10_" | tail -n 2 | sed 's/^/  /'
   echo "  relaunches or skips: $(grep -c "kbol_c10_.*\(killing\|WARNING\)\|WARNING kbol_c10_" kbol_queue.log 2>/dev/null)"

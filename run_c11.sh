@@ -37,7 +37,8 @@ WORK_SMOKE=openmc_runs_c11_smoke
 KT=ktarget_table_c8.json
 SEED=c11_seed.json
 N_INFILL=6; ITERS=6
-N_INIT=58                         # the seed; the driver sets n_init to the number of records it reads
+N_INIT=58                         # the seed; replaced by the number of usable records (the loader of --doe-from-cache
+                                  # leaves out evaluations whose 3D depletion failed: 57 of 58 for Campaign 10)
 
 # the problem: Campaign 9, one place (run_c9.sh), as in run_c10.sh
 EFPD_REQ=1826
@@ -114,7 +115,7 @@ stage_S() {
   done_ S && { echo "[S] already done"; return 0; }
   hr; echo " STAGE S. Seed file and kappa from the measured leave-one-out error ($(stamp))"; hr
   python c11_seed_from_c10.py --require-all || die "c11_seed_from_c10.py --require-all"
-  N_INIT=$(python -c "import json; print(len(json.load(open('$SEED'))))")
+  N_INIT=$(python -c "import json; print(sum(1 for v in json.load(open('$SEED')).values() if v.get('axial_measured') is not False))")
   echo "  seed $SEED: $N_INIT designs; $(kappa_args)"
   mark S
 }
@@ -166,7 +167,7 @@ launch_driver() {
 
 stage_F() {
   done_ F && { echo "[F] already done"; return 0; }
-  N_INIT=$(python -c "import json; print(len(json.load(open('$SEED'))))"); TARGET=$(( N_INIT + ITERS * N_INFILL ))
+  N_INIT=$(python -c "import json; print(sum(1 for v in json.load(open('$SEED')).values() if v.get('axial_measured') is not False))"); TARGET=$(( N_INIT + ITERS * N_INFILL ))
   hr; echo " STAGE F. Campaign 11, $N_INIT + $ITERS x $N_INFILL = $TARGET evaluations, watchdog $STALL_MIN min ($(stamp))"; hr
   if command -v free >/dev/null 2>&1; then bash machine_monitor.sh "$MACHINE_CSV" 60 & else sleep 1 & fi
   MONITOR=$!; trap 'kill $MONITOR 2>/dev/null' EXIT

@@ -84,7 +84,9 @@ def load_archive(path):
               "g_geom": cg.R_VESSEL_INNER - cg.VESSEL_CLEARANCE_CM,
               "g_efpd": efpd_req,
               "g_ctrl_peak": 1.0,
-              "g_ctrl": 1.0}
+              "g_ctrl": 1.0,
+              # c11: the MTC boron limit as a constraint (--constrain-boron)
+              "g_boron": float((meta.get("campaign9") or {}).get("boron_ceiling_ppm", 2763.0))}
     missing = [c for c in cons if c not in scales]
     if missing:
         raise SystemExit(f"no scale for {missing}")

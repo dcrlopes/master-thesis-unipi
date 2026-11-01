@@ -317,7 +317,10 @@ def deplete_design(design, rec, schedule, hump_noise_pcm, tr, n_layers, case, sa
     else:
         sched = dict(bol_steps=schedule["bol_steps"], dep_step=schedule["dep_step"],
                      chunk_steps=schedule["chunk_steps"], max_burnup=schedule["max_burnup"])
-    ratio = float(rec["k_target"]) / float(rec["k_bol"])
+    # Campaign 11 records carry k_bol_hifi, the fresh-assembly k_inf at high statistics
+    # that the loop used in the criterion (paper_finds.md Section 12); the confirmation
+    # must use the same value, or the two cycle lengths would differ by the k_bol noise
+    ratio = float(rec["k_target"]) / float(rec.get("k_bol_hifi") or rec["k_bol"])
     print(f"[{label}] 3D hardware core, {n_layers} layers, {info['n_fuel_segments']} fuel segments, "
           f"{info['n_depletable']} depletable materials, seed {seed}, transport {tr}, end of cycle "
           + (f"relative, ratio {ratio:.5f}" if mode == "relative" else f"absolute at k = {k_eoc}"), flush=True)

@@ -138,6 +138,20 @@ def main():
                     help="override the number of active-learning iterations for "
                          "THIS run (handy on --resume, e.g. --iters 3 to add 3 "
                          "more rounds of infill)")
+    # HV-STOP
+    ap.add_argument("--hv-stop", action="store_true",
+                    help="stop automatically on the rule of methodology.tex: "
+                         "hypervolume gain below --hv-tol for --hv-patience "
+                         "consecutive iterations AND no censored design on "
+                         "the front. --iters then acts as an upper bound")
+    ap.add_argument("--hv-tol", type=float, default=0.01,
+                    help="relative hypervolume gain that counts as quiet "
+                         "(default 0.01, that is 1 percent)")
+    ap.add_argument("--hv-patience", type=int, default=3,
+                    help="consecutive quiet iterations required (default 3)")
+    ap.add_argument("--max-evals", type=int, default=None,
+                    help="budget on real evaluations, DOE included. The loop "
+                         "never starts an iteration that would exceed it")
     ap.add_argument("--n-init", type=int, default=None,
                     help="override the Stage-1 DOE (Design of Experiments) "
                          "size, i.e. how many Latin-Hypercube designs are "
@@ -283,6 +297,24 @@ def main():
                          "criterion of the 3D depletion, instead of the campaign "
                          "solve whose 264 pcm put about 43 d into every cycle "
                          "length (paper_finds.md Section 12).")
+    # CAMPAIGN 12 (3 Nov 2026)
+    ap.add_argument("--cycle-constraint", choices=["efpd", "margin"], default="efpd",
+                    help="CAMPAIGN 12: the quantity the cycle-length requirement constrains. "
+                         "efpd: g_efpd = efpd_req - EFPD_3D (Campaigns 9 to 11). margin: "
+                         "g_margin = k_eoc - k_3D(B_mission), the reactivity margin at the "
+                         "mission burnup, smooth where g_efpd has a cliff; the 3D depletion "
+                         "then runs exactly to B_mission (7 solves). Needs --cycle-core3d.")
+    ap.add_argument("--margin-scale", type=float, default=0.01,
+                    help="CONSTRAINT-NORM scale of g_margin in k-units (default 0.01 = 1000 pcm)")
+    ap.add_argument("--explore-sep", type=float, default=0.0,
+                    help="CAMPAIGN 12: when the batch separation had to relax below this value, "
+                         "replace the last --n-explore picks by space-filling designs the margin "
+                         "rule predicts feasible (0 = off; Campaign 11 relaxed to 0.0044 to 0.0088)")
+    ap.add_argument("--n-explore", type=int, default=1)
+    ap.add_argument("--confirm-transport", metavar="P,B,I", default=None,
+                    help="CAMPAIGN 12: confirm every design that enters the feasible front with two "
+                         "eight-layer depletions at this transport (run_c11_confirm.sh used "
+                         "20000,160,60) before the next batch; the mean replaces the proxy value")
     ap.add_argument("--margin-constraints", nargs="*", default=None,
                     metavar="NAME",
                     help="ACQUISITION, margin rule: apply the gate to these "
@@ -499,6 +531,28 @@ def main():
         cfg.nsga_gen = int(args.nsga_gen)
     cfg.infill_min_sep = float(args.infill_min_sep)  # BATCH-DIVERSITY
     cfg.feas_kappa = float(args.feas_kappa)          # FEAS-MARGIN
+    # HV-STOP: under the rule --iters is only an upper bound. With no
+    # --iters it is sized from the budget, generously, and cap_blocks()
+    # inside the loop does the exact accounting, on a resume as well.
+    cfg.hv_stop = bool(args.hv_stop)
+    cfg.hv_tol = float(args.hv_tol)
+    cfg.hv_patience = int(args.hv_patience)
+    cfg.max_evals = args.max_evals
+    if args.hv_stop and args.iters is None:
+        if args.max_evals is None:
+            raise SystemExit("--hv-stop needs --max-evals or --iters: an "
+                             "unattended run must have an upper bound.")
+        cfg.n_iter = -(-int(args.max_evals) // max(1, cfg.n_infill))
+    if args.hv_stop or args.max_evals is not None:
+        print(f"STOP RULE: "
+              + (f"gain < {100 * cfg.hv_tol:g} % for {cfg.hv_patience} "
+                 f"consecutive iterations and no censored front member"
+                 if cfg.hv_stop else "rule off")
+              + f" | budget {cfg.max_evals} evaluations"
+              + f" | iteration bound {cfg.n_iter}, the budget is enforced "
+                f"inside the loop")
+    cfg.explore_sep = float(args.explore_sep)          # CAMPAIGN 12
+    cfg.n_explore = int(args.n_explore)
     cfg.acq_rule = args.acq_rule                      # ACQUISITION
     cfg.feas_kappa_map = ({k: float(v) for k, v in (s.split("=", 1) for s in args.feas_kappa_per)}
                           if args.feas_kappa_per else None)
@@ -562,6 +616,11 @@ def main():
             axial_meta = arm.summary(ev.c9_axial_model)
             axial_meta["path"] = str(args.axial_model)
             print(f"CAMPAIGN 9 AXIAL FLOOR: {arm.describe(ev.c9_axial_model)}")
+        if args.cycle_constraint == "margin" and not args.cycle_core3d:
+            raise SystemExit("--cycle-constraint margin reads the margin from the 3D depletion: "
+                             "pass --cycle-core3d P,B,I")
+        if args.confirm_transport and not args.cycle_core3d:
+            raise SystemExit("--confirm-transport confirms the 3D depletion: pass --cycle-core3d P,B,I")
         if args.cycle_core3d:
             if args.axial_model:
                 raise SystemExit("--cycle-core3d measures the axial cycle length, "
@@ -576,6 +635,29 @@ def main():
                 cycle_core3d_meta["kbol_transport"] = {"particles": kp, "batches": kb, "inactive": ki}
                 print(f"CAMPAIGN 11: k_bol of the end-of-cycle criterion from a fresh-assembly solve at "
                       f"{kp} x {kb} ({ki} inactive); constraint kernel Matern nu={args.con_kernel_nu}")
+            if args.cycle_constraint == "margin":
+                # CAMPAIGN 12: the constraint is the reactivity margin at the mission
+                # burnup, so the depletion runs exactly to B_mission (min = max burnup)
+                # and g_efpd is recorded, not constrained. Replay on Campaigns 10 and 11
+                # (paper_finds.md Section 13): R^2 0.997 and s_z 0.99 against 0.93 and
+                # 1.50 for the cycle length, with the campaign kernel.
+                b_m = float(args.efpd_req) * ev.spec_power / 1000.0
+                cycle_core3d_meta.update(max_burnup=b_m, min_burnup=b_m, cycle_constraint="margin",
+                                         margin_scale=float(args.margin_scale))
+                spec.constraint_names[spec.constraint_names.index("g_efpd")] = "g_margin"
+                spec.constraint_scales["g_margin"] = float(args.margin_scale)
+                print(f"CAMPAIGN 12: the cycle requirement is the margin at the mission burnup, "
+                      f"g_margin = k_eoc - k_3D({b_m:.2f} MWd/kgHM) <= 0, scale {args.margin_scale:g}; "
+                      f"the 3D depletion stops at B_mission; g_efpd is recorded only")
+            if args.confirm_transport:
+                cp, cb, ci = (int(v) for v in args.confirm_transport.split(","))
+                cycle_core3d_meta["confirm_transport"] = {"particles": cp, "batches": cb, "inactive": ci}
+                cfg.confirm_front = True
+                print(f"CAMPAIGN 12: every new feasible front member is confirmed with two eight-layer "
+                      f"depletions at {cp} x {cb} ({ci} inactive) before the next batch")
+            if cfg.explore_sep > 0:
+                print(f"CAMPAIGN 12: {cfg.n_explore} exploration pick(s) per batch when the separation "
+                      f"relaxes below {cfg.explore_sep:g}")
             ev.c9_cycle_core3d = cycle_core3d_meta
             print(f"CAMPAIGN 10: cycle length from the {args.cycle_layers}-layer 3D core depletion "
                   f"at {p} x {b} ({i} inactive), in a subprocess, stopped at {args.cycle_max_burnup:g} MWd/kgHM; "
@@ -604,6 +686,10 @@ def main():
             d = json.loads(key)                 # the design values are the cache key
             if res.get("axial_measured") is False:
                 continue
+            lacking = [c for c in spec.constraint_names if c not in res and c not in d]
+            if lacking:
+                raise SystemExit(f"--doe-from-cache: a record lacks the constraint(s) {lacking}; "
+                                 f"the seed must be built for this problem (c12_seed_from_c11.py)")
             recs.append({**{n: float(d[n]) for n in names if n in d}, **d, **res})
         if not recs:
             raise SystemExit(f"--doe-from-cache: no usable evaluation in {args.doe_from_cache}")
@@ -774,6 +860,11 @@ def main():
                            "c9_axial": prev_meta.get("c9_axial"),
                            "geometry": "v2-envelope",
                            "objective_set": args.objective_set,
+                           # HV-STOP
+                           "stop_rule": {"enabled": bool(args.hv_stop),
+                                         "tol": args.hv_tol,
+                                         "patience": args.hv_patience,
+                                         "max_evals": args.max_evals},
                            "campaign9": ({
                                "efpd_req": args.efpd_req,
                                "axial_model": axial_meta,
@@ -853,6 +944,10 @@ def main():
                                "nsga_pop": cfg.nsga_pop,
                                "nsga_gen": cfg.nsga_gen,
                                "infill_min_sep": cfg.infill_min_sep,
+                               "explore_sep": cfg.explore_sep,          # CAMPAIGN 12
+                               "n_explore": cfg.n_explore,
+                               "confirm_front": bool(cfg.confirm_front),
+                               "cycle_constraint": args.cycle_constraint,
                                "feas_kappa": cfg.feas_kappa,
                                "constraint_norm": "g / own limit "
                                                   "(CONSTRAINT-NORM)"},

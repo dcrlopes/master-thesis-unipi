@@ -16,7 +16,8 @@ import tempfile
 from pathlib import Path
 
 src = open("openmc_evaluator.py", encoding="utf-8").read()
-ns = {"json": json, "Path": Path}
+import dep_common
+ns = {"json": json, "Path": Path, "dep_common": dep_common}   # the hook reads the mission margin from dep_common
 tree = ast.parse(src)
 for node in tree.body:
     if isinstance(node, ast.FunctionDef) and node.name in ("core3d_cycle_fields", "_core3d_selftest"):
@@ -31,6 +32,14 @@ for node in tree.body:
                 exec(compile(ast.Module([item], []), "openmc_evaluator.py", "exec"), ns)
 assert "core3d_cycle_fields" in ns and "_core3d_selftest" in ns, "hook functions not found"
 ns["_core3d_selftest"]()
+# Campaign 12: the margin at the mission burnup, B_mission = efpd_req x P_spec / 1000 = 15 MWd/kgHM here
+dep_m = {"efpd": 1900.0, "k_eoc": 1.03, "spec_power": 10.0, "k_hist": [1.10, 1.06, 1.02], "bu_hist": [0.0, 10.0, 20.0]}
+out_m = ns["core3d_cycle_fields"]({"cycle_length": 2300.0}, dep_m, 1500.0)
+assert abs(out_m["g_margin"] + 0.01) < 1e-9 and abs(out_m["k_mission_3d"] - 1.04) < 1e-9 and not out_m["margin_extrapolated"]
+out_x = ns["core3d_cycle_fields"]({"cycle_length": 2300.0}, {**dep_m, "k_eoc": 1.05, "k_hist": [1.10, 1.06, 1.052], "bu_hist": [0.0, 10.0, 12.0]}, 1500.0)
+assert out_x["margin_extrapolated"] and abs(out_x["g_margin"] - 0.010) < 1e-9
+assert "g_margin" not in ns["core3d_cycle_fields"]({"cycle_length": 2300.0}, {"efpd": 1900.0}, 1826.0), "no k_eoc, no margin"
+print("mission margin fields OK")
 
 # the evaluation cache: put, get, and a miss on a different design
 class Stub:

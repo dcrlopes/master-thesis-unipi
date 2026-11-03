@@ -86,7 +86,8 @@ def load_archive(path):
               "g_ctrl_peak": 1.0,
               "g_ctrl": 1.0,
               # c11: the MTC boron limit as a constraint (--constrain-boron)
-              "g_boron": float((meta.get("campaign9") or {}).get("boron_ceiling_ppm", 2763.0))}
+              "g_boron": float((meta.get("campaign9") or {}).get("boron_ceiling_ppm", 2763.0)),
+        "g_margin": float((((meta.get("campaign9") or {}).get("cycle_core3d") or {}).get("margin_scale")) or 0.01)   # Campaign 12}
     missing = [c for c in cons if c not in scales]
     if missing:
         raise SystemExit(f"no scale for {missing}")

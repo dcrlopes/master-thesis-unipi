@@ -149,7 +149,7 @@ def serial_depletion_pool() -> str:
 # ---------------------------------------------------- adaptive depletion ----
 def run_adaptive(model, k_target, spec_power: float, *, bol_steps,
                  dep_step: float, chunk_steps: int, max_burnup: float,
-                 case, k_target_ratio=None, verbose=True) -> dict:
+                 case, k_target_ratio=None, verbose=True, min_burnup: float = 0.0) -> dict:
     """The adaptive chunked depletion of OpenMCEvaluator._cycle_length,
     for a model whose depletable materials are already set. `spec_power` in
     W/gHM converts burnup steps to days and normalises the power, exactly
@@ -164,6 +164,10 @@ def run_adaptive(model, k_target, spec_power: float, *, bol_steps,
     k_target is not the criticality point of the core: for C9-47 the 2D core
     at 1000 ppm starts at 1.0273, already below the axial leakage factor
     1.0289, so an absolute target ends the cycle at burnup zero.
+
+    `min_burnup` (Campaign 12) keeps depleting past the end of cycle until that
+    burnup, so the margin at the mission burnup can be read from the history.
+    With min_burnup = max_burnup = B_mission the depletion ends exactly there.
 
     Returns dict(efpd, bu_eoc, censored, k_hist, bu_hist, n_solves, wall_s,
     chunks, k_target)."""
@@ -240,7 +244,7 @@ def run_adaptive(model, k_target, spec_power: float, *, bol_steps,
     while True:
         k_op = k_hist[1:] if len(k_hist) > 1 else k_hist
         past_peak = int(np.argmax(k_op)) < len(k_op) - 1
-        if past_peak and k_hist[-1] <= k_target:
+        if past_peak and k_hist[-1] <= k_target and bu_hist[-1] >= min_burnup - 1e-9:
             break
         remaining = max_burnup - bu_hist[-1]
         if remaining <= 1e-9:
@@ -270,6 +274,27 @@ def run_adaptive(model, k_target, spec_power: float, *, bol_steps,
 
 
 # ----------------------------------------------------------- statistics ----
+def margin_at_mission(bu, k, k_eoc, b_mission):
+    """CAMPAIGN 12: the reactivity margin at the mission burnup from a depletion
+    history, g = k_eoc - k(B_mission) in k-units, g <= 0 feasible. It is the
+    smooth alternative to the cycle-length constraint (paper_finds.md Section
+    13): the cycle length has a cliff at 0 for a design whose k never reaches
+    k_eoc, the margin does not. Interpolated inside the history. When the
+    history stops before B_mission (a depletion that ended at the crossing)
+    k is extrapolated linearly from the last two states and the result is
+    flagged. Returns (g, k_mission, extrapolated)."""
+    bu = np.asarray(bu, dtype=float)
+    k = np.asarray(k, dtype=float)
+    if len(bu) < 2 or len(bu) != len(k):
+        raise ValueError("the history needs at least two states")
+    if bu[-1] >= b_mission - 1e-9:
+        k_m, extrapolated = float(np.interp(b_mission, bu, k)), False
+    else:
+        slope = (k[-1] - k[-2]) / (bu[-1] - bu[-2])
+        k_m, extrapolated = float(k[-1] + slope * (b_mission - bu[-1])), True
+    return float(k_eoc - k_m), k_m, extrapolated
+
+
 def k_sd_from_case(case) -> dict:
     """{k value: Monte Carlo s.d.} over every real entry of every chunk
     results file under `case`. Entries the chunk did not compute are
@@ -388,6 +413,12 @@ def selftest():
     assert abs(s - 1000.0 * exp_b / 10.0) < 1e-9, s
     assert bracket_sigma_efpd(bu, k, [None] * 3, 1.08, 10.0)[0] is None
     assert bracket_indices([0, 1, 2, 3], [1.1, 1.0, 1.05, 0.99], 1.02) == 2, "LAST crossing"
+    # margin at the mission burnup (Campaign 12): interpolated inside the history,
+    # extrapolated from the last two states when the depletion stopped before it
+    g, km, ex = margin_at_mission([0.0, 10.0, 20.0], [1.10, 1.06, 1.02], 1.03, 15.0)
+    assert not ex and abs(km - 1.04) < 1e-9 and abs(g + 0.01) < 1e-9, (g, km)
+    g, km, ex = margin_at_mission([0.0, 10.0, 12.0], [1.10, 1.06, 1.052], 1.05, 15.0)
+    assert ex and abs(km - 1.040) < 1e-9 and abs(g - 0.010) < 1e-9, (g, km)
 
     # hump and c_max against the archived Campaign 9 arithmetic of C9-47
     pts = {"1000": 2655.231035559427, "2000": -3886.8565238274164}

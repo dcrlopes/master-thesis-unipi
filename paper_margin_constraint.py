@@ -77,8 +77,8 @@ def main():
             continue
         kbol = r["k_bol"]
         p = Path(f"repro_c9/kbol_c10_{i}_hifi.json")
-        if a.hifi_kbol and p.exists():
-            kbol = float(json.load(open(p))["k"][0])
+        if a.hifi_kbol:        # the record carries it from Campaign 11 on; Campaign 10 has the queue files
+            kbol = float(r.get("k_bol_hifi") or (json.load(open(p))["k"][0] if p.exists() else kbol))
         k_eoc = k[0] * r["k_target"] / kbol
         if bu[-1] < b_mission:                      # history too short for the margin (cycle 0 designs)
             k_m, reach = None, False

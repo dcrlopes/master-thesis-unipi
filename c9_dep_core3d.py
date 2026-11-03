@@ -291,6 +291,17 @@ def layer_burnup(states, bu_hist, edges):
 
 
 # ----------------------------------------------------------------- run ----
+def _margin_fields(res, k_eoc, spec_power):
+    """Campaign 12: the margin at the mission burnup read from the history, g <= 0 feasible."""
+    import dep_common as dc
+    b_m = EFPD_REQ * spec_power / 1000.0
+    try:
+        g, km, ex = dc.margin_at_mission(res["bu_hist"], res["k_hist"], k_eoc, b_m)
+    except Exception:
+        return {}
+    return dict(g_margin=g, k_mission=km, b_mission=b_m, margin_extrapolated=ex)
+
+
 def deplete_design(design, rec, schedule, hump_noise_pcm, tr, n_layers, case, salt="core3d",
                    mode="relative", k_eoc=1.0, estimate=False, label="d?"):
     """The eight-layer core depletion of one design, from its design dict and
@@ -316,7 +327,8 @@ def deplete_design(design, rec, schedule, hump_noise_pcm, tr, n_layers, case, sa
         sched = dict(bol_steps=[0.5, 0.5], dep_step=0.5, chunk_steps=1, max_burnup=1.0)
     else:
         sched = dict(bol_steps=schedule["bol_steps"], dep_step=schedule["dep_step"],
-                     chunk_steps=schedule["chunk_steps"], max_burnup=schedule["max_burnup"])
+                     chunk_steps=schedule["chunk_steps"], max_burnup=schedule["max_burnup"],
+                     min_burnup=float(schedule.get("min_burnup", 0.0)))   # Campaign 12: deplete to the mission burnup
     # Campaign 11 records carry k_bol_hifi, the fresh-assembly k_inf at high statistics
     # that the loop used in the criterion (paper_finds.md Section 12); the confirmation
     # must use the same value, or the two cycle lengths would differ by the k_bol noise
@@ -359,6 +371,7 @@ def deplete_design(design, rec, schedule, hump_noise_pcm, tr, n_layers, case, sa
         hump_core_pcm=obj["hump_core_pcm"], hump_core_op_pcm=obj["hump_core_op_pcm"],
         k_peak=obj["k_peak"], bu_index=obj["bu_index"], c_max=obj["c_max"],
         c_max_status=obj["c_max_status"], g_efpd=EFPD_REQ - res["efpd"],
+        **_margin_fields(res, k_eoc, spec_power),
         states=states, states_aligned=aligned, layer_burnup=lb, solve_times=times, wall_s=wall,
         post_errors=errors)
 

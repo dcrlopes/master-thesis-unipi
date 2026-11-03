@@ -315,6 +315,51 @@ class OpenMCEvaluator(Evaluator):
         self._eval_cache_put(design, res)
         return res
 
+    def confirm_one(self, design: dict, rec: dict) -> dict:
+        """CAMPAIGN 12: confirmation inside the loop. Two eight-layer depletions of
+        a design that entered the feasible front at proxy fidelity, at the
+        transport of c9_cycle_core3d["confirm_transport"] with the seed salts of
+        run_c11_confirm.sh (core3d, core3d-seed2) and the stored k_bol_hifi in
+        the criterion. The mean of the two replaces the proxy cycle length and
+        margin in the record, the proxy values keep the suffix _proxy, and the
+        evaluation cache is updated so a resume replays the confirmed record.
+        Campaign 11 showed why: of its four front members one was infeasible at
+        full fidelity and five of six rejected near misses were feasible
+        (paper_finds.md Section 15). On a failed depletion the record is
+        returned unchanged, flagged."""
+        import hashlib
+        cfg3d = dict(self.c9_cycle_core3d)
+        tr = dict(cfg3d.pop("confirm_transport"))
+        cfg3d.update(transport=tr, kbol_transport=None)
+        base = self.workdir / "confirm" / hashlib.md5(self.eval_cache_key(design).encode()).hexdigest()[:10]
+        runs = []
+        for salt in ("core3d", "core3d-seed2"):
+            r = _c9_core3d_cycle(self, design, rec, {**cfg3d, "salt": salt}, case=base / salt)
+            if r.get("axial_measured") is False:
+                print(f"      WARNING confirmation of the design failed ({r.get('core3d_error')}), proxy values kept", flush=True)
+                return {**rec, "confirm_error": r.get("core3d_error"), "t_confirm_s": float(r.get("t_dep3d_s", 0.0))}
+            runs.append(r)
+        out = dict(rec)
+        for key in ("efpd_3d", "cycle_length", "g_efpd", "g_margin", "k_mission_3d", "censored_3d", "sigma_efpd_3d"):
+            if key in rec:
+                out[key + "_proxy"] = rec[key]
+        for key in ("efpd_3d", "cycle_length", "g_efpd", "g_margin", "k_mission_3d"):
+            vals = [r.get(key) for r in runs]
+            if all(v is not None for v in vals):
+                out[key] = float(np.mean(vals))
+        out.update(confirmed_3d=True, confirm_transport=tr, confirm_seeds=[r["seed_3d"] for r in runs],
+                   efpd_3d_seeds=[r["efpd_3d"] for r in runs], g_margin_seeds=[r.get("g_margin") for r in runs],
+                   censored_3d=all(bool(r.get("censored_3d")) for r in runs),
+                   t_confirm_s=float(sum(r["t_dep3d_s"] for r in runs)))
+        out["t_eval_s"] = float(rec.get("t_eval_s", 0.0)) + out["t_confirm_s"]
+        if self.verbose:
+            print(f"      confirmed at {tr['particles']} x {tr['batches']}: EFPD {out.get('efpd_3d', float('nan')):.1f} d "
+                  f"(proxy {rec.get('efpd_3d', float('nan')):.1f}), seeds {[round(v, 1) for v in out['efpd_3d_seeds']]}"
+                  + (f", g_margin {1e5 * out['g_margin']:+.0f} pcm (proxy {1e5 * rec['g_margin']:+.0f})" if out.get("g_margin") is not None and rec.get("g_margin") is not None else "")
+                  + f" [{out['t_confirm_s'] / 60:.1f} min]", flush=True)
+        self._eval_cache_put(design, out)
+        return out
+
     _EVAL_CACHE = "eval_cache.json"
 
     @staticmethod
@@ -872,10 +917,17 @@ def core3d_cycle_fields(res, dep, efpd_req):
         "g_efpd_mission": float(efpd_req) - float(res["cycle_length"]),   # what the assembly would say
         "g_efpd": float(efpd_req) - efpd,
     }
+    # CAMPAIGN 12: the margin at the mission burnup, g_margin = k_eoc - k_3D(B_mission),
+    # the smooth alternative to g_efpd (paper_finds.md Section 13). Always recorded
+    # when the depletion gives what it needs; the driver decides which is constrained.
+    if dep.get("k_eoc") is not None and dep.get("spec_power") and len(dep.get("bu_hist") or []) >= 2:
+        b_m = float(efpd_req) * float(dep["spec_power"]) / 1000.0
+        g_m, k_m, ex = dep_common.margin_at_mission(dep["bu_hist"], dep["k_hist"], float(dep["k_eoc"]), b_m)
+        out.update(g_margin=g_m, k_mission_3d=k_m, b_mission=b_m, margin_extrapolated=bool(ex))
     return out
 
 
-def _c9_core3d_cycle(ev, design, rec, cfg):
+def _c9_core3d_cycle(ev, design, rec, cfg, case=None):
     """Run the eight-layer core depletion of the design just evaluated in a
     separate process (core3d_subprocess.py) and return the fields of
     core3d_cycle_fields. On any failure, including a crash of OpenMC in that
@@ -888,17 +940,20 @@ def _c9_core3d_cycle(ev, design, rec, cfg):
     which cost an hour each in three dimensions on 11 Oct 2026."""
     import subprocess
     import sys as _sys
-    case = ev.workdir / f"case_{ev.n_calls:04d}" / "core3d"
+    case = Path(case) if case is not None else ev.workdir / f"case_{ev.n_calls:04d}" / "core3d"
     case.mkdir(parents=True, exist_ok=True)
     schedule = dict(bol_steps=list(ev.bol_steps), dep_step=ev.dep_step, chunk_steps=ev.chunk_steps,
-                    max_burnup=float(cfg.get("max_burnup", ev.max_burnup)))
+                    max_burnup=float(cfg.get("max_burnup", ev.max_burnup)),
+                    min_burnup=float(cfg.get("min_burnup", 0.0)))   # Campaign 12: to the mission burnup
     spec = dict(design={k: float(v) if isinstance(v, (int, float)) else v for k, v in design.items()},
-                rec={k: rec[k] for k in ("k_target", "k_bol", "boron_points", "n_dep_solves") if k in rec},
+                rec={k: rec[k] for k in ("k_target", "k_bol", "k_bol_hifi", "boron_points", "n_dep_solves") if k in rec},
                 schedule=schedule, hump_noise_pcm=float(ev.c9_hump_noise_pcm), transport=dict(cfg["transport"]),
                 layers=int(cfg["layers"]), case=str(case), salt=str(cfg.get("salt", "core3d-loop")),
                 label=f"case {ev.n_calls:04d} 3D")
     kbol_info = {}
-    if cfg.get("kbol_transport"):
+    if cfg.get("kbol_transport") and not rec.get("k_bol_hifi"):
+        # A record that already has one (a retried 3D depletion, or the confirmation
+        # of Campaign 12) reuses it, so both depletions share the criterion.
         # HIGH-STATISTICS k_bol (22 Oct 2026): the criterion k_3D(BOL) x k_target / k_bol
         # carried the 264 pcm noise of the campaign assembly solve, about 43 d per
         # three-dimensional cycle length (paper_finds.md Section 12). One fresh-assembly
@@ -937,7 +992,7 @@ def _c9_core3d_cycle(ev, design, rec, cfg):
     dep["wall_s"] = float(wall)                  # the whole subprocess, model build included
     out = core3d_cycle_fields(rec, dep, float(ev.c9_efpd_req))
     out.update(kbol_info)
-    out["k_target_ratio_3d"] = float(spec["rec"]["k_target"]) / float(spec["rec"]["k_bol"])
+    out["k_target_ratio_3d"] = float(spec["rec"]["k_target"]) / float(spec["rec"].get("k_bol_hifi") or spec["rec"]["k_bol"])
     if getattr(ev, "verbose", False):
         print(f"      3D: EFPD {out['efpd_3d']:.1f} d (assembly {out['cycle_length_asm']:.1f}) "
               f"g_efpd={out['g_efpd']:+.0f} F_z(BOL)={out['fz_bol_3d'] if out['fz_bol_3d'] else float('nan'):.3f} "

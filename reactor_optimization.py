@@ -607,6 +607,26 @@ class OptimizerConfig:
                                          # name, overriding feas_kappa
     margin_constraints: tuple | None = None  # margin rule: gate on these
                                              # constraints only
+    # HV-STOP: automatic stopping (hv_stop.py). All off by default, so every
+    # earlier campaign reproduces. hv_stop enables the two-condition rule of
+    # methodology.tex; max_evals is a budget on real evaluations that the
+    # loop never exceeds.
+    hv_stop: bool = False
+    hv_tol: float = 0.01
+    hv_patience: int = 3
+    max_evals: int | None = None
+    # CAMPAIGN 12 (3 Nov 2026). explore_sep: when the batch could only be
+    # filled by relaxing the separation below this value, the last n_explore
+    # picks come from a seeded space-filling sample of the predicted-feasible
+    # region instead of the collapsed surrogate front (Campaign 11 moved one
+    # variable, the pin count, in all six batches); 0 is off. confirm_front:
+    # the designs of a batch that enter the feasible front are evaluated again
+    # by evaluator.confirm_one (two full-fidelity depletions) before the next
+    # batch, because one of the four Campaign 11 front members was infeasible
+    # at full fidelity and five of six rejected near misses were feasible.
+    explore_sep: float = 0.0
+    n_explore: int = 1
+    confirm_front: bool = False
 
 
 
@@ -625,6 +645,7 @@ class ActiveLearningMOO:
         self.history = []          # hypervolume per iteration
         self.phase_log: list[dict] = []   # wall time per phase, per iteration
         self._hv_ref_frozen = None # fixed reference point (set after Stage 1)
+        self.stop_info = None      # HV-STOP: why the last run() ended
 
     # ---- surrogate factory --------------------------------------------------
     def _new_surrogate(self, constraints=False):
@@ -678,6 +699,48 @@ class ActiveLearningMOO:
         if not keep.any():
             return 0.0
         return float(HV(ref_point=ref)(front[keep]))
+
+    def _n_front_censored(self):
+        """HV-STOP: censored designs on the current feasible Pareto front."""
+        feas = self._feasible_mask()
+        if feas.sum() == 0:
+            return 0
+        idx = np.flatnonzero(feas)[self._nondominated(self.F[feas])]
+        return int(sum(bool(self.raw[i].get("censored")) for i in idx))
+
+    def _confirm_new_front(self, verbose=True):
+        """CAMPAIGN 12: every unconfirmed design on the feasible front is
+        evaluated again by evaluator.confirm_one, and its rows of F, G and raw
+        are rebuilt from the confirmed record, so the surrogate, the
+        feasibility and the hypervolume of the next batch see the confirmed
+        values. Repeated until the front is confirmed, because a design the
+        confirmation makes infeasible can uncover another. With a seed whose
+        front members are already confirmed (c12_seed_from_c11.py) only the
+        designs of the last batch are depleted.
+        Returns (indices confirmed, indices that became infeasible)."""
+        confirmed, dropped = [], []
+        for _ in range(len(self.X)):
+            feas = self._feasible_mask()
+            if feas.sum() == 0:
+                break
+            idx_f = np.flatnonzero(feas)
+            todo = [int(i) for i in idx_f[self._nondominated(self.F[feas])]
+                    if not self.raw[i].get("confirmed_3d") and i not in confirmed]
+            if not todo:
+                break
+            for i in todo:
+                d = self.spec.design_space.as_dict(self.X[i])
+                rec = self.evaluator.confirm_one(d, self.raw[i])
+                self.raw[i] = {**d, **rec}
+                self.F[i] = [obj.to_min(rec[obj.name]) for obj in self.spec.objectives]
+                self.G[i] = [float(rec[c]) / self.spec.g_scale(c) for c in self.spec.constraint_names]
+                confirmed.append(i)
+                if self.spec.n_constr and not np.all(self.G[i] <= 1e-9):
+                    dropped.append(i)
+                if verbose:
+                    print(f"           [confirm] archive {i}: "
+                          + ("infeasible at full fidelity, leaves the front" if i in dropped else "confirmed on the front"))
+        return confirmed, dropped
 
     @staticmethod
     def _least_infeasible_candidates(res):
@@ -834,6 +897,7 @@ class ActiveLearningMOO:
             return float(np.linalg.norm(d, axis=1).min()) / rootn
 
         chosen = []
+        relax_depth = 0             # HV-STOP health indicator
         min_sep = float(getattr(self.cfg, "infill_min_sep", 0.14))
         while len(chosen) < self.cfg.n_infill and min_sep > 1e-4:
             for idx in order:
@@ -847,10 +911,51 @@ class ActiveLearningMOO:
                 chosen.append(x)
             if len(chosen) < self.cfg.n_infill:
                 min_sep *= 0.5          # relax and rescan the ranking
+                relax_depth += 1        # HV-STOP health indicator
                 if verbose:
                     print(f"           [acquisition] diversity relaxed "
                           f"to min_sep={min_sep:.4f} "
                           f"({len(chosen)}/{self.cfg.n_infill} picked)")
+        # EXPLORATION PICK (Campaign 12). When the batch could only be filled
+        # by relaxing the separation below cfg.explore_sep, the surrogate front
+        # has collapsed onto a line (Campaign 11: the pin count at fixed
+        # enrichment, gadolinia and reflector, min_sep down to 0.0044 in every
+        # batch). The last cfg.n_explore picks are then replaced by designs
+        # from a seeded uniform sample of the box, kept where the margin rule
+        # predicts feasibility (or its least-infeasible quarter when nothing
+        # is), each the farthest from the archive and from the picks already
+        # made. The sample is seeded with the batch number, so a relaunch in
+        # the middle of a batch proposes the same designs (test_resume_batch_seed).
+        n_explore = 0
+        ex_sep = float(getattr(self.cfg, "explore_sep", 0.0) or 0.0)
+        if ex_sep > 0.0 and min_sep < ex_sep and len(chosen) == self.cfg.n_infill:
+            n_explore = max(0, min(int(getattr(self.cfg, "n_explore", 1)), self.cfg.n_infill))
+        if n_explore:
+            rng_e = np.random.default_rng(self.cfg.seed + 555 + it)
+            pool = rng_e.uniform(_xl, _xu, size=(max(256, 16 * self.cfg.n_infill), len(_xl)))
+            if self.spec.exact_constraints:
+                pool = pool[[self.spec.exact_ok(self.spec.design_space.as_dict(x)) for x in pool]]
+            gm_e, gs_e = (np.atleast_2d(np.asarray(v, dtype=float)) for v in con_sur.predict(pool))
+            s_e = ((gm_e[:, _gp_cols] + _kvec * gs_e[:, _gp_cols]).max(axis=1)
+                   if _gp_cols else np.zeros(len(pool)))
+            ok = s_e <= 0.0
+            n_ok = int(ok.sum())
+            if not ok.any():
+                ok = s_e <= np.quantile(s_e, 0.25)
+            pool = pool[ok]
+            chosen = chosen[: self.cfg.n_infill - n_explore]
+            for _ in range(n_explore):
+                dist = np.array([min(_sep(x, self.X), _sep(x, np.array(chosen)) if chosen else np.inf)
+                                 for x in pool])
+                j = int(np.argmax(dist))
+                chosen.append(pool[j])
+                pool = np.delete(pool, j, axis=0)
+            if verbose:
+                print(f"           [acquisition] exploration: separation relaxed to "
+                      f"{min_sep:.4f} < {ex_sep:g}, {n_explore} pick(s) from the "
+                      f"space-filling sample ({n_ok} predicted feasible)")
+        acq_info.update(relax_depth=int(relax_depth), n_candidates=int(len(cand)),
+                        n_margin_feasible=int(eligible.sum()), n_explore=int(n_explore))
         if len(chosen) < self.cfg.n_infill:
             # candidates exhausted even after relaxation: top up with
             # space-filling randoms rather than duplicating a pick
@@ -867,6 +972,12 @@ class ActiveLearningMOO:
     # ---- main loop ----------------------------------------------------------
     def run(self, verbose=True):
         t0 = time.time()
+        # HV-STOP: imported only when asked for, so the framework does not
+        # depend on hv_stop.py for any earlier campaign.
+        _hvs = None
+        self.stop_info = None
+        if self.cfg.hv_stop or self.cfg.max_evals is not None:
+            import hv_stop as _hvs
         # ---- STAGE 1 : space-filling DOE, evaluated with the TRUTH ----------
         # Skipped entirely on a RESUMED run: if load_checkpoint() has already
         # pre-seeded the data set, we keep the existing (X, F, G, raw, history,
@@ -926,6 +1037,17 @@ class ActiveLearningMOO:
         # different batch 3, and 4 finished evaluations were not used.
         n_done = sum(1 for p in self.phase_log if p.get("stage") == "infill")
         for it in range(n_done, n_done + self.cfg.n_iter):
+            # HV-STOP: never start an iteration that would exceed the budget
+            if _hvs is not None and _hvs.cap_blocks(
+                    len(self.X), self.cfg.n_infill, self.cfg.max_evals):
+                self.stop_info = dict(
+                    stop=True, by="cap", n_evals=int(len(self.X)),
+                    reason=f"budget: {len(self.X)} evaluations done, one more "
+                           f"batch of {self.cfg.n_infill} would exceed "
+                           f"{self.cfg.max_evals}")
+                if verbose:
+                    print(f"[HV-STOP] {self.stop_info['reason']}")
+                break
             Xinf, _p = self.propose(it, verbose=verbose)
             t_fit, t_nsga, t_acq = _p["t_fit"], _p["t_nsga"], _p["t_acq"]
 
@@ -934,6 +1056,13 @@ class ActiveLearningMOO:
             Finf, Ginf, rawinf = self.evaluator.evaluate(Xinf)
             t_ev = time.perf_counter() - t_ev0
             self._add(Xinf, Finf, Ginf, rawinf)
+            # CAMPAIGN 12: confirmation of the new front members before the
+            # hypervolume and the next surrogate fit see them
+            confirmed, dropped, t_conf = [], [], 0.0
+            if getattr(self.cfg, "confirm_front", False) and hasattr(self.evaluator, "confirm_one"):
+                t_c0 = time.perf_counter()
+                confirmed, dropped = self._confirm_new_front(verbose)
+                t_conf = time.perf_counter() - t_c0
             t_hv0 = time.perf_counter()
             self.history.append(self._hv())
             t_hv = time.perf_counter() - t_hv0
@@ -941,7 +1070,21 @@ class ActiveLearningMOO:
                 stage="infill", iteration=len(self.phase_log),
                 n_eval=int(len(Xinf)), n_archive_before=int(len(self.X) - len(Xinf)),
                 t_fit_s=t_fit, t_nsga_s=t_nsga, t_acq_s=t_acq,
-                t_eval_s=t_ev, t_hv_s=t_hv, t_ckpt_s=None))
+                t_eval_s=t_ev, t_hv_s=t_hv, t_ckpt_s=None,
+                # HV-STOP: the indicators methodology.tex asks to inspect
+                # before the rule is trusted, stored and not only printed
+                n_candidates=_p["acq"].get("n_candidates"),
+                n_margin_feasible=_p["acq"].get("n_margin_feasible"),
+                relax_depth=_p["acq"].get("relax_depth"),
+                n_infill_feasible=(int(np.all(self.G[len(self.X) - len(Xinf):] <= 1e-9, axis=1).sum())
+                                   if self.spec.n_constr else int(len(Xinf))),
+                hv_gain=((self.history[-1] - self.history[-2]) / self.history[-2]
+                         if len(self.history) > 1 and self.history[-2] > 0
+                         else None),
+                # CAMPAIGN 12
+                n_explore=_p["acq"].get("n_explore", 0),
+                n_confirmed=int(len(confirmed)), confirm_dropped=[int(i) for i in dropped],
+                t_confirm_s=float(t_conf)))
             if verbose:
                 print(f"           budget: evaluation {t_ev / 60.0:.1f} min | "
                       f"optimiser {t_fit + t_nsga + t_acq + t_hv:.1f} s "
@@ -952,6 +1095,29 @@ class ActiveLearningMOO:
                       f"+{len(Xinf)} real evals "
                       f"(total {self.evaluator.n_calls}), "
                       f"HV={self.history[-1]:.4g}")
+
+            # HV-STOP: evaluate the rule BEFORE the checkpoint, so the decision
+            # is inside the file that a resume or a post-analysis reads.
+            if _hvs is not None and self.cfg.hv_stop:
+                _dec = _hvs.decide(self.history, self._n_front_censored(),
+                                   self.cfg.hv_tol, self.cfg.hv_patience)
+                if verbose:
+                    _g = _dec["last_gain"]
+                    print("           [HV-STOP] gain "
+                          + (f"{100 * _g:.3f} %" if _g is not None else "undefined")
+                          + f" | {_dec['reason']}")
+                if _dec["stop"]:
+                    self.stop_info = dict(
+                        by="rule", n_evals=int(len(self.X)),
+                        warnings=_hvs.health_warnings(self.phase_log,
+                                                      self.cfg.hv_patience),
+                        notes=_hvs.health_notes(self.phase_log,
+                                                self.cfg.hv_patience),
+                        **_dec)
+                    for _n in self.stop_info["notes"]:
+                        print(f"           [HV-STOP] note    {_n}")
+                    for _w in self.stop_info["warnings"]:
+                        print(f"           [HV-STOP] WARNING {_w}")
 
             # crash-safe: persist the FULL archive after every iteration, so an
             # exception later in the loop can never discard completed real
@@ -968,6 +1134,13 @@ class ActiveLearningMOO:
                 except Exception as exc:            # never kill a live campaign
                     print(f"           WARNING: checkpoint failed: {exc}")
 
+            if self.stop_info is not None and self.stop_info.get("stop"):
+                break                   # HV-STOP: rule met, state is on disk
+
+        if self.stop_info is None:      # HV-STOP: the --iters bound ended the run
+            self.stop_info = dict(stop=False, by="iters", n_evals=int(len(self.X)),
+                                  reason=f"{self.cfg.n_iter} iterations requested "
+                                         f"and done, rule not met")
         if verbose:
             print(f"Done in {time.time()-t0:.1f}s, "
                   f"{self.evaluator.n_calls} total real evaluations.")
@@ -1036,6 +1209,7 @@ class ActiveLearningMOO:
                        if self._hv_ref_frozen is not None else None),
             "n_real_evaluations": r["n_real_evaluations"],
             "phase_log": list(self.phase_log),   # wall time per phase
+            "stop": getattr(self, "stop_info", None),   # HV-STOP
         }
         if meta:
             out["meta"] = dict(meta)

@@ -20,7 +20,7 @@ import dep_common
 ns = {"json": json, "Path": Path, "dep_common": dep_common}   # the hook reads the mission margin from dep_common
 tree = ast.parse(src)
 for node in tree.body:
-    if isinstance(node, ast.FunctionDef) and node.name in ("core3d_cycle_fields", "_core3d_selftest"):
+    if isinstance(node, ast.FunctionDef) and node.name in ("core3d_cycle_fields", "assembly_margin_fields", "_core3d_selftest"):
         exec(compile(ast.Module([node], []), "openmc_evaluator.py", "exec"), ns)
     if isinstance(node, ast.ClassDef) and node.name == "OpenMCEvaluator":
         for item in node.body:

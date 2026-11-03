@@ -927,6 +927,17 @@ def core3d_cycle_fields(res, dep, efpd_req):
     return out
 
 
+def assembly_margin_fields(rec, k_hist, bu_hist, efpd_req, spec_power):
+    """CAMPAIGN 12: the margin at the mission burnup read from the ASSEMBLY
+    depletion, the value kept when the 3D depletion fails (the counterpart of
+    the assembly g_efpd that _c9_boron_block always writes). The criterion is
+    the assembly k_target. Flagged so a resume retries the 3D depletion."""
+    b_m = float(efpd_req) * float(spec_power) / 1000.0
+    g_m, k_m, ex = dep_common.margin_at_mission(bu_hist, k_hist, float(rec["k_target"]), b_m)
+    return {"g_margin": g_m, "k_mission_3d": k_m, "b_mission": b_m, "margin_extrapolated": bool(ex),
+            "margin_source": "assembly"}
+
+
 def _c9_core3d_cycle(ev, design, rec, cfg, case=None):
     """Run the eight-layer core depletion of the design just evaluated in a
     separate process (core3d_subprocess.py) and return the fields of
@@ -987,7 +998,12 @@ def _c9_core3d_cycle(ev, design, rec, cfg, case=None):
         msg = (f"core3d_subprocess timeout after {limit / 60:.0f} min" if rc == "timeout"
                else f"core3d_subprocess exit {rc}") + ("" if fout.exists() else ", no result file")
         print(f"      WARNING core3d cycle failed after {wall / 60:.1f} min, assembly value kept: {msg}", flush=True)
-        return {"axial_measured": False, "core3d_error": msg, "t_dep3d_s": float(wall), **kbol_info}
+        out = {"axial_measured": False, "core3d_error": msg, "t_dep3d_s": float(wall), **kbol_info}
+        if cfg.get("cycle_constraint") == "margin":
+            # the constraint row needs g_margin even when the 3D depletion failed
+            # (smoke of 3 Nov 2026: HDF5 crash in the subprocess, then KeyError)
+            out.update(assembly_margin_fields(rec, ev._last_k_hist, ev._last_bu_hist, ev.c9_efpd_req, ev.spec_power))
+        return out
     dep = json.loads(fout.read_text())
     dep["wall_s"] = float(wall)                  # the whole subprocess, model build included
     out = core3d_cycle_fields(rec, dep, float(ev.c9_efpd_req))
@@ -1030,5 +1046,9 @@ def _core3d_selftest():
     assert out["axial_measured"] and out["fz_bol_3d"] == 1.44 and out["t_dep3d_s"] == 1200.0
     merged = {**res, **out}
     assert merged["cycle_length"] == 1900.0, "the 3D value must win when merged into the evaluation"
+    # the fallback margin from the assembly history: k 1.08 -> 1.00 over 0 -> 20 MWd/kgHM,
+    # k_target 1.03, mission 10 x 1.0 / 1000 x 1000 = 10 MWd/kgHM -> k 1.04, margin -0.01
+    fb = assembly_margin_fields({"k_target": 1.03}, [1.08, 1.00], [0.0, 20.0], 10000.0, 1.0)
+    assert abs(fb["g_margin"] + 0.01) < 1e-9 and fb["margin_source"] == "assembly" and not fb["margin_extrapolated"]
     print("core3d hook selftest OK")
 

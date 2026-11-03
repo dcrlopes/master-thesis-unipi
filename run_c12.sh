@@ -129,11 +129,22 @@ stage_S() {
 stage_M() {
   done_ M && { echo "[M] already done"; return 0; }
   hr; echo " STAGE M. Smoke run: coarse transport, 4 + 2 evaluations, margin constraint, coarse confirmation ($(stamp))"; hr
-  rm -rf "$WORK_SMOKE" "$OUT_SMOKE"
-  python -u run_optimization.py --smoke --out "$OUT_SMOKE" --workdir "$WORK_SMOKE" "${COMMON[@]}" \
-       --n-init 4 --n-infill 2 --iters 1 --hump-noise "$HUMP_NOISE_SMOKE" \
-       --cycle-core3d "$CYCLE3D_SMOKE" --kbol-transport "$KBOL_SMOKE" --confirm-transport "$CYCLE3D_SMOKE" \
-       2>&1 | tee "$OUT_SMOKE.log" || die "smoke run failed"
+  rm -rf "$WORK_SMOKE" "$OUT_SMOKE" "$OUT_SMOKE.log"
+  # OpenMC aborted twice inside the smoke on 3 Nov 2026 (heap corruption at
+  # H5Fclose in the subprocess, then at openmc_finalize in the driver). Stage F
+  # survives that through the watchdog and the evaluation cache; the smoke gets
+  # the same tolerance: up to three attempts, the cache and checkpoint kept.
+  local attempt resume
+  for attempt in 1 2 3; do
+    resume=()
+    [ -f "$OUT_SMOKE/optimization_checkpoint.json" ] && resume=(--resume "$OUT_SMOKE/optimization_checkpoint.json")
+    python -u run_optimization.py --smoke "${resume[@]}" --out "$OUT_SMOKE" --workdir "$WORK_SMOKE" "${COMMON[@]}" \
+         --n-init 4 --n-infill 2 --iters 1 --hump-noise "$HUMP_NOISE_SMOKE" \
+         --cycle-core3d "$CYCLE3D_SMOKE" --kbol-transport "$KBOL_SMOKE" --confirm-transport "$CYCLE3D_SMOKE" \
+         2>&1 | tee -a "$OUT_SMOKE.log" && break
+    echo "$(stamp)   smoke attempt $attempt failed, see $OUT_SMOKE.log (finished evaluations replay from $WORK_SMOKE/eval_cache.json)"
+    [ "$attempt" -lt 3 ] || die "smoke run failed three times"
+  done
   python - <<PY || die "smoke checkpoint is not a Campaign 12 archive"
 import json
 d = json.load(open("$OUT_SMOKE/optimization_checkpoint.json")); r = d["all_raw"]

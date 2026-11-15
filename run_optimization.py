@@ -149,6 +149,16 @@ def main():
                          "(default 0.01, that is 1 percent)")
     ap.add_argument("--hv-patience", type=int, default=3,
                     help="consecutive quiet iterations required (default 3)")
+    ap.add_argument("--margin-in-search", action="store_true",
+                    help="constrain NSGA-II on mean + kappa * sd of the constraint surrogates "
+                         "instead of the mean, so the candidates satisfy the margin rule "
+                         "(replay: c12_acquisition_replay.py)")
+    ap.add_argument("--hv-ref", default=None, metavar="F1,F2",
+                    help="reference point of the hypervolume, in the minimised objectives. "
+                         "Default: 1.25 x the worst front value of the design of experiments. "
+                         "The stop rule is a relative gain, so give the constraint limits "
+                         "(Campaign 9 objectives: f_max,boron_ceiling) to make its tolerance "
+                         "comparable between campaigns. On --resume the history is recomputed")
     ap.add_argument("--max-evals", type=int, default=None,
                     help="budget on real evaluations, DOE included. The loop "
                          "never starts an iteration that would exceed it")
@@ -537,6 +547,9 @@ def main():
     cfg.hv_stop = bool(args.hv_stop)
     cfg.hv_tol = float(args.hv_tol)
     cfg.hv_patience = int(args.hv_patience)
+    cfg.margin_in_search = bool(args.margin_in_search)
+    if args.hv_ref:
+        cfg.hv_ref = tuple(float(v) for v in args.hv_ref.split(","))
     cfg.max_evals = args.max_evals
     if args.hv_stop and args.iters is None:
         if args.max_evals is None:
@@ -864,6 +877,7 @@ def main():
                            "stop_rule": {"enabled": bool(args.hv_stop),
                                          "tol": args.hv_tol,
                                          "patience": args.hv_patience,
+                                         "hv_ref": args.hv_ref,
                                          "max_evals": args.max_evals},
                            "campaign9": ({
                                "efpd_req": args.efpd_req,
@@ -946,6 +960,7 @@ def main():
                                "infill_min_sep": cfg.infill_min_sep,
                                "explore_sep": cfg.explore_sep,          # CAMPAIGN 12
                                "n_explore": cfg.n_explore,
+                               "margin_in_search": bool(cfg.margin_in_search),
                                "confirm_front": bool(cfg.confirm_front),
                                "cycle_constraint": args.cycle_constraint,
                                "feas_kappa": cfg.feas_kappa,

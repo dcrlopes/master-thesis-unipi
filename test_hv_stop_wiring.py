@@ -136,8 +136,17 @@ def main():
         last = [p for p in disk["phase_log"] if p["stage"] == "infill"][-1]
         assert all(k in last for k in HEALTH)
         assert len(disk["hv_history"]) == 4 and len(disk["all_raw"]) == 42
+        # ---- G. a reference given on a resume replaces the stored one, and the history follows
+        ref = (1.65, 2763.0)
+        g = make(PlainStub, n_iter=1, hv_ref=ref)
+        g.load_checkpoint(ck)
+        want = hvs.history_on_ref(disk["all_raw"], disk["constraint_names"], disk["objectives"],
+                                  disk["phase_log"], ref)
+        assert list(g._hv_ref_frozen) == list(ref) and len(g.history) == len(disk["hv_history"])
+        assert all(abs(x - y) <= 1e-9 * max(1.0, abs(y)) for x, y in zip(g.history, want)), (g.history, want)
     print(f"E  resume       : 36 loaded, rule fired after one more iteration at {len(e2.X)}")
     print(f"F  checkpoint   : stop block on disk, reason: {disk['stop']['reason']}")
+    print(f"G  reference    : history recomputed on {ref}: {[round(h, 2) for h in g.history]}")
     print("test_hv_stop_wiring OK")
     return 0
 

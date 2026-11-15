@@ -529,7 +529,7 @@ class _SurrogateProblem(Problem):
     (e.g. the vessel-fit g_geom). The acquisition therefore never proposes a
     geometrically unbuildable design, even at iteration 1 when the GP
     (Gaussian Process) has seen almost no data."""
-    def __init__(self, spec, obj_surrogate, con_surrogate, efpd_cap=None):
+    def __init__(self, spec, obj_surrogate, con_surrogate, efpd_cap=None, kappa=None):
         super().__init__(n_var=spec.design_space.n,
                          n_obj=spec.n_obj,
                          n_ieq_constr=spec.n_constr,
@@ -539,6 +539,7 @@ class _SurrogateProblem(Problem):
         self.obj_surrogate = obj_surrogate
         self.con_surrogate = con_surrogate
         self.efpd_cap = efpd_cap        # EFPD-CLIP (None disables the clip)
+        self.kappa = kappa              # MARGIN-IN-SEARCH (None: constrain the mean)
         self._exact_cols = [(spec.constraint_names.index(name), fn,
                              spec.g_scale(name))          # CONSTRAINT-NORM
                             for name, fn in spec.exact_constraints.items()]
@@ -558,8 +559,17 @@ class _SurrogateProblem(Problem):
             f_mean[:, 0] = np.maximum(f_mean[:, 0], -float(self.efpd_cap))
         out["F"] = f_mean
         if self.con_surrogate is not None:
-            g_mean, _ = self.con_surrogate.predict(X)
+            g_mean, g_std = self.con_surrogate.predict(X)
             g_mean = np.atleast_2d(g_mean)
+            if self.kappa is not None:
+                # MARGIN-IN-SEARCH (15 Nov 2026): NSGA-II constrained on the
+                # mean places its whole population on the predicted constraint
+                # boundary, where mean + kappa * sd > 0 by construction, so the
+                # margin rule applied afterwards admitted 0 of 300 candidates in
+                # every batch of Campaigns 11 and 12. With kappa given, the
+                # search itself is constrained on mean + kappa * sd. The exact
+                # columns are overwritten below and keep their closed form.
+                g_mean = g_mean + self.kappa * np.atleast_2d(g_std)
             for col, fn, scl in self._exact_cols:
                 # CONSTRAINT-NORM: the GP columns are trained on normalized G,
                 # so the exact overwrite must be divided by the SAME scale or
@@ -626,6 +636,8 @@ class OptimizerConfig:
     # at full fidelity and five of six rejected near misses were feasible.
     explore_sep: float = 0.0
     n_explore: int = 1
+    margin_in_search: bool = False  # MARGIN-IN-SEARCH: NSGA-II constrained on
+                                    # mean + kappa * sd instead of the mean
     confirm_front: bool = False
 
 
@@ -784,8 +796,14 @@ class ActiveLearningMOO:
 
         # NSGA-II on the surrogate (cheap):
         t_nsga0 = time.perf_counter()
+        _kfull = None
+        if getattr(self.cfg, "margin_in_search", False) and con_sur is not None:
+            _km = getattr(self.cfg, "feas_kappa_map", None) or {}
+            _kfull = np.array([float(_km.get(n_, getattr(self.cfg, "feas_kappa", 1.5)))
+                               for n_ in self.spec.constraint_names])
         prob = _SurrogateProblem(self.spec, obj_sur, con_sur,
-                                 efpd_cap=self.cfg.efpd_cap)  # EFPD-CLIP
+                                 efpd_cap=self.cfg.efpd_cap,  # EFPD-CLIP
+                                 kappa=_kfull)                # MARGIN-IN-SEARCH
         algo = NSGA2(pop_size=self.cfg.nsga_pop, sampling=LHS())
         res = minimize(prob, algo,
                        ("n_gen", self.cfg.nsga_gen),
@@ -1269,6 +1287,26 @@ class ActiveLearningMOO:
         hv_ref = ckpt.get("hv_ref")
         self._hv_ref_frozen = (np.array(hv_ref, dtype=float)
                                if hv_ref is not None else None)
+        # HV-REF (15 Nov 2026): the stop rule is a RELATIVE gain, so its tolerance
+        # depends on the reference point. A reference given in the configuration
+        # replaces the one of the checkpoint, and the history is recomputed on it
+        # from the batch sizes of phase_log, so the quiet count is consistent.
+        _cfg_ref = getattr(self.cfg, "hv_ref", None)
+        if _cfg_ref is not None and (hv_ref is None or not np.allclose(hv_ref, _cfg_ref)):
+            _sizes = np.cumsum([int(p_["n_eval"]) for p_ in self.phase_log])
+            if len(_sizes) and _sizes[-1] == len(self.X):
+                self._hv_ref_frozen = np.array(_cfg_ref, dtype=float)
+                _X, _F, _G = self.X, self.F, self.G
+                self.history = []
+                for _n in _sizes:
+                    self.X, self.F, self.G = _X[:_n], _F[:_n], _G[:_n]
+                    self.history.append(self._hv())
+                self.X, self.F, self.G = _X, _F, _G
+                print(f"HV-REF: reference {list(_cfg_ref)} replaces {hv_ref}; "
+                      f"history recomputed: {[round(h, 2) for h in self.history]}")
+            else:
+                print("!! HV-REF: phase_log does not account for every evaluation, "
+                      "the reference of the checkpoint is kept")
         # remember when the CAMPAIGN started, not when this block started, so
         # save_checkpoint() can write it back instead of overwriting it
         _m = ckpt.get("meta") or {}

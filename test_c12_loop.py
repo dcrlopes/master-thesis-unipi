@@ -103,6 +103,21 @@ def main():
     assert all(b.raw[i].get("confirmed_3d") for i in front), "an unconfirmed design is on the front"
     print(f"B  confirmation : {n_conf} design(s) confirmed over 2 batches, {len(dropped)} left the front, "
           f"rows rebuilt, front members all confirmed")
+    # ---- C. the margin rule as the constraint of the search (15 Nov 2026) -----
+    spec, c = make(StubC9Evaluator, n_iter=0)
+    c.run(verbose=False)
+    c.cfg.explore_sep = 0.0
+    _, pm = c.propose(0, verbose=False)
+    c.cfg.margin_in_search = True
+    _, ps = c.propose(0, verbose=False)
+    # NSGA-II constrained on mean + kappa sd: whatever it returns as feasible satisfies the rule
+    assert ps["acq"]["n_margin_feasible"] == ps["acq"]["n_candidates"] > 0,         (ps["acq"]["n_margin_feasible"], ps["acq"]["n_candidates"])
+    gm, gs = (np.atleast_2d(v) for v in ps["con_sur"].predict(ps["cand"]))
+    cols = [j for j, n in enumerate(spec.constraint_names) if n not in spec.exact_constraints]
+    n_ok = int(np.sum((gm[:, cols] + c.cfg.feas_kappa * gs[:, cols]).max(axis=1) <= 0))
+    assert n_ok == ps["acq"]["n_margin_feasible"], (n_ok, ps["acq"]["n_margin_feasible"])
+    print(f"C  margin search: {pm['acq']['n_margin_feasible']}/{pm['acq']['n_candidates']} candidates satisfy the rule "
+          f"with the mean constraint, {ps['acq']['n_margin_feasible']}/{ps['acq']['n_candidates']} with the margin constraint")
     print("test_c12_loop OK")
     return 0
 

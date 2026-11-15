@@ -92,6 +92,33 @@ def decide(history, n_front_censored, tol=TOL, patience=PATIENCE):
                 last_gain=last, censored=int(n_front_censored), reason=reason)
 
 
+def hv2d(points, ref):
+    """Hypervolume of a set of two-objective points (minimisation) against ref.
+    Points that do not dominate ref add nothing."""
+    P = sorted((float(a), float(b)) for a, b in points if a < ref[0] and b < ref[1])
+    hv, best = 0.0, float(ref[1])
+    for a, b in P:
+        if b < best:
+            hv += (ref[0] - a) * (best - b)
+            best = b
+    return hv
+
+
+def history_on_ref(raw, constraint_names, objectives, phase_log, ref):
+    """The hypervolume after the design of experiments and after every infill
+    batch, on a reference point of the caller's choice. The rule is relative,
+    so its 1 % tolerance means a different absolute gain on each reference:
+    Campaign 12 stopped on a gain of 0.95 % against (1.977, 2786 ppm), which
+    is 3.9 % against the constraint limits (1.65, 2763 ppm)."""
+    keys = [(o[0], -1.0 if o[1] == "max" else 1.0) for o in objectives]
+    out, n = [], 0
+    for p in phase_log:
+        n += int(p["n_eval"])
+        F = [[s * r[k] for k, s in keys] for r in raw[:n] if all(r[c] <= 1e-9 for c in constraint_names)]
+        out.append(hv2d(F, ref))
+    return out
+
+
 def _last_infill(phase_log, patience):
     return [p for p in phase_log if p.get("stage") == "infill"][-patience:]
 
@@ -143,6 +170,12 @@ def selftest():
     # the cap: 24 + 12 x 6 = 96 runs the twelfth iteration and blocks the thirteenth
     assert not cap_blocks(90, 6, 96) and cap_blocks(96, 6, 96) and cap_blocks(92, 6, 96)
     assert not cap_blocks(10 ** 6, 6, None)
+    # the hypervolume on a chosen reference
+    assert abs(hv2d([(1.0, 3.0), (2.0, 1.0), (2.5, 2.5), (9.0, 0.0)], (4.0, 4.0)) - 7.0) < 1e-12
+    assert hv2d([], (4.0, 4.0)) == 0.0
+    rr = [dict(f=1.0, c=3.0, g=-1.0), dict(f=2.0, c=1.0, g=-1.0), dict(f=0.5, c=0.5, g=1.0)]
+    hh = history_on_ref(rr, ["g"], [["f", "min"], ["c", "min"]], [dict(n_eval=1), dict(n_eval=2)], (4.0, 4.0))
+    assert hh == [3.0, 7.0], hh
     # health
     log = [dict(stage="DOE", iteration=0),
            dict(stage="infill", iteration=1, n_margin_feasible=40, n_infill_feasible=3, relax_depth=0),
@@ -163,6 +196,9 @@ def main(argv=None):
     ap.add_argument("--checkpoint")
     ap.add_argument("--tol", type=float, default=TOL)
     ap.add_argument("--patience", type=int, default=PATIENCE)
+    ap.add_argument("--ref", default=None, metavar="F1,F2",
+                    help="replay the rule on this reference point instead of the one of the "
+                         "checkpoint (two objectives, in the units of the checkpoint)")
     ap.add_argument("--selftest", action="store_true")
     a = ap.parse_args(argv)
     if a.selftest:
@@ -178,10 +214,19 @@ def main(argv=None):
              if not any(all(x <= y for x, y in zip(h, f)) and any(x < y for x, y in zip(h, f))
                         for j, h in enumerate(F) if j != i)]
     n_cen = sum(bool(feas[i].get("censored")) for i in front)
-    for i, g in enumerate(gains(d["hv_history"]), 1):
-        print(f"  iteration {i:2d}: HV {d['hv_history'][i]:12.4f}  gain "
+    hist = d["hv_history"]
+    if a.ref:
+        ref = [float(v) for v in a.ref.split(",")]
+        hist = history_on_ref(raw, cn, d["objectives"], d["phase_log"], ref)
+        print(f"  reference {ref} (checkpoint: {d.get('hv_ref')}), the final constraint values of every design")
+        for n in range(a.patience + 1, len(hist) + 1):
+            if decide(hist[:n], n_cen, a.tol, a.patience)["stop"]:
+                print(f"  the rule first fires after iteration {n - 1}")
+                break
+    for i, g in enumerate(gains(hist), 1):
+        print(f"  iteration {i:2d}: HV {hist[i]:12.4f}  gain "
               + (f"{100 * g:8.3f} %" if g is not None else "   undefined"))
-    r = decide(d["hv_history"], n_cen, a.tol, a.patience)
+    r = decide(hist, n_cen, a.tol, a.patience)
     print(f"  front members {len(front)}, censored on the front {n_cen}")
     print(f"  {r['reason']}")
     for n in health_notes(d.get("phase_log", []), a.patience):

@@ -71,6 +71,7 @@ LAYERS=8
 CON_NU=2.5
 EXPLORE_SEP=0.035
 HV_TOL=0.01; HV_PATIENCE=3
+HV_REF="1.65,2763"                # the constraint limits (F_dH, boron): the rule is a relative gain, so its reference is fixed
 STALL_MIN=${STALL_MIN:-100}
 MAX_LAUNCHES=${MAX_LAUNCHES:-25}
 POLL_S=60
@@ -94,7 +95,7 @@ COMMON=(--ktarget-table "$KT" --k-basis core --k-max "$K_MAX" --k-min "$K_MIN"
         --boron-ceiling "$BORON_CEILING" --constrain-boron --hump-noise "$HUMP_NOISE"
         --cycle-layers "$LAYERS" --threads "$THREADS" --con-kernel-nu "$CON_NU"
         --cycle-constraint margin --explore-sep "$EXPLORE_SEP" --n-explore 1
-        --hv-stop --hv-tol "$HV_TOL" --hv-patience "$HV_PATIENCE")
+        --hv-stop --hv-tol "$HV_TOL" --hv-patience "$HV_PATIENCE" --hv-ref "$HV_REF")
 LOOP=(--nsga-pop 300 --nsga-gen 400 --infill-min-sep 0.14 --feas-kappa 1.5)
 
 stage_P() {

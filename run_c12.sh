@@ -210,8 +210,9 @@ stage_F() {
   done
   kill "$MONITOR" 2>/dev/null
   mark F
-  echo "$(stamp) Campaign 12 finished ($(n_eval) evaluations). To send the results back:"
-  echo "  git add -f $OUT/optimization_checkpoint.json $OUT.log $MACHINE_CSV $SEED $KAPPA $WORK/eval_cache.json && git commit -m 'Campaign 12: stop rule, mission margin, exploration, confirmation in the loop' && git push"
+  # wks720 has no GitHub access since 15 Nov 2026: the results are copied from the PC over SSH and pushed there
+  echo "$(stamp) Campaign 12 finished ($(n_eval) evaluations). Results to copy from the PC:"
+  echo "  $OUT/optimization_checkpoint.json $OUT.log c12.log $MACHINE_CSV $SEED $KAPPA $WORK/eval_cache.json"
 }
 
 case "${1:-}" in

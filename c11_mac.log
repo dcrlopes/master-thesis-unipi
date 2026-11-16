@@ -1,0 +1,19 @@
+------------------------------------------------------------------------------
+ STAGE P. Preflight (2026-11-15 05:20:20)
+------------------------------------------------------------------------------
+  openmc 0.16.0 | pymoo 0.6.2 | sklearn 1.9.1
+core3d hook selftest OK
+  core3d hook selftest OK
+  preflight OK, 12 threads
+[K] already done
+[S] already done
+[M] already done
+------------------------------------------------------------------------------
+ STAGE F. Campaign 11, 57 + 7 x 6 = 99 evaluations, watchdog 100 min (2026-11-15 05:20:23)
+------------------------------------------------------------------------------
+2026-11-15 05:20:23 launch 1, 0 evaluations in the checkpoint
+2026-11-15 05:20:23   fresh start, design of experiments = the 57 corrected evaluations of c11_seed.json
+2026-11-15 05:20:23   driver pid 11751
+2026-11-16 01:34:33   driver ended, 99 evaluations in the checkpoint
+2026-11-16 01:34:33 Campaign 11 (Mac) finished. To send the results back:
+  git add -f out_c11_mac/optimization_checkpoint.json out_c11_mac.log c11_mac_machine.csv c11_seed.json c11_kappa.json openmc_runs_c11_mac/eval_cache.json repro_c9/kbol_c10_*.json kbol_queue.log && git commit -m 'Campaign 11 on the Mac mini (OpenMC 0.16.0)' && git push

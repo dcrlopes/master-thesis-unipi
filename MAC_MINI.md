@@ -118,3 +118,52 @@ scp diogo@10.114.180.54:~/master-thesis-unipi/openmc_runs_c10/eval_cache.json ~/
 That skips the design of experiments on the Mac (the 22 evaluations are
 taken as they are) and runs only the 36 infill evaluations, so it measures
 the loop with the proxy, not the design of experiments.
+
+## Offline surrogate studies of Campaign 12 (no transport)
+
+Two studies that need neither OpenMC nor the nuclear data, only the
+Campaign 12 checkpoint in `results_wks720_2026-11-15/c12/`. Both write into
+`figs_c12_cv/` beside the twelve surrogates already compared on the PC
+(`surrogate_cv.md`).
+
+- `c12_mfgp_cv.py`, two-fidelity Gaussian processes (autoregressive
+  co-kriging). The pairs in the checkpoint: the assembly and the core solve
+  for g_kmin and F_dH (117 designs), and the proxy and the full-fidelity
+  depletion for g_margin (15 confirmed designs). scikit-learn only, so it
+  runs in `openmc-env`.
+- `c12_surrogate_cv.py --variants tabpfn`, the TabPFN regressor on the same
+  leave-one-out and walk-forward folds. It needs PyTorch, so it gets its own
+  environment and `openmc-env` stays as it is.
+
+```bash
+cd ~/master-thesis-unipi
+git pull --ff-only
+source ~/miniforge3/etc/profile.d/conda.sh
+
+# 1. Two-fidelity Gaussian processes, about 5 min
+conda activate openmc-env
+python c12_mfgp_cv.py --selftest
+caffeinate -i python c12_mfgp_cv.py --jobs 8 2>&1 | tee figs_c12_cv/mfgp_mac.log
+
+# 2. TabPFN, in a separate environment (PyTorch is about 1 GB)
+conda create -n tabpfn-env python=3.12 -y
+conda activate tabpfn-env
+pip install tabpfn scikit-learn joblib scipy
+python -c "import tabpfn, torch, sklearn; print('tabpfn', tabpfn.__version__, 'torch', torch.__version__, 'sklearn', sklearn.__version__)"
+#    smoke test, 18 predictions: the first call also downloads the model weights
+python c12_surrogate_cv.py --variants tabpfn --outputs g_kmin --schemes walkforward --jobs 1
+#    the full study, about 15 to 30 min
+caffeinate -i python c12_surrogate_cv.py --variants tabpfn --jobs 4 2>&1 | tee figs_c12_cv/tabpfn_mac.log
+
+# 3. the results back to GitHub
+git add figs_c12_cv/mfgp_cv.json figs_c12_cv/mfgp_cv.md figs_c12_cv/surrogate_cv.json \
+        figs_c12_cv/surrogate_cv.md figs_c12_cv/mfgp_mac.log figs_c12_cv/tabpfn_mac.log
+git commit -m "Campaign 12: two-fidelity GP and TabPFN on the Mac mini"
+git push
+```
+
+If the first TabPFN fit stops with a message about the model licence or a
+Hugging Face login, accept the licence on the page the message names and
+log in with `hf auth login` (in `tabpfn-env`), then repeat the smoke test.
+If the smoke test fails for another reason, send its full output; the
+wrapper class `TabPFN` in `c12_surrogate_cv.py` is the only TabPFN code.

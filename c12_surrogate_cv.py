@@ -22,6 +22,7 @@ SURROGATES
     mlp_ens          the MLP ensemble of the code base, 5 networks
     gpc              Gaussian-process classifier of the sign of the constraint
                      (decisions only, no regression metrics)
+    tabpfn           TabPFN regressor, sd from the 16 and 84 % quantiles (on request)
 
 VALIDATION SCHEMES
     loo           every design predicted from the other 116
@@ -43,6 +44,7 @@ METRICS
 USAGE (repository root, about 20 min on 8 threads)
     python c12_surrogate_cv.py
     python c12_surrogate_cv.py --variants gp_m52_ard rf --outputs g_kmin
+    python c12_surrogate_cv.py --variants tabpfn --jobs 4    (pip install tabpfn, see MAC_MINI.md)
 Results are merged into <out>/surrogate_cv.json; surrogate_cv.md is rewritten.
 """
 from __future__ import annotations
@@ -137,6 +139,19 @@ class GPC:
         return 0.5 - p, np.full(len(X), np.nan)
 
 
+class TabPFN:
+    """TabPFN regressor (pip install tabpfn), sd = half the 16-84 % quantile interval."""
+    def fit(self, X, y):
+        from tabpfn import TabPFNRegressor
+        self.m = TabPFNRegressor(random_state=0, n_jobs=1).fit(X, y)
+        return self
+
+    def predict(self, X):
+        lo, mid, hi = (np.asarray(q) for q in self.m.predict(np.atleast_2d(X), output_type="quantiles",
+                                                             quantiles=[0.16, 0.5, 0.84]))
+        return mid, np.maximum(np.abs(hi - lo) / 2.0, 1e-12)
+
+
 def variants(names):
     i, j = names.index("gd_wt"), names.index("gd_pins")
     return {
@@ -144,14 +159,14 @@ def variants(names):
         "gp_m32_ard": lambda: GP("m32", True), "gp_m12_ard": lambda: GP("m12", True),
         "gp_rbf_ard": lambda: GP("rbf", True), "gp_rq_iso": lambda: GP("rq", False),
         "gp_m52_ard_inv": lambda: Inv(GP("m52", True), i, j),
-        "quad": Quad, "rf": RF, "gbr_q": GBQ, "mlp_ens": MLP, "gpc": GPC,
+        "quad": Quad, "rf": RF, "gbr_q": GBQ, "mlp_ens": MLP, "gpc": GPC, "tabpfn": TabPFN,
     }
 
 
 LABEL = {"gp_m52_ard": "GP Matern 5/2 ARD (campaign)", "gp_m52_iso": "GP Matern 5/2 iso", "gp_m32_ard": "GP Matern 3/2 ARD",
          "gp_m12_ard": "GP Matern 1/2 ARD", "gp_rbf_ard": "GP SE ARD", "gp_rq_iso": "GP rational quadratic iso",
          "gp_m52_ard_inv": "GP Matern 5/2 ARD + Gd inventory", "quad": "Quadratic response surface",
-         "rf": "Random forest", "gbr_q": "Gradient boosting, quantiles", "mlp_ens": "MLP ensemble", "gpc": "GP classifier"}
+         "rf": "Random forest", "gbr_q": "Gradient boosting, quantiles", "mlp_ens": "MLP ensemble", "gpc": "GP classifier", "tabpfn": "TabPFN"}
 
 
 def _one(make, X, y, tr, te):
@@ -244,7 +259,7 @@ def main(argv=None):
     feas = np.array([all(r[c] <= 0 for c in CN) for r in A])
     n = len(A)
     V = variants(names)
-    todo = a.variants or list(V)
+    todo = a.variants or [v for v in V if v != "tabpfn"]      # tabpfn only on request: it needs PyTorch
     n0, wf = 0, []
     for p in D["phase_log"]:
         m = int(p["n_eval"])
